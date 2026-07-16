@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Data files (runtime-generated JSON)
+data/*.json
+!data/.gitkeep
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build output
+dist/
+build/
+.out/
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# MSW service worker cache
+.msw/
