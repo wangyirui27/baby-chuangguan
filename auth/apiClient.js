@@ -3,17 +3,24 @@
 
   /**
    * 宝宝闯关 API 客户端
-   * — 支持 file://（sessionStorage token）和 HTTP（Authorization header）
-   * — API_BASE 可配置（默认 http://localhost:3000）
+   * — 支持 file://（sessionStorage token）和 HTTP（Authorization header + cookie）
+   * — 使用相对路径 /api/*：Vite dev proxy 根据 VITE_API_MODE 路由到 mock(3001) 或 real(3000)
+   * — 生产环境：相对路径直接访问部署的后端
    * — 开发模式通过后端返回的 debugCode 在前端弹窗内显示验证码
    *
    * 安全设计：
    * - 验证码永远由服务端生成/校验
    * - 后端不可用时：不伪登录、不本地生成验证码、不创建本地 session
    * - session token 由后端签发，前端只存储透传
+   * - 绝对 URL 永远不在业务代码中硬编码
    */
 
-  var API_BASE = 'http://localhost:3000';
+  // Use relative paths — Vite dev proxy routes /api/* to:
+  //   mock mode → localhost:3001 (standalone fixture server)
+  //   real mode → localhost:3000 (real backend)
+  // Production: relative paths work directly against the deployed backend.
+  // Absolute URLs are NEVER hardcoded in business code (see contract rule).
+  var API_BASE = '';
   var _lastDevCode = null;
 
   // ─── 协议检测 ────────────────────────────────
