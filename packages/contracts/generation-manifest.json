@@ -1,0 +1,130 @@
+{
+  "version": "0.1.0",
+  "generatedAt": "2025-07-16T06:47:00Z",
+  "contractOwner": "@contract-owner",
+  "description": "Generation manifest for 宝宝闯关 contract artifacts. All generated files listed below are machine-produced. Do NOT hand-edit.",
+  "endpoints": [
+    {
+      "id": "health",
+      "method": "GET",
+      "path": "/api/health",
+      "security": [],
+      "openapiRef": "#/paths/~1api~1health/get",
+      "schema": "schemas/health.json",
+      "fixtures": {
+        "200": "fixtures/health-success.json"
+      }
+    },
+    {
+      "id": "send-code",
+      "method": "POST",
+      "path": "/api/auth/send-code",
+      "security": [],
+      "openapiRef": "#/paths/~1api~1auth~1send-code/post",
+      "schema": {
+        "request": "schemas/send-code-request.json",
+        "response": "schemas/send-code-response.json",
+        "error": "schemas/error.json"
+      },
+      "fixtures": {
+        "200": "fixtures/send-code-success.json",
+        "200-dev": "fixtures/send-code-success-dev.json",
+        "400-phone": "fixtures/send-code-error-phone-required.json",
+        "400-invalid": "fixtures/send-code-error-invalid-phone.json",
+        "429-cooldown": "fixtures/send-code-error-cooldown.json",
+        "429-rate": "fixtures/send-code-error-rate-limited.json",
+        "503": "fixtures/send-code-error-sms-unavailable.json"
+      }
+    },
+    {
+      "id": "verify-code",
+      "method": "POST",
+      "path": "/api/auth/verify-code",
+      "security": [],
+      "openapiRef": "#/paths/~1api~1auth~1verify-code/post",
+      "schema": {
+        "request": "schemas/verify-code-request.json",
+        "response": "schemas/verify-code-response.json",
+        "error": "schemas/error.json"
+      },
+      "fixtures": {
+        "200": "fixtures/verify-code-success.json",
+        "400-params": "fixtures/verify-code-error-params-required.json",
+        "400-expired": "fixtures/verify-code-error-expired.json",
+        "400-invalid": "fixtures/verify-code-error-invalid-code.json",
+        "400-attempts": "fixtures/verify-code-error-attempts-exceeded.json"
+      }
+    },
+    {
+      "id": "session",
+      "method": "GET",
+      "path": "/api/auth/session",
+      "security": ["bearerAuth", "cookieAuth"],
+      "openapiRef": "#/paths/~1api~1auth~1session/get",
+      "schema": {
+        "response": "schemas/session-response.json",
+        "error": "schemas/error.json"
+      },
+      "fixtures": {
+        "200": "fixtures/session-success.json",
+        "401-unauthorized": "fixtures/session-error-unauthorized.json",
+        "401-revoked": "fixtures/session-error-revoked.json",
+        "401-expired": "fixtures/session-error-expired.json"
+      }
+    },
+    {
+      "id": "logout",
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "security": ["bearerAuth", "cookieAuth"],
+      "openapiRef": "#/paths/~1api~1auth~1logout/post",
+      "schema": {
+        "response": "schemas/logout-response.json",
+        "error": "schemas/error.json"
+      },
+      "fixtures": {
+        "200": "fixtures/logout-success.json"
+      }
+    }
+  ],
+  "clientSideOnly": {
+    "curriculum": {
+      "description": "100 levels in 10 units, hardcoded in script.js. No backend endpoint.",
+      "source": "script.js → curriculumUnits"
+    },
+    "progress": {
+      "description": "Stored in localStorage key baby-island-preview-progress-v1",
+      "source": "script.js → PREVIEW_PROGRESS_KEY"
+    },
+    "rankings": {
+      "description": "8 hardcoded entries in script.js. No backend endpoint.",
+      "source": "script.js → rankings"
+    },
+    "profile": {
+      "description": "Static UI, no backend endpoint.",
+      "source": "script.js → renderMine()"
+    }
+  },
+  "targetArtifacts": {
+    "frontendTypes": {
+      "path": "packages/contracts/src/types/",
+      "description": "TypeScript interfaces for frontend consumption",
+      "generator": "Scaffolder (future)"
+    },
+    "frontendMsw": {
+      "path": "packages/contracts/src/msw/",
+      "description": "MSW request handlers for frontend dev",
+      "generator": "Scaffolder (future)"
+    },
+    "backendDto": {
+      "path": "packages/contracts/src/dto/",
+      "description": "Backend validation schemas (Zod/Joi)",
+      "generator": "Scaffolder (future)"
+    },
+    "contractTests": {
+      "path": "packages/contracts/src/tests/",
+      "description": "Contract test templates",
+      "generator": "Scaffolder (future)"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schemas/send-code-response.json",
+  "title": "SendCodeResponse",
+  "type": "object",
+  "required": ["success"],
+  "properties": {
+    "success": { "type": "boolean", "const": true },
+    "debugCode": {
+      "type": "string",
+      "description": "Only in development mode. Never in production."
+    }
+  },
+  "additionalProperties": false
+}

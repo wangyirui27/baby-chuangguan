@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schemas/send-code-request.json",
+  "title": "SendCodeRequest",
+  "type": "object",
+  "required": ["phone"],
+  "properties": {
+    "phone": {
+      "type": "string",
+      "description": "Phone number (11 digits)",
+      "minLength": 1
+    }
+  },
+  "additionalProperties": false
+}

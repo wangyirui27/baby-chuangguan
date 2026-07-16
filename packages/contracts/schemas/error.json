@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schemas/error.json",
+  "title": "ErrorResponse",
+  "type": "object",
+  "required": ["error", "code"],
+  "properties": {
+    "error": {
+      "type": "string",
+      "description": "Human-readable error message (Chinese)"
+    },
+    "code": {
+      "type": "string",
+      "description": "Machine-readable error code",
+      "enum": [
+        "PHONE_REQUIRED",
+        "INVALID_PHONE",
+        "COOLDOWN",
+        "RATE_LIMITED",
+        "IP_RATE_LIMITED",
+        "SEND_FAILED",
+        "SMS_UNAVAILABLE",
+        "PARAMS_REQUIRED",
+        "VERIFICATION_EXPIRED",
+        "INVALID_CODE",
+        "ATTEMPTS_EXCEEDED",
+        "VERIFY_FAILED",
+        "UNAUTHORIZED",
+        "SESSION_REVOKED",
+        "SESSION_EXPIRED",
+        "USER_NOT_FOUND",
+        "NOT_FOUND"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

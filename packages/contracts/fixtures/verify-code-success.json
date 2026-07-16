@@ -1,0 +1,11 @@
+{
+  "token": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+  "user": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "normalizedPhone": "+8613800138000",
+    "createdAt": "2025-07-16T00:00:00.000Z",
+    "lastLoginAt": "2025-07-16T00:00:00.000Z",
+    "isLoggedIn": true,
+    "hasFullAccess": false
+  }
+}

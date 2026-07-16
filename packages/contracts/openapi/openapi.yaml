@@ -1,0 +1,366 @@
+openapi: 3.1.0
+info:
+  title: 宝宝闯关 API
+  version: 0.1.0
+  description: >
+    Frozen contract for 宝宝闯关 (Baby Island Quest) — 3–6 year old English
+    learning H5.  Only endpoints actually implemented in backend/src/auth.js
+    and backend/src/index.js are included.  Curriculum data, progress,
+    rankings, and profile remain client-side (localStorage / sessionStorage)
+    and are NOT backend endpoints.
+
+servers:
+  - url: http://localhost:3000
+    description: Local development
+
+paths:
+  /api/health:
+    get:
+      summary: Health check
+      operationId: getHealth
+      tags: [System]
+      security: []
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
+  /api/auth/send-code:
+    post:
+      summary: Send SMS verification code
+      operationId: sendVerificationCode
+      tags: [Auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendCodeRequest"
+      responses:
+        "200":
+          description: Code sent (or dev debug code returned)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SendCodeResponse"
+        "400":
+          description: Invalid phone number
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                phoneRequired:
+                  value:
+                    error: "手机号不能为空"
+                    code: PHONE_REQUIRED
+                invalidPhone:
+                  value:
+                    error: "手机号格式不正确"
+                    code: INVALID_PHONE
+        "429":
+          description: Rate limited (cooldown or too many sends)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                cooldown:
+                  value:
+                    error: "发送太频繁，请 42 秒后再试"
+                    code: COOLDOWN
+                rateLimited:
+                  value:
+                    error: "发送太频繁，请稍后再试"
+                    code: RATE_LIMITED
+                ipRateLimited:
+                  value:
+                    error: "发送太频繁，请稍后再试"
+                    code: IP_RATE_LIMITED
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                sendFailed:
+                  value:
+                    error: "发送验证码失败"
+                    code: SEND_FAILED
+        "503":
+          description: SMS provider unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                smsUnavailable:
+                  value:
+                    error: "短信服务暂不可用，请稍后再试"
+                    code: SMS_UNAVAILABLE
+
+  /api/auth/verify-code:
+    post:
+      summary: Verify SMS code and login
+      operationId: verifyCode
+      tags: [Auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyCodeRequest"
+      responses:
+        "200":
+          description: Login successful — returns token and user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyCodeResponse"
+        "400":
+          description: Invalid or expired code
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                paramsRequired:
+                  value:
+                    error: "手机号和验证码不能为空"
+                    code: PARAMS_REQUIRED
+                expired:
+                  value:
+                    error: "验证码错误或已过期"
+                    code: VERIFICATION_EXPIRED
+                invalidCode:
+                  value:
+                    error: "验证码错误或已过期"
+                    code: INVALID_CODE
+                attemptsExceeded:
+                  value:
+                    error: "验证码错误或已过期"
+                    code: ATTEMPTS_EXCEEDED
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                verifyFailed:
+                  value:
+                    error: "验证失败"
+                    code: VERIFY_FAILED
+
+  /api/auth/session:
+    get:
+      summary: Get current session user
+      operationId: getSession
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Valid session — returns user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                unauthorized:
+                  value:
+                    error: "未登录"
+                    code: UNAUTHORIZED
+                sessionRevoked:
+                  value:
+                    error: "会话已失效"
+                    code: SESSION_REVOKED
+                sessionExpired:
+                  value:
+                    error: "会话已过期"
+                    code: SESSION_EXPIRED
+                userNotFound:
+                  value:
+                    error: "用户不存在"
+                    code: USER_NOT_FOUND
+
+  /api/auth/logout:
+    post:
+      summary: Logout and revoke session
+      operationId: logout
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      requestBody: {}
+      responses:
+        "200":
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LogoutResponse"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: >
+        Session token from verify-code response.
+        Header: Authorization: Bearer <token>
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session_token
+      description: >
+        HttpOnly, SameSite=Lax cookie set by backend.
+
+  schemas:
+    HealthResponse:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          const: ok
+
+    SendCodeRequest:
+      type: object
+      required: [phone]
+      properties:
+        phone:
+          type: string
+          description: Phone number (11 digits)
+          example: "13800138000"
+
+    SendCodeResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+          const: true
+        debugCode:
+          type: string
+          description: >
+            Only present when NODE_ENV=development AND SMS_PROVIDER=development.
+            Never returned in production/staging/test.
+          example: "123456"
+
+    VerifyCodeRequest:
+      type: object
+      required: [phone, code]
+      properties:
+        phone:
+          type: string
+          description: Phone number (11 digits)
+          example: "13800138000"
+        code:
+          type: string
+          description: 6-digit verification code
+          example: "123456"
+
+    VerifyCodeResponse:
+      type: object
+      required: [token, user]
+      properties:
+        token:
+          type: string
+          description: 64 hex char session token
+          example: "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"
+        user:
+          $ref: "#/components/schemas/User"
+
+    User:
+      type: object
+      required: [id, normalizedPhone, createdAt, lastLoginAt, isLoggedIn, hasFullAccess]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: User unique identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        normalizedPhone:
+          type: string
+          description: E.164 normalized phone with +86 prefix
+          example: "+8613800138000"
+        createdAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of user creation
+        lastLoginAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of last login
+        isLoggedIn:
+          type: boolean
+          const: true
+        hasFullAccess:
+          type: boolean
+          description: >
+            Always false currently. Payment/unlock not yet implemented.
+            Frontend gates levels > 5 on this field.
+
+    SessionResponse:
+      type: object
+      required: [user]
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+
+    LogoutResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+          const: true
+
+    ErrorResponse:
+      type: object
+      required: [error, code]
+      properties:
+        error:
+          type: string
+          description: Human-readable error message (Chinese)
+        code:
+          type: string
+          description: Machine-readable error code
+
+  # ─── Client-side only (NOT backend endpoints) ──────
+  # These are documented here for cross-team awareness but have
+  # NO corresponding backend route. They are stored in
+  # localStorage/sessionStorage by script.js.
+  x-clientData:
+    curriculum:
+      description: >
+        100 levels across 10 units, hardcoded in script.js curriculumUnits.
+        No backend endpoint. Levels include: id, title, zhTitle, topic,
+        duration, guidance, question, options, correct.
+    progress:
+      description: >
+        { completed: number[], unlockedThrough: number }
+        Stored in localStorage key "baby-island-preview-progress-v1".
+        No backend endpoint.
+    rankings:
+      description: >
+        8 hardcoded entries in script.js rankings array.
+        No backend endpoint.
+    profile:
+      description: >
+        Static UI in renderMine(). No backend endpoint.
+        Fields like "学习天数" and "学习分钟" are hardcoded.
