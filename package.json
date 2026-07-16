@@ -1,0 +1,13 @@
+{
+  "name": "baby-island-quest",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test quiz.test.js voice-samples-v2.test.js generate-word-audio-v2.test.js backend/src/auth.test.js",
+    "start": "cd backend && npm start",
+    "e2e": "node tools/e2e-auth-flow.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.0"
+  }
+}

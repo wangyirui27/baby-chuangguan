@@ -1,0 +1,22 @@
+{
+  "name": "baby-quest-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "宝宝闯关后端服务 — TTS 预录 & 音频管理",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "node --test src/*.test.js",
+    "generate-tts": "node src/generate-tts.js",
+    "generate-voice-samples": "node src/generate-voice-samples.js",
+    "generate-voice-samples-v2": "node src/generate-voice-samples-v2.js",
+    "generate-word-audio": "node src/generate-word-audio-v2.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.0"
+  }
+}
