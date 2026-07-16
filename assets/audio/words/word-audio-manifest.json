@@ -1,0 +1,1525 @@
+{
+  "version": "2.0",
+  "model": "豆包语音合成模型2.0",
+  "resource_id": "seed-tts-2.0",
+  "speaker": "en_female_hayley_uranus_bigtts",
+  "generated_at": "2026-07-15T18:28:50.323Z",
+  "audio_format": "mp3",
+  "sample_rate": 24000,
+  "voice_type": "en_female_hayley_uranus_bigtts",
+  "entries": [
+    {
+      "word": "hello",
+      "level_ids": [
+        1
+      ],
+      "level_count": 1,
+      "zh": "你好",
+      "unit": "First Words · 初见英语",
+      "unit_index": 0,
+      "url": "assets/audio/words/hello.mp3",
+      "status": "generated",
+      "size_bytes": 9837,
+      "sha256": "ec8994af75d43cd39827ceeed59a472eae2f654c01a5947e0586c1e5f7a5ee52",
+      "cache_key": "hello|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "red",
+      "level_ids": [
+        2
+      ],
+      "level_count": 1,
+      "zh": "红色",
+      "unit": "First Words · 初见英语",
+      "unit_index": 0,
+      "url": "assets/audio/words/red.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "8e4af5523dd76a7ce8df36b1d77075b4e2ad17d448521aae53114beee2f910b7",
+      "cache_key": "red|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "flower",
+      "level_ids": [
+        3
+      ],
+      "level_count": 1,
+      "zh": "花朵",
+      "unit": "First Words · 初见英语",
+      "unit_index": 0,
+      "url": "assets/audio/words/flower.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "3cac0b49471a5ce7cce8741e96d92a82c40db4eb0ad570a9371b11d391116b96",
+      "cache_key": "flower|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "bye",
+      "level_ids": [
+        4
+      ],
+      "level_count": 1,
+      "zh": "再见",
+      "unit": "First Words · 初见英语",
+      "unit_index": 0,
+      "url": "assets/audio/words/bye.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "9d407a739085c79e335e34f2ed3cb948cd44d92f26c1e03d3778afb5f14e3684",
+      "cache_key": "bye|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "yes",
+      "level_ids": [
+        5
+      ],
+      "level_count": 1,
+      "zh": "是的",
+      "unit": "First Words · 初见英语",
+      "unit_index": 0,
+      "url": "assets/audio/words/yes.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "1fa185130a8a410cc56f7c1708d74d0c03d70ed4cb58c20d0dc05b71e4d2a923",
+      "cache_key": "yes|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "no",
+      "level_ids": [
+        6
+      ],
+      "level_count": 1,
+      "zh": "不是",
+      "unit": "First Words · 初见英语",
+      "unit_index": 0,
+      "url": "assets/audio/words/no.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "53f6424bf8c7713f4dc556cb1225f53aeb78445c87bb63779441b0966a927103",
+      "cache_key": "no|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "please",
+      "level_ids": [
+        7
+      ],
+      "level_count": 1,
+      "zh": "请",
+      "unit": "First Words · 初见英语",
+      "unit_index": 0,
+      "url": "assets/audio/words/please.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "c891bc929de747943e3498c095dc0c93f8733a4d2c1616e4cf035e2b41b6c94a",
+      "cache_key": "please|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "thanks",
+      "level_ids": [
+        8
+      ],
+      "level_count": 1,
+      "zh": "谢谢",
+      "unit": "First Words · 初见英语",
+      "unit_index": 0,
+      "url": "assets/audio/words/thanks.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "6f4eee59efd5e133503ee5713c78de85045f8b4d709f3673ef9e83dc2d92c93f",
+      "cache_key": "thanks|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "friend",
+      "level_ids": [
+        9
+      ],
+      "level_count": 1,
+      "zh": "朋友",
+      "unit": "First Words · 初见英语",
+      "unit_index": 0,
+      "url": "assets/audio/words/friend.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "b33ac805432bbd1dc0c2205ec6d43fc9746c5cca10c7fba5825d97f050de52f8",
+      "cache_key": "friend|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "happy",
+      "level_ids": [
+        10
+      ],
+      "level_count": 1,
+      "zh": "开心",
+      "unit": "First Words · 初见英语",
+      "unit_index": 0,
+      "url": "assets/audio/words/happy.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "6df77a8290db8478df6cd79ecb9e7fa8aeb8862f053f08a37edcb78a7443a9b9",
+      "cache_key": "happy|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "blue",
+      "level_ids": [
+        11
+      ],
+      "level_count": 1,
+      "zh": "蓝色",
+      "unit": "Colors · 颜色",
+      "unit_index": 1,
+      "url": "assets/audio/words/blue.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "b95ad6460dbb5e032d6a33b38e5e9cd5d2cfa3ca45ab43ddb8acbed0f5147743",
+      "cache_key": "blue|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "yellow",
+      "level_ids": [
+        12
+      ],
+      "level_count": 1,
+      "zh": "黄色",
+      "unit": "Colors · 颜色",
+      "unit_index": 1,
+      "url": "assets/audio/words/yellow.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "79aed50879847fe7a38d8902e64204f2a25b2bf860a436fb2e806a903a56235b",
+      "cache_key": "yellow|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "green",
+      "level_ids": [
+        13
+      ],
+      "level_count": 1,
+      "zh": "绿色",
+      "unit": "Colors · 颜色",
+      "unit_index": 1,
+      "url": "assets/audio/words/green.mp3",
+      "status": "generated",
+      "size_bytes": 8685,
+      "sha256": "196082f00b33cc7fad489218183934bc87915cc8fd6913e2b2cd1c3f221f6d0f",
+      "cache_key": "green|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "orange",
+      "level_ids": [
+        14
+      ],
+      "level_count": 1,
+      "zh": "橙色",
+      "unit": "Colors · 颜色",
+      "unit_index": 1,
+      "url": "assets/audio/words/orange.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "b98c959a7d5a0ec34bfb2df4625f7291c7b43af52b7d0bda91b2733304e9559f",
+      "cache_key": "orange|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "purple",
+      "level_ids": [
+        15
+      ],
+      "level_count": 1,
+      "zh": "紫色",
+      "unit": "Colors · 颜色",
+      "unit_index": 1,
+      "url": "assets/audio/words/purple.mp3",
+      "status": "generated",
+      "size_bytes": 5421,
+      "sha256": "4180a9018ad00a3028e42c546cdb956ae791937221606bcff3ddcbefdc76d96e",
+      "cache_key": "purple|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "pink",
+      "level_ids": [
+        16
+      ],
+      "level_count": 1,
+      "zh": "粉色",
+      "unit": "Colors · 颜色",
+      "unit_index": 1,
+      "url": "assets/audio/words/pink.mp3",
+      "status": "generated",
+      "size_bytes": 5229,
+      "sha256": "d62cc1b96ad587e4fcb7f09ba4d97ae5942c5b86856bb09ebac994c88e943b01",
+      "cache_key": "pink|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "black",
+      "level_ids": [
+        17
+      ],
+      "level_count": 1,
+      "zh": "黑色",
+      "unit": "Colors · 颜色",
+      "unit_index": 1,
+      "url": "assets/audio/words/black.mp3",
+      "status": "generated",
+      "size_bytes": 5421,
+      "sha256": "23196a8b8a945789e42acfde433268475f5d93fffb1873b8bb54522a7401bfc0",
+      "cache_key": "black|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "white",
+      "level_ids": [
+        18
+      ],
+      "level_count": 1,
+      "zh": "白色",
+      "unit": "Colors · 颜色",
+      "unit_index": 1,
+      "url": "assets/audio/words/white.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "6f2c901689db5b7a19d5892e8e0943c07232d45015a712c8e5a9ef11f60ffda1",
+      "cache_key": "white|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "brown",
+      "level_ids": [
+        19
+      ],
+      "level_count": 1,
+      "zh": "棕色",
+      "unit": "Colors · 颜色",
+      "unit_index": 1,
+      "url": "assets/audio/words/brown.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "019cd41068d881559ef3ab5c9ad395484d07c332e4a57bc2ddbbeacd66717bc6",
+      "cache_key": "brown|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "rainbow",
+      "level_ids": [
+        20
+      ],
+      "level_count": 1,
+      "zh": "彩虹",
+      "unit": "Colors · 颜色",
+      "unit_index": 1,
+      "url": "assets/audio/words/rainbow.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "4574a8d05d595e8c4fb23ae8ec7bbb0df114b2f90c9e03e0ffc43f0bad1a0a3e",
+      "cache_key": "rainbow|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "cat",
+      "level_ids": [
+        21
+      ],
+      "level_count": 1,
+      "zh": "小猫",
+      "unit": "Animals · 动物",
+      "unit_index": 2,
+      "url": "assets/audio/words/cat.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "3b63e59379e66511153b006d6a1c2efc11d1ea06e7eba8c2d0d30e9f425da8ba",
+      "cache_key": "cat|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "dog",
+      "level_ids": [
+        22
+      ],
+      "level_count": 1,
+      "zh": "小狗",
+      "unit": "Animals · 动物",
+      "unit_index": 2,
+      "url": "assets/audio/words/dog.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "865f161193da82791fd3aa3d88a80a3a6c987756ba4f634941d3290511bb1db0",
+      "cache_key": "dog|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "bird",
+      "level_ids": [
+        23
+      ],
+      "level_count": 1,
+      "zh": "小鸟",
+      "unit": "Animals · 动物",
+      "unit_index": 2,
+      "url": "assets/audio/words/bird.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "d78c7fdc9e45d7cd1f20d7e8e66da5dd8fd3643a55bb11121f3e51d8808a4d67",
+      "cache_key": "bird|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "fish",
+      "level_ids": [
+        24
+      ],
+      "level_count": 1,
+      "zh": "小鱼",
+      "unit": "Animals · 动物",
+      "unit_index": 2,
+      "url": "assets/audio/words/fish.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "75ebd46bc1d820430e9b3d1ff3fb2b688ad139de0810ae2ec77c3e8322fbc168",
+      "cache_key": "fish|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "duck",
+      "level_ids": [
+        25
+      ],
+      "level_count": 1,
+      "zh": "鸭子",
+      "unit": "Animals · 动物",
+      "unit_index": 2,
+      "url": "assets/audio/words/duck.mp3",
+      "status": "generated",
+      "size_bytes": 5229,
+      "sha256": "2dbd3876a7b25b18f0766071a299635839aee52b8ea4cc430c6aa4e48c523eaa",
+      "cache_key": "duck|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "rabbit",
+      "level_ids": [
+        26
+      ],
+      "level_count": 1,
+      "zh": "兔子",
+      "unit": "Animals · 动物",
+      "unit_index": 2,
+      "url": "assets/audio/words/rabbit.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "04e373e65003e22b80a2edfafe08474e1b6612f071cb0b252ac4499b5821c53e",
+      "cache_key": "rabbit|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "panda",
+      "level_ids": [
+        27
+      ],
+      "level_count": 1,
+      "zh": "熊猫",
+      "unit": "Animals · 动物",
+      "unit_index": 2,
+      "url": "assets/audio/words/panda.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "d44af91274483c72ec7b5b0a7bbaf99c7e7643e1920ee0c0bce1e95ce93bef8d",
+      "cache_key": "panda|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "tiger",
+      "level_ids": [
+        28
+      ],
+      "level_count": 1,
+      "zh": "老虎",
+      "unit": "Animals · 动物",
+      "unit_index": 2,
+      "url": "assets/audio/words/tiger.mp3",
+      "status": "generated",
+      "size_bytes": 5421,
+      "sha256": "4621bbff71066dd0aac4f364840ea5a4db3f658839d5b941ee78348bbb0a71f5",
+      "cache_key": "tiger|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "lion",
+      "level_ids": [
+        29
+      ],
+      "level_count": 1,
+      "zh": "狮子",
+      "unit": "Animals · 动物",
+      "unit_index": 2,
+      "url": "assets/audio/words/lion.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "ad503c32bbd74fbeff79cc7b62a07d0cae4ff981d385ba933079cfa8074beb0f",
+      "cache_key": "lion|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "monkey",
+      "level_ids": [
+        30
+      ],
+      "level_count": 1,
+      "zh": "猴子",
+      "unit": "Animals · 动物",
+      "unit_index": 2,
+      "url": "assets/audio/words/monkey.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "5fe2721b7473686e46850d2ab01011a19e39c68eaf76951b4779dfbaf5e22fff",
+      "cache_key": "monkey|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "one",
+      "level_ids": [
+        31
+      ],
+      "level_count": 1,
+      "zh": "一",
+      "unit": "Numbers · 数字",
+      "unit_index": 3,
+      "url": "assets/audio/words/one.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "ca4c91a5844dd8bb6e10aa3a6846b0f1dbb77aefc0e63db204614c2b3acd8c38",
+      "cache_key": "one|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "two",
+      "level_ids": [
+        32
+      ],
+      "level_count": 1,
+      "zh": "二",
+      "unit": "Numbers · 数字",
+      "unit_index": 3,
+      "url": "assets/audio/words/two.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "4ced9a4688450d19060547d034c2303d09a94f43ce45f51a1f263d2b7e67c1b8",
+      "cache_key": "two|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "three",
+      "level_ids": [
+        33
+      ],
+      "level_count": 1,
+      "zh": "三",
+      "unit": "Numbers · 数字",
+      "unit_index": 3,
+      "url": "assets/audio/words/three.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "7feda3c3e4de0049a727d54941dcfda482dcc1c94130537a67d0bbe4709a315b",
+      "cache_key": "three|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "four",
+      "level_ids": [
+        34
+      ],
+      "level_count": 1,
+      "zh": "四",
+      "unit": "Numbers · 数字",
+      "unit_index": 3,
+      "url": "assets/audio/words/four.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "d66d4fc88f7809b828a4db493f15299ec3d385b1fd6ede413f047a0187d6d9e4",
+      "cache_key": "four|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "five",
+      "level_ids": [
+        35
+      ],
+      "level_count": 1,
+      "zh": "五",
+      "unit": "Numbers · 数字",
+      "unit_index": 3,
+      "url": "assets/audio/words/five.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "653943594abafa81125f08126f1d885d8383485fec4535a95ec982677c362fa3",
+      "cache_key": "five|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "six",
+      "level_ids": [
+        36
+      ],
+      "level_count": 1,
+      "zh": "六",
+      "unit": "Numbers · 数字",
+      "unit_index": 3,
+      "url": "assets/audio/words/six.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "0c72ea2aeef49df1195a641156600f2973b4f5fdf32e99691814b763a4fce5d7",
+      "cache_key": "six|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "seven",
+      "level_ids": [
+        37
+      ],
+      "level_count": 1,
+      "zh": "七",
+      "unit": "Numbers · 数字",
+      "unit_index": 3,
+      "url": "assets/audio/words/seven.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "736daf2935f59d3a632cb8c68387c6c127460d54af713abdb3e7e8302f405464",
+      "cache_key": "seven|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "eight",
+      "level_ids": [
+        38
+      ],
+      "level_count": 1,
+      "zh": "八",
+      "unit": "Numbers · 数字",
+      "unit_index": 3,
+      "url": "assets/audio/words/eight.mp3",
+      "status": "generated",
+      "size_bytes": 5421,
+      "sha256": "37d559075fc1ac973b139be31f30e9641c44617909c99ac64cd2b5c9bd177382",
+      "cache_key": "eight|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "nine",
+      "level_ids": [
+        39
+      ],
+      "level_count": 1,
+      "zh": "九",
+      "unit": "Numbers · 数字",
+      "unit_index": 3,
+      "url": "assets/audio/words/nine.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "3ab106a4adb59d294f52f7e76b0be298965802c55925de037c2d9c219df1f33d",
+      "cache_key": "nine|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "ten",
+      "level_ids": [
+        40
+      ],
+      "level_count": 1,
+      "zh": "十",
+      "unit": "Numbers · 数字",
+      "unit_index": 3,
+      "url": "assets/audio/words/ten.mp3",
+      "status": "generated",
+      "size_bytes": 8685,
+      "sha256": "4cc00c5aaa8ae6113d3bb824c463508257cbee2a9f6bc7470b1bf8857f61a180",
+      "cache_key": "ten|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "mom",
+      "level_ids": [
+        41
+      ],
+      "level_count": 1,
+      "zh": "妈妈",
+      "unit": "Family · 家人",
+      "unit_index": 4,
+      "url": "assets/audio/words/mom.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "1d29024be8268d947913f18b0c2f27b90c13b557eb0e61479b04f1df3d8ced65",
+      "cache_key": "mom|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "dad",
+      "level_ids": [
+        42
+      ],
+      "level_count": 1,
+      "zh": "爸爸",
+      "unit": "Family · 家人",
+      "unit_index": 4,
+      "url": "assets/audio/words/dad.mp3",
+      "status": "generated",
+      "size_bytes": 5421,
+      "sha256": "3310867cbbb2379f4946362e5cd73daf3f4e094e2bd6ccacef71fcea394b44e5",
+      "cache_key": "dad|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "baby",
+      "level_ids": [
+        43
+      ],
+      "level_count": 1,
+      "zh": "宝宝",
+      "unit": "Family · 家人",
+      "unit_index": 4,
+      "url": "assets/audio/words/baby.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "8d0b666877f0a2fc662bfed83c6f28478eec8d4d195b0a831759567c968719a5",
+      "cache_key": "baby|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "sister",
+      "level_ids": [
+        44
+      ],
+      "level_count": 1,
+      "zh": "姐姐",
+      "unit": "Family · 家人",
+      "unit_index": 4,
+      "url": "assets/audio/words/sister.mp3",
+      "status": "generated",
+      "size_bytes": 5229,
+      "sha256": "66340ecefec478753a3ff38386fcb280d8efa17efc18c07689cabcfa4d601642",
+      "cache_key": "sister|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "brother",
+      "level_ids": [
+        45
+      ],
+      "level_count": 1,
+      "zh": "哥哥",
+      "unit": "Family · 家人",
+      "unit_index": 4,
+      "url": "assets/audio/words/brother.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "1985ce607052fa6980ff70311d1b35075c62ce94887bbdbd89f080e56172b3bc",
+      "cache_key": "brother|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "grandma",
+      "level_ids": [
+        46
+      ],
+      "level_count": 1,
+      "zh": "奶奶",
+      "unit": "Family · 家人",
+      "unit_index": 4,
+      "url": "assets/audio/words/grandma.mp3",
+      "status": "generated",
+      "size_bytes": 5229,
+      "sha256": "4e28c8b587bb8010c18329d696a6e68923846404e775643fe85423fab5e2d0ce",
+      "cache_key": "grandma|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "grandpa",
+      "level_ids": [
+        47
+      ],
+      "level_count": 1,
+      "zh": "爷爷",
+      "unit": "Family · 家人",
+      "unit_index": 4,
+      "url": "assets/audio/words/grandpa.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "05c6ab2c973925dd8305978d6a2f3782f19e6be6d58593125f6b667dcdc70faf",
+      "cache_key": "grandpa|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "family",
+      "level_ids": [
+        48
+      ],
+      "level_count": 1,
+      "zh": "家人",
+      "unit": "Family · 家人",
+      "unit_index": 4,
+      "url": "assets/audio/words/family.mp3",
+      "status": "generated",
+      "size_bytes": 5421,
+      "sha256": "0bfd49a7fa5749fe2d763b37f2ae74aaf9f6225d0d37b343228bae76f66ae59b",
+      "cache_key": "family|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "home",
+      "level_ids": [
+        49
+      ],
+      "level_count": 1,
+      "zh": "家",
+      "unit": "Family · 家人",
+      "unit_index": 4,
+      "url": "assets/audio/words/home.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "69270afd756c4d8651757b9121b61f2df429a86d2fdd1784ad6793808d6124a0",
+      "cache_key": "home|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "love",
+      "level_ids": [
+        50
+      ],
+      "level_count": 1,
+      "zh": "爱",
+      "unit": "Family · 家人",
+      "unit_index": 4,
+      "url": "assets/audio/words/love.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "d1c648e51fb132fd47b9948c3d404705da1b9f6d89b8084f3a3751b085687e2a",
+      "cache_key": "love|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "apple",
+      "level_ids": [
+        51
+      ],
+      "level_count": 1,
+      "zh": "苹果",
+      "unit": "Food · 食物",
+      "unit_index": 5,
+      "url": "assets/audio/words/apple.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "4fca57ba5260d105b734559d6b03599c50e99880784d8118a4ba50cce03ba4dc",
+      "cache_key": "apple|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "banana",
+      "level_ids": [
+        52
+      ],
+      "level_count": 1,
+      "zh": "香蕉",
+      "unit": "Food · 食物",
+      "unit_index": 5,
+      "url": "assets/audio/words/banana.mp3",
+      "status": "generated",
+      "size_bytes": 5229,
+      "sha256": "b9d0a2efee471c6040d37135f988a52e2f2cd74020bb59342ff782d814e2f70e",
+      "cache_key": "banana|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "milk",
+      "level_ids": [
+        53
+      ],
+      "level_count": 1,
+      "zh": "牛奶",
+      "unit": "Food · 食物",
+      "unit_index": 5,
+      "url": "assets/audio/words/milk.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "7100c42489e0a8377d24dbe1dd54fab671d9eb6440ed9ddfe5233d7da005eeef",
+      "cache_key": "milk|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "bread",
+      "level_ids": [
+        54
+      ],
+      "level_count": 1,
+      "zh": "面包",
+      "unit": "Food · 食物",
+      "unit_index": 5,
+      "url": "assets/audio/words/bread.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "32ae926baf1badd5fe97568486653bfdd4a4de0772944b84ebd6677f4666f368",
+      "cache_key": "bread|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "egg",
+      "level_ids": [
+        55
+      ],
+      "level_count": 1,
+      "zh": "鸡蛋",
+      "unit": "Food · 食物",
+      "unit_index": 5,
+      "url": "assets/audio/words/egg.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "42bb84a57e98c7a5c8d8e744a847859d7a434814378425e8c1c383cd286a4182",
+      "cache_key": "egg|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "rice",
+      "level_ids": [
+        56
+      ],
+      "level_count": 1,
+      "zh": "米饭",
+      "unit": "Food · 食物",
+      "unit_index": 5,
+      "url": "assets/audio/words/rice.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "8cff28c58421e278a14b22bbf9144fa65fa3f6fa463c38260bde540a29eb37af",
+      "cache_key": "rice|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "cake",
+      "level_ids": [
+        57
+      ],
+      "level_count": 1,
+      "zh": "蛋糕",
+      "unit": "Food · 食物",
+      "unit_index": 5,
+      "url": "assets/audio/words/cake.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "e7683c7b9c68e7e3dd65e0ab7d943d9920c3f190e5923261ce8ff3dd9d5d09ea",
+      "cache_key": "cake|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "water",
+      "level_ids": [
+        58
+      ],
+      "level_count": 1,
+      "zh": "水",
+      "unit": "Food · 食物",
+      "unit_index": 5,
+      "url": "assets/audio/words/water.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "1ae1fa910d1ba312fa64e9d42c8dc25e2cd73df57990bedaba7d69b8c870c27d",
+      "cache_key": "water|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "juice",
+      "level_ids": [
+        59
+      ],
+      "level_count": 1,
+      "zh": "果汁",
+      "unit": "Food · 食物",
+      "unit_index": 5,
+      "url": "assets/audio/words/juice.mp3",
+      "status": "generated",
+      "size_bytes": 5229,
+      "sha256": "a2ccfa8b39be6a8f2ddcd3f92db66b427eeb5da2d2d91d5920fd5041934fc0c3",
+      "cache_key": "juice|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "cookie",
+      "level_ids": [
+        60
+      ],
+      "level_count": 1,
+      "zh": "饼干",
+      "unit": "Food · 食物",
+      "unit_index": 5,
+      "url": "assets/audio/words/cookie.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "34b4487e0cc9999549c80e74971bf45ab6d3b579604c34235e36c0b3f0aeb227",
+      "cache_key": "cookie|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "head",
+      "level_ids": [
+        61
+      ],
+      "level_count": 1,
+      "zh": "头",
+      "unit": "Body · 身体",
+      "unit_index": 6,
+      "url": "assets/audio/words/head.mp3",
+      "status": "generated",
+      "size_bytes": 5421,
+      "sha256": "102a079235ea6061a626df14778bf29213f0ed2b4c1fa4d6c1f19ae7ff11d224",
+      "cache_key": "head|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "eye",
+      "level_ids": [
+        62
+      ],
+      "level_count": 1,
+      "zh": "眼睛",
+      "unit": "Body · 身体",
+      "unit_index": 6,
+      "url": "assets/audio/words/eye.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "43056f059701f3da70ad8e12fef3084fc447a7a4c9f718be39737032e970e6a0",
+      "cache_key": "eye|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "ear",
+      "level_ids": [
+        63
+      ],
+      "level_count": 1,
+      "zh": "耳朵",
+      "unit": "Body · 身体",
+      "unit_index": 6,
+      "url": "assets/audio/words/ear.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "61760e3043a515bfed84a49228bf47be2e09961037d207a34edd43968d2fc9b6",
+      "cache_key": "ear|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "nose",
+      "level_ids": [
+        64
+      ],
+      "level_count": 1,
+      "zh": "鼻子",
+      "unit": "Body · 身体",
+      "unit_index": 6,
+      "url": "assets/audio/words/nose.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "d3d1847227f0eb54382ecab448541b336be320cb0f59aa07fb91a2b1e7ad9605",
+      "cache_key": "nose|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "mouth",
+      "level_ids": [
+        65
+      ],
+      "level_count": 1,
+      "zh": "嘴巴",
+      "unit": "Body · 身体",
+      "unit_index": 6,
+      "url": "assets/audio/words/mouth.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "33c89c450bfa86f898bc86533940cfe1288ec1fb35fb10be5b73120e03d48551",
+      "cache_key": "mouth|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "hand",
+      "level_ids": [
+        66
+      ],
+      "level_count": 1,
+      "zh": "手",
+      "unit": "Body · 身体",
+      "unit_index": 6,
+      "url": "assets/audio/words/hand.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "78b2397937f15b2409b940f7dc6f4a677be5b3a597880abfd1399b52a84ff5b3",
+      "cache_key": "hand|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "arm",
+      "level_ids": [
+        67
+      ],
+      "level_count": 1,
+      "zh": "手臂",
+      "unit": "Body · 身体",
+      "unit_index": 6,
+      "url": "assets/audio/words/arm.mp3",
+      "status": "generated",
+      "size_bytes": 5421,
+      "sha256": "8db5d189df1387066fa112f1ead2b0a208d14e94100d6c5f8f90418761f020b0",
+      "cache_key": "arm|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "leg",
+      "level_ids": [
+        68
+      ],
+      "level_count": 1,
+      "zh": "腿",
+      "unit": "Body · 身体",
+      "unit_index": 6,
+      "url": "assets/audio/words/leg.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "f597d879bd846fd97d87c08f1d93fafa060fe64556653aad317b918f97613a12",
+      "cache_key": "leg|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "foot",
+      "level_ids": [
+        69
+      ],
+      "level_count": 1,
+      "zh": "脚",
+      "unit": "Body · 身体",
+      "unit_index": 6,
+      "url": "assets/audio/words/foot.mp3",
+      "status": "generated",
+      "size_bytes": 5421,
+      "sha256": "c90562cca7d4c3c6f48a78878ca7dd472bbee57af1c965aee333d22d0425e232",
+      "cache_key": "foot|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "body",
+      "level_ids": [
+        70
+      ],
+      "level_count": 1,
+      "zh": "身体",
+      "unit": "Body · 身体",
+      "unit_index": 6,
+      "url": "assets/audio/words/body.mp3",
+      "status": "generated",
+      "size_bytes": 5229,
+      "sha256": "0cc8b5545fe6470541f96452963ae3ccc4e9d31b74179e4c5f19e685d7ba9776",
+      "cache_key": "body|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "sun",
+      "level_ids": [
+        71
+      ],
+      "level_count": 1,
+      "zh": "太阳",
+      "unit": "Nature · 自然天气",
+      "unit_index": 7,
+      "url": "assets/audio/words/sun.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "6b594985d5f2892fd4a06fdbaf9b2c5f1717b03dacc513d6340ebdb3c1a81953",
+      "cache_key": "sun|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "moon",
+      "level_ids": [
+        72
+      ],
+      "level_count": 1,
+      "zh": "月亮",
+      "unit": "Nature · 自然天气",
+      "unit_index": 7,
+      "url": "assets/audio/words/moon.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "a2207406650b6f2cb18e1cacff97a7a05de74e1ce22d7b18228a65a05aeb683d",
+      "cache_key": "moon|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "star",
+      "level_ids": [
+        73
+      ],
+      "level_count": 1,
+      "zh": "星星",
+      "unit": "Nature · 自然天气",
+      "unit_index": 7,
+      "url": "assets/audio/words/star.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "010e885ba0334323346f99809e7671439a225116163f006030f3f0f673d9ac38",
+      "cache_key": "star|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "cloud",
+      "level_ids": [
+        74
+      ],
+      "level_count": 1,
+      "zh": "云",
+      "unit": "Nature · 自然天气",
+      "unit_index": 7,
+      "url": "assets/audio/words/cloud.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "0ba3e55cfe611be83cf44e0e8f4961d37e82d4fb4e015bcb1bb4292a8d569cde",
+      "cache_key": "cloud|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "rain",
+      "level_ids": [
+        75
+      ],
+      "level_count": 1,
+      "zh": "雨",
+      "unit": "Nature · 自然天气",
+      "unit_index": 7,
+      "url": "assets/audio/words/rain.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "5094febf1db0728958499a70a758c525e9b44f58872a16b7d8431e06bbe65d64",
+      "cache_key": "rain|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "wind",
+      "level_ids": [
+        76
+      ],
+      "level_count": 1,
+      "zh": "风",
+      "unit": "Nature · 自然天气",
+      "unit_index": 7,
+      "url": "assets/audio/words/wind.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "d1a7d6948cb603f68c2746fd3b819fdb144b94d92251f7675fc5a561c502d52e",
+      "cache_key": "wind|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "snow",
+      "level_ids": [
+        77
+      ],
+      "level_count": 1,
+      "zh": "雪",
+      "unit": "Nature · 自然天气",
+      "unit_index": 7,
+      "url": "assets/audio/words/snow.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "f62baedc5f2079e64549e74ef6a967edaf47e2a7dc39ed9abbbcce2580af148a",
+      "cache_key": "snow|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "tree",
+      "level_ids": [
+        78
+      ],
+      "level_count": 1,
+      "zh": "树",
+      "unit": "Nature · 自然天气",
+      "unit_index": 7,
+      "url": "assets/audio/words/tree.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "cde997eec5d68374dc987e9c443bc622309101182a745fe1b31f756591d0eeec",
+      "cache_key": "tree|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "grass",
+      "level_ids": [
+        79
+      ],
+      "level_count": 1,
+      "zh": "草地",
+      "unit": "Nature · 自然天气",
+      "unit_index": 7,
+      "url": "assets/audio/words/grass.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "e06f60012f14cb962cc6fa9e0b15d87f91f96266cc1e4dc88db96970fa628774",
+      "cache_key": "grass|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "sky",
+      "level_ids": [
+        80
+      ],
+      "level_count": 1,
+      "zh": "天空",
+      "unit": "Nature · 自然天气",
+      "unit_index": 7,
+      "url": "assets/audio/words/sky.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "fb2f750f0280ad2e84f29095387c9b153c4b02a976464eef407a9ab86a0dee34",
+      "cache_key": "sky|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "run",
+      "level_ids": [
+        81
+      ],
+      "level_count": 1,
+      "zh": "跑",
+      "unit": "Actions · 动作",
+      "unit_index": 8,
+      "url": "assets/audio/words/run.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "c18d3f203b6ab0d9825558f8f1057a6a51d3087a3458bddf62f72beb0d386260",
+      "cache_key": "run|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "jump",
+      "level_ids": [
+        82
+      ],
+      "level_count": 1,
+      "zh": "跳",
+      "unit": "Actions · 动作",
+      "unit_index": 8,
+      "url": "assets/audio/words/jump.mp3",
+      "status": "generated",
+      "size_bytes": 5229,
+      "sha256": "1597c735e41adf2f6cb334865e08ab8ec6550dcd0e49a662cc657a724eda075b",
+      "cache_key": "jump|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "walk",
+      "level_ids": [
+        83
+      ],
+      "level_count": 1,
+      "zh": "走",
+      "unit": "Actions · 动作",
+      "unit_index": 8,
+      "url": "assets/audio/words/walk.mp3",
+      "status": "generated",
+      "size_bytes": 5229,
+      "sha256": "4226234dfc1164b28228c78e9c1df45e01a14562154504f27975b92f90c33897",
+      "cache_key": "walk|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "sit",
+      "level_ids": [
+        84
+      ],
+      "level_count": 1,
+      "zh": "坐下",
+      "unit": "Actions · 动作",
+      "unit_index": 8,
+      "url": "assets/audio/words/sit.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "f150cf5df0fbea2f0dd9076f3a9ffea67f3161c23ee1ddb157a650796f2307af",
+      "cache_key": "sit|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "stand",
+      "level_ids": [
+        85
+      ],
+      "level_count": 1,
+      "zh": "站立",
+      "unit": "Actions · 动作",
+      "unit_index": 8,
+      "url": "assets/audio/words/stand.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "8424e9918dcb5779bb6f21a8742cc3f48680dca0ccbb081c94cb6eb2f2a9b09a",
+      "cache_key": "stand|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "clap",
+      "level_ids": [
+        86
+      ],
+      "level_count": 1,
+      "zh": "拍手",
+      "unit": "Actions · 动作",
+      "unit_index": 8,
+      "url": "assets/audio/words/clap.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "20a11019128606db1a0a35b160e867ef8309b5ae55068e1cff572ba66022b87f",
+      "cache_key": "clap|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "smile",
+      "level_ids": [
+        87
+      ],
+      "level_count": 1,
+      "zh": "微笑",
+      "unit": "Actions · 动作",
+      "unit_index": 8,
+      "url": "assets/audio/words/smile.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "ce5da955cfa1419b2bbdbe9b447c8d84a703cd79aec0fb359de54c45d90b520b",
+      "cache_key": "smile|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "sing",
+      "level_ids": [
+        88
+      ],
+      "level_count": 1,
+      "zh": "唱歌",
+      "unit": "Actions · 动作",
+      "unit_index": 8,
+      "url": "assets/audio/words/sing.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "aef03fb84769625f0735d750e93ef681f119072d61e623c4faff1cbe109fb7e9",
+      "cache_key": "sing|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "dance",
+      "level_ids": [
+        89
+      ],
+      "level_count": 1,
+      "zh": "跳舞",
+      "unit": "Actions · 动作",
+      "unit_index": 8,
+      "url": "assets/audio/words/dance.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "3a643475425fcd6ed9970956d519c48428c9ff91fad227d2427b7fc721752244",
+      "cache_key": "dance|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "sleep",
+      "level_ids": [
+        90
+      ],
+      "level_count": 1,
+      "zh": "睡觉",
+      "unit": "Actions · 动作",
+      "unit_index": 8,
+      "url": "assets/audio/words/sleep.mp3",
+      "status": "generated",
+      "size_bytes": 5421,
+      "sha256": "65706f4524fcf884457267de88d59f0f93f3d7d20cfac50e1f469f153177f228",
+      "cache_key": "sleep|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "book",
+      "level_ids": [
+        91
+      ],
+      "level_count": 1,
+      "zh": "书",
+      "unit": "Daily Life · 日常生活",
+      "unit_index": 9,
+      "url": "assets/audio/words/book.mp3",
+      "status": "generated",
+      "size_bytes": 5229,
+      "sha256": "7a2611aa4f85d6ad73964d93e2234c940a4044119699033f6d64a65920185697",
+      "cache_key": "book|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "ball",
+      "level_ids": [
+        92
+      ],
+      "level_count": 1,
+      "zh": "球",
+      "unit": "Daily Life · 日常生活",
+      "unit_index": 9,
+      "url": "assets/audio/words/ball.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "e3c56651ea411e395bcf41dcd8077122d1497f62e9e1ed60f0d2f75f60b58421",
+      "cache_key": "ball|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "car",
+      "level_ids": [
+        93
+      ],
+      "level_count": 1,
+      "zh": "汽车",
+      "unit": "Daily Life · 日常生活",
+      "unit_index": 9,
+      "url": "assets/audio/words/car.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "ee2df410137b8bdc915104a7a9b533c927feda6ec9b361ee14cf08ca7f241e60",
+      "cache_key": "car|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "bed",
+      "level_ids": [
+        94
+      ],
+      "level_count": 1,
+      "zh": "床",
+      "unit": "Daily Life · 日常生活",
+      "unit_index": 9,
+      "url": "assets/audio/words/bed.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "180301a8cf8eb7eb1634382ac6d9f2a685f46618c33c52868e71c811f7d99b7f",
+      "cache_key": "bed|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "chair",
+      "level_ids": [
+        95
+      ],
+      "level_count": 1,
+      "zh": "椅子",
+      "unit": "Daily Life · 日常生活",
+      "unit_index": 9,
+      "url": "assets/audio/words/chair.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "3074a9ef953524a126bcb58fb306d49ec525163aa56440799e11eb3f84275776",
+      "cache_key": "chair|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "table",
+      "level_ids": [
+        96
+      ],
+      "level_count": 1,
+      "zh": "桌子",
+      "unit": "Daily Life · 日常生活",
+      "unit_index": 9,
+      "url": "assets/audio/words/table.mp3",
+      "status": "generated",
+      "size_bytes": 5421,
+      "sha256": "ab43722188fce6759a7223d62d6cba2aef287ad17370ea957273f276e3bd3d97",
+      "cache_key": "table|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "shirt",
+      "level_ids": [
+        97
+      ],
+      "level_count": 1,
+      "zh": "上衣",
+      "unit": "Daily Life · 日常生活",
+      "unit_index": 9,
+      "url": "assets/audio/words/shirt.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "9174d1c4d2034d35815a4f7a0868ce8f86d5baa951a6ae7c06fe79d021f5a346",
+      "cache_key": "shirt|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "shoes",
+      "level_ids": [
+        98
+      ],
+      "level_count": 1,
+      "zh": "鞋子",
+      "unit": "Daily Life · 日常生活",
+      "unit_index": 9,
+      "url": "assets/audio/words/shoes.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "2e650f987c18532994e2b28698d8514481a1d38d2ddc6fb65082abed0b204664",
+      "cache_key": "shoes|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "bath",
+      "level_ids": [
+        99
+      ],
+      "level_count": 1,
+      "zh": "洗澡",
+      "unit": "Daily Life · 日常生活",
+      "unit_index": 9,
+      "url": "assets/audio/words/bath.mp3",
+      "status": "generated",
+      "size_bytes": 6765,
+      "sha256": "823853870a6a2c95fbfaa9c507b891d0c46a2549460b8cd73772a16cb21265a1",
+      "cache_key": "bath|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    },
+    {
+      "word": "good night",
+      "level_ids": [
+        100
+      ],
+      "level_count": 1,
+      "zh": "晚安",
+      "unit": "Daily Life · 日常生活",
+      "unit_index": 9,
+      "url": "assets/audio/words/good_night.mp3",
+      "status": "generated",
+      "size_bytes": 8493,
+      "sha256": "233da77406c125cdd6d2377ca32c93ea32d7b273c182c9d6778111e546771f6f",
+      "cache_key": "good night|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+    }
+  ],
+  "summary": {
+    "total": 100,
+    "generated": 0,
+    "skipped": 100,
+    "available": 100,
+    "failed": 0,
+    "not_attempted": 0,
+    "levels": 100,
+    "speaker": "en_female_hayley_uranus_bigtts",
+    "resource_id": "seed-tts-2.0",
+    "audio_format": "mp3",
+    "sample_rate": 24000
+  }
+}

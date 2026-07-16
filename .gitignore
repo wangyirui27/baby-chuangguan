@@ -1,36 +1,63 @@
-# Dependencies
+# ─── Dependencies ──────────────────────────────────
 node_modules/
 */node_modules/
 
-# Environment files
+# ─── Environment / Secrets ─────────────────────────
 .env
 .env.*
 !.env.example
 
-# Data files (runtime-generated JSON)
+# ─── Runtime data (generated JSON) ──────────────────
 data/*.json
 !data/.gitkeep
 
-# Temporary files
+# ─── Build output ─────────────────────────────────
+dist/
+build/
+.out/
+
+# ─── Temporary files ───────────────────────────────
 *.tmp
 *.temp
 *.log
 *.lock
 
-# OS files
+# ─── OS files ──────────────────────────────────────
 .DS_Store
 Thumbs.db
 
-# Build output
-dist/
-build/
-.out/
-
-# Editor directories
+# ─── Editor directories ────────────────────────────
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# MSW service worker cache
+# ─── MSW service worker cache ─────────────────────
 .msw/
+
+# ─── Alma metadata & snapshots ────────────────────
+.alma/
+.alma-snapshots/
+
+# ─── LibTV metadata ────────────────────────────────
+.libtv/
+
+# ─── Screenshots (verification artifacts) ──────────
+*.png
+!assets/**/*.webp
+*.jpg
+*.jpeg
+# Allow runtime jpg/jpeg in assets (none currently needed)
+
+# ─── PinchTab / browser test artifacts ─────────────
+pinchtab-*
+
+# ─── Preview/standalone HTML test pages ─────────────
+voice-samples.html
+voice-samples-v2.html
+preview-word-audio.png
+mobile-state-check.png
+_verify_button.mjs
+
+# ─── Generated source assets (intermediate AI output, not runtime) ──
+assets/generated/
