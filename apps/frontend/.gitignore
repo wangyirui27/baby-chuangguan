@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+
+# Vite build output
+dist/
+
+# Vite mode env (auto-generated)
+.env.local
+
+# logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# test results
+*.test-report.*

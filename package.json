@@ -7,7 +7,15 @@
     "start": "cd backend && npm start",
     "e2e": "node tools/e2e-auth-flow.mjs",
     "generate:contracts": "node tools/contracts/generate.mjs",
-    "validate:contracts": "node tools/contracts/validate.mjs"
+    "validate:contracts": "node tools/contracts/validate.mjs",
+
+    "frontend:dev:mock": "cd apps/frontend && npm run dev:mock",
+    "frontend:dev:real": "cd apps/frontend && npm run dev:real",
+    "frontend:mock:server": "cd apps/frontend && npm run mock:server",
+    "frontend:build": "cd apps/frontend && npm run build",
+    "frontend:test": "cd apps/frontend && npm run test",
+    "frontend:test:mock": "cd apps/frontend && npm run test:mock",
+    "frontend:smoke": "cd apps/frontend && npm run test:smoke"
   },
   "devDependencies": {
     "playwright": "^1.61.0"
