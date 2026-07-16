@@ -1,0 +1,172 @@
+{
+  "description": "Consumable index of all contract fixtures. Maps endpoint → status → fixture file.",
+  "manifestVersion": "0.1.0",
+  "endpoints": {
+    "health": {
+      "method": "GET",
+      "path": "/api/health",
+      "fixtures": {
+        "200": {
+          "file": "fixtures/health-success.json",
+          "data": {
+            "status": "ok"
+          }
+        }
+      }
+    },
+    "send-code": {
+      "method": "POST",
+      "path": "/api/auth/send-code",
+      "fixtures": {
+        "200": {
+          "file": "fixtures/send-code-success.json",
+          "data": {
+            "success": true
+          }
+        },
+        "503": {
+          "file": "fixtures/send-code-error-sms-unavailable.json",
+          "data": {
+            "error": "短信服务暂不可用，请稍后再试",
+            "code": "SMS_UNAVAILABLE"
+          }
+        },
+        "200-dev": {
+          "file": "fixtures/send-code-success-dev.json",
+          "data": {
+            "success": true,
+            "debugCode": "123456"
+          }
+        },
+        "400-phone": {
+          "file": "fixtures/send-code-error-phone-required.json",
+          "data": {
+            "error": "手机号不能为空",
+            "code": "PHONE_REQUIRED"
+          }
+        },
+        "400-invalid": {
+          "file": "fixtures/send-code-error-invalid-phone.json",
+          "data": {
+            "error": "手机号格式不正确",
+            "code": "INVALID_PHONE"
+          }
+        },
+        "429-cooldown": {
+          "file": "fixtures/send-code-error-cooldown.json",
+          "data": {
+            "error": "发送太频繁，请 42 秒后再试",
+            "code": "COOLDOWN"
+          }
+        },
+        "429-rate": {
+          "file": "fixtures/send-code-error-rate-limited.json",
+          "data": {
+            "error": "发送太频繁，请稍后再试",
+            "code": "RATE_LIMITED"
+          }
+        }
+      }
+    },
+    "verify-code": {
+      "method": "POST",
+      "path": "/api/auth/verify-code",
+      "fixtures": {
+        "200": {
+          "file": "fixtures/verify-code-success.json",
+          "data": {
+            "token": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+            "user": {
+              "id": "550e8400-e29b-41d4-a716-446655440000",
+              "normalizedPhone": "+8613800138000",
+              "createdAt": "2025-07-16T00:00:00.000Z",
+              "lastLoginAt": "2025-07-16T00:00:00.000Z",
+              "isLoggedIn": true,
+              "hasFullAccess": false
+            }
+          }
+        },
+        "400-params": {
+          "file": "fixtures/verify-code-error-params-required.json",
+          "data": {
+            "error": "手机号和验证码不能为空",
+            "code": "PARAMS_REQUIRED"
+          }
+        },
+        "400-expired": {
+          "file": "fixtures/verify-code-error-expired.json",
+          "data": {
+            "error": "验证码错误或已过期",
+            "code": "VERIFICATION_EXPIRED"
+          }
+        },
+        "400-invalid": {
+          "file": "fixtures/verify-code-error-invalid-code.json",
+          "data": {
+            "error": "验证码错误或已过期",
+            "code": "INVALID_CODE"
+          }
+        },
+        "400-attempts": {
+          "file": "fixtures/verify-code-error-attempts-exceeded.json",
+          "data": {
+            "error": "验证码错误或已过期",
+            "code": "ATTEMPTS_EXCEEDED"
+          }
+        }
+      }
+    },
+    "session": {
+      "method": "GET",
+      "path": "/api/auth/session",
+      "fixtures": {
+        "200": {
+          "file": "fixtures/session-success.json",
+          "data": {
+            "user": {
+              "id": "550e8400-e29b-41d4-a716-446655440000",
+              "normalizedPhone": "+8613800138000",
+              "createdAt": "2025-07-16T00:00:00.000Z",
+              "lastLoginAt": "2025-07-16T00:00:00.000Z",
+              "isLoggedIn": true,
+              "hasFullAccess": false
+            }
+          }
+        },
+        "401-unauthorized": {
+          "file": "fixtures/session-error-unauthorized.json",
+          "data": {
+            "error": "未登录",
+            "code": "UNAUTHORIZED"
+          }
+        },
+        "401-revoked": {
+          "file": "fixtures/session-error-revoked.json",
+          "data": {
+            "error": "会话已失效",
+            "code": "SESSION_REVOKED"
+          }
+        },
+        "401-expired": {
+          "file": "fixtures/session-error-expired.json",
+          "data": {
+            "error": "会话已过期",
+            "code": "SESSION_EXPIRED"
+          }
+        }
+      }
+    },
+    "logout": {
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "fixtures": {
+        "200": {
+          "file": "fixtures/logout-success.json",
+          "data": {
+            "success": true
+          }
+        }
+      }
+    }
+  }
+}
