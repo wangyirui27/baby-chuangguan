@@ -1,0 +1,77 @@
+{
+  "description": "Maps generated TypeScript interface names to source JSON Schema files.",
+  "manifestVersion": "0.1.0",
+  "schemas": {
+    "ErrorResponse": {
+      "schemaFile": "error.json",
+      "title": "ErrorResponse",
+      "required": [
+        "error",
+        "code"
+      ]
+    },
+    "HealthResponse": {
+      "schemaFile": "health.json",
+      "title": "HealthResponse",
+      "required": [
+        "status"
+      ]
+    },
+    "LogoutResponse": {
+      "schemaFile": "logout-response.json",
+      "title": "LogoutResponse",
+      "required": [
+        "success"
+      ]
+    },
+    "SendCodeRequest": {
+      "schemaFile": "send-code-request.json",
+      "title": "SendCodeRequest",
+      "required": [
+        "phone"
+      ]
+    },
+    "SendCodeResponse": {
+      "schemaFile": "send-code-response.json",
+      "title": "SendCodeResponse",
+      "required": [
+        "success"
+      ]
+    },
+    "SessionResponse": {
+      "schemaFile": "session-response.json",
+      "title": "SessionResponse",
+      "required": [
+        "user"
+      ]
+    },
+    "User": {
+      "schemaFile": "user.json",
+      "title": "User",
+      "required": [
+        "id",
+        "normalizedPhone",
+        "createdAt",
+        "lastLoginAt",
+        "isLoggedIn",
+        "hasFullAccess"
+      ]
+    },
+    "VerifyCodeRequest": {
+      "schemaFile": "verify-code-request.json",
+      "title": "VerifyCodeRequest",
+      "required": [
+        "phone",
+        "code"
+      ]
+    },
+    "VerifyCodeResponse": {
+      "schemaFile": "verify-code-response.json",
+      "title": "VerifyCodeResponse",
+      "required": [
+        "token",
+        "user"
+      ]
+    }
+  }
+}
