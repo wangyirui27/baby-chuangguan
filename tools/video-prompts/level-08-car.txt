@@ -1,0 +1,35 @@
+Title: The Little Red Car
+
+Duration: 15 seconds
+
+Format: 16:9 horizontal
+
+Cinematic Style: Hand-painted watercolor and gouache storybook animation matching the current Magic English Voyage island art direction. Soft pencil outlines, visible paper grain, warm cream sunlight, pale turquoise sea, moss green plants, soft red accent, low-saturation colors, gentle imperfect brush texture, cozy quiet emotion. Characters should look warm, clean, attractive, and child-safe. It must feel hand-drawn and alive, not glossy 3D or plastic CGI.
+
+Source Situation: A cute 4-year-old child gently rolls one small red toy car across an empty sunlit floor, says car, and proudly shows it to mom.
+
+CEFR Target: Pre-A1 / very young A1. The target word is "car". Keep every spoken line short, natural, and easy for a 3-5 year old English learner to understand. The word "car" must be heard clearly several times, with warm family feeling, not a vocabulary drill.
+
+Zero-beginner clarity rule: Whenever the word "car" is spoken, the single red car must be the only clear foreground meaning target. The child's finger, gaze, or hand movement must guide attention to the car. Do not introduce other vehicles, blocks, balls, dolls, books, roads signs, garages, animals, or other toys during or immediately before the word "car".
+
+Scene: A simple island room with an open window, empty wooden floor, pale sea outside. One small red toy car is centered and easy to see. No other foreground props. No readable text anywhere.
+
+Characters: One cute 4-year-old child and one beautiful gentle mother nearby, watching with a soft proud smile. No dad, grandma, grandpa, teachers, narrator, or other speaking adults.
+
+Story Container: The child carefully rolls one red car toward mom, as if sharing a tiny achievement. Mom watches quietly and smiles. The child points to the car before speaking and then parks it gently near mom's hand. The emotional beat is the mother noticing the child's small proud moment.
+
+Dialogue:
+0-3s: Child, clear while pointing to the red car: "Car."
+3-6s: Mother, soft and close: "A car."
+3-6s: Child, proud: "My car."
+6-10s: Child, smiling as the car stays centered: "Car."
+10-15s: Mother, warm: "Nice."
+10-15s: Child, happy and clear: "Car!"
+
+Action & Performance: Keep the acting gentle and emotionally specific. The child rolls the car slowly and safely, never throwing it. Mom's smile is quiet pride, not classroom teaching. No other toy enters the frame.
+
+Camera: One continuous gentle storybook shot. Whenever "car" is spoken, show the red car clearly in close-up with the child's finger, gaze, or hand guiding attention. Keep the floor empty except for the single car. Avoid tight mouth close-ups. End on the child smiling beside mom and the red car.
+
+Audio: Natural English mother-child dialogue, not narration. No narrator. No robotic TTS voice. No flat recitation. Child voice soft, young, and proud. Mother voice gentle and affectionate. Tiny soft wheel sound, quiet seaside room ambience, no loud music.
+
+Negative Prompt: other vehicle, bus, truck, train, bike, plane, block, ball, doll, book, road sign, garage, animal, unrelated toy, object clutter, unclear word target, object confusion, subtitles, captions, written words, speech bubbles, labels, flashcards, card UI, classroom blackboard, teacher, student, narrator, vocabulary lesson, repeat-after-me lesson, robotic voice, monotone voice, emotionless voice, overacting, loud music, crowded background, extra talking characters, complex story, scary elements, fast cuts, distorted hands, incorrect lip sync, glossy 3D render, plastic toy texture, neon colors, hard vector outlines, anime parody, artist signature, logo, readable text.

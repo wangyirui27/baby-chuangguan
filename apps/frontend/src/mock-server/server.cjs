@@ -95,7 +95,8 @@ function readBody(req) {
 }
 
 function jsonResponse(res, statusCode, body) {
-  const payload = JSON.stringify(body);
+  // JSON.stringify(undefined) returns undefined, breaking Buffer.byteLength
+  const payload = JSON.stringify(body == null ? null : body);
   res.writeHead(statusCode, {
     'Content-Type': 'application/json',
     'Content-Length': Buffer.byteLength(payload),
@@ -180,8 +181,14 @@ async function handleVerifyCode(req, res) {
     return;
   }
 
-  // Must be exactly 6 decimal digits
-  if (!/^\d{6}$/.test(String(body.code))) {
+  // Phone must be 11 digits (matches local mock validation)
+  if (!/^\d{11}$/.test(String(body.phone))) {
+    jsonResponse(res, 400, FIXTURES['verify-code-error-invalid-phone']);
+    return;
+  }
+
+  // Must be 6 digits, or virtual login code 1234
+  if (!/^\d{6}$/.test(String(body.code)) && String(body.code) !== '1234') {
     jsonResponse(res, 400, FIXTURES['verify-code-error-invalid-code']);
     return;
   }
@@ -201,8 +208,7 @@ async function handleVerifyCode(req, res) {
     jsonResponse(res, 400, FIXTURES['verify-code-error-invalid-code']);
     return;
   }
-  // 123456 → the test success code (any other valid 6-digit code also succeeds)
-  // Success — issue a new token and store it
+  // 1234 或任意其它合法 6 位码 → 成功
   const newToken = 'mock-token-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
   validTokens.add(newToken);
   jsonResponse(res, 200, {

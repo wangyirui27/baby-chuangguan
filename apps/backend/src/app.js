@@ -5,6 +5,31 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { createAuthRouter } = require('./transport/auth-router');
 
+function configuredCorsOrigins() {
+  return (process.env.CORS_ORIGINS || '').split(',').map((origin) => origin.trim()).filter(Boolean);
+}
+
+function createCorsOrigin(environment = 'production') {
+  return function corsOrigin(origin, cb) {
+    if (!origin) return cb(null, true);
+    const isStrictCorsEnv = ['production', 'staging'].includes(environment);
+    const configured = configuredCorsOrigins();
+    if (configured.includes('*')) return cb(null, true);
+    if (origin === 'null') {
+      return cb(null, process.env.CORS_ALLOW_NULL_ORIGIN === 'true' || !isStrictCorsEnv);
+    }
+
+    try {
+      const parsed = new URL(origin);
+      const normalized = `${parsed.protocol}//${parsed.host}`;
+      const localDev = !isStrictCorsEnv && ['localhost', '127.0.0.1'].includes(parsed.hostname);
+      return cb(null, localDev || configured.includes(normalized));
+    } catch {
+      return cb(null, false);
+    }
+  };
+}
+
 /**
  * Create the Express app — exported for test-server.js and smoke tests.
  * @param {{ authService: AuthService, environment?: string }} deps
@@ -15,17 +40,7 @@ function createApp({ authService, environment = 'production' }) {
 
   // ─── Global middleware ──────────────────────────────────────────
   app.use(cors({
-    origin(origin, cb) {
-      // Allow null origin (file://) and localhost in all environments
-      if (!origin || origin === 'null') return cb(null, true);
-      const allowed = [
-        'http://localhost',
-        'http://127.0.0.1',
-        ...(process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',').map((s) => s.trim()) : []),
-      ];
-      if (allowed.some((prefix) => origin.startsWith(prefix))) return cb(null, true);
-      cb(null, true); // permissive — lock down in production via CORS_ORIGINS
-    },
+    origin: createCorsOrigin(environment),
     credentials: true,
   }));
   app.use(express.json());
@@ -69,4 +84,4 @@ function createApp({ authService, environment = 'production' }) {
   return app;
 }
 
-module.exports = { createApp };
+module.exports = { createApp, createCorsOrigin };

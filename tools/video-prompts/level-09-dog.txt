@@ -1,0 +1,35 @@
+Title: Gentle Dog
+
+Duration: 15 seconds
+
+Format: 16:9 horizontal
+
+Cinematic Style: Hand-painted watercolor and gouache storybook animation matching the current Magic English Voyage island art direction. Soft pencil outlines, visible paper grain, warm cream sunlight, pale turquoise sea, moss green plants, soft golden fur, coral accents, low-saturation colors, gentle imperfect brush texture, cozy quiet emotion. Characters should look warm, clean, attractive, and child-safe. It must feel hand-drawn and alive, not glossy 3D or plastic CGI.
+
+Source Situation: A cute 4-year-old child sees one gentle small dog resting near the island doorway, points to the dog, says dog, and slowly becomes brave enough to pet it.
+
+CEFR Target: Pre-A1 / very young A1. The target word is "dog". Keep every spoken line short, natural, and easy for a 3-5 year old English learner to understand. The word "dog" must be heard clearly several times, with warm courage and comfort, not a vocabulary drill.
+
+Zero-beginner clarity rule: Whenever the word "dog" is spoken, the dog must be the only clear foreground meaning target. The child's finger, gaze, petting motion, or wave must guide attention to the dog. Do not introduce balls, bones, bowls, leashes, toys, other animals, food, signs, or other learnable objects during or immediately before the word "dog".
+
+Scene: A quiet island doorway with warm sunlight, empty wooden floor, pale sea outside. One small friendly dog is centered, calm, and safe. No other foreground props. No readable text anywhere.
+
+Characters: One cute 4-year-old child, one beautiful gentle mother nearby as quiet emotional support, and one small friendly dog. The dog is the only animal. No dad, grandma, grandpa, teachers, narrator, or other speaking adults.
+
+Story Container: The child first feels a little shy, then mom gently stays beside them without speaking too much. The child points to the calm dog, says the word, and gently pets the dog's back. The emotional beat is a child becoming brave while mom watches with tenderness.
+
+Dialogue:
+0-3s: Child, clear while pointing to the dog: "Dog."
+3-6s: Mother, soft and close: "A dog."
+3-6s: Child, calmer: "Dog."
+6-10s: Child, gently petting the dog: "My dog."
+10-15s: Mother, warm: "Good."
+10-15s: Child, happy and clear: "Dog!"
+
+Action & Performance: Keep the dog calm, cute, and safe. The child pets slowly and gently. Mom's role is protective support, not instruction. No barking in a scary way, no sudden movement, no classroom teaching.
+
+Camera: One continuous gentle storybook shot. Whenever "dog" is spoken, show the dog clearly with the child's finger, gaze, or petting hand guiding attention. Keep the foreground empty except for the dog and the child's hand. Avoid tight mouth close-ups. End on the child smiling beside the gentle dog.
+
+Audio: Natural English mother-child dialogue, not narration. No narrator. No robotic TTS voice. No flat recitation. Child voice soft, young, and gradually braver. Mother voice gentle and affectionate. One tiny friendly dog sound only if soft, quiet seaside room ambience, no loud music.
+
+Negative Prompt: ball, bone, bowl, leash, toy, other animal, cat, rabbit, bird, food, sign, object clutter, aggressive dog, scary bark, unclear word target, object confusion, subtitles, captions, written words, speech bubbles, labels, flashcards, card UI, classroom blackboard, teacher, student, narrator, vocabulary lesson, repeat-after-me lesson, robotic voice, monotone voice, emotionless voice, overacting, loud music, crowded background, extra talking characters, complex story, scary elements, fast cuts, distorted hands, incorrect lip sync, glossy 3D render, plastic toy texture, neon colors, hard vector outlines, anime parody, artist signature, logo, readable text.

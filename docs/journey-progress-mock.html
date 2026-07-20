@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>航线进度 Redesign Mock — 三态预览</title>
+<style>
+/* ── 产品色板 ── */
+:root {
+  --cream: #f8f8f0;
+  --mint: #19c8b9;
+  --mint-active: #14a99d;
+  --earth: #794f27;
+  --gold: #ffcc00;
+  --muted: #9f927d;
+  --track-bg: #ece8dc;
+}
+
+/* ── 页面布局 ── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, 'Noto Sans SC', sans-serif;
+  background: #f3f0e8;
+  color: #333;
+  padding: 2rem;
+}
+.mock-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.mock-topbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: "brand journey resource";
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
+  background: var(--cream);
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 2rem;
+  max-width: 420px;
+}
+.mock-brand {
+  grid-area: brand;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.mock-brand h1 {
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+.mock-brand p {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 700;
+}
+.mock-resource {
+  grid-area: resource;
+  display: flex;
+  gap: 0.5rem;
+}
+.mock-chip {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 800;
+}
+.mock-chip--star { background: #fff0a7; color: #d8b138; }
+.mock-chip--shell { background: #dff7f5; color: #9edbd7; }
+
+/* ══════════════════════════════════════════
+   新 journey-compact 样式
+   ══════════════════════════════════════════ */
+.journey-compact {
+  grid-area: journey;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.15rem 0;
+}
+
+/* ── j-head: 一行 大数字 + 当前关 pill ── */
+.j-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.6rem;
+}
+.j-head-num {
+  font-size: 1.4rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: var(--mint-active);
+  line-height: 1;
+  white-space: nowrap;
+}
+.j-head-slash {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+.j-level-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.55rem;
+  border-radius: 1rem;
+  background: var(--track-bg);
+  color: var(--earth);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+/* ── j-track: 粗进度条 + 5 阶段刻度 ── */
+.j-track {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background: var(--track-bg);
+  border-radius: 999px;
+  overflow: visible;
+}
+.j-track-fill {
+  position: absolute;
+  top: 0; left: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--mint), var(--mint-active));
+  transition: width 0.5s ease;
+}
+.j-track-marks {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 100%;
+}
+.j-track-mark {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.55rem;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+  white-space: nowrap;
+  padding: 0 0.15rem;
+  border-radius: 3px;
+}
+.j-track-mark--done {
+  color: var(--mint-active);
+}
+.j-track-mark--pending {
+  color: var(--muted);
+  opacity: 0.7;
+}
+.j-track-mark--active {
+  color: var(--earth);
+  opacity: 1;
+}
+
+/* 刻度位置: 20/40/60/80/100 百分比，对应 40/80/120/160/200 关 */
+.j-track-mark--20 { left: 20%; }
+.j-track-mark--40 { left: 40%; }
+.j-track-mark--60 { left: 60%; }
+.j-track-mark--80 { left: 80%; }
+.j-track-mark--100 { left: 100%; }
+
+/* ── j-foot: 次要文案 ── */
+.j-foot {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.3;
+}
+.j-foot-next span {
+  color: var(--earth);
+}
+.j-foot-complete {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--mint-active);
+}
+.j-foot-complete svg {
+  flex-shrink: 0;
+}
+
+/* ── 进度条上方的刻度（放轨道外侧） ── */
+.j-track {
+  margin-top: 0.5rem; /* 给刻度数字留空间 */
+}
+.j-track-mark {
+  top: -10px;
+}
+
+/* ── 响应式 ≤480px ── */
+@media (max-width: 480px) {
+  .j-foot { display: none; }
+  .j-track-mark { display: none; }
+  .j-track { margin-top: 0; }
+}
+
+/* ── prefers-reduced-motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .j-track-fill { transition: none; }
+}
+</style>
+</head>
+<body>
+<p class="mock-label">历史草案预览：当前程序已采用 j-badge + j-pearls + j-next 珍珠航线结构。</p>
+
+<!-- ═══ 态1: 0/200 第1关 ═══ -->
+<div class="mock-label">态1: 0/200 · 第1关（起步）</div>
+<div class="mock-topbar">
+  <div class="mock-brand">
+    <h1>🧭 英语岛</h1>
+    <p>宝宝航海记</p>
+  </div>
+
+  <div class="journey-compact"
+       aria-label="已完成了0/200，当前第1关，下一阶段40"
+       role="group">
+    <div class="j-head">
+      <div class="j-head-num">0<span class="j-head-slash">/200</span></div>
+      <div class="j-level-pill">第 1 关</div>
+    </div>
+    <div class="j-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="200">
+      <div class="j-track-fill" style="width: 0%"></div>
+      <div class="j-track-marks">
+        <span class="j-track-mark j-track-mark--20 j-track-mark--pending">40</span>
+        <span class="j-track-mark j-track-mark--40 j-track-mark--pending">80</span>
+        <span class="j-track-mark j-track-mark--60 j-track-mark--pending">120</span>
+        <span class="j-track-mark j-track-mark--80 j-track-mark--pending">160</span>
+        <span class="j-track-mark j-track-mark--100 j-track-mark--pending">200</span>
+      </div>
+    </div>
+    <div class="j-foot">
+      <span class="j-foot-next">下一阶段 <span>40</span></span>
+    </div>
+  </div>
+
+  <div class="mock-resource">
+    <div class="mock-chip mock-chip--star">★ 3</div>
+    <div class="mock-chip mock-chip--shell">🐚 1</div>
+  </div>
+</div>
+
+<!-- ═══ 态2: 37/200 第38关（中途） ═══ -->
+<div class="mock-label">态2: 37/200 · 第38关（中途）</div>
+<div class="mock-topbar">
+  <div class="mock-brand">
+    <h1>🧭 英语岛</h1>
+    <p>宝宝航海记</p>
+  </div>
+
+  <div class="journey-compact"
+       aria-label="已完成了37/200，当前第38关，下一阶段40"
+       role="group">
+    <div class="j-head">
+      <div class="j-head-num">37<span class="j-head-slash">/200</span></div>
+      <div class="j-level-pill">第 38 关</div>
+    </div>
+    <div class="j-track" role="progressbar" aria-valuenow="37" aria-valuemin="0" aria-valuemax="200">
+      <div class="j-track-fill" style="width: 18.5%"></div>
+      <div class="j-track-marks">
+        <span class="j-track-mark j-track-mark--20 j-track-mark--active">40</span>
+        <span class="j-track-mark j-track-mark--40 j-track-mark--pending">80</span>
+        <span class="j-track-mark j-track-mark--60 j-track-mark--pending">120</span>
+        <span class="j-track-mark j-track-mark--80 j-track-mark--pending">160</span>
+        <span class="j-track-mark j-track-mark--100 j-track-mark--pending">200</span>
+      </div>
+    </div>
+    <div class="j-foot">
+      <span class="j-foot-next">下一阶段 <span>40</span></span>
+    </div>
+  </div>
+
+  <div class="mock-resource">
+    <div class="mock-chip mock-chip--star">★ 15</div>
+    <div class="mock-chip mock-chip--shell">🐚 8</div>
+  </div>
+</div>
+
+<!-- ═══ 态3: 200/200 群岛通关 ═══ -->
+<div class="mock-label">态3: 200/200 · 群岛通关</div>
+<div class="mock-topbar">
+  <div class="mock-brand">
+    <h1>🧭 英语岛</h1>
+    <p>宝宝航海记</p>
+  </div>
+
+  <div class="journey-compact"
+       aria-label="已完成了200/200，群岛通关"
+       role="group">
+    <div class="j-head">
+      <div class="j-head-num">200<span class="j-head-slash">/200</span></div>
+      <div class="j-level-pill">通关</div>
+    </div>
+    <div class="j-track" role="progressbar" aria-valuenow="200" aria-valuemin="0" aria-valuemax="200">
+      <div class="j-track-fill" style="width: 100%"></div>
+      <div class="j-track-marks">
+        <span class="j-track-mark j-track-mark--20 j-track-mark--done">40</span>
+        <span class="j-track-mark j-track-mark--40 j-track-mark--done">80</span>
+        <span class="j-track-mark j-track-mark--60 j-track-mark--done">120</span>
+        <span class="j-track-mark j-track-mark--80 j-track-mark--done">160</span>
+        <span class="j-track-mark j-track-mark--100 j-track-mark--done">200</span>
+      </div>
+    </div>
+    <div class="j-foot">
+      <span class="j-foot-complete">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        群岛通关
+      </span>
+    </div>
+  </div>
+
+  <div class="mock-resource">
+    <div class="mock-chip mock-chip--star">★ 50</div>
+    <div class="mock-chip mock-chip--shell">🐚 20</div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -440,6 +440,16 @@ describe('API Client — Fixture 数据一致性验证', () => {
 });
 
 describe('API Client — script.js 兼容性验证', () => {
+  it('switch-mode mock 写入 3001，real 默认写入 3000', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const switchModeSrc = fs.readFileSync(
+      path.resolve(__dirname, '../scripts/switch-mode.cjs'),
+      'utf8'
+    );
+    assert.match(switchModeSrc, /mode === 'real'[\s\S]*'http:\/\/localhost:3000'[\s\S]*: 'http:\/\/localhost:3001'/);
+  });
+
   it('client.js 包含 script.js 期望的所有方法', () => {
     const fs = require('fs');
     const path = require('path');

@@ -1,0 +1,22 @@
+{
+  "submit_id": "e3d9989e-8920-4ef6-b7ea-f1d4683a2670",
+  "prompt": "Redraw the first square island game asset in the confirmed hand-painted watercolor children picture book style of the second reference. Preserve the exact square block silhouette, horizontal front edge, camera angle, landmark layout and all objects. Keep the lower ocean block square and readable. Put the whole island on a perfectly flat pure magenta #ff00ff background for chroma key. No texture in background, no cast shadow, no white border, no sticker outline, no frame, no text, no number, no UI. Keep it square, not oval, not irregular.",
+  "gen_status": "success",
+  "result_json": {
+    "images": [
+      {
+        "path": "assets/handpainted-island/dreamina/map-islands-v13-magentascreen/e3d9989e-8920-4ef6-b7ea-f1d4683a2670_image_1.png",
+        "width": 4096,
+        "height": 4096
+      }
+    ],
+    "videos": []
+  },
+  "queue_info": {
+    "queue_idx": 0,
+    "priority": 1,
+    "queue_status": "Finish",
+    "queue_length": 0,
+    "debug_info": "{\"have_no_dreamina_queue_name\":true,\"dreamina_matrix_queue_name\":\"\",\"dreamina_matrix_req_key\":\"\",\"dreamina_matrix_second_req_key\":\"\",\"have_no_queue_name\":false,\"queue_name\":\"high_aes_general_v50\",\"matrix_req_key\":\"MImageGen:high_aes_general_v50\",\"matrix_second_req_key\":\"\"}"
+  }
+}

@@ -348,7 +348,8 @@ components:
   x-clientData:
     curriculum:
       description: >
-        100 levels across 10 units, hardcoded in script.js curriculumUnits.
+        200 client-side levels, hardcoded in script.js lessonOverrides,
+        curriculumUnits, and additionalLevelUnits.
         No backend endpoint. Levels include: id, title, zhTitle, topic,
         duration, guidance, question, options, correct.
     progress:

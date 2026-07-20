@@ -32,6 +32,7 @@ export default defineConfig(({ mode }) => {
     // All <script src="..."> and <link href="..."> resolve from here.
     // process.cwd() is apps/frontend, so go up two levels to the repo root.
     root: resolve(process.cwd(), '..', '..'),
+    base: './',
 
     build: {
       outDir: 'apps/frontend/dist',

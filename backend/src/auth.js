@@ -13,6 +13,7 @@ const crypto = require('crypto');
 const db = require('./db');
 const { createSmsProvider, maskPhone } = require('./sms-provider');
 const { ipLimiter } = require('./security');
+const { isVirtualLoginCode, getVirtualLoginCode } = require('./virtual-login');
 
 // ─── 限流配置 ──────────────────────────────────────
 const RATE_LIMIT = {
@@ -157,7 +158,14 @@ router.post('/send-code', ipLimiter.middleware(), async (req, res) => {
     db.verifications.set(vKey, verification);
     db.scheduleSave();
 
-    await getSmsProvider().send(normalizedPhone, code);
+    try {
+      await getSmsProvider().send(normalizedPhone, code);
+    } catch (sendErr) {
+      // 发送失败则回滚本条验证码，避免占用冷却/限流配额
+      db.verifications.delete(vKey);
+      db.scheduleSave();
+      throw sendErr;
+    }
 
     console.log(`[AUTH] send-code: ${maskPhone(normalizedPhone)} — code sent`);
 
@@ -172,15 +180,20 @@ router.post('/send-code', ipLimiter.middleware(), async (req, res) => {
     }
     return res.json(response);
   } catch (err) {
-    // 短信供应商未配置 / 生产环境未接入 / 环境不匹配 → 503
-    if (err.message && (
-      err.message.includes('SmsProvider not configured') ||
-      err.message.includes('短信服务尚未接入') ||
-      err.message.includes('未接入') ||
-      err.message.includes('Unknown SMS_PROVIDER') ||
-      err.message.includes('尚未接入') ||
-      err.message.includes('not properly configured')
-    )) {
+    // 短信供应商未配置 / 凭据缺失 / 生产误配 development → 503
+    if (
+      err.code === 'SMS_UNAVAILABLE' ||
+      (err.message && (
+        err.message.includes('SmsProvider not configured') ||
+        err.message.includes('短信服务尚未接入') ||
+        err.message.includes('未接入') ||
+        err.message.includes('Unknown SMS_PROVIDER') ||
+        err.message.includes('尚未接入') ||
+        err.message.includes('not properly configured') ||
+        err.message.includes('Aliyun SMS not configured') ||
+        err.message.includes('Aliyun SMS credentials incomplete')
+      ))
+    ) {
       console.error('[AUTH] send-code: SMS provider not available');
       return res.status(503).json({
         error: '短信服务暂不可用，请稍后再试',
@@ -202,10 +215,23 @@ router.post('/verify-code', async (req, res) => {
     }
 
     const normalizedPhone = db.normalizePhone(phone);
+    const digits = normalizedPhone.replace(/\D/g, '');
+    // 国内 11 位（去掉 86 后）
+    const national = digits.startsWith('86') && digits.length === 13 ? digits.slice(2) : digits;
+    if (!/^1\d{10}$/.test(national)) {
+      return res.status(400).json({ error: '手机号格式不正确', code: 'INVALID_PHONE' });
+    }
+
     const phoneHash = db.sha256(normalizedPhone);
+    const now = Date.now();
+
+    // ── 虚拟登录：任意 11 位手机号 + 固定码（默认 1234），无需先发短信 ──
+    if (isVirtualLoginCode(code)) {
+      console.log(`[AUTH] verify-code: virtual login for ${maskPhone(normalizedPhone)} code=${getVirtualLoginCode()}`);
+      return issueLoginSession(res, normalizedPhone, phoneHash, now);
+    }
 
     // 同一条验证码：用 key 追踪，找到后可直接删除
-    const now = Date.now();
     /** @type {Array<{key: string, record: object}>} */
     const candidates = [];
 
@@ -258,70 +284,75 @@ router.post('/verify-code', async (req, res) => {
     db.verifications.delete(vKey);
     db.scheduleSave();
 
-    // 查找或创建用户
-    const existingUser = Array.from(db.users.values()).find(
-      u => db.sha256(u.normalizedPhone) === phoneHash
-    );
-
-    let user;
-    if (existingUser) {
-      user = existingUser;
-      user.lastLoginAt = new Date(now).toISOString();
-      db.scheduleSave();
-    } else {
-      user = {
-        id: db.uid(),
-        normalizedPhone,
-        createdAt: new Date(now).toISOString(),
-        lastLoginAt: new Date(now).toISOString(),
-      };
-      db.users.set(user.id, user);
-      db.scheduleSave();
-    }
-
-    // 创建会话（每个 token 独一无二，自然不可复用）
-    const rawToken = db.generateToken();
-    const tokenHash = db.sha256(rawToken);
-    const expiresAt = new Date(now + RATE_LIMIT.SESSION_DAYS * 24 * 60 * 60 * 1000).toISOString();
-
-    const session = {
-      id: tokenHash,
-      tokenHash,
-      userId: user.id,
-      createdAt: new Date(now).toISOString(),
-      expiresAt,
-      revoked: false,
-    };
-    db.sessions.set(tokenHash, session);
-    db.scheduleSave();
-
-    // HttpOnly/SameSite=Lax cookie；生产环境强制 Secure
-    res.cookie('session_token', rawToken, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: RATE_LIMIT.SESSION_DAYS * 24 * 60 * 60 * 1000,
-      path: '/',
-    });
-
-    console.log(`[AUTH] verify-code: login success`);
-
-    return res.json({
-      token: rawToken,
-      user: {
-        id: user.id,
-        normalizedPhone: user.normalizedPhone,
-        createdAt: user.createdAt,
-        lastLoginAt: user.lastLoginAt,
-        isLoggedIn: true,
-        hasFullAccess: false,
-      },
-    });
+    return issueLoginSession(res, normalizedPhone, phoneHash, now);
   } catch (err) {
     console.error('[AUTH] verify-code error');
     return res.status(500).json({ error: '验证失败', code: 'VERIFY_FAILED' });
   }
 });
+
+/**
+ * 签发 session cookie + token + user（正式验证与虚拟登录共用）
+ */
+function issueLoginSession(res, normalizedPhone, phoneHash, now) {
+  // 查找或创建用户
+  const existingUser = Array.from(db.users.values()).find(
+    (u) => db.sha256(u.normalizedPhone) === phoneHash
+  );
+
+  let user;
+  if (existingUser) {
+    user = existingUser;
+    user.lastLoginAt = new Date(now).toISOString();
+    db.scheduleSave();
+  } else {
+    user = {
+      id: db.uid(),
+      normalizedPhone,
+      createdAt: new Date(now).toISOString(),
+      lastLoginAt: new Date(now).toISOString(),
+    };
+    db.users.set(user.id, user);
+    db.scheduleSave();
+  }
+
+  const rawToken = db.generateToken();
+  const tokenHash = db.sha256(rawToken);
+  const expiresAt = new Date(now + RATE_LIMIT.SESSION_DAYS * 24 * 60 * 60 * 1000).toISOString();
+
+  const session = {
+    id: tokenHash,
+    tokenHash,
+    userId: user.id,
+    createdAt: new Date(now).toISOString(),
+    expiresAt,
+    revoked: false,
+  };
+  db.sessions.set(tokenHash, session);
+  db.scheduleSave();
+
+  res.cookie('session_token', rawToken, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: RATE_LIMIT.SESSION_DAYS * 24 * 60 * 60 * 1000,
+    path: '/',
+  });
+
+  console.log('[AUTH] verify-code: login success');
+
+  return res.json({
+    token: rawToken,
+    user: {
+      id: user.id,
+      normalizedPhone: user.normalizedPhone,
+      createdAt: user.createdAt,
+      lastLoginAt: user.lastLoginAt,
+      isLoggedIn: true,
+      hasFullAccess: false,
+    },
+  });
+}
 
 // ─── 3. GET /api/auth/session ──────────────────
 router.get('/session', requireAuth, (req, res) => {
@@ -356,4 +387,5 @@ router.post('/logout', (req, res) => {
 });
 
 module.exports = router;
+module.exports.requireAuth = requireAuth;
 module.exports.resetSmsProvider = resetSmsProvider;

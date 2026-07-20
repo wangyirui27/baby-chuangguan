@@ -4,19 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#f8f8f0">
-    <meta name="description" content="宝宝英语岛：面向 3–6 岁孩子的英语启蒙闯关 H5">
+    <meta name="description" content="宝宝英语岛：面向 3-5 岁孩子的英语启蒙闯关 H5">
+    <meta name="application-name" content="宝宝英语岛">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="宝宝英语岛">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
     <meta name="app-marker" content="VIDEO_LEVEL_APP_READY">
     <title>宝宝英语岛</title>
+    <link rel="manifest" href="manifest.webmanifest?v=20260717-app-shell-v1">
+    <link rel="icon" href="assets/icons/app-icon.svg?v=20260717-app-shell-v1" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/icons/app-icon.svg?v=20260717-app-shell-v1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20260715-access-v1">
-    <script src="assets/audio/words/word-audio-manifest.js?v=1"></script>
-    <script src="auth/apiClient.js?v=20260716-sms-login-v1"></script>
-    <script src="script.js?v=20260716-sms-login-v1" defer></script>
+    <link rel="stylesheet" href="style.css?v=20260720-camel-idle-stable-v3">
+    <script src="assets/audio/words/word-audio-manifest.js?v=20260720-word-manifest-200-v1"></script>
+    <script src="assets/vendor/lottie.min.js"></script>
+    <script src="assets/lottie/hand-tap-data.js?v=20260718-hand-user-edit"></script>
+    <script src="assets/lottie/correct-celebration-data.js?v=20260718-correct-lottie-v1"></script>
+    <script src="auth/apiClient.js?v=20260720-learning-sync-v1" defer></script>
+    <script src="script.js?v=20260720-camel-idle-walkmatch-v1" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="network-banner" data-network-status role="status" aria-live="polite" hidden></div>
+    <div class="app-toast" data-app-toast role="status" aria-live="polite" hidden></div>
 
     <div class="app-shell">
       <main id="main-content" tabindex="-1"></main>
@@ -24,29 +38,36 @@
 
     <audio id="map-music" src="assets/audio/map-bgm.mp3" loop preload="auto" aria-hidden="true"></audio>
 
-    <dialog class="access-dialog" data-access-dialog aria-labelledby="access-dialog-title" aria-describedby="access-dialog-description">
-      <section class="access-dialog-card" data-access-dialog-content></section>
-    </dialog>
-
     <nav class="bottom-tabs" aria-label="主要导航">
       <button class="tab-button" type="button" data-tab="map">
-        <svg aria-hidden="true" viewBox="0 0 24 24">
-          <path d="M5 19c0-4 2-6 7-7s7-3 7-7M5 19h.01M19 5h.01"/>
-          <circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="5" r="2.5"/>
-        </svg>
-        <span>闯关</span>
+        <span class="tab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M7 20V4.5"/>
+            <path d="M7 5.2h8.2l-1.7 2.9 1.7 2.9H7"/>
+            <path d="M4.5 20h15"/>
+          </svg>
+        </span>
+        <span class="tab-label">闯关</span>
       </button>
       <button class="tab-button" type="button" data-tab="ranking">
-        <svg aria-hidden="true" viewBox="0 0 24 24">
-          <path d="M4 20v-6h5v6M10 20V7h5v13M16 20v-9h4v9M3 20h18"/>
-        </svg>
-        <span>排行榜</span>
+        <span class="tab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M5 19v-6.2h3.8V19"/>
+            <path d="M10.1 19V7.5h3.8V19"/>
+            <path d="M15.2 19v-4.4H19V19"/>
+            <path d="M3.8 19.7h16.4"/>
+          </svg>
+        </span>
+        <span class="tab-label">排行榜</span>
       </button>
       <button class="tab-button" type="button" data-tab="mine">
-        <svg aria-hidden="true" viewBox="0 0 24 24">
-          <circle cx="12" cy="8" r="4"/><path d="M4.5 20c.7-4 3.2-6 7.5-6s6.8 2 7.5 6"/>
-        </svg>
-        <span>我的</span>
+        <span class="tab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="8" r="3.2"/>
+            <path d="M5.5 18.7c.85-3.05 3.15-4.55 6.5-4.55s5.65 1.5 6.5 4.55"/>
+          </svg>
+        </span>
+        <span class="tab-label">我的</span>
       </button>
     </nav>
 

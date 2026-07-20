@@ -793,7 +793,7 @@ test('auth module logs do not contain raw token', () => {
 // ════════════════════════════════════════════════════════════
 
 const http = require('node:http');
-const { app: testApp } = require('./index');
+const { app: testApp, corsOrigin } = require('./index');
 
 /** 启动临时服务器，返回 { server, port, url } */
 function createTestServer() {
@@ -827,6 +827,43 @@ async function apiFetch(url, path, options = {}) {
   const data = await res.json();
   return { status: res.status, headers: res.headers, data };
 }
+
+function checkCorsOrigin(origin) {
+  return new Promise((resolve, reject) => {
+    corsOrigin(origin, (err, allowed) => {
+      if (err) reject(err);
+      else resolve(allowed);
+    });
+  });
+}
+
+test('CORS does not allow unknown origins in production by default', async () => {
+  const originalNodeEnv = process.env.NODE_ENV;
+  const originalOrigins = process.env.CORS_ORIGINS;
+  const originalNullOrigin = process.env.CORS_ALLOW_NULL_ORIGIN;
+  delete process.env.CORS_ORIGINS;
+  delete process.env.CORS_ALLOW_NULL_ORIGIN;
+  try {
+    process.env.NODE_ENV = 'development';
+    assert.equal(await checkCorsOrigin('https://parent-preview.example'), true);
+
+    process.env.NODE_ENV = 'production';
+    assert.equal(await checkCorsOrigin('https://parent-preview.example'), false);
+    assert.equal(await checkCorsOrigin('null'), false);
+
+    process.env.CORS_ORIGINS = 'https://parent-preview.example';
+    assert.equal(await checkCorsOrigin('https://parent-preview.example'), true);
+
+    process.env.CORS_ALLOW_NULL_ORIGIN = 'true';
+    assert.equal(await checkCorsOrigin('null'), true);
+  } finally {
+    process.env.NODE_ENV = originalNodeEnv;
+    if (originalOrigins === undefined) delete process.env.CORS_ORIGINS;
+    else process.env.CORS_ORIGINS = originalOrigins;
+    if (originalNullOrigin === undefined) delete process.env.CORS_ALLOW_NULL_ORIGIN;
+    else process.env.CORS_ALLOW_NULL_ORIGIN = originalNullOrigin;
+  }
+});
 
 // ─── send-code 测试 ────────────────────────────────
 

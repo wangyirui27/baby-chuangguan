@@ -1,0 +1,35 @@
+Title: Water After Play
+
+Duration: 15 seconds
+
+Format: 16:9 horizontal
+
+Cinematic Style: Hand-painted watercolor and gouache storybook animation matching the current Magic English Voyage island art direction. Soft pencil outlines, visible paper grain, warm cream sunlight, pale turquoise sea, moss green plants, clear light reflections, coral-pink accents, low-saturation colors, gentle imperfect brush texture, cozy quiet emotion. Characters should look warm, clean, attractive, and child-safe. It must feel hand-drawn and alive, not glossy 3D or plastic CGI.
+
+Source Situation: After playing by the island window, a cute 4-year-old child sees clear water in a cup that mom offers, points to the visible water, says water, and takes a small safe sip.
+
+CEFR Target: Pre-A1 / very young A1. The target word is "water". Keep every spoken line short, natural, and easy for a 3-5 year old English learner to understand. The word "water" must be heard clearly several times, with caring family emotion, not a vocabulary drill.
+
+Zero-beginner clarity rule: Whenever the word "water" is spoken, the transparent water surface, ripples, and liquid must be the only clear foreground meaning target. The cup is only a container and must not read as the target word. The child's finger or gaze must point to the water. Do not introduce juice, milk, tea, soup, bottles, straws, snacks, or empty cups during or immediately before the word "water".
+
+Scene: A quiet island room beside an open window, warm sunlight, pale turquoise sea outside, empty table except for one clear cup filled with visible water. No readable text anywhere.
+
+Characters: One cute 4-year-old child and one beautiful gentle mother mostly shown by warm side view and hands. No dad, grandma, grandpa, teachers, narrator, or other speaking adults.
+
+Story Container: The child looks thirsty after play. Mom gently brings one clear cup of water. The child points to the water surface before speaking, then takes one small sip. Mom smiles softly, like she noticed exactly what the child needed.
+
+Dialogue:
+0-3s: Child, clear while pointing to the water: "Water."
+3-6s: Mother, warm and close: "Water for you."
+3-6s: Child, relieved: "Water, please."
+6-10s: Child, after a small safe sip: "Water."
+10-15s: Mother, gentle: "Good."
+10-15s: Child, happy and clear: "Water!"
+
+Action & Performance: Keep the acting quiet, tender, and specific. The water surface should shimmer gently when the word is spoken. Mom's gesture is caring and simple. The child drinks safely with two hands but the visible water remains the focus. No classroom teaching.
+
+Camera: One continuous gentle storybook shot. Use clear close-ups of the water surface whenever "water" is spoken. Keep the table uncluttered. Avoid tight mouth close-ups. End on the child smiling beside the clear water.
+
+Audio: Natural English mother-child dialogue, not narration. No narrator. No robotic TTS voice. No flat recitation. Child voice soft, young, and relieved. Mother voice gentle and affectionate. Very quiet room ambience and tiny water sip sound, no loud music.
+
+Negative Prompt: juice, milk, tea, soup, bottle, straw, snack, empty cup, cup as foreground focus instead of water, other drink, object clutter, unclear word target, object confusion, subtitles, captions, written words, speech bubbles, labels, flashcards, card UI, classroom blackboard, teacher, student, narrator, vocabulary lesson, repeat-after-me lesson, robotic voice, monotone voice, emotionless voice, overacting, loud music, crowded background, extra talking characters, complex story, scary elements, fast cuts, distorted hands, incorrect lip sync, glossy 3D render, plastic toy texture, neon colors, hard vector outlines, anime parody, artist signature, logo, readable text.

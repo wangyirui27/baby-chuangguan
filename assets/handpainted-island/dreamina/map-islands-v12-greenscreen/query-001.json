@@ -1,0 +1,22 @@
+{
+  "submit_id": "5ce8e619-4794-4eac-8af7-374706e9d343",
+  "prompt": "Redraw the first square island game asset while preserving its exact square block silhouette, horizontal front edge, camera angle, landmark layout and all objects. Match the second reference only for the confirmed premium hand-painted watercolor children picture book style, soft pencil outlines, matte paper texture, bright ocean-map colors. The lower ocean block must stay square and solid, with clear waterline and underwater wave details. Put the entire island sticker on a perfectly flat pure green screen background #00ff00. No texture in the green background, no cast shadow, no white border, no sticker outline, no frame, no text, no number, no UI. Do not make the island oval or irregular.",
+  "gen_status": "success",
+  "result_json": {
+    "images": [
+      {
+        "path": "assets/handpainted-island/dreamina/map-islands-v12-greenscreen/5ce8e619-4794-4eac-8af7-374706e9d343_image_1.png",
+        "width": 4096,
+        "height": 4096
+      }
+    ],
+    "videos": []
+  },
+  "queue_info": {
+    "queue_idx": 0,
+    "priority": 1,
+    "queue_status": "Finish",
+    "queue_length": 0,
+    "debug_info": "{\"have_no_dreamina_queue_name\":true,\"dreamina_matrix_queue_name\":\"\",\"dreamina_matrix_req_key\":\"\",\"dreamina_matrix_second_req_key\":\"\",\"have_no_queue_name\":false,\"queue_name\":\"high_aes_general_v50\",\"matrix_req_key\":\"MImageGen:high_aes_general_v50\",\"matrix_second_req_key\":\"\"}"
+  }
+}

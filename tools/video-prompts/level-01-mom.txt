@@ -1,0 +1,36 @@
+Title: Mom Comes Home
+
+Duration: 15 seconds
+
+Format: 16:9 horizontal
+
+Cinematic Style: Hand-painted watercolor and gouache storybook animation matching the current Magic English Voyage island art direction. Soft pencil outlines, visible paper grain, warm cream sunlight, pale turquoise sea, moss green island plants, coral-pink accents, low-saturation colors, gentle imperfect brush texture, cozy quiet emotion. Faces should be more appealing and polished than before: bright clean eyes, soft cheeks, balanced proportions, gentle smiles, cute childlike charm, and refined hand-painted character design. It must feel hand-drawn and alive, not glossy 3D or plastic CGI.
+
+Source Situation: A quiet seaside island home where a cute 4-year-old boy sees his mother come in, clearly points to her, calls her mom, and the mother warmly kneels down, answers, hugs him, and holds his hand.
+
+CEFR Target: Pre-A1 / very young A1. The target word is "mom". Keep every spoken line short, natural, and easy for a 3-5 year old English learner to understand. The word "mom" must be heard clearly several times, but it should sound like real affection, not a vocabulary drill.
+
+Zero-beginner clarity rule: Whenever the word "mom" is spoken, the mother must be the only clear foreground meaning target. The boy's eyes, finger, body movement, or hug must point to the mother. The boy's hands must be visibly empty in every shot. Do not introduce any object during or immediately before the word "mom". No seashell, toy, book, block, card, ball, cup, food, animal, sign, or other learnable object may appear in the foreground, near the child, on the floor, or in the child's hands. Background props must stay soft, distant, and non-salient.
+
+Scene: A simple sunlit room by the sea, with an open window, soft curtains, an empty warm wooden floor, and the turquoise sea and pale sky visible outside. Keep the room calm and extremely uncluttered. The foreground floor must be empty: no toys, books, blocks, cards, shells, baskets, cups, plates, plants, furniture pieces, or decorative objects near the child. No readable text anywhere.
+
+Characters: Exactly two speaking characters. One beautiful gentle mother wearing a soft coral-pink cardigan and cream apron, with warm eyes, soft cheeks, and a kind smile. One cute 4-year-old boy with bright eyes, soft cheeks, neat hair, and a simple hand-painted storybook face. Keep faces bright, warm, clean, and attractive. No dad, grandma, grandpa, teachers, narrator, or other speaking adults.
+
+Story Container: The mother appears clearly in the doorway or beside the open window. The boy sits or stands with empty hands, immediately looks at her, smiles, and points to her, so the meaning of "mom" is visually obvious before he says it. The mother steps close, kneels to the boy's eye level, and answers warmly. The boy hugs her and says "My mom" while looking at her face. The mother gently reassures him and holds his empty hand. The scene ends with the boy happy beside mom, still looking at her.
+
+Dialogue:
+0-3s: Boy, happy and clear while pointing at the mother: "Mom!"
+3-6s: Mother, warm and close: "Hi, sweetheart."
+3-6s: Child, relieved and happy: "My mom."
+6-10s: Mother, gentle and affectionate: "I'm here."
+6-10s: Child, smiling: "Mom."
+10-15s: Child, happy whisper: "Mom!"
+10-15s: Mother, soft smile: "Yes, honey."
+
+Action & Performance: Keep the acting quiet, tender, and emotionally specific. The boy should sound happy and certain, not confused. The mother should sound warm, protective, and present. Use small pauses, eye contact, the boy pointing directly to the mother, the mother kneeling, a soft hug, and hand-holding. The child's hands remain empty and visible; no object enters his hands or the foreground floor. No overacting, no presenter energy, no classroom teaching.
+
+Camera: One continuous gentle storybook shot with slow natural movement. Start with the mother clearly visible and centered as the boy looks up and points to her with empty hands. Whenever the boy says "mom", the mother's face and upper body should be visible and visually dominant. Keep the lower foreground floor empty and do not frame any object near the child. Avoid tight mouth close-ups; use pointing, hugging, hand-holding, and eye contact to carry the dialogue. End on a warm close-up of the boy holding mom's hand while looking at her.
+
+Audio: Natural English mother-child dialogue, not narration. No narrator. No robotic TTS voice. No flat recitation. No sing-song teaching voice. The child voice should be soft, young, curious, and emotionally alive. The mother voice should be gentle, warm, and affectionate. Keep the room ambience and faint seaside breeze very quiet. No loud music; at most a barely audible soft ambient bed.
+
+Negative Prompt: seashell, shell, toy, block, cube, book, open book, card, flashcard, ball, cup, bowl, plate, spoon, food, animal, sign, object on floor near child, child holding an object, child looking at an object while saying mom, foreground prop, learnable object near the child, unclear word target, object confusion, subtitles, captions, written words, speech bubbles, labels, flashcards, card UI, classroom blackboard, teacher, student, narrator, vocabulary lesson, repeat-after-me lesson, robotic voice, monotone voice, emotionless voice, overacting, loud music, crowded background, extra talking characters, complex story, scary elements, fast cuts, distorted hands, incorrect lip sync, tight mouth close-ups, ugly faces, asymmetrical eyes, deformed face, glossy 3D render, plastic toy texture, neon colors, hard vector outlines, anime parody, artist signature, logo, readable text.

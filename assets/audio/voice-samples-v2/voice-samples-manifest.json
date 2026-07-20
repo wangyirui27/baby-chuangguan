@@ -2,7 +2,7 @@
   "version": "2.0",
   "model": "豆包语音合成模型2.0",
   "resource_id": "seed-tts-2.0",
-  "generated_at": "2026-07-15T18:15:13.799Z",
+  "generated_at": "2026-07-19T07:25:58.468Z",
   "sample_text": "Hello friends! Welcome to our English class. Look at the red apple and the blue sky. Can you count with me? One, two, three! What's your favorite animal?",
   "audio_format": "mp3",
   "sample_rate": 24000,
@@ -1030,23 +1030,23 @@
   ],
   "summary": {
     "total": 68,
-    "generated": 68,
-    "skipped": 0,
+    "generated": 0,
+    "skipped": 68,
     "available": 68,
     "failed": 0,
     "not_attempted": 0,
     "female": {
       "total": 27,
-      "generated": 27,
-      "skipped": 0,
+      "generated": 0,
+      "skipped": 27,
       "available": 27,
       "failed": 0,
       "not_attempted": 0
     },
     "male": {
       "total": 41,
-      "generated": 41,
-      "skipped": 0,
+      "generated": 0,
+      "skipped": 41,
       "available": 41,
       "failed": 0,
       "not_attempted": 0

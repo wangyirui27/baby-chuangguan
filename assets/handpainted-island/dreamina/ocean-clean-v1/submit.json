@@ -1,0 +1,31 @@
+{
+  "submit_id": "10758acb-7357-4fb8-bd1c-bd13cf3387d2",
+  "gen_status": "success",
+  "result_json": {
+    "images": [
+      {
+        "image_url": "https://p26-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/84de41302c604645bc7d93122702feba~tplv-tb4s082cfz-aigc_resize:0:0.png?lk3s=7c3bb0db&x-expires=1784484000&x-signature=H1AriX5NnqhqDmBOc0WL%2BftcSL4%3D&format=.png",
+        "width": 5404,
+        "height": 3040
+      },
+      {
+        "image_url": "https://p11-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/f73b15720f86479c9c248b000f4eda27~tplv-tb4s082cfz-aigc_resize:0:0.png?lk3s=7c3bb0db&x-expires=1784484000&x-signature=ilfoPfyTW%2FacM9R1U4YORYEkTQo%3D&format=.png",
+        "width": 5404,
+        "height": 3040
+      },
+      {
+        "image_url": "https://p11-dreamina-sign.byteimg.com/tos-cn-i-tb4s082cfz/0f8eb1924e844353b7c0c0d5b83e0883~tplv-tb4s082cfz-aigc_resize:0:0.png?lk3s=7c3bb0db&x-expires=1784484000&x-signature=xNBDjoZk8FsPQgWT7qnvIJmpMF0%3D&format=.png",
+        "width": 5404,
+        "height": 3040
+      }
+    ],
+    "videos": []
+  },
+  "queue_info": {
+    "queue_idx": 0,
+    "priority": 1,
+    "queue_status": "Finish",
+    "queue_length": 0,
+    "debug_info": "{\"have_no_dreamina_queue_name\":true,\"dreamina_matrix_queue_name\":\"\",\"dreamina_matrix_req_key\":\"\",\"dreamina_matrix_second_req_key\":\"\",\"have_no_queue_name\":false,\"queue_name\":\"high_aes_general_v50\",\"matrix_req_key\":\"MImageGen:high_aes_general_v50\",\"matrix_second_req_key\":\"\"}"
+  }
+}

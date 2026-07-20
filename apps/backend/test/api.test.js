@@ -13,6 +13,7 @@ const {
   userRecord,
   verificationRecord,
 } = require('./helpers/test-server');
+const { createCorsOrigin } = require('../src/app');
 
 async function withServer(options, run) {
   const server = await createTestServer(options);
@@ -22,6 +23,39 @@ async function withServer(options, run) {
     await server.close();
   }
 }
+
+function checkCorsOrigin(environment, origin) {
+  return new Promise((resolve, reject) => {
+    createCorsOrigin(environment)(origin, (err, allowed) => {
+      if (err) reject(err);
+      else resolve(allowed);
+    });
+  });
+}
+
+test('CORS rejects unknown production origins and exact-matches configured origins', async () => {
+  const originalOrigins = process.env.CORS_ORIGINS;
+  const originalNullOrigin = process.env.CORS_ALLOW_NULL_ORIGIN;
+  delete process.env.CORS_ORIGINS;
+  delete process.env.CORS_ALLOW_NULL_ORIGIN;
+  try {
+    assert.equal(await checkCorsOrigin('development', 'http://localhost:5173'), true);
+    assert.equal(await checkCorsOrigin('production', 'https://parent-preview.example'), false);
+    assert.equal(await checkCorsOrigin('staging', 'null'), false);
+
+    process.env.CORS_ORIGINS = 'https://parent-preview.example,http://localhost:5173';
+    assert.equal(await checkCorsOrigin('production', 'https://parent-preview.example'), true);
+    assert.equal(await checkCorsOrigin('production', 'https://parent-preview.example.evil.test'), false);
+
+    process.env.CORS_ALLOW_NULL_ORIGIN = 'true';
+    assert.equal(await checkCorsOrigin('production', 'null'), true);
+  } finally {
+    if (originalOrigins === undefined) delete process.env.CORS_ORIGINS;
+    else process.env.CORS_ORIGINS = originalOrigins;
+    if (originalNullOrigin === undefined) delete process.env.CORS_ALLOW_NULL_ORIGIN;
+    else process.env.CORS_ALLOW_NULL_ORIGIN = originalNullOrigin;
+  }
+});
 
 test('only the frozen methods and paths are exposed', async () => {
   await withServer({}, async ({ request }) => {

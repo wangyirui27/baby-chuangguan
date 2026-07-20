@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const db = require('./db');
 const authRouter = require('./auth');
+const { createLearningRouter } = require('./learning');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ function corsOrigin(origin, callback) {
   if (!origin) {
     return callback(null, true);
   }
+  const isStrictCorsEnv = ['production', 'staging'].includes(process.env.NODE_ENV);
 
   // 开发模式允许本地地址
   const allowedOrigins = [];
@@ -31,8 +33,8 @@ function corsOrigin(origin, callback) {
     allowedOrigins.push(...envOrigins.split(',').map(s => s.trim()));
   }
 
-  // 默认允许 localhost 和 null
-  const defaultAllowed = [
+  // 开发/测试默认允许本地调试；生产/staging 必须显式配置 CORS_ORIGINS。
+  const defaultAllowed = isStrictCorsEnv ? [] : [
     'null',           // file:// 场景
     'http://localhost',
     `http://localhost:${PORT}`,
@@ -53,10 +55,10 @@ function corsOrigin(origin, callback) {
 
   // 检查是否是 null origin 字符串
   if (origin === 'null') {
-    return callback(null, true);
+    return callback(null, process.env.CORS_ALLOW_NULL_ORIGIN === 'true' || !isStrictCorsEnv);
   }
 
-  callback(null, true); // 安全起见，允许所有（产品环境应限制）
+  callback(null, !isStrictCorsEnv);
 }
 
 app.use(cors({
@@ -83,6 +85,9 @@ app.get('/healthz', (_req, res) => {
 
 // ─── 认证路由 ──────────────────────────────────────
 app.use('/api/auth', authRouter);
+
+// ─── 学习数据路由 ──────────────────────────────────
+app.use('/api/learning', createLearningRouter({ requireAuth: authRouter.requireAuth }));
 
 // ─── 404 兜底 ──────────────────────────────────────
 app.use((_req, res) => {
@@ -119,7 +124,7 @@ function start() {
 }
 
 // 导出 app 供测试使用（测试时不会自动启动）
-module.exports = { app, start };
+module.exports = { app, corsOrigin, start };
 
 // 如果直接运行，自动启动
 if (require.main === module) {

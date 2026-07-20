@@ -1,0 +1,22 @@
+{
+  "submit_id": "4948f66a-88e0-4af9-aca3-177edc1dae4b",
+  "prompt": "Redraw the first square island asset in the confirmed hand-painted watercolor style of the second reference. Preserve the exact square island block shape, camera angle, waterfall/stairs layout and all objects. Put the whole island on a perfectly flat pure green #00ff00 background for chroma key. No shadow, no border, no text, no UI. Keep the island square, not oval.",
+  "gen_status": "success",
+  "result_json": {
+    "images": [
+      {
+        "path": "assets/handpainted-island/dreamina/map-islands-v12-greenscreen/4948f66a-88e0-4af9-aca3-177edc1dae4b_image_1.png",
+        "width": 4096,
+        "height": 4096
+      }
+    ],
+    "videos": []
+  },
+  "queue_info": {
+    "queue_idx": 0,
+    "priority": 1,
+    "queue_status": "Finish",
+    "queue_length": 0,
+    "debug_info": "{\"have_no_dreamina_queue_name\":true,\"dreamina_matrix_queue_name\":\"\",\"dreamina_matrix_req_key\":\"\",\"dreamina_matrix_second_req_key\":\"\",\"have_no_queue_name\":false,\"queue_name\":\"high_aes_general_v50\",\"matrix_req_key\":\"MImageGen:high_aes_general_v50\",\"matrix_second_req_key\":\"\"}"
+  }
+}

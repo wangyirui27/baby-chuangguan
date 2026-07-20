@@ -50,14 +50,12 @@ describe('POST /api/auth/send-code — SendCode', () => {
     assert.ok(data);
   });
 
-  it('should return error codes on failure', async () => {
-    // TODO: implement test cases for each error scenario:
-    //   - status 503, code "SMS_UNAVAILABLE"
-    //   - status 400, code "PHONE_REQUIRED"
-    //   - status 400, code "INVALID_PHONE"
-    //   - status 429, code "COOLDOWN"
-    //   - status 429, code "RATE_LIMITED"
-  });
+
+  it.todo("should return 503 with code \"SMS_UNAVAILABLE\"");
+  it.todo("should return 400 with code \"PHONE_REQUIRED\"");
+  it.todo("should return 400 with code \"INVALID_PHONE\"");
+  it.todo("should return 429 with code \"COOLDOWN\"");
+  it.todo("should return 429 with code \"RATE_LIMITED\"");
 });
 
 describe('POST /api/auth/verify-code — VerifyCode', () => {
@@ -68,13 +66,11 @@ describe('POST /api/auth/verify-code — VerifyCode', () => {
     assert.ok(data);
   });
 
-  it('should return error codes on failure', async () => {
-    // TODO: implement test cases for each error scenario:
-    //   - status 400, code "PARAMS_REQUIRED"
-    //   - status 400, code "VERIFICATION_EXPIRED"
-    //   - status 400, code "INVALID_CODE"
-    //   - status 400, code "ATTEMPTS_EXCEEDED"
-  });
+
+  it.todo("should return 400 with code \"PARAMS_REQUIRED\"");
+  it.todo("should return 400 with code \"VERIFICATION_EXPIRED\"");
+  it.todo("should return 400 with code \"INVALID_CODE\"");
+  it.todo("should return 400 with code \"ATTEMPTS_EXCEEDED\"");
 });
 
 describe('GET /api/auth/session — Session', () => {
@@ -84,12 +80,10 @@ describe('GET /api/auth/session — Session', () => {
     assert.ok(data);
   });
 
-  it('should return error codes on failure', async () => {
-    // TODO: implement test cases for each error scenario:
-    //   - status 401, code "UNAUTHORIZED"
-    //   - status 401, code "SESSION_REVOKED"
-    //   - status 401, code "SESSION_EXPIRED"
-  });
+
+  it.todo("should return 401 with code \"UNAUTHORIZED\"");
+  it.todo("should return 401 with code \"SESSION_REVOKED\"");
+  it.todo("should return 401 with code \"SESSION_EXPIRED\"");
 });
 
 describe('POST /api/auth/logout — Logout', () => {

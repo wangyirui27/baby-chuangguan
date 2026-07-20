@@ -1,16 +1,16 @@
 /**
- * 宝宝闯关 · 关卡单词音频生成器（豆包语音合成模型 2.0 + Hayley）
+ * 宝宝闯关 · 关卡单词音频生成器（豆包语音合成模型 2.0 + Natasha）
  *
  * 使用方式：cd backend && node src/generate-word-audio-v2.js
- * 生产化：所有关卡单词统一使用 en_female_hayley_uranus_bigtts 声线
+ * 生产化：所有关卡单词统一使用 en_female_natasha_uranus_bigtts 声线
  * 幂等：已存在且有效的 MP3 跳过；失败支持中断重跑；manifest 原子写入
  * 安全：所有凭据仅从 .env 读取，绝不输出或写入 manifest
  *
  * API: V3 HTTP Chunked 单向流 (POST /api/v3/tts/unidirectional)
  * 鉴权: X-Api-App-Id + X-Api-Access-Key + X-Api-Resource-Id: seed-tts-2.0
- * Speaker: en_female_hayley_uranus_bigtts (固定)
+ * Speaker: en_female_natasha_uranus_bigtts (固定)
  *
- * 数据源：从 script.js 的 curriculumUnits 自动提取全部关卡单词，
+ * 数据源：与 script.js 的 200 关课程表保持一致，
  * 去重但保留 level_id 关联。manifest 覆盖当前所有关卡示例词。
  */
 
@@ -30,27 +30,20 @@ const path = require('node:path');
 const fs = require('node:fs');
 const crypto = require('node:crypto');
 const https = require('node:https');
+const { levels: COURSE_LEVELS } = require('../../script.js');
 
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
 // ═══════════════════════════════════════════════════════════
-//  课程数据 — 单一事实源（与 script.js curriculumUnits 一致）
-//  新增关卡只需在此追加，重新运行即可增量生成。
-//  未来可改为从 script.js 动态加载，但拷贝更健壮（无 DOM/模块依赖）。
+//  课程数据 — 直接来自 script.js，避免音频 manifest 与关卡表漂移。
 // ═══════════════════════════════════════════════════════════
 
-const CURRICULUM_UNITS = [
-  { topic: 'First Words · 初见英语', words: [['hello', '你好'], ['red', '红色'], ['flower', '花朵'], ['bye', '再见'], ['yes', '是的'], ['no', '不是'], ['please', '请'], ['thanks', '谢谢'], ['friend', '朋友'], ['happy', '开心']] },
-  { topic: 'Colors · 颜色', words: [['blue', '蓝色'], ['yellow', '黄色'], ['green', '绿色'], ['orange', '橙色'], ['purple', '紫色'], ['pink', '粉色'], ['black', '黑色'], ['white', '白色'], ['brown', '棕色'], ['rainbow', '彩虹']] },
-  { topic: 'Animals · 动物', words: [['cat', '小猫'], ['dog', '小狗'], ['bird', '小鸟'], ['fish', '小鱼'], ['duck', '鸭子'], ['rabbit', '兔子'], ['panda', '熊猫'], ['tiger', '老虎'], ['lion', '狮子'], ['monkey', '猴子']] },
-  { topic: 'Numbers · 数字', words: [['one', '一'], ['two', '二'], ['three', '三'], ['four', '四'], ['five', '五'], ['six', '六'], ['seven', '七'], ['eight', '八'], ['nine', '九'], ['ten', '十']] },
-  { topic: 'Family · 家人', words: [['mom', '妈妈'], ['dad', '爸爸'], ['baby', '宝宝'], ['sister', '姐姐'], ['brother', '哥哥'], ['grandma', '奶奶'], ['grandpa', '爷爷'], ['family', '家人'], ['home', '家'], ['love', '爱']] },
-  { topic: 'Food · 食物', words: [['apple', '苹果'], ['banana', '香蕉'], ['milk', '牛奶'], ['bread', '面包'], ['egg', '鸡蛋'], ['rice', '米饭'], ['cake', '蛋糕'], ['water', '水'], ['juice', '果汁'], ['cookie', '饼干']] },
-  { topic: 'Body · 身体', words: [['head', '头'], ['eye', '眼睛'], ['ear', '耳朵'], ['nose', '鼻子'], ['mouth', '嘴巴'], ['hand', '手'], ['arm', '手臂'], ['leg', '腿'], ['foot', '脚'], ['body', '身体']] },
-  { topic: 'Nature · 自然天气', words: [['sun', '太阳'], ['moon', '月亮'], ['star', '星星'], ['cloud', '云'], ['rain', '雨'], ['wind', '风'], ['snow', '雪'], ['tree', '树'], ['grass', '草地'], ['sky', '天空']] },
-  { topic: 'Actions · 动作', words: [['run', '跑'], ['jump', '跳'], ['walk', '走'], ['sit', '坐下'], ['stand', '站立'], ['clap', '拍手'], ['smile', '微笑'], ['sing', '唱歌'], ['dance', '跳舞'], ['sleep', '睡觉']] },
-  { topic: 'Daily Life · 日常生活', words: [['book', '书'], ['ball', '球'], ['car', '汽车'], ['bed', '床'], ['chair', '椅子'], ['table', '桌子'], ['shirt', '上衣'], ['shoes', '鞋子'], ['bath', '洗澡'], ['good night', '晚安']] },
-];
+const CURRICULUM_UNITS = COURSE_LEVELS.reduce((units, level) => {
+  const unitIndex = Math.floor((level.id - 1) / 10);
+  if (!units[unitIndex]) units[unitIndex] = { topic: level.topic, words: [] };
+  units[unitIndex].words.push([level.title.toLowerCase(), level.zhTitle]);
+  return units;
+}, []);
 
 // ═══════════════════════════════════════════════════════════
 //  提取唯一单词（去重，保留 level_id 映射）
@@ -61,7 +54,7 @@ function extractWordEntries() {
 
   CURRICULUM_UNITS.forEach((unit, ui) => {
     unit.words.forEach(([word, zh], wi) => {
-      const levelId = ui * unit.words.length + wi + 1;
+      const levelId = ui * 10 + wi + 1;
       if (!wordMap.has(word)) {
         wordMap.set(word, {
           word,
@@ -88,7 +81,7 @@ const ACCESS_KEY = process.env.DOUBAO_TOKEN;
 
 const API_URL = 'https://openspeech.bytedance.com/api/v3/tts/unidirectional';
 const RESOURCE_ID = 'seed-tts-2.0';
-const SPEAKER = 'en_female_hayley_uranus_bigtts'; // 本项目正式声线 Hayley
+const SPEAKER = 'en_female_natasha_uranus_bigtts'; // 本项目正式声线 Natasha
 const MAX_RETRIES = 3;
 const RETRY_DELAYS_MS = [2000, 4000, 8000];
 const REQUEST_TIMEOUT_MS = 60000;
@@ -366,8 +359,8 @@ async function main() {
   // ── 横幅 ─────────────────────────────────────────────
   console.log('');
   console.log('═══════════════════════════════════════════════');
-  console.log('  关卡单词音频生成器 (V3 · Hayley)');
-  console.log('  豆包语音合成模型 2.0 · en_female_hayley_uranus_bigtts');
+  console.log('  关卡单词音频生成器 (V3 · Natasha)');
+  console.log('  豆包语音合成模型 2.0 · en_female_natasha_uranus_bigtts');
   console.log('═══════════════════════════════════════════════');
   console.log('');
 
@@ -416,7 +409,7 @@ async function main() {
 
   // ── 探针策略 ─────────────────────────────────────────
   if (hasCreds) {
-    console.log('  🔍 探针测试: 合成 "hello" 验证 Hayley V3 可用');
+    console.log('  🔍 探针测试: 合成 "hello" 验证 Natasha V3 可用');
     const probePath = path.join(WORDS_DIR, '_probe_test.mp3');
     const probeResult = await synthesizeWord('hello', probePath);
 

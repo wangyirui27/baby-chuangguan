@@ -724,7 +724,7 @@ function buildEntry(voice, status, url, sizeBytes, sha256sum, apiCode, errorMsg,
 
 // ── 导出（用于测试） ─────────────────────────────────────
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { JsonStreamParser, sanitizeError, sha256, mp3HeaderValid, fileValid, VOICES, SAMPLE_TEXT };
+  module.exports = { JsonStreamParser, sanitizeError, sha256, mp3HeaderValid, fileValid, synthesizeVoice, VOICES, SAMPLE_TEXT };
 }
 
 if (require.main === module) {

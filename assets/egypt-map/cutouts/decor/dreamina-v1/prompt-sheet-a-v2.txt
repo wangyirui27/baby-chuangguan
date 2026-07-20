@@ -1,0 +1,13 @@
+Create a 2x2 sprite sheet of four separate desert decoration stickers for a preschool kids English learning app map.
+
+Visual style: warm hand-painted watercolor animation, soft pencil texture, low-saturation golden sand, muted gray-green plants, gentle child-friendly desert adventure mood. Match a pale Egyptian desert map, sandy pyramid stickers, and children riding a camel. Not photorealistic, not 3D plastic, not vector icon, no hard black outline.
+
+Background and extraction: pure solid chroma magenta background (#ff00ff), no landscape, no frame, no labels, no text, no UI, no grid lines. Four objects separated with large empty space, fully visible, not cropped.
+
+Every object should look naturally embedded in sand: bottom 5-15% buried, small soft pale-golden sand mound/contact dust under it, feathered dusty lower edge, no rectangular ground patch, no hard shadow, no black halo.
+
+Objects, reading order:
+1 small cactus cluster, 2-3 short muted gray-green stems;
+2 low dry grass clump, pale tan and muted olive;
+3 small rounded sandstone rock pile, very low;
+4 half-buried cracked terracotta jar, cute and safe.

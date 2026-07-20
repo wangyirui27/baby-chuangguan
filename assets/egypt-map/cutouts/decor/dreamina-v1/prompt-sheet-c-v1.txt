@@ -1,0 +1,13 @@
+Create a 2x2 sheet of four isolated hand-painted desert prop sprites for a children's map game.
+
+The four sprites only: 1 dry desert bush, 2 reed-like desert grass bundle, 3 half-buried small blank sandstone tablet, 4 small simple explorer wooden crate.
+
+Art direction: soft hand-painted watercolor animation prop, pale golden sand, muted tan and olive, warm dusty light, low contrast, gentle child-friendly desert adventure mood, soft pencil texture. These are small foreground props between map checkpoints, not main landmarks.
+
+Extraction background: pure solid chroma magenta background (#ff00ff). No real desert background, no frame, no labels, no text, no UI, no grid.
+
+Important: no white sticker border, no outline glow, no paper sticker look, no thick contour, no drop shadow. Fully visible with safe margins.
+
+Sand integration: each prop has a very small soft pale-golden sand mound at the bottom, lower edge slightly buried 5-15%, feathered dust fading outward, no rectangular ground patch, no hard shadow.
+
+Forbidden: people, children, camel, animal, bird, cactus focus, pyramid, sphinx, temple, palace, large building, scary object, bones, skull, footprints, railway, road, readable symbols, text, logo, photorealistic, 3D plastic, vector icon.

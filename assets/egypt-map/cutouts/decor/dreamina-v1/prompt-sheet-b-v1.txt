@@ -1,0 +1,13 @@
+Create a 2x2 sheet of four isolated hand-painted desert ruin prop sprites for a children's map game.
+
+The four sprites only: 1 weathered sandstone column fragment, 2 small broken obelisk fragment, 3 low ruined sandstone wall segment, 4 small abandoned sandstone archway fragment.
+
+Art direction: soft hand-painted watercolor animation prop, pale sandstone, warm dusty light, low contrast, gentle child-friendly desert adventure mood, soft pencil texture. These are small foreground props between map checkpoints, not main landmark buildings.
+
+Extraction background: pure solid chroma magenta background (#ff00ff). No real desert background, no frame, no labels, no text, no UI, no grid.
+
+Important: no white sticker border, no outline glow, no paper sticker look, no thick contour, no drop shadow. Fully visible with safe margins.
+
+Sand integration: each prop has a very small soft pale-golden sand mound at the bottom, lower edge slightly buried 5-15%, feathered dust fading outward, no rectangular ground patch, no hard shadow.
+
+Forbidden: people, children, camel, animal, bird, cactus, plant focus, pyramid, sphinx, temple, palace, large building, scary object, bones, skull, footprints, railway, road, text, logo, photorealistic, 3D plastic, vector icon.

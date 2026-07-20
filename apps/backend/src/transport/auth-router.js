@@ -2,6 +2,7 @@
 
 const express = require('express');
 const { ContractError, PHONE_REQUIRED, INVALID_PHONE, PARAMS_REQUIRED } = require('../errors');
+const { isAcceptableLoginCodeFormat } = require('../virtual-login');
 
 /**
  * Extract raw session token from request.
@@ -65,7 +66,7 @@ function validateVerifyCode(body) {
     typeof body.phone !== 'string' ||
     typeof body.code !== 'string' ||
     !/^\d{11}$/.test(body.phone) ||
-    !/^\d{6}$/.test(body.code)
+    !isAcceptableLoginCodeFormat(body.code)
   ) {
     throw PARAMS_REQUIRED('手机号和验证码不能为空');
   }

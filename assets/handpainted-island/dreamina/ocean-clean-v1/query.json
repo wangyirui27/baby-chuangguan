@@ -1,0 +1,31 @@
+{
+  "submit_id": "10758acb-7357-4fb8-bd1c-bd13cf3387d2",
+  "gen_status": "success",
+  "result_json": {
+    "images": [
+      {
+        "path": "assets/handpainted-island/dreamina/ocean-clean-v1/10758acb-7357-4fb8-bd1c-bd13cf3387d2_image_1.png",
+        "width": 5404,
+        "height": 3040
+      },
+      {
+        "path": "assets/handpainted-island/dreamina/ocean-clean-v1/10758acb-7357-4fb8-bd1c-bd13cf3387d2_image_2.png",
+        "width": 5404,
+        "height": 3040
+      },
+      {
+        "path": "assets/handpainted-island/dreamina/ocean-clean-v1/10758acb-7357-4fb8-bd1c-bd13cf3387d2_image_3.png",
+        "width": 5404,
+        "height": 3040
+      }
+    ],
+    "videos": []
+  },
+  "queue_info": {
+    "queue_idx": 0,
+    "priority": 1,
+    "queue_status": "Finish",
+    "queue_length": 0,
+    "debug_info": "{\"have_no_dreamina_queue_name\":true,\"dreamina_matrix_queue_name\":\"\",\"dreamina_matrix_req_key\":\"\",\"dreamina_matrix_second_req_key\":\"\",\"have_no_queue_name\":false,\"queue_name\":\"high_aes_general_v50\",\"matrix_req_key\":\"MImageGen:high_aes_general_v50\",\"matrix_second_req_key\":\"\"}"
+  }
+}

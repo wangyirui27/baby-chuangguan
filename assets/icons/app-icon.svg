@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="宝宝英语岛">
+  <rect width="512" height="512" rx="112" fill="#f8f8f0"/>
+  <circle cx="384" cy="114" r="52" fill="#fff1ab"/>
+  <path d="M0 306c78-41 163-50 256-27s178 13 256-27v260H0z" fill="#19c8b9"/>
+  <path d="M0 348c79 23 164 27 256 10s177-10 256 20v134H0z" fill="#11a89b"/>
+  <path d="M136 326c18-74 65-119 128-119s111 45 128 119c-70 30-176 30-256 0z" fill="#f7cd67"/>
+  <path d="M158 310c19-54 56-84 106-84s88 30 107 84c-58 23-145 24-213 0z" fill="#7fd35d"/>
+  <path d="M228 219c12-56 34-88 61-105 14 33 15 70 4 111" fill="#725d42"/>
+  <path d="M289 114c46 2 80 22 101 59-42 12-80 7-114-17" fill="#8ac68a"/>
+  <path d="M289 115c-43-15-77-11-105 17 30 28 67 39 109 27" fill="#6fba2c"/>
+  <path d="M279 150c-42 9-71 31-86 66 43 7 77-5 104-35" fill="#8ac68a"/>
+  <path d="M304 148c41 12 67 38 78 75-44 3-77-12-100-45" fill="#6fba2c"/>
+  <path d="M176 344c52 21 110 25 174 12" fill="none" stroke="#fff9d7" stroke-width="16" stroke-linecap="round"/>
+  <text x="256" y="424" text-anchor="middle" font-family="Nunito, Noto Sans SC, sans-serif" font-size="72" font-weight="900" fill="#794f27">ABC</text>
+</svg>

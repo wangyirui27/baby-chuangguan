@@ -1,0 +1,23 @@
+Create a single 4x3 sprite sheet of twelve separate transparent-game-sticker desert decorations for a preschool kids English learning app map.
+
+Style match: warm hand-painted watercolor animation background, soft pencil texture, low-saturation golden sand palette, gentle Studio-Ghibli-inspired children's adventure mood, same family as a pale Egyptian desert map with a camel and children. Not photorealistic, not 3D plastic, not vector flat icon, not sharp black outline.
+
+Canvas and extraction requirements: pure solid chroma magenta background (#ff00ff) only, no landscape background, no frame, no labels, no text, no UI, no grid lines. Arrange the twelve assets in a clean 4 columns x 3 rows layout, large spacing between assets, every object fully visible with safe margins and not cropped.
+
+Each sticker must feel naturally embedded in the desert sand: bottom 5-15% slightly buried, a small soft sand mound/contact dust in the same pale golden sand color, feathered dusty edge that can fade into the map sand, no rectangular ground patch, no hard shadow, no black halo.
+
+Assets in reading order:
+1 small gray-green cactus cluster, 2-3 short cactus stems;
+2 low dry grass clump, pale tan and muted olive;
+3 small warm sandstone rock pile, rounded stones, very low;
+4 half-buried cracked terracotta jar, child-friendly, no scary details;
+5 weathered sandstone column fragment, broken but cute and safe;
+6 small broken obelisk fragment, half buried, no readable symbols;
+7 low ruined sandstone wall segment, short and sandy;
+8 small abandoned archway fragment, sandstone, low and friendly;
+9 dry desert bush, pale brown, soft shape;
+10 reed-like desert grass bundle, thin vertical strokes;
+11 half-buried small stone tablet, blank or very faint non-readable marks;
+12 small explorer wooden crate, simple warm brown, slightly sunk in sand.
+
+Keep all decorations small-to-medium scale compared with large level buildings: nothing should look like a main checkpoint landmark.

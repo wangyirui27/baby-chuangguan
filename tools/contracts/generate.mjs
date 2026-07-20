@@ -745,15 +745,13 @@ for (const ep of manifest.endpoints) {
   const errorFixtures = Object.entries(ep.fixtures || {})
     .filter(([k]) => k.startsWith('4') || k.startsWith('5'));
   if (errorFixtures.length > 0) {
-    testsContent += `  it('should return error codes on failure', async () => {\n`;
-    testsContent += `    // TODO: implement test cases for each error scenario:\n`;
+    testsContent += `\n`;
     for (const [fixtureKey, fixturePath] of errorFixtures) {
       const statusCode = parseInt(fixtureKey.split('-')[0]);
       const fixtureData = fixtures[fixturePath.replace(/^fixtures\//, '').replace(/\.json$/, '')];
       const code = fixtureData?.code || 'UNKNOWN';
-      testsContent += `    //   - status ${statusCode}, code "${code}"\n`;
+      testsContent += `  it.todo(${JSON.stringify(`should return ${statusCode} with code "${code}"`)});\n`;
     }
-    testsContent += `  });\n`;
   }
 
   testsContent += `});\n`;

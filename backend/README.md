@@ -63,7 +63,14 @@ npm run generate-tts
 | `DOUBAO_AUDIO_FORMAT` | ❌ | 音频格式，默认 `mp3` |
 | `PORT` | ❌ | 服务端口，默认 `3000` |
 | `NODE_ENV` | ❌ | 运行模式（`development` / `production`） |
-| `SMS_PROVIDER` | ❌ | 短信供应商（`development` / `aliyun` / `tencent`），默认 `development` |
+| `SMS_PROVIDER` | ❌ | 短信供应商：`development`（默认）/ `aliyun`（已接入） |
+| `SMS_ALIYUN_ACCESS_KEY_ID` | aliyun 时必填 | 阿里云 RAM AccessKey ID |
+| `SMS_ALIYUN_ACCESS_KEY_SECRET` | aliyun 时必填 | 阿里云 RAM AccessKey Secret |
+| `SMS_ALIYUN_SIGN_NAME` | aliyun 时必填 | 短信签名（控制台已审核通过） |
+| `SMS_ALIYUN_TEMPLATE_CODE` | aliyun 时必填 | 短信模板 CODE（变量默认 `${code}`） |
+| `SMS_ALIYUN_TEMPLATE_PARAM_KEY` | ❌ | 模板变量名，默认 `code` |
+| `INSFORGE_URL` | 学习同步必填 | InsForge 项目 URL，只在服务端使用 |
+| `INSFORGE_API_KEY` | 学习同步必填 | InsForge 项目 admin API key，只在服务端使用，禁止暴露给前端 |
 
 ---
 
@@ -77,6 +84,20 @@ npm run generate-tts
 - **校验登录**：`POST /api/auth/verify-code` — 校验验证码，限流（3次错误失效），一次性消费，创建 session
 - **会话恢复**：`GET /api/auth/session` — 通过 cookie 或 Authorization header 恢复登录态
 - **退出登录**：`POST /api/auth/logout` — 撤销 session，清除 cookie
+
+## 学习数据同步（InsForge）
+
+当前后端已接入 InsForge，用现有手机号 session 保护学习数据接口：
+
+- `GET /api/learning/state`：读取孩子资料、偏好、各地图进度、学习日期、错题本
+- `PUT /api/learning/state`：保存完整学习快照
+- `PATCH /api/learning/preferences`：保存宝宝资料和偏好
+- `POST /api/learning/quiz-attempts`：追加答题事件
+- `POST /api/learning/support-feedback`：提交反馈
+
+数据库表包括 `baby_profiles`、`baby_world_progress`、`baby_learning_activity`、`baby_mistakes`、`baby_quiz_attempts`、`baby_support_feedback`。所有表启用 RLS；当前 Express 服务端使用 server-only `INSFORGE_API_KEY` 写入，未来如果改成前端直连 InsForge Auth，也已有 owner-only policy 基础。
+
+> `INSFORGE_API_KEY` 是 admin key，不能写入前端、公开环境变量、日志或 commit message。
 
 ### 安全策略
 
@@ -128,54 +149,47 @@ npm start
 
 #### 1. 选择供应商
 
-本项目支持两种短信供应商：阿里云、腾讯云。
+- **阿里云**：代码已接入（`SMS_PROVIDER=aliyun`）
 
-#### 2. 配置阿里云短信
+#### 2. 配置阿里云短信（你需要在控制台完成的部分）
 
 ```bash
-# 在 .env 中配置：
+# 在 backend/.env 或项目根 .env 中配置：
 SMS_PROVIDER=aliyun
 SMS_ALIYUN_ACCESS_KEY_ID=your_access_key_id
 SMS_ALIYUN_ACCESS_KEY_SECRET=your_access_key_secret
 SMS_ALIYUN_SIGN_NAME=宝宝闯关
 SMS_ALIYUN_TEMPLATE_CODE=SMS_123456789
+# 若模板变量名不是 code，再设：
+# SMS_ALIYUN_TEMPLATE_PARAM_KEY=code
 ```
 
-**获取方式：**
-1. 登录 [阿里云 RAM 访问控制](https://ram.console.aliyun.com/) → 创建 AccessKey
-2. 开通 [阿里云短信服务](https://dysms.console.aliyun.com/)
-3. 申请短信签名（如「宝宝闯关」）
-4. 申请短信模板（变量 `{code}`，如 `您的验证码为：${code}，5分钟内有效。`）
-5. 将模板 CODE 填入 `SMS_ALIYUN_TEMPLATE_CODE`
+**你在阿里云控制台需要完成：**
+1. 登录 [阿里云 RAM](https://ram.console.aliyun.com/) → 创建 AccessKey（建议最小权限：`AliyunDysmsFullAccess` 或自定义 SendSms）
+2. 开通 [短信服务](https://dysms.console.aliyun.com/)
+3. 申请短信签名（如「宝宝闯关」）并等待审核通过
+4. 申请短信模板，变量与 `SMS_ALIYUN_TEMPLATE_PARAM_KEY` 一致（默认 `code`），例如：`您的验证码为：${code}，5分钟内有效。`
+5. 将签名名称与模板 CODE 填入 `.env`，重启 `npm start`
 
-#### 3. 配置腾讯云短信
+**代码侧已实现：**
+- RPC 签名调用 `dysmsapi.aliyuncs.com` SendSms（无 SDK 依赖）
+- 国内号自动去掉 `+86` 前缀
+- 失败映射：`SMS_UNAVAILABLE`（503）/ `SEND_FAILED`（500）
+- 发送失败回滚验证码记录，不占用冷却
+- 日志手机号脱敏，密钥不入日志
 
-```bash
-# 在 .env 中配置：
-SMS_PROVIDER=tencent
-SMS_TENCENT_SECRET_ID=your_secret_id
-SMS_TENCENT_SECRET_KEY=your_secret_key
-SMS_TENCENT_SDK_APP_ID=1400000000
-SMS_TENCENT_SIGN_NAME=宝宝闯关
-SMS_TENCENT_TEMPLATE_ID=1234567
-```
+本地仍可用 `SMS_PROVIDER=development` 免费用终端验证码联调。
 
-**获取方式：**
-1. 登录 [腾讯云 API 密钥管理](https://console.cloud.tencent.com/cam/capi) → 创建 SecretId/SecretKey
-2. 开通 [腾讯云短信服务](https://console.cloud.tencent.com/smsv2)
-3. 创建短信应用 → 获取 SDK AppID
-4. 申请短信签名和正文模板
+#### 3. 生产环境检查清单
 
-#### 4. 生产环境检查清单
-
-- [ ] `SMS_PROVIDER` 设置为 `aliyun` 或 `tencent`（非 development）
-- [ ] 对应供应商的凭据已配置且有效
+- [ ] `SMS_PROVIDER=aliyun`（非 development）
+- [ ] 四项阿里云凭据已配置且签名/模板已审核通过
 - [ ] `NODE_ENV=production`（启用 Secure cookie）
 - [ ] Session 有效期配置合理（默认 30 天）
 - [ ] CORS 白名单已配置，不包含 `'null'`
-- [ ] 日志级别设为生产级，确认验证码/手机号不写入日志
-- [ ] 压力测试：验证限流策略在生产流量下正常工作
-- [ ] HTTP 或 HTTPS 代理就绪，cookie 正常工作
+- [ ] 确认验证码/完整手机号不写入日志
+- [ ] 压力测试：限流策略在生产流量下正常
+- [ ] HTTPS 就绪，cookie 正常工作
 
 > ⚠️ **安全警告**：生产环境绝不可使用 `SMS_PROVIDER=development`。  
 > ⚠️ 供应商凭据绝不可提交到代码仓库。  
@@ -314,15 +328,15 @@ node --test voice-samples-v2.test.js
 
 ---
 
-## 关卡单词音频生成器（模型 2.0 + Hayley 正式声线）
+## 关卡单词音频生成器（模型 2.0 + Natasha 正式声线）
 
-> 本项目正式声线：**Hayley**（`en_female_hayley_uranus_bigtts`）
+> 本项目正式声线：**Natasha**（`en_female_natasha_uranus_bigtts`）
 > 所有关卡单词发音统一使用豆包语音合成模型 2.0，不再使用 V1 Bearer/BV 音色。
 
 ```bash
 # 1. 确保 backend/.env 已配置真实凭据
 #    必需: DOUBAO_APP_ID, DOUBAO_TOKEN
-#    （DOUBAO_VOICE_TYPE 已固定为 en_female_hayley_uranus_bigtts）
+#    （DOUBAO_VOICE_TYPE 已固定为 en_female_natasha_uranus_bigtts）
 
 # 2. 生成全部关卡单词音频（幂等：已存在的有效 MP3 自动跳过）
 cd backend
@@ -340,7 +354,7 @@ npm run generate-word-audio
 | 接口 | `POST https://openspeech.bytedance.com/api/v3/tts/unidirectional` |
 | 鉴权 | `X-Api-App-Id` + `X-Api-Access-Key`（旧版控制台） |
 | 资源 ID | `seed-tts-2.0` |
-| 声线 | `en_female_hayley_uranus_bigtts`（Hayley · 教学场景 · 美式英语） |
+| 声线 | `en_female_natasha_uranus_bigtts`（Natasha · 视频配音 · 美式英语） |
 | 输出格式 | MP3, 24000 Hz, 正常语速/音量 |
 | 合成内容 | 每次只合成单词本身（不拼句子） |
 | 输出目录 | `assets/audio/words/` |
@@ -359,7 +373,7 @@ npm run generate-word-audio
 {
   "version": "2.0",
   "model": "豆包语音合成模型2.0",
-  "speaker": "en_female_hayley_uranus_bigtts",
+  "speaker": "en_female_natasha_uranus_bigtts",
   "audio_format": "mp3",
   "sample_rate": 24000,
   "entries": [
@@ -373,18 +387,18 @@ npm run generate-word-audio
       "status": "generated",
       "size_bytes": 12345,
       "sha256": "abc...",
-      "cache_key": "hello|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000"
+      "cache_key": "hello|en_female_natasha_uranus_bigtts|seed-tts-2.0|mp3|24000"
     }
   ],
   "summary": {
-    "total": 100,
-    "generated": 100,
-    "skipped": 0,
-    "available": 100,
+    "total": 200,
+    "generated": 0,
+    "skipped": 101,
+    "available": 101,
     "failed": 0,
-    "not_attempted": 0,
-    "levels": 100,
-    "speaker": "en_female_hayley_uranus_bigtts"
+    "not_attempted": 99,
+    "levels": 200,
+    "speaker": "en_female_natasha_uranus_bigtts"
   }
 }
 ```

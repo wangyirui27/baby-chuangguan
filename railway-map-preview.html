@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>森林英语铁路预览</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Nunito, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      --ink: #65401f;
+      --cream: #fff7df;
+      --gold: #ffcc3e;
+      --mint: #35c8b5;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-width: 320px;
+      min-height: 100dvh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: var(--ink);
+      background: #d7f0de;
+    }
+
+    .railway-preview {
+      position: relative;
+      width: 100vw;
+      height: 100dvh;
+      overflow: hidden;
+      background: #bdebd1;
+      box-shadow: 0 1.5rem 4rem rgba(51, 86, 54, 0.22);
+    }
+
+    .railway-preview video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .topbar {
+      position: absolute;
+      z-index: 6;
+      top: clamp(0.75rem, 2vw, 1.3rem);
+      left: clamp(0.75rem, 2vw, 1.4rem);
+      right: clamp(0.75rem, 2vw, 1.4rem);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      pointer-events: none;
+    }
+
+    .brand,
+    .counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      min-height: clamp(2.55rem, 5vw, 3.2rem);
+      padding: 0.55rem 0.85rem;
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      border-radius: 999px;
+      background: rgba(255, 248, 226, 0.72);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 0.6rem 1.4rem rgba(67, 96, 59, 0.18);
+      backdrop-filter: blur(14px);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .brand small,
+    .counter small {
+      display: block;
+      margin-bottom: 0.18rem;
+      color: rgba(101, 64, 31, 0.68);
+      font-size: clamp(0.62rem, 1.3vw, 0.76rem);
+    }
+
+    .brand strong,
+    .counter strong {
+      display: block;
+      font-size: clamp(0.9rem, 2vw, 1.12rem);
+    }
+
+    .counter {
+      background: rgba(231, 255, 247, 0.72);
+    }
+
+    .asset {
+      position: absolute;
+      z-index: 3;
+      height: auto;
+      user-select: none;
+      pointer-events: none;
+      filter: drop-shadow(0 0.8rem 0.65rem rgba(48, 68, 40, 0.2));
+    }
+
+    .asset.treehouse {
+      left: 7.5%;
+      top: 28%;
+      width: min(23vw, 20rem);
+      transform: rotate(-2deg);
+    }
+
+    .asset.library {
+      right: 7%;
+      top: 24%;
+      width: min(20vw, 17rem);
+      transform: rotate(1deg);
+    }
+
+    .asset.station {
+      right: 8.5%;
+      bottom: 8%;
+      width: min(30vw, 25rem);
+      transform: rotate(-3deg);
+    }
+
+    .asset.train {
+      z-index: 5;
+      left: 42%;
+      bottom: 11%;
+      width: min(18vw, 14rem);
+      transform: rotate(-2deg);
+      animation: train-idle 2.8s ease-in-out infinite;
+    }
+
+    .nodes {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .node {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: clamp(2rem, 4.3vw, 3rem);
+      aspect-ratio: 1;
+      border: 0.16rem solid #70431f;
+      border-radius: 50%;
+      background: var(--cream);
+      box-shadow: 0 0.18rem 0 #d09a20, 0 0.55rem 0.7rem rgba(55, 57, 32, 0.22);
+      color: var(--ink);
+      font-size: clamp(0.78rem, 1.8vw, 1rem);
+      font-weight: 1000;
+    }
+
+    .node.done {
+      background: #ffe48a;
+    }
+
+    .node.current {
+      width: clamp(2.5rem, 5.2vw, 3.65rem);
+      background: var(--mint);
+      color: white;
+      outline: 0.24rem solid rgba(255, 232, 133, 0.92);
+    }
+
+    .node.locked {
+      background: rgba(255, 248, 226, 0.88);
+      color: rgba(101, 64, 31, 0.5);
+    }
+
+    .node.locked::after {
+      content: "";
+      width: 44%;
+      aspect-ratio: 1;
+      border: 0.16rem solid currentColor;
+      border-radius: 0.35rem;
+      box-shadow: inset 0 0.35rem 0 -0.18rem currentColor;
+    }
+
+    .n1 { left: 17%; bottom: 14%; }
+    .n2 { left: 27%; bottom: 13%; }
+    .n3 { left: 37%; bottom: 14%; }
+    .n4 { left: 50%; bottom: 19%; }
+    .n5 { left: 62%; bottom: 27%; }
+    .n6 { left: 71%; bottom: 37%; }
+    .n7 { left: 78%; bottom: 47%; }
+
+    .chapter {
+      position: absolute;
+      z-index: 5;
+      left: 50%;
+      bottom: clamp(0.8rem, 2vw, 1.4rem);
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.65rem 0.95rem;
+      border-radius: 999px;
+      background: rgba(255, 248, 226, 0.74);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 0.5rem 1.2rem rgba(67, 96, 59, 0.18);
+      backdrop-filter: blur(14px);
+      font-size: clamp(0.78rem, 1.7vw, 1rem);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    @keyframes train-idle {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-0.35rem) rotate(-1.5deg); }
+    }
+
+    @media (max-width: 720px) {
+      .railway-preview video {
+        object-position: center;
+      }
+
+      .asset.treehouse { left: -4%; top: 35%; width: 42vw; }
+      .asset.library { right: -6%; top: 32%; width: 38vw; }
+      .asset.station { right: -14%; bottom: 11%; width: 52vw; }
+      .asset.train { left: 37%; bottom: 17%; width: 31vw; }
+      .counter { display: none; }
+      .chapter { bottom: calc(0.75rem + env(safe-area-inset-bottom)); }
+    }
+  </style>
+</head>
+<body>
+  <main class="railway-preview" aria-label="森林英语铁路地图预览">
+    <video autoplay muted loop playsinline preload="auto" src="assets/railway-map/forest-railway-bg-v1.mp4"></video>
+    <header class="topbar" aria-hidden="true">
+      <div class="brand"><span>🚂</span><span><small>新地图样机</small><strong>森林英语铁路</strong></span></div>
+      <div class="counter"><span>⭐</span><span><small>本章进度</small><strong>4 / 10</strong></span></div>
+    </header>
+
+    <img class="asset treehouse" src="assets/railway-map/cutouts/treehouse.webp" alt="">
+    <img class="asset library" src="assets/railway-map/cutouts/library.webp" alt="">
+    <img class="asset station" src="assets/railway-map/cutouts/station.webp" alt="">
+    <img class="asset train" src="assets/railway-map/cutouts/train.webp" alt="">
+
+    <div class="nodes" aria-hidden="true">
+      <span class="node done n1">1</span>
+      <span class="node done n2">2</span>
+      <span class="node done n3">3</span>
+      <span class="node current n4">4</span>
+      <span class="node n5">5</span>
+      <span class="node locked n6"></span>
+      <span class="node locked n7"></span>
+    </div>
+
+    <p class="chapter" aria-hidden="true">第 4 站 · Forest words</p>
+  </main>
+</body>
+</html>

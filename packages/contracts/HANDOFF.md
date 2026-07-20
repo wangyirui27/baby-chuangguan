@@ -9,7 +9,7 @@
 
 The app is a vanilla JS SPA (no framework) with an Express backend.
 Currently only **auth routes** have real backend endpoints.
-Curriculum (100 levels), progress, rankings, and profile are **client-side only**.
+Curriculum (200 levels), progress, rankings, and profile are **client-side only**.
 
 ### Endpoints (frozen)
 
@@ -23,10 +23,10 @@ Curriculum (100 levels), progress, rankings, and profile are **client-side only*
 
 ### Client-side only (NO backend endpoint)
 
-- **Curriculum**: `script.js` → `curriculumUnits` (100 levels, 10 units)
+- **Curriculum**: `script.js` → `lessonOverrides`, `curriculumUnits`, and `additionalLevelUnits` (200 levels total; first 10 have local video assets)
 - **Progress**: localStorage key `baby-island-preview-progress-v1`
-- **Rankings**: `script.js` → `rankings` (8 hardcoded entries)
-- **Profile**: `script.js` → `renderMine()` (static, hardcoded stats)
+- **Rankings**: `script.js` → `rankings` base rows + `buildLocalRankings()` inserts the current child from local progress; no backend leaderboard
+- **Profile**: `script.js` → `renderMine()` reads local progress, learning activity, and preferences
 
 ---
 

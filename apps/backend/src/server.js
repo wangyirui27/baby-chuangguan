@@ -4,6 +4,9 @@
  * 宝宝闯关 · API Server Entry Point
  * Uses AUTH_REPOSITORY=memory (only supported backend for now).
  * Port 3000 unless PORT is set.
+ *
+ * SMS: SMS_PROVIDER=development | aliyun
+ * Aliyun credentials via env (see .env.example).
  */
 
 require('dotenv').config();
@@ -11,10 +14,12 @@ require('dotenv').config();
 const { createApp } = require('./app');
 const { MemoryAuthRepository } = require('./repository/memory-auth-repository');
 const { AuthService } = require('./service/auth-service');
+const { createSmsProvider, getAliyunConfigStatus } = require('./sms-provider');
 
 const PORT = process.env.PORT || 3000;
 const ENVIRONMENT = process.env.NODE_ENV || 'development';
 const AUTH_REPOSITORY = process.env.AUTH_REPOSITORY || 'memory';
+const SMS_PROVIDER_NAME = (process.env.SMS_PROVIDER || 'development').toLowerCase();
 
 // ─── Repository selection (memory only for now) ──────────────────
 /** @type {object} */
@@ -29,36 +34,25 @@ switch (AUTH_REPOSITORY) {
     process.exit(1);
 }
 
-// ─── Development SMS provider (no real SMS) ─────────────────────
-const DevelopmentSmsProvider = {
-  kind: 'development',
-  async send(phone, code) {
-    console.log(`\n╔═════════════════════════════════════════════╗`);
-    console.log(`║           [DEV SMS] 验证码                   ║`);
-    console.log(`║  手机号: ${phone.replace(/(\+86)(\d{3})(\d{4})(\d{4})/, '$1$2****$4')}  ║`);
-    console.log(`║  验证码: ${code}                             ║`);
-    console.log(`║  有效期: 5 分钟                               ║`);
-    console.log(`╚═════════════════════════════════════════════╝\n`);
-  },
-};
-
-// Use environment-specific SMS provider
+// ─── SMS provider ────────────────────────────────────────────────
+/** @type {object} */
 let smsProvider;
-if (ENVIRONMENT === 'production' || ENVIRONMENT === 'staging') {
-  const providerName = process.env.SMS_PROVIDER || 'development';
-  if (providerName === 'development') {
-    console.warn('[server] WARNING: SMS_PROVIDER=development in production/staging!');
+try {
+  smsProvider = createSmsProvider({ nodeEnv: ENVIRONMENT });
+} catch (err) {
+  console.error(`[server] SMS provider init failed: ${err.message}`);
+  if (SMS_PROVIDER_NAME === 'aliyun') {
+    const status = getAliyunConfigStatus();
+    if (!status.ok) {
+      console.error(`[server] Missing Aliyun env: ${status.missing.join(', ')}`);
+      console.error('[server] Fill credentials in .env (see .env.example), then restart.');
+    }
   }
-  // Real providers (aliyun/tencent) not yet implemented — fail fast
-  if (providerName !== 'development') {
-    console.error(`[server] SMS_PROVIDER="${providerName}" is not yet implemented.`);
-    console.error('[server] Set SMS_PROVIDER=development for local testing.');
+  if (ENVIRONMENT === 'production' || ENVIRONMENT === 'staging') {
     process.exit(1);
   }
-  smsProvider = DevelopmentSmsProvider;
-} else {
-  // development / test
-  smsProvider = DevelopmentSmsProvider;
+  // 非生产：启动失败也退出，避免 silent 无短信
+  process.exit(1);
 }
 
 // ─── AuthService ──────────────────────────────────────────────────
@@ -73,7 +67,7 @@ const app = createApp({ authService, environment: ENVIRONMENT });
 
 const server = app.listen(PORT, () => {
   console.log(`[server] 宝宝闯关 API listening on http://localhost:${PORT} (${ENVIRONMENT})`);
-  console.log(`[server] AUTH_REPOSITORY=${AUTH_REPOSITORY}  PORT=${PORT}`);
+  console.log(`[server] AUTH_REPOSITORY=${AUTH_REPOSITORY}  SMS_PROVIDER=${SMS_PROVIDER_NAME}  PORT=${PORT}`);
 });
 
 // ─── Graceful shutdown ──────────────────────────────────────────

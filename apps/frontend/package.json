@@ -7,10 +7,10 @@
   "scripts": {
     "dev:real": "node scripts/switch-mode.cjs real && vite --mode real",
     "dev:mock": "node scripts/switch-mode.cjs mock && vite --mode mock",
-    "build": "vite build",
+    "build": "vite build && node scripts/copy-root-static.cjs",
     "preview": "vite preview",
     "mock:server": "node src/mock-server/server.cjs",
-    "test": "node --test tests/*.test.cjs",
+    "test": "node --test tests/api-client.test.cjs",
     "test:mock": "node --test tests/api-client.test.cjs",
     "test:api-client": "node --test tests/api-client.test.cjs",
     "test:smoke": "node tests/smoke.test.cjs"

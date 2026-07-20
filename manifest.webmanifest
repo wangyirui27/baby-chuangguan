@@ -1,0 +1,38 @@
+{
+  "name": "宝宝英语岛",
+  "short_name": "英语岛",
+  "description": "面向 3–6 岁孩子的英语启蒙闯关 H5",
+  "start_url": "./#map",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#f8f8f0",
+  "theme_color": "#f8f8f0",
+  "categories": ["education", "games", "kids"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "assets/icons/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "继续闯关",
+      "short_name": "闯关",
+      "url": "./#map"
+    },
+    {
+      "name": "排行榜",
+      "short_name": "排行",
+      "url": "./#ranking"
+    },
+    {
+      "name": "我的英语岛",
+      "short_name": "我的",
+      "url": "./#mine"
+    }
+  ]
+}

@@ -23,6 +23,9 @@ const { spawn } = require('child_process');
 const assert = require('node:assert');
 const http = require('http');
 
+const PROGRESS_STORAGE_KEY = 'baby-island-preview-progress-v1';
+const PREFERENCES_STORAGE_KEY = 'baby-island-app-preferences-v1';
+
 // ── Helpers ─────────────────────────────────────────────────────────
 
 function httpGet(url) {
@@ -136,17 +139,28 @@ async function runPlaywrightSmoke(frontendUrl) {
     assert.ok(main, '#main-content 必须存在');
     console.info('[smoke] ✓ #main-content 存在');
 
-    // ── 5. 检查底部 Tab 导航 ─────────────────────────────────────────
+    // ── 5. 启动必须检查发版更新并弹出提示，验证后关闭 ───────────────
+    const releaseDialog = page.locator('.release-update-dialog[open]');
+    await releaseDialog.waitFor({ state: 'visible', timeout: 5_000 });
+    const releaseText = await releaseDialog.innerText();
+    assert.ok(releaseText.includes('APP 版本更新'), '启动发版更新弹窗文案必须存在');
+    assert.ok(releaseText.includes('当前版本 1.0.0'), '启动发版更新弹窗必须显示当前版本');
+    assert.ok(releaseText.includes('最新版本 1.0.1'), '启动发版更新弹窗必须显示最新版本');
+    await page.locator('[data-release-update-close]').first().click();
+    await releaseDialog.waitFor({ state: 'hidden', timeout: 5_000 });
+    console.info('[smoke] ✓ 启动发版更新弹窗可展示并关闭');
+
+    // ── 6. 检查底部 Tab 导航 ─────────────────────────────────────────
     const tabs = await page.$$('[data-tab]');
     assert.ok(tabs.length >= 3, `底部 Tab 数量应为 3+，实际 ${tabs.length}`);
     console.info(`[smoke] ✓ 底部 Tab 数量: ${tabs.length}`);
 
-    // ── 6. 检查地图视图是否渲染（检查 route-scroll 存在）──────────────
+    // ── 7. 检查地图视图是否渲染（检查 route-scroll 存在）──────────────
     const routeScroll = await page.$('[data-route-scroll]');
     if (routeScroll) {
       console.info('[smoke] ✓ 地图路线 route-scroll 存在');
 
-      // ── 7. 首关位置验证 ─────────────────────────────────────────────
+      // ── 8. 首关位置验证 ─────────────────────────────────────────────
       // 检查第一个 level-stop 是否在视口内（检查元素存在 + 可见）
       const firstStop = await page.$('[data-stop="1"]');
       assert.ok(firstStop, '第 1 关节点必须存在 (data-stop="1")');
@@ -168,36 +182,93 @@ async function runPlaywrightSmoke(frontendUrl) {
       });
       // unlockedThrough = 1 时，第一个节点应该在视口内
       console.info(`[smoke] ✓ route-scroll 初始 scrollLeft: ${scrollLeft}`);
+
+      const level100AudioDisabled = await page.locator('[data-stop="100"] [data-speak-word]').isDisabled();
+      const level101AudioDisabled = await page.locator('[data-stop="101"] [data-speak-word]').isDisabled();
+      assert.strictEqual(level100AudioDisabled, false, '第 100 关已有本地 MP3，地图喇叭应可用');
+      assert.strictEqual(level101AudioDisabled, false, '第 101 关已有本地 MP3，地图喇叭应可用');
+      console.info('[smoke] ✓ 已生产本地 MP3 的地图喇叭可用');
     } else {
       // 可能需要先等待地图渲染
       console.warn('[smoke] ⚠ route-scroll 未找到，可能需要登录或等待渲染');
     }
 
-    // ── 8. 检查 babyIslandApi 存在 ──────────────────────────────────
+    // ── 9. 当前 App Store 版本不再暴露旧短信登录运行时 ───────────────
     const apiExists = await page.evaluate(() => typeof window.babyIslandApi !== 'undefined');
-    assert.ok(apiExists, 'window.babyIslandApi 必须存在');
-    console.info('[smoke] ✓ babyIslandApi 全局对象存在');
+    assert.strictEqual(apiExists, false, 'window.babyIslandApi 不应存在');
+    console.info('[smoke] ✓ 旧短信登录运行时未暴露');
 
-    // ── 9. 检查 babyIslandApi 有必需方法 ────────────────────────────
-    const apiMethods = await page.evaluate(() => {
-      const api = window.babyIslandApi;
-      return [
-        'sendVerificationCode',
-        'verifyCode',
-        'checkSession',
-        'logout',
-        'getToken',
-        'clearToken',
-        'isFileProtocol',
-      ].map(m => ({ method: m, exists: typeof api[m] === 'function' }));
-    });
+    // ── 10. 第 11 关会员支付面板可以直接弹出 ────────────────────────
+    await page.evaluate((progressKey) => {
+      localStorage.setItem(progressKey, JSON.stringify({
+        completed: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        unlockedThrough: 11,
+      }));
+      location.hash = '#map';
+    }, PROGRESS_STORAGE_KEY);
+    await page.waitForSelector('[data-level="11"]', { timeout: 5_000 });
+    await page.locator('[data-level="11"]').click();
+    const paywallDialog = page.locator('.paywall-dialog[open]');
+    await paywallDialog.waitFor({ state: 'visible', timeout: 5_000 });
+    const paywallText = await paywallDialog.innerText();
+    assert.ok(paywallText.includes('VIP 学习卡'), 'VIP 支付面板标题必须存在');
+    assert.ok(paywallText.includes('立即支付 ¥99'), 'VIP 支付按钮必须存在');
+    assert.ok(paywallText.includes('当前预览不会扣费'), 'H5 预览必须前置说明不会扣费');
+    console.info('[smoke] ✓ 第 11 关直接弹出 VIP 支付面板');
+    await page.locator('[data-vip-pay]').click();
+    const payNote = await page.locator('[data-vip-pay-note]').innerText();
+    assert.ok(payNote.includes('正式 iPad 包会打开 App Store 支付，当前预览不会扣费'), '点击支付后必须说明正式包支付边界');
+    await page.locator('[data-paywall-close]').click();
 
-    for (const { method, exists } of apiMethods) {
-      assert.ok(exists, `babyIslandApi.${method} 必须存在`);
-    }
-    console.info(`[smoke] ✓ babyIslandApi 方法全部存在`);
+    // ── 11. VIP 后第 11/12 关可以进入真实视频，第 13 关仍保护未上线内容 ───
+    await page.evaluate(({ progressKey, preferencesKey }) => {
+      localStorage.setItem(progressKey, JSON.stringify({
+        completed: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        unlockedThrough: 11,
+      }));
+      localStorage.setItem(preferencesKey, JSON.stringify({ vipActive: true }));
+    }, { progressKey: PROGRESS_STORAGE_KEY, preferencesKey: PREFERENCES_STORAGE_KEY });
+    await page.goto(`${frontendUrl}/?vip-paid11=1#level-11`, { waitUntil: 'domcontentloaded' });
+    const releaseDialogAfterVip = page.locator('.release-update-dialog[open]');
+    if (await releaseDialogAfterVip.count()) await page.locator('[data-release-update-close]').first().click();
+    await page.locator('[data-stage-video]').waitFor({ state: 'visible', timeout: 5_000 });
+    assert.ok(
+      (await page.locator('[data-video]').getAttribute('src')).includes('assets/video/paid-levels/level-11-pear.mp4'),
+      'VIP 后第 11 关必须播放已上线 Pear 视频'
+    );
 
-    // ── 10. 检查无致命控制台错误 ─────────────────────────────────────
+    await page.evaluate(({ progressKey }) => {
+      localStorage.setItem(progressKey, JSON.stringify({
+        completed: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        unlockedThrough: 12,
+      }));
+    }, { progressKey: PROGRESS_STORAGE_KEY });
+    await page.goto(`${frontendUrl}/?vip-paid12=1#level-12`, { waitUntil: 'domcontentloaded' });
+    await page.locator('[data-stage-video]').waitFor({ state: 'visible', timeout: 5_000 });
+    assert.ok(
+      (await page.locator('[data-video]').getAttribute('src')).includes('assets/video/paid-levels/level-12-grape.mp4'),
+      'VIP 后第 12 关必须播放已上线 Grape 视频'
+    );
+
+    await page.evaluate(({ progressKey }) => {
+      localStorage.setItem(progressKey, JSON.stringify({
+        completed: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        unlockedThrough: 13,
+      }));
+    }, { progressKey: PROGRESS_STORAGE_KEY });
+    await page.goto(`${frontendUrl}/?vip-content-check=1#level-13`, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(500);
+    const unavailableText = await page.locator('body').innerText();
+    assert.ok(
+      unavailableText.includes('这关视频还在准备中') ||
+        unavailableText.includes('课程内容更新中') ||
+        unavailableText.includes('后续课程内容会随更新开放'),
+      'VIP 后访问未上线付费关必须提示课程内容更新中'
+    );
+    assert.strictEqual(await page.locator('[data-video]').count(), 0, '未上线付费关不能渲染空视频播放器');
+    console.info('[smoke] ✓ VIP 后第 11/12 关可播放，第 13 关不进入空视频页');
+
+    // ── 12. 检查无致命控制台错误 ─────────────────────────────────────
     const fatalErrors = consoleErrors.filter(e =>
       // 过滤已知的无害警告
       !e.includes('favicon') &&
@@ -213,14 +284,6 @@ async function runPlaywrightSmoke(frontendUrl) {
     assert.strictEqual(fatalErrors.length, 0, '控制台不能有致命错误');
 
     console.info('[smoke] ✓ 无控制台致命错误');
-
-    // ── 11. 验证 login dialog 可以打开 ───────────────────────────────
-    // 点击一个锁定状态的关卡，触发 login dialog
-    const lockedLevel = await page.$('[data-level][aria-disabled="true"]');
-    if (lockedLevel) {
-      // 跳过登录对话框测试（需要网络请求）
-      console.info('[smoke] ℹ 跳过登录对话框自动测试（需网络请求）');
-    }
 
     console.info('[smoke] ✓ 所有烟测检查通过');
 

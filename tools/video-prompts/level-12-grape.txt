@@ -1,0 +1,23 @@
+Create a 15-second 16:9 warm 3D cartoon animation for preschool English learners aged 3 to 5. Target English word: grape.
+
+The video must clearly teach the meaning of grape through visuals and repeated speech. Use one single purple grape as the main object. Do not show pears, peaches, watermelon, mango, apples, bananas, juice, candy, or other foods.
+
+Zero-beginner clarity rule: Whenever the word "grape" is spoken, the single purple grape must be the only clear foreground meaning target. The child's finger, gaze, or hands must guide attention to that grape. Plates, hands, and table surfaces may support the action, but they must not become the visual focus.
+
+Style: warm 3D preschool cartoon animation, rounded cute characters, soft colorful lighting, simple real-life kitchen snack setting, gentle camera motion, same charming animated feel as the accepted ice cream lesson video. This must be a real animated scene, not a flashcard, not a flat UI card, not a static poster, not a slideshow, and not an icon-only video.
+
+Characters: one 4-year-old child sitting at a small table, and one gentle parent hand placing the grape on a plate. The single grape must stay visually centered whenever the word grape is spoken. Avoid tight mouth close-ups during speech; use object close-ups, pointing, and simple gestures so lip sync does not distract.
+
+Dialogue must be very slow, clear, and minimal:
+0-3s: Close-up of one single purple grape on a white plate. Narrator says: Grape. The child points to the grape and says: Grape!
+3-6s: The parent hand gently moves the plate closer to the child. Parent says: Grape. Child repeats: Grape.
+6-10s: The child carefully picks up one grape, smiles, and looks at the grape. Child says: My grape.
+10-15s: The child holds the grape near their cheek and smiles. Narrator repeats: Grape. Child says: Grape!
+
+Language level: Pre-A1 / very young A1. Use only simple English. 1 to 3 words per spoken turn. Very slow, clear pronunciation. No idioms, no long sentences, no fast speech, no overlapping dialogue.
+
+Camera: clear close-ups whenever grape is spoken. The child's finger or gaze must point to the grape when saying the word. End on a happy close-up of the child holding one grape.
+
+Audio: cheerful light music, soft child voice, clear narrator voice, gentle home ambience. The word grape must be pronounced clearly every time.
+
+Negative prompt: grape bunch as foreground focus, plate as foreground focus, hand as foreground focus instead of grape, other fruit as foreground focus, unclear word target, object confusion, no subtitles, no written words, no speech bubbles, no labels, no flashcards, no card UI, no static poster, no classroom blackboard, no complex story, no crowded background, no scary elements, no fast cuts, no distorted hands, no other fruit, no incorrect lip sync.

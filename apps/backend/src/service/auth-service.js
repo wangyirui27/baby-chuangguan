@@ -19,6 +19,7 @@ const {
   SESSION_EXPIRED,
   USER_NOT_FOUND,
 } = require('../errors');
+const { isVirtualLoginCode, getVirtualLoginCode } = require('../virtual-login');
 
 // ─── Rate-limit constants (match frozen contract) ───────────────
 const PHONE_COOLDOWN_MS = 60_000;   // 60 s — cooldown fixture: 42s wait after 18s elapsed
@@ -142,6 +143,10 @@ class AuthService {
     try {
       await this.smsProvider.send(normalized, code);
     } catch (err) {
+      // 发送失败回滚本条验证码，避免占用冷却/限流
+      if (typeof this.repository.deleteVerification === 'function') {
+        this.repository.deleteVerification(verification.id);
+      }
       // SMS provider unavailable → 503
       if (err.code === 'SMS_UNAVAILABLE') {
         throw SMS_UNAVAILABLE('短信服务暂不可用，请稍后再试');
@@ -181,7 +186,16 @@ class AuthService {
     }
 
     const normalized = normalizePhone(phone);
+    if (!isValidPhone(normalized)) {
+      throw INVALID_PHONE('手机号格式不正确');
+    }
     const phoneHash = hashValue(normalized);
+
+    // ── Virtual login: any valid phone + fixed code (default 1234) ──
+    if (isVirtualLoginCode(code)) {
+      console.log(`[auth] virtual login phone=*** code=${getVirtualLoginCode()}`);
+      return this._issueSessionForPhone(normalized, phoneHash);
+    }
 
     try {
       // ── 2. Find the latest unexpired verification ───────────────
@@ -216,48 +230,56 @@ class AuthService {
       // ── 5. Consume verification ────────────────────────────────
       this.repository.deleteVerification(latest.id);
 
-      // ── 6. Find or create user ─────────────────────────────────
-      let user = this.repository.findUserByPhoneHash(phoneHash);
-      if (user) {
-        user.lastLoginAt = new Date(this._now()).toISOString();
-      } else {
-        user = {
-          id: this._generateId(),
-          phoneHash,
-          normalizedPhone: normalized,
-          createdAt: new Date(this._now()).toISOString(),
-          lastLoginAt: new Date(this._now()).toISOString(),
-        };
-        this.repository.saveUser(user);
-      }
-
-      // ── 7. Create session ───────────────────────────────────────
-      const rawToken = this._generateToken();
-      const tokenHash = hashValue(rawToken);
-      const session = {
-        tokenHash,
-        userId: user.id,
-        createdAt: new Date(this._now()).toISOString(),
-        expiresAt: new Date(this._now() + SESSION_MS).toISOString(),
-        revoked: false,
-      };
-      this.repository.saveSession(session);
-
-      return {
-        token: rawToken,
-        user: {
-          id: user.id,
-          normalizedPhone: user.normalizedPhone,
-          createdAt: user.createdAt,
-          lastLoginAt: user.lastLoginAt,
-          isLoggedIn: true,
-          hasFullAccess: false,
-        },
-      };
+      return this._issueSessionForPhone(normalized, phoneHash);
     } catch (err) {
       if (err instanceof ContractError) throw err;
       throw VERIFY_FAILED('验证失败');
     }
+  }
+
+  /**
+   * Find-or-create user and issue a session token.
+   * @param {string} normalized
+   * @param {string} phoneHash
+   * @returns {{ token: string, user: object }}
+   */
+  _issueSessionForPhone(normalized, phoneHash) {
+    let user = this.repository.findUserByPhoneHash(phoneHash);
+    if (user) {
+      user.lastLoginAt = new Date(this._now()).toISOString();
+    } else {
+      user = {
+        id: this._generateId(),
+        phoneHash,
+        normalizedPhone: normalized,
+        createdAt: new Date(this._now()).toISOString(),
+        lastLoginAt: new Date(this._now()).toISOString(),
+      };
+      this.repository.saveUser(user);
+    }
+
+    const rawToken = this._generateToken();
+    const tokenHash = hashValue(rawToken);
+    const session = {
+      tokenHash,
+      userId: user.id,
+      createdAt: new Date(this._now()).toISOString(),
+      expiresAt: new Date(this._now() + SESSION_MS).toISOString(),
+      revoked: false,
+    };
+    this.repository.saveSession(session);
+
+    return {
+      token: rawToken,
+      user: {
+        id: user.id,
+        normalizedPhone: user.normalizedPhone,
+        createdAt: user.createdAt,
+        lastLoginAt: user.lastLoginAt,
+        isLoggedIn: true,
+        hasFullAccess: false,
+      },
+    };
   }
 
   /**

@@ -38,24 +38,26 @@ function fakeHash(buf) {
 //  1. 单词提取 / 去重 / 关卡映射
 // ═══════════════════════════════════════════════════════════
 
-test('extractWordEntries returns all 100 unique words from curriculumUnits', () => {
+test('extractWordEntries returns current unique words from script.js levels', () => {
   const { extractWordEntries, CURRICULUM_UNITS } = require('./backend/src/generate-word-audio-v2.js');
+  const { levels } = require('./script.js');
 
   const entries = extractWordEntries();
   const totalLevels = CURRICULUM_UNITS.reduce((s, u) => s + u.words.length, 0);
+  const uniqueWords = new Set(levels.map(l => l.title.toLowerCase()));
 
-  assert.equal(entries.length, 100, 'Must have 100 unique words');
-  assert.equal(totalLevels, 100, 'Must have 100 total levels');
+  assert.equal(entries.length, uniqueWords.size, 'Must have one entry per unique current word');
+  assert.equal(totalLevels, 200, 'Must have 200 total levels');
 
   // All words must be unique
   const words = entries.map(e => e.word);
-  assert.equal(new Set(words).size, 100, 'All words must be unique');
+  assert.equal(new Set(words).size, uniqueWords.size, 'All manifest words must be unique');
 
   // Check first and last words
-  assert.equal(entries[0].word, 'hello');
-  assert.equal(entries[0].level_ids[0], 1);
-  assert.equal(entries[99].word, 'good night');
-  assert.equal(entries[99].level_ids[0], 100);
+  assert.equal(entries[0].word, 'mom');
+  assert.deepEqual(entries[0].level_ids, [1]);
+  assert.equal(entries.at(-1).word, 'sleep');
+  assert.equal(entries.at(-1).level_ids[0], 200);
 
   // Each entry must have level_ids array
   entries.forEach((entry) => {
@@ -71,9 +73,8 @@ test('words with multiple level_ids (duplicates) are properly handled', () => {
   const { extractWordEntries } = require('./backend/src/generate-word-audio-v2.js');
   const entries = extractWordEntries();
 
-  // With current dataset, all 100 words are unique (0 duplicates)
   const duplicates = entries.filter(e => e.level_ids.length > 1);
-  assert.equal(duplicates.length, 0, 'Expected 0 duplicate words in current curriculum');
+  assert.equal(duplicates.length, 0, 'Expected no duplicated words in current curriculum');
 
   // But the code should handle duplicates if they exist — test the logic
   // We verify the structure supports it: level_ids is an array
@@ -87,24 +88,27 @@ test('extractWordEntries level_ids match expected pattern', () => {
   const entries = extractWordEntries();
 
   // Check a few known mappings
-  const hello = entries.find(e => e.word === 'hello');
-  assert.deepEqual(hello.level_ids, [1]);
+  const mom = entries.find(e => e.word === 'mom');
+  assert.deepEqual(mom.level_ids, [1]);
 
-  const red = entries.find(e => e.word === 'red');
-  assert.deepEqual(red.level_ids, [2]);
+  const banana = entries.find(e => e.word === 'banana');
+  assert.deepEqual(banana.level_ids, [11]);
 
-  const happy = entries.find(e => e.word === 'happy');
-  assert.deepEqual(happy.level_ids, [10]);
+  const papaya = entries.find(e => e.word === 'papaya');
+  assert.deepEqual(papaya.level_ids, [12]);
 
-  const rain = entries.find(e => e.word === 'rain');
-  assert.deepEqual(rain.level_ids, [75]);
+  const iceCream = entries.find(e => e.word === 'ice cream');
+  assert.deepEqual(iceCream.level_ids, [26]);
 
-  const goodNight = entries.find(e => e.word === 'good night');
-  assert.deepEqual(goodNight.level_ids, [100]);
+  const teddyBear = entries.find(e => e.word === 'teddy bear');
+  assert.deepEqual(teddyBear.level_ids, [101]);
 
-  // Verify all level_ids are 1..100 exactly once
+  const sleep = entries.find(e => e.word === 'sleep');
+  assert.deepEqual(sleep.level_ids, [200]);
+
+  // Verify all level_ids are 1..200 exactly once
   const allIds = entries.flatMap(e => e.level_ids).sort((a, b) => a - b);
-  assert.deepEqual(allIds, Array.from({ length: 100 }, (_, i) => i + 1));
+  assert.deepEqual(allIds, Array.from({ length: 200 }, (_, i) => i + 1));
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -249,11 +253,11 @@ test('generator uses V3 body structure: req_params with audio_params', () => {
     'Body must include loudness_rate');
 });
 
-test('generator uses Hayley speaker fixed', () => {
+test('generator uses Natasha speaker fixed', () => {
   const source = read('backend/src/generate-word-audio-v2.js');
 
-  assert.ok(source.includes('en_female_hayley_uranus_bigtts'),
-    'Must use Hayley speaker');
+  assert.ok(source.includes('en_female_natasha_uranus_bigtts'),
+    'Must use Natasha speaker');
   assert.ok(!source.includes('DOUBAO_VOICE_TYPE'),
     'Speaker must NOT come from env variable — it is fixed');
 });
@@ -346,8 +350,8 @@ test('manifest has V2 structure with speaker and resource', () => {
     'Manifest version must be 2.0');
   assert.ok(source.includes('seed-tts-2.0'),
     'Manifest must reference seed-tts-2.0');
-  assert.ok(source.includes('en_female_hayley_uranus_bigtts'),
-    'Manifest must reference Hayley speaker');
+  assert.ok(source.includes('en_female_natasha_uranus_bigtts'),
+    'Manifest must reference Natasha speaker');
 });
 
 test('manifest summary includes levels count and speaker', () => {
@@ -449,21 +453,21 @@ test('README references word audio generator', () => {
 
   assert.ok(readme.includes('generate-word-audio'),
     'README must mention generate-word-audio command');
-  assert.ok(readme.includes('Hayley'),
-    'README must mention Hayley voice');
-  assert.ok(readme.includes('en_female_hayley_uranus_bigtts'),
-    'README must reference the Hayley speaker ID');
+  assert.ok(readme.includes('Natasha'),
+    'README must mention Natasha voice');
+  assert.ok(readme.includes('en_female_natasha_uranus_bigtts'),
+    'README must reference the Natasha speaker ID');
 });
 
 // ═══════════════════════════════════════════════════════════
 //  11. .env.example 更新测试
 // ═══════════════════════════════════════════════════════════
 
-test('.env.example has Hayley voice type set', () => {
+test('.env.example has Natasha voice type set', () => {
   const envExample = read('backend/.env.example');
 
-  assert.ok(envExample.includes('en_female_hayley_uranus_bigtts'),
-    '.env.example must have Hayley voice type');
+  assert.ok(envExample.includes('en_female_natasha_uranus_bigtts'),
+    '.env.example must have Natasha voice type');
   assert.ok(!envExample.includes('your_voice_type_here'),
     '.env.example must not have placeholder voice type');
 });
@@ -522,12 +526,12 @@ test('frontend script.js manifest loading is compatible with V2 structure', () =
   assert.ok(scriptSource.includes('localAudioEl.play'),
     'script.js must play local MP3');
 
-  // Frontend falls back to speechSynthesis
-  assert.ok(scriptSource.includes('speechSynthesis.speak'),
-    'script.js must have speechSynthesis fallback');
+  // Frontend must not fall back to browser/system TTS for words without generated MP3.
+  assert.ok(!scriptSource.includes('speechSynthesis.speak'),
+    'script.js must not fall back to browser/system speechSynthesis');
 
   // Frontend ducks BGM during local playback
-  assert.ok(scriptSource.includes('mapMusic.volume = 0.12'),
+  assert.ok(scriptSource.includes('mapMusic.volume = MAP_MUSIC_DUCK_VOLUME'),
     'script.js must duck BGM');
 });
 
@@ -542,9 +546,12 @@ test('generated manifest has correct entry count coverage', () => {
 
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 
-  // Must have all 100 entries
+  // Manifest must match the current 200-level course table.
   assert.equal(manifest.version, '2.0', 'Manifest version must be 2.0');
   assert.ok(Array.isArray(manifest.entries), 'Must have entries array');
+  assert.equal(manifest.entries.length, 200, 'Manifest must cover all unique current words');
+  assert.equal(manifest.summary.total, 200, 'Manifest summary total must cover unique current words');
+  assert.equal(manifest.summary.levels, 200, 'Manifest summary levels must cover 200 levels');
 
   // Verify structure
   manifest.entries.forEach((entry) => {
@@ -558,4 +565,7 @@ test('generated manifest has correct entry count coverage', () => {
       assert.ok(entry.size_bytes > 0, 'Generated entries must have size > 0');
     }
   });
+
+  const generatedCount = manifest.entries.filter((entry) => entry.status === 'generated').length;
+  assert.equal(manifest.summary.available, generatedCount, 'Available count must only include generated local MP3');
 });

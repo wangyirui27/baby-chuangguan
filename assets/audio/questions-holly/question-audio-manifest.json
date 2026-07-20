@@ -1,0 +1,2016 @@
+{
+  "version": "20260719-question-200-nouns-v2",
+  "speaker": "zh_female_peiqi_uranus_bigtts",
+  "resource_id": "seed-tts-2.0",
+  "generated_at": "2026-07-19T06:17:09.242Z",
+  "entries": [
+    {
+      "level": 1,
+      "word": "mom",
+      "zh": "妈妈",
+      "text": "小朋友，视频里学到的单词，哪一个是妈妈的意思？",
+      "file": "assets/audio/questions-holly/level-01-mom.mp3",
+      "status": "generated",
+      "size": 40749,
+      "sha256": "8a4d85f60c82ce7625aa50c322e962b07b01680e6106900f945c56eb7194c045"
+    },
+    {
+      "level": 2,
+      "word": "dad",
+      "zh": "爸爸",
+      "text": "小朋友，视频里学到的单词，哪一个是爸爸的意思？",
+      "file": "assets/audio/questions-holly/level-02-dad.mp3",
+      "status": "generated",
+      "size": 42669,
+      "sha256": "c09ef4b726a42287e03f6c06b6229b0f12600af37592b915f0054ce3c205d587"
+    },
+    {
+      "level": 3,
+      "word": "grandma",
+      "zh": "奶奶",
+      "text": "小朋友，视频里学到的单词，哪一个是奶奶的意思？",
+      "file": "assets/audio/questions-holly/level-03-grandma.mp3",
+      "status": "generated",
+      "size": 40749,
+      "sha256": "4be9e1edcb6074e2ab0789021b854b703ed4a6a3577df08dc4f20bf8a53621d2"
+    },
+    {
+      "level": 4,
+      "word": "grandpa",
+      "zh": "爷爷",
+      "text": "小朋友，视频里学到的单词，哪一个是爷爷的意思？",
+      "file": "assets/audio/questions-holly/level-04-grandpa.mp3",
+      "status": "generated",
+      "size": 40749,
+      "sha256": "5a610e81e89c664909792155a706cf7139c68b93a8fe5562f3355354ea59342b"
+    },
+    {
+      "level": 5,
+      "word": "hand",
+      "zh": "手",
+      "text": "小朋友，视频里学到的单词，哪一个是手的意思？",
+      "file": "assets/audio/questions-holly/level-05-hand.mp3",
+      "status": "generated",
+      "size": 39213,
+      "sha256": "c8d14ed9ededbb7097b598f883b0f7d3a0a9d37e4b9c0684c514af79d68b7fea"
+    },
+    {
+      "level": 6,
+      "word": "rice",
+      "zh": "饭",
+      "text": "小朋友，视频里学到的单词，哪一个是饭的意思？",
+      "file": "assets/audio/questions-holly/level-06-rice.mp3",
+      "status": "generated",
+      "size": 40749,
+      "sha256": "f3897b58f733ab8a3d9455c07d0e1bdb003ed68e5b22e90d22035884563bee46"
+    },
+    {
+      "level": 7,
+      "word": "water",
+      "zh": "水",
+      "text": "小朋友，视频里学到的单词，哪一个是水的意思？",
+      "file": "assets/audio/questions-holly/level-07-water.mp3",
+      "status": "generated",
+      "size": 39213,
+      "sha256": "71d1d41383e4062cf2b9cd26a3248eacf447aa1be029d15739b53d96044ffdcc"
+    },
+    {
+      "level": 8,
+      "word": "car",
+      "zh": "车",
+      "text": "小朋友，视频里学到的单词，哪一个是车的意思？",
+      "file": "assets/audio/questions-holly/level-08-car.mp3",
+      "status": "generated",
+      "size": 39213,
+      "sha256": "02f4212b3fae0968467b711d105b6f21786b307513ce420ccc96945996446892"
+    },
+    {
+      "level": 9,
+      "word": "dog",
+      "zh": "狗",
+      "text": "小朋友，视频里学到的单词，哪一个是狗的意思？",
+      "file": "assets/audio/questions-holly/level-09-dog.mp3",
+      "status": "generated",
+      "size": 39213,
+      "sha256": "82d6a3171b49efa675d8f25cb8d522e4829edc844efd1d0ee9ea3dacc073db7f"
+    },
+    {
+      "level": 10,
+      "word": "book",
+      "zh": "书",
+      "text": "小朋友，视频里学到的单词，哪一个是书的意思？",
+      "file": "assets/audio/questions-holly/level-10-book.mp3",
+      "status": "generated",
+      "size": 39213,
+      "sha256": "8f145dcd97c95a5880376637af5e62c5ba38acadd912aa962259e2a182a425a8"
+    },
+    {
+      "level": 11,
+      "word": "pear",
+      "zh": "梨",
+      "text": "小朋友，视频里学到的单词，哪一个是梨的意思？",
+      "file": "assets/audio/questions-holly/level-11-pear.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "8f844cadf16653a022baf5d2971a8d3afd27c1e6a6fb393ece8f47599b93f7c7"
+    },
+    {
+      "level": 12,
+      "word": "grape",
+      "zh": "葡萄",
+      "text": "小朋友，视频里学到的单词，哪一个是葡萄的意思？",
+      "file": "assets/audio/questions-holly/level-12-grape.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "82b97b5c07be2796542498a019d13e0663faa5d4b154697a7562a3ac136a303c"
+    },
+    {
+      "level": 13,
+      "word": "peach",
+      "zh": "桃子",
+      "text": "小朋友，视频里学到的单词，哪一个是桃子的意思？",
+      "file": "assets/audio/questions-holly/level-13-peach.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "7ff3502c23c79886f2188d89397de216b35b0bd08cc218599298d1d3729465d6"
+    },
+    {
+      "level": 14,
+      "word": "watermelon",
+      "zh": "西瓜",
+      "text": "小朋友，视频里学到的单词，哪一个是西瓜的意思？",
+      "file": "assets/audio/questions-holly/level-14-watermelon.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "ea3600ad857905d4e9c6998b3ba53246f8e70b0ef1832730c31875dd87c514b0"
+    },
+    {
+      "level": 15,
+      "word": "mango",
+      "zh": "芒果",
+      "text": "小朋友，视频里学到的单词，哪一个是芒果的意思？",
+      "file": "assets/audio/questions-holly/level-15-mango.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "2c94f7b35d378549fba662ca78d5527a5b4d826dc86720b38d50c81b0a3ff0a3"
+    },
+    {
+      "level": 16,
+      "word": "pineapple",
+      "zh": "菠萝",
+      "text": "小朋友，视频里学到的单词，哪一个是菠萝的意思？",
+      "file": "assets/audio/questions-holly/level-16-pineapple.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "453d1173b13c0c89c203ea9825f3ff70ab3eddc301cecdd4bb069d76446385a6"
+    },
+    {
+      "level": 17,
+      "word": "lemon",
+      "zh": "柠檬",
+      "text": "小朋友，视频里学到的单词，哪一个是柠檬的意思？",
+      "file": "assets/audio/questions-holly/level-17-lemon.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "a70decb7ec6657291c6d17636e4faa4357329c687f360f950ca7e1794261e84a"
+    },
+    {
+      "level": 18,
+      "word": "cherry",
+      "zh": "樱桃",
+      "text": "小朋友，视频里学到的单词，哪一个是樱桃的意思？",
+      "file": "assets/audio/questions-holly/level-18-cherry.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "2e3ac4928646698923e81b51e966c69f7217862c8af72b61dd7d9ba45c28db35"
+    },
+    {
+      "level": 19,
+      "word": "kiwi",
+      "zh": "猕猴桃",
+      "text": "小朋友，视频里学到的单词，哪一个是猕猴桃的意思？",
+      "file": "assets/audio/questions-holly/level-19-kiwi.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "f9656e37fdcc8e8fd5ac8456d9d0b07f0c9742cc664833b260458e07d59bb9b5"
+    },
+    {
+      "level": 20,
+      "word": "coconut",
+      "zh": "椰子",
+      "text": "小朋友，视频里学到的单词，哪一个是椰子的意思？",
+      "file": "assets/audio/questions-holly/level-20-coconut.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "85cec4bfd224829a914d5b2187f233a5900c4982ba0b82c996b9942bacba03e4"
+    },
+    {
+      "level": 21,
+      "word": "cat",
+      "zh": "小猫",
+      "text": "小朋友，视频里学到的单词，哪一个是小猫的意思？",
+      "file": "assets/audio/questions-holly/level-21-cat.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "185f2690e14351a41b543c054e4a82862f12499008fc5a6491c621c5247098ed"
+    },
+    {
+      "level": 22,
+      "word": "dog",
+      "zh": "小狗",
+      "text": "小朋友，视频里学到的单词，哪一个是小狗的意思？",
+      "file": "assets/audio/questions-holly/level-22-dog.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "7e5206c980d17f6769a1365a435b3668ce6562833e0e15abc0d3ed9af058ffbc"
+    },
+    {
+      "level": 23,
+      "word": "bird",
+      "zh": "小鸟",
+      "text": "小朋友，视频里学到的单词，哪一个是小鸟的意思？",
+      "file": "assets/audio/questions-holly/level-23-bird.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "af0d683aa6bd1ddc0a0e47e39ba4d56294f9978840d83e82889006bb78717344"
+    },
+    {
+      "level": 24,
+      "word": "fish",
+      "zh": "小鱼",
+      "text": "小朋友，视频里学到的单词，哪一个是小鱼的意思？",
+      "file": "assets/audio/questions-holly/level-24-fish.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "1fe18d927c333707af837016890bdabaa63a030f662ea03acbb68ddd56eebb4f"
+    },
+    {
+      "level": 25,
+      "word": "duck",
+      "zh": "鸭子",
+      "text": "小朋友，视频里学到的单词，哪一个是鸭子的意思？",
+      "file": "assets/audio/questions-holly/level-25-duck.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "e764caa59bc4efa200d1b1f9d4f8f2d19653b5ffcd416f428155363150400567"
+    },
+    {
+      "level": 26,
+      "word": "rabbit",
+      "zh": "兔子",
+      "text": "小朋友，视频里学到的单词，哪一个是兔子的意思？",
+      "file": "assets/audio/questions-holly/level-26-rabbit.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "0ae7b3bc4296415c4390bd63c097a477da652658df981e6b5ce5cbcda634dd26"
+    },
+    {
+      "level": 27,
+      "word": "panda",
+      "zh": "熊猫",
+      "text": "小朋友，视频里学到的单词，哪一个是熊猫的意思？",
+      "file": "assets/audio/questions-holly/level-27-panda.mp3",
+      "status": "generated",
+      "size": 37101,
+      "sha256": "ffcf7196ca2dce64382ddd9d25781088d107c2042e4b3fa89632aa66122b1958"
+    },
+    {
+      "level": 28,
+      "word": "tiger",
+      "zh": "老虎",
+      "text": "小朋友，视频里学到的单词，哪一个是老虎的意思？",
+      "file": "assets/audio/questions-holly/level-28-tiger.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "da02312ed2e46ea782e3ddc3edd0cb56585e3a32c12c50b6de8192adf4e76b63"
+    },
+    {
+      "level": 29,
+      "word": "lion",
+      "zh": "狮子",
+      "text": "小朋友，视频里学到的单词，哪一个是狮子的意思？",
+      "file": "assets/audio/questions-holly/level-29-lion.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "db6a1276380e26b70aad20d2b6ef04eb833818b1e8daa81ab7e44516f6f86561"
+    },
+    {
+      "level": 30,
+      "word": "monkey",
+      "zh": "猴子",
+      "text": "小朋友，视频里学到的单词，哪一个是猴子的意思？",
+      "file": "assets/audio/questions-holly/level-30-monkey.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "c88677a0fa8f9211cb4e762d99984ecf364af7aa53e7d943d9923ddee5cb7467"
+    },
+    {
+      "level": 31,
+      "word": "porridge",
+      "zh": "粥",
+      "text": "小朋友，视频里学到的单词，哪一个是粥的意思？",
+      "file": "assets/audio/questions-holly/level-31-porridge.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "c13c06436086ef0ba5500f4d091b782a0e75e2602399276129c5cc18f909e8cf"
+    },
+    {
+      "level": 32,
+      "word": "dumpling",
+      "zh": "饺子",
+      "text": "小朋友，视频里学到的单词，哪一个是饺子的意思？",
+      "file": "assets/audio/questions-holly/level-32-dumpling.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "a670a40dbeebd508ccd0be17eeec553ad7551c31ecec75a9fc4cc41d8b66464c"
+    },
+    {
+      "level": 33,
+      "word": "bun",
+      "zh": "包子",
+      "text": "小朋友，视频里学到的单词，哪一个是包子的意思？",
+      "file": "assets/audio/questions-holly/level-33-bun.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "219b665d45f9011828d51a9fd7cf64b8d281473beb19583952a10794c96468e4"
+    },
+    {
+      "level": 34,
+      "word": "corn",
+      "zh": "玉米",
+      "text": "小朋友，视频里学到的单词，哪一个是玉米的意思？",
+      "file": "assets/audio/questions-holly/level-34-corn.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "7edc6a63dd838120cf5e9942310c0ced92ecb99a3dd7681b2e649fe9254b51ab"
+    },
+    {
+      "level": 35,
+      "word": "beef",
+      "zh": "牛肉",
+      "text": "小朋友，视频里学到的单词，哪一个是牛肉的意思？",
+      "file": "assets/audio/questions-holly/level-35-beef.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "f9fafe77bc924d8e33c812feb68cc0adba50a2d253861e81cb4294a4146a7bcc"
+    },
+    {
+      "level": 36,
+      "word": "pork",
+      "zh": "猪肉",
+      "text": "小朋友，视频里学到的单词，哪一个是猪肉的意思？",
+      "file": "assets/audio/questions-holly/level-36-pork.mp3",
+      "status": "generated",
+      "size": 37485,
+      "sha256": "6e839a24edaa48e4065ac9b6214debf97837a81332037d3bcd5e9ccf3ea60ee4"
+    },
+    {
+      "level": 37,
+      "word": "shrimp",
+      "zh": "虾",
+      "text": "小朋友，视频里学到的单词，哪一个是虾的意思？",
+      "file": "assets/audio/questions-holly/level-37-shrimp.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "4cdd42868ba37cf970076a1be360a4e44584f904d69d74aadff512802b44f8cf"
+    },
+    {
+      "level": 38,
+      "word": "vegetable",
+      "zh": "蔬菜",
+      "text": "小朋友，视频里学到的单词，哪一个是蔬菜的意思？",
+      "file": "assets/audio/questions-holly/level-38-vegetable.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "215923dd0b024f073461c8a8f02316b012ea0650696d855f7fed2e4226886e39"
+    },
+    {
+      "level": 39,
+      "word": "mushroom",
+      "zh": "蘑菇",
+      "text": "小朋友，视频里学到的单词，哪一个是蘑菇的意思？",
+      "file": "assets/audio/questions-holly/level-39-mushroom.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "1bf4998f158e64e3d7f32537a8d781f43e4c809daf55c2773b30e4e4e7a88059"
+    },
+    {
+      "level": 40,
+      "word": "sandwich",
+      "zh": "三明治",
+      "text": "小朋友，视频里学到的单词，哪一个是三明治的意思？",
+      "file": "assets/audio/questions-holly/level-40-sandwich.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "13ee6e9e4012c45adc975d8924c2055125b0e738e22443beb1a2b54acd032676"
+    },
+    {
+      "level": 41,
+      "word": "mom",
+      "zh": "妈妈",
+      "text": "小朋友，视频里学到的单词，哪一个是妈妈的意思？",
+      "file": "assets/audio/questions-holly/level-41-mom.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "b8001a5bbdefc850389d6d18e8cdc1362ed43f43284654ef0b31aacc8af01c50"
+    },
+    {
+      "level": 42,
+      "word": "dad",
+      "zh": "爸爸",
+      "text": "小朋友，视频里学到的单词，哪一个是爸爸的意思？",
+      "file": "assets/audio/questions-holly/level-42-dad.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "c569095527397186e56ee5a0c09865719421077c2b4bd2c5947f60df00d0c20f"
+    },
+    {
+      "level": 43,
+      "word": "baby",
+      "zh": "宝宝",
+      "text": "小朋友，视频里学到的单词，哪一个是宝宝的意思？",
+      "file": "assets/audio/questions-holly/level-43-baby.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "c35b8ffce3fa4742da0c8d2b47eba0fb1df08db7522d1965326032c87da83211"
+    },
+    {
+      "level": 44,
+      "word": "sister",
+      "zh": "姐姐",
+      "text": "小朋友，视频里学到的单词，哪一个是姐姐的意思？",
+      "file": "assets/audio/questions-holly/level-44-sister.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "e64a7a4f247b1883f0e94f04e1a053bdcd27256ff062386cd29de1b7ff36c7c4"
+    },
+    {
+      "level": 45,
+      "word": "brother",
+      "zh": "哥哥",
+      "text": "小朋友，视频里学到的单词，哪一个是哥哥的意思？",
+      "file": "assets/audio/questions-holly/level-45-brother.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "105be1c49534c0cf2b831bf5d3f254ddabfd85b6e940172bfabdc8a9fc4d9c69"
+    },
+    {
+      "level": 46,
+      "word": "grandma",
+      "zh": "奶奶",
+      "text": "小朋友，视频里学到的单词，哪一个是奶奶的意思？",
+      "file": "assets/audio/questions-holly/level-46-grandma.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "4bf65df50ac83cd79b9973b8b4c672679ae44cbf52b772595cff82a4995d6356"
+    },
+    {
+      "level": 47,
+      "word": "grandpa",
+      "zh": "爷爷",
+      "text": "小朋友，视频里学到的单词，哪一个是爷爷的意思？",
+      "file": "assets/audio/questions-holly/level-47-grandpa.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "4f91f7e497e1088abb408a5eaa5b33831966c02e4feb00335336ae4df7c6925c"
+    },
+    {
+      "level": 48,
+      "word": "family",
+      "zh": "家人",
+      "text": "小朋友，视频里学到的单词，哪一个是家人的意思？",
+      "file": "assets/audio/questions-holly/level-48-family.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "c11caa54e29e159eeb635c6fa9e1da3782eb6704972b059eee5b8197cf62089d"
+    },
+    {
+      "level": 49,
+      "word": "home",
+      "zh": "家",
+      "text": "小朋友，视频里学到的单词，哪一个是家的意思？",
+      "file": "assets/audio/questions-holly/level-49-home.mp3",
+      "status": "generated",
+      "size": 37485,
+      "sha256": "ccd051f7115a5a700f1c70cebff71c0b80559650524f0f780e80594a6ba06417"
+    },
+    {
+      "level": 50,
+      "word": "aunt",
+      "zh": "阿姨",
+      "text": "小朋友，视频里学到的单词，哪一个是阿姨的意思？",
+      "file": "assets/audio/questions-holly/level-50-aunt.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "e1f71a4683a410cc23e32f698dbdd561d55169b095835590a948180ee132ec47"
+    },
+    {
+      "level": 51,
+      "word": "apple",
+      "zh": "苹果",
+      "text": "小朋友，视频里学到的单词，哪一个是苹果的意思？",
+      "file": "assets/audio/questions-holly/level-51-apple.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "aebdf0fde6e47ac21bde62d92a95ae005131f2085fd82c170fe6b7c03ae70313"
+    },
+    {
+      "level": 52,
+      "word": "banana",
+      "zh": "香蕉",
+      "text": "小朋友，视频里学到的单词，哪一个是香蕉的意思？",
+      "file": "assets/audio/questions-holly/level-52-banana.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "09e8f04a5f9b3cd624043b425d4f964ec338f09d9fd1a6fda912df762f3a9afa"
+    },
+    {
+      "level": 53,
+      "word": "milk",
+      "zh": "牛奶",
+      "text": "小朋友，视频里学到的单词，哪一个是牛奶的意思？",
+      "file": "assets/audio/questions-holly/level-53-milk.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "0657a3fb5f769d22eee4e5e29ee8553689283aee5b3f0e3624fad66f4ca01958"
+    },
+    {
+      "level": 54,
+      "word": "bread",
+      "zh": "面包",
+      "text": "小朋友，视频里学到的单词，哪一个是面包的意思？",
+      "file": "assets/audio/questions-holly/level-54-bread.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "1245cb147b08943ea428ec7b61b05653d518220d13278764dda1eadbff89c87b"
+    },
+    {
+      "level": 55,
+      "word": "egg",
+      "zh": "鸡蛋",
+      "text": "小朋友，视频里学到的单词，哪一个是鸡蛋的意思？",
+      "file": "assets/audio/questions-holly/level-55-egg.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "a200925990b6b415297441d359c09f5cf8ac97aa0724e61dd890a5a9b2a9fd90"
+    },
+    {
+      "level": 56,
+      "word": "rice",
+      "zh": "米饭",
+      "text": "小朋友，视频里学到的单词，哪一个是米饭的意思？",
+      "file": "assets/audio/questions-holly/level-56-rice.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "076898e59f2c2f9b5d749b4f41c1d8b528d7aa2ba191a60ec7f688402d6a44b3"
+    },
+    {
+      "level": 57,
+      "word": "cake",
+      "zh": "蛋糕",
+      "text": "小朋友，视频里学到的单词，哪一个是蛋糕的意思？",
+      "file": "assets/audio/questions-holly/level-57-cake.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "4040ced52e7d7d9c2660212cf8341f6ed7bd0d266c480dcae18b067f3cda7b84"
+    },
+    {
+      "level": 58,
+      "word": "water",
+      "zh": "水",
+      "text": "小朋友，视频里学到的单词，哪一个是水的意思？",
+      "file": "assets/audio/questions-holly/level-58-water.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "2420cdb391048224c85fa8bcd6f5018d89d3391d59da5a2208dc16f6c50dfa6d"
+    },
+    {
+      "level": 59,
+      "word": "juice",
+      "zh": "果汁",
+      "text": "小朋友，视频里学到的单词，哪一个是果汁的意思？",
+      "file": "assets/audio/questions-holly/level-59-juice.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "f18981cf1034928cb464c600de21637b3f93118c7bfb2839c178afaef440d5ed"
+    },
+    {
+      "level": 60,
+      "word": "cookie",
+      "zh": "饼干",
+      "text": "小朋友，视频里学到的单词，哪一个是饼干的意思？",
+      "file": "assets/audio/questions-holly/level-60-cookie.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "612e818b3d1269e854a64bab0b31feb95794c6cbc4024ed159ac1d34db892809"
+    },
+    {
+      "level": 61,
+      "word": "head",
+      "zh": "头",
+      "text": "小朋友，视频里学到的单词，哪一个是头的意思？",
+      "file": "assets/audio/questions-holly/level-61-head.mp3",
+      "status": "generated",
+      "size": 37485,
+      "sha256": "d264582b751045c6b5c0659608db8062a68ccd706e36984817634816c080e500"
+    },
+    {
+      "level": 62,
+      "word": "eye",
+      "zh": "眼睛",
+      "text": "小朋友，视频里学到的单词，哪一个是眼睛的意思？",
+      "file": "assets/audio/questions-holly/level-62-eye.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "e5cbbd8638041f2bb3a646010d5ebd3799bd5b28942609ad588f37f267c95bf7"
+    },
+    {
+      "level": 63,
+      "word": "ear",
+      "zh": "耳朵",
+      "text": "小朋友，视频里学到的单词，哪一个是耳朵的意思？",
+      "file": "assets/audio/questions-holly/level-63-ear.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "c54b0f82733de221993aab2c179da7ece4e1bd08b4d93a224e32dd00ff88d6a8"
+    },
+    {
+      "level": 64,
+      "word": "nose",
+      "zh": "鼻子",
+      "text": "小朋友，视频里学到的单词，哪一个是鼻子的意思？",
+      "file": "assets/audio/questions-holly/level-64-nose.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "a1e3464b0d59b8baba3a6041501174a8d1f8e6ffae8365f6290a3831e07f409d"
+    },
+    {
+      "level": 65,
+      "word": "mouth",
+      "zh": "嘴巴",
+      "text": "小朋友，视频里学到的单词，哪一个是嘴巴的意思？",
+      "file": "assets/audio/questions-holly/level-65-mouth.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "529bdd74e7ffc1a298f4b4f41bdac6aea193cbd32c46880c69396914b1caf463"
+    },
+    {
+      "level": 66,
+      "word": "hand",
+      "zh": "手",
+      "text": "小朋友，视频里学到的单词，哪一个是手的意思？",
+      "file": "assets/audio/questions-holly/level-66-hand.mp3",
+      "status": "generated",
+      "size": 37485,
+      "sha256": "2ea2e3175dbed0f0aa2f978c3971bbc0fee442407f036d0ffd464cb405525db0"
+    },
+    {
+      "level": 67,
+      "word": "arm",
+      "zh": "手臂",
+      "text": "小朋友，视频里学到的单词，哪一个是手臂的意思？",
+      "file": "assets/audio/questions-holly/level-67-arm.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "9f93a91a1b305b35d8136f4089e1ec9c86d3bc2f4e046a1e2602a472d7de83d3"
+    },
+    {
+      "level": 68,
+      "word": "leg",
+      "zh": "腿",
+      "text": "小朋友，视频里学到的单词，哪一个是腿的意思？",
+      "file": "assets/audio/questions-holly/level-68-leg.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "25a0adedb22bce0447552a8900dc0ee7b29eb8ab13f342f379ad015fd69a8673"
+    },
+    {
+      "level": 69,
+      "word": "foot",
+      "zh": "脚",
+      "text": "小朋友，视频里学到的单词，哪一个是脚的意思？",
+      "file": "assets/audio/questions-holly/level-69-foot.mp3",
+      "status": "generated",
+      "size": 37485,
+      "sha256": "af031775d9d8f97c7f04c42f20a81a0658dbae9e77f2afd7a09e1c11657c9df5"
+    },
+    {
+      "level": 70,
+      "word": "body",
+      "zh": "身体",
+      "text": "小朋友，视频里学到的单词，哪一个是身体的意思？",
+      "file": "assets/audio/questions-holly/level-70-body.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "1d8b738d2880466ba47f4c2d88aea7bc29d1ce0ea62607beb00d1c2f5819242d"
+    },
+    {
+      "level": 71,
+      "word": "sun",
+      "zh": "太阳",
+      "text": "小朋友，视频里学到的单词，哪一个是太阳的意思？",
+      "file": "assets/audio/questions-holly/level-71-sun.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "0f0ff6c27436bb5c42ef6e653e5b1a4382a25b44e6286062688cf09b10cff253"
+    },
+    {
+      "level": 72,
+      "word": "moon",
+      "zh": "月亮",
+      "text": "小朋友，视频里学到的单词，哪一个是月亮的意思？",
+      "file": "assets/audio/questions-holly/level-72-moon.mp3",
+      "status": "generated",
+      "size": 37485,
+      "sha256": "c1a8a7f9be8d44fee346b93b17bc79f10f04b0db53e9c7ddc6ae7bcd3512e55e"
+    },
+    {
+      "level": 73,
+      "word": "star",
+      "zh": "星星",
+      "text": "小朋友，视频里学到的单词，哪一个是星星的意思？",
+      "file": "assets/audio/questions-holly/level-73-star.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "8103ebb612c50a0998b005853c5a83520203cc722ad5ca1956966bc3d3c6273c"
+    },
+    {
+      "level": 74,
+      "word": "cloud",
+      "zh": "云",
+      "text": "小朋友，视频里学到的单词，哪一个是云的意思？",
+      "file": "assets/audio/questions-holly/level-74-cloud.mp3",
+      "status": "generated",
+      "size": 39021,
+      "sha256": "0f5c372a319292833ed2a1fd7575f846f235fa549c7e53eea7d09c9334c8beb6"
+    },
+    {
+      "level": 75,
+      "word": "rain",
+      "zh": "雨",
+      "text": "小朋友，视频里学到的单词，哪一个是雨的意思？",
+      "file": "assets/audio/questions-holly/level-75-rain.mp3",
+      "status": "generated",
+      "size": 37485,
+      "sha256": "27224ec7b41aaf1381e112845a5097599fe6224d6f1092aade096dda83595da0"
+    },
+    {
+      "level": 76,
+      "word": "wind",
+      "zh": "风",
+      "text": "小朋友，视频里学到的单词，哪一个是风的意思？",
+      "file": "assets/audio/questions-holly/level-76-wind.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "441b49a964990c25cfad0f621c8dc153bcb5c9af9ba3c737eafaa0aceb2aaf29"
+    },
+    {
+      "level": 77,
+      "word": "snow",
+      "zh": "雪",
+      "text": "小朋友，视频里学到的单词，哪一个是雪的意思？",
+      "file": "assets/audio/questions-holly/level-77-snow.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "f6c314bfbc73adce0317162ac9c329a4026aafa86b91d715f43d487ac41085b8"
+    },
+    {
+      "level": 78,
+      "word": "tree",
+      "zh": "树",
+      "text": "小朋友，视频里学到的单词，哪一个是树的意思？",
+      "file": "assets/audio/questions-holly/level-78-tree.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "3ddf5e406053384116c4932efebfa052c0488cfd26f8fe97c4fb323ac3b5b486"
+    },
+    {
+      "level": 79,
+      "word": "grass",
+      "zh": "草地",
+      "text": "小朋友，视频里学到的单词，哪一个是草地的意思？",
+      "file": "assets/audio/questions-holly/level-79-grass.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "e0d497e79c4b65e2e8dd7b328cb9334ad21b434d8773fce51df0469a0f35337c"
+    },
+    {
+      "level": 80,
+      "word": "sky",
+      "zh": "天空",
+      "text": "小朋友，视频里学到的单词，哪一个是天空的意思？",
+      "file": "assets/audio/questions-holly/level-80-sky.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "1c85ed7b8cb19edbd3d53ab83173648a5487abbaac8c3ae6eb8f1c2efa5489c0"
+    },
+    {
+      "level": 81,
+      "word": "desk",
+      "zh": "书桌",
+      "text": "小朋友，视频里学到的单词，哪一个是书桌的意思？",
+      "file": "assets/audio/questions-holly/level-81-desk.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "f32020ad4cdec9f258a3934b010c283cf1ed15105b663b505fb9b459c30f49d8"
+    },
+    {
+      "level": 82,
+      "word": "drawer",
+      "zh": "抽屉",
+      "text": "小朋友，视频里学到的单词，哪一个是抽屉的意思？",
+      "file": "assets/audio/questions-holly/level-82-drawer.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "08b34482682a7c3070d76c186284ca1d686379c00d5f6940bfcce2cb56712215"
+    },
+    {
+      "level": 83,
+      "word": "lamp",
+      "zh": "台灯",
+      "text": "小朋友，视频里学到的单词，哪一个是台灯的意思？",
+      "file": "assets/audio/questions-holly/level-83-lamp.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "255d6917e2f8df2523c87cfb157c5a42970dd2cac2f334afc4170d5a224025ad"
+    },
+    {
+      "level": 84,
+      "word": "rug",
+      "zh": "地毯",
+      "text": "小朋友，视频里学到的单词，哪一个是地毯的意思？",
+      "file": "assets/audio/questions-holly/level-84-rug.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "a09fb781cf8103fd22f4ea2717f71e88b639b58f191bd619484459a3b41f93b2"
+    },
+    {
+      "level": 85,
+      "word": "curtain",
+      "zh": "窗帘",
+      "text": "小朋友，视频里学到的单词，哪一个是窗帘的意思？",
+      "file": "assets/audio/questions-holly/level-85-curtain.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "ba46f8353cf9b8690d2c5fe6adefad5d67846aec6576651b06002c10f075b693"
+    },
+    {
+      "level": 86,
+      "word": "remote",
+      "zh": "遥控器",
+      "text": "小朋友，视频里学到的单词，哪一个是遥控器的意思？",
+      "file": "assets/audio/questions-holly/level-86-remote.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "4d8e9d47ed1121f8a64413502b735a800f67a7d29202f79506945e4c51b9c7bf"
+    },
+    {
+      "level": 87,
+      "word": "key",
+      "zh": "钥匙",
+      "text": "小朋友，视频里学到的单词，哪一个是钥匙的意思？",
+      "file": "assets/audio/questions-holly/level-87-key.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "0b0dcc28eadaccb8cd5e72b22f557c282dc119f3bfb31910a460134fa429d800"
+    },
+    {
+      "level": 88,
+      "word": "phone",
+      "zh": "手机",
+      "text": "小朋友，视频里学到的单词，哪一个是手机的意思？",
+      "file": "assets/audio/questions-holly/level-88-phone.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "136225c73e16261adffa75ed51ff312579d5dafbbf93ef8b6529d320e48e95cb"
+    },
+    {
+      "level": 89,
+      "word": "box",
+      "zh": "盒子",
+      "text": "小朋友，视频里学到的单词，哪一个是盒子的意思？",
+      "file": "assets/audio/questions-holly/level-89-box.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "360a53c4c86c69ce82b83c91f2ce8951d716b14eaf8aa6fe80840cd1cd518d3e"
+    },
+    {
+      "level": 90,
+      "word": "trash can",
+      "zh": "垃圾桶",
+      "text": "小朋友，视频里学到的单词，哪一个是垃圾桶的意思？",
+      "file": "assets/audio/questions-holly/level-90-trash-can.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "784b06cc33b6d6cf3b8cccf2404f27105e6adbe7edb0b9bc27d6f0edf34e1f4d"
+    },
+    {
+      "level": 91,
+      "word": "book",
+      "zh": "书",
+      "text": "小朋友，视频里学到的单词，哪一个是书的意思？",
+      "file": "assets/audio/questions-holly/level-91-book.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "e8132fe4ea4da26d1d8d51850193e2193110ac6f9463e2f8eaf7634ba83be030"
+    },
+    {
+      "level": 92,
+      "word": "ball",
+      "zh": "球",
+      "text": "小朋友，视频里学到的单词，哪一个是球的意思？",
+      "file": "assets/audio/questions-holly/level-92-ball.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "9e1826c3dda2763a628bdde34c3161ba8c67520990a3f5b5ca2d894658fca880"
+    },
+    {
+      "level": 93,
+      "word": "car",
+      "zh": "汽车",
+      "text": "小朋友，视频里学到的单词，哪一个是汽车的意思？",
+      "file": "assets/audio/questions-holly/level-93-car.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "86f3db1cb69b9eaab2f6ace6df073f17e04c0a89f835941420a227fe9d3c981d"
+    },
+    {
+      "level": 94,
+      "word": "bed",
+      "zh": "床",
+      "text": "小朋友，视频里学到的单词，哪一个是床的意思？",
+      "file": "assets/audio/questions-holly/level-94-bed.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "7e8f2ba6ea46ef6c9b490e2fb02bf5ea1390b368f2b3b7cc8cad1208959c6a7c"
+    },
+    {
+      "level": 95,
+      "word": "chair",
+      "zh": "椅子",
+      "text": "小朋友，视频里学到的单词，哪一个是椅子的意思？",
+      "file": "assets/audio/questions-holly/level-95-chair.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "63e70bed178b2633fa36fa17cd550e478b103af6bd582703d053d0bb25431b30"
+    },
+    {
+      "level": 96,
+      "word": "table",
+      "zh": "桌子",
+      "text": "小朋友，视频里学到的单词，哪一个是桌子的意思？",
+      "file": "assets/audio/questions-holly/level-96-table.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "9780c632372cd8ed3477d8037ff7c1264b123a9a6564d02f299a628ea3ed821e"
+    },
+    {
+      "level": 97,
+      "word": "shirt",
+      "zh": "上衣",
+      "text": "小朋友，视频里学到的单词，哪一个是上衣的意思？",
+      "file": "assets/audio/questions-holly/level-97-shirt.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "0fca073b721ab643bc4c660cd6a666237373617a54c8079ea1f7ff460a6576bd"
+    },
+    {
+      "level": 98,
+      "word": "shoes",
+      "zh": "鞋子",
+      "text": "小朋友，视频里学到的单词，哪一个是鞋子的意思？",
+      "file": "assets/audio/questions-holly/level-98-shoes.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "3d24ca16302aea2266ca38da1dfa921fb457cf87febc82520382ff7d83761261"
+    },
+    {
+      "level": 99,
+      "word": "bubble",
+      "zh": "泡泡",
+      "text": "小朋友，视频里学到的单词，哪一个是泡泡的意思？",
+      "file": "assets/audio/questions-holly/level-99-bubble.mp3",
+      "status": "generated",
+      "size": 37485,
+      "sha256": "df22541ccbf3f1835c8594b1868b06f39da587553120154b0ddeb574cd9842ea"
+    },
+    {
+      "level": 100,
+      "word": "story",
+      "zh": "故事",
+      "text": "小朋友，视频里学到的单词，哪一个是故事的意思？",
+      "file": "assets/audio/questions-holly/level-100-story.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "e07750ac77e0ff71e1a2773e34b95213a9496a1d9ff2ce1e97312450710a8a42"
+    },
+    {
+      "level": 101,
+      "word": "toy",
+      "zh": "玩具",
+      "text": "小朋友，视频里学到的单词，哪一个是玩具的意思？",
+      "file": "assets/audio/questions-holly/level-101-toy.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "3b4b8fc8ee159ed27fe9e29320e0790d7fb284a77dc28d9ed4d97bd504b24da4"
+    },
+    {
+      "level": 102,
+      "word": "doll",
+      "zh": "娃娃",
+      "text": "小朋友，视频里学到的单词，哪一个是娃娃的意思？",
+      "file": "assets/audio/questions-holly/level-102-doll.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "7889a4bdab15b2227ae35d5bf9b479d2395c9725221bec054c982fea2025220a"
+    },
+    {
+      "level": 103,
+      "word": "block",
+      "zh": "积木",
+      "text": "小朋友，视频里学到的单词，哪一个是积木的意思？",
+      "file": "assets/audio/questions-holly/level-103-block.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "791e5bc0d1714f50f0a91b3d5a5644f10576305cc4b7183578bb1abacd7f0477"
+    },
+    {
+      "level": 104,
+      "word": "puzzle",
+      "zh": "拼图",
+      "text": "小朋友，视频里学到的单词，哪一个是拼图的意思？",
+      "file": "assets/audio/questions-holly/level-104-puzzle.mp3",
+      "status": "generated",
+      "size": 39021,
+      "sha256": "591ef1231f57226089847899031e8441e857c7f00ceaf5fb9da30c29f87ebfcc"
+    },
+    {
+      "level": 105,
+      "word": "train",
+      "zh": "火车",
+      "text": "小朋友，视频里学到的单词，哪一个是火车的意思？",
+      "file": "assets/audio/questions-holly/level-105-train.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "a7d9ac97b60cf9504bc5e33151cba983532085302ca163f4f38c52d68ad55645"
+    },
+    {
+      "level": 106,
+      "word": "plane",
+      "zh": "飞机",
+      "text": "小朋友，视频里学到的单词，哪一个是飞机的意思？",
+      "file": "assets/audio/questions-holly/level-106-plane.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "ca6c91c959f6516e4f7879eadd2dc948fdcde037698d857a33a16e14bf6ce1dd"
+    },
+    {
+      "level": 107,
+      "word": "boat",
+      "zh": "小船",
+      "text": "小朋友，视频里学到的单词，哪一个是小船的意思？",
+      "file": "assets/audio/questions-holly/level-107-boat.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "8099fc939d56d026a37596dd808bf62c2c23280b706cee5d65414f2eacd6b4e0"
+    },
+    {
+      "level": 108,
+      "word": "kite",
+      "zh": "风筝",
+      "text": "小朋友，视频里学到的单词，哪一个是风筝的意思？",
+      "file": "assets/audio/questions-holly/level-108-kite.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "968a87d946c3a3788f6023236f8ede5efef18257df84c116b26b40d66885c63b"
+    },
+    {
+      "level": 109,
+      "word": "bike",
+      "zh": "自行车",
+      "text": "小朋友，视频里学到的单词，哪一个是自行车的意思？",
+      "file": "assets/audio/questions-holly/level-109-bike.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "a0ca9aaf8bff68b393cb19ef9aa00dfde924ddf6fa863a76a876d0888cf00781"
+    },
+    {
+      "level": 110,
+      "word": "teddy bear",
+      "zh": "泰迪熊",
+      "text": "小朋友，视频里学到的单词，哪一个是泰迪熊的意思？",
+      "file": "assets/audio/questions-holly/level-110-teddy-bear.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "427091d69f0d270ea64271fe527b71e1f52d409b896d691b397223902837e265"
+    },
+    {
+      "level": 111,
+      "word": "cup",
+      "zh": "杯子",
+      "text": "小朋友，视频里学到的单词，哪一个是杯子的意思？",
+      "file": "assets/audio/questions-holly/level-111-cup.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "af0f77c104bce7c7f44f6f252a64b7a878bc1dc1729aec2a382456495a170199"
+    },
+    {
+      "level": 112,
+      "word": "spoon",
+      "zh": "勺子",
+      "text": "小朋友，视频里学到的单词，哪一个是勺子的意思？",
+      "file": "assets/audio/questions-holly/level-112-spoon.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "5ae7693a7fecbfe972b7033f66e48ffa9038b9a918666d0ce0e21aa16a3e9859"
+    },
+    {
+      "level": 113,
+      "word": "bowl",
+      "zh": "碗",
+      "text": "小朋友，视频里学到的单词，哪一个是碗的意思？",
+      "file": "assets/audio/questions-holly/level-113-bowl.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "52fc40ecd04ff01e0c8cc2c90c292fa611064a44d1d67fe96b97ee0f38b1fb33"
+    },
+    {
+      "level": 114,
+      "word": "plate",
+      "zh": "盘子",
+      "text": "小朋友，视频里学到的单词，哪一个是盘子的意思？",
+      "file": "assets/audio/questions-holly/level-114-plate.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "98e4176fc2089b8c3322d34cd315a8de822024eff4303383db21ea4cc9ed3a6e"
+    },
+    {
+      "level": 115,
+      "word": "fork",
+      "zh": "叉子",
+      "text": "小朋友，视频里学到的单词，哪一个是叉子的意思？",
+      "file": "assets/audio/questions-holly/level-115-fork.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "51b4e94d80f6c0aa7bef708ca1281a7c1e8163a1a6580a3f5ee4cc20bf74ff94"
+    },
+    {
+      "level": 116,
+      "word": "chopsticks",
+      "zh": "筷子",
+      "text": "小朋友，视频里学到的单词，哪一个是筷子的意思？",
+      "file": "assets/audio/questions-holly/level-116-chopsticks.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "5d0a3080e75ce0b2e6680d8a20e7eb0d5d6948383ff2b9d98b21911143014f1d"
+    },
+    {
+      "level": 117,
+      "word": "bottle",
+      "zh": "瓶子",
+      "text": "小朋友，视频里学到的单词，哪一个是瓶子的意思？",
+      "file": "assets/audio/questions-holly/level-117-bottle.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "9d431713caf31f51d68bc51e55ccd8f8318d04744daacc554971f7efbaa53f92"
+    },
+    {
+      "level": 118,
+      "word": "snack",
+      "zh": "零食",
+      "text": "小朋友，视频里学到的单词，哪一个是零食的意思？",
+      "file": "assets/audio/questions-holly/level-118-snack.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "14a2fd65e31318c343cabda89e83889692e3238b3e1fb80fa339ef43980ca30c"
+    },
+    {
+      "level": 119,
+      "word": "noodle",
+      "zh": "面条",
+      "text": "小朋友，视频里学到的单词，哪一个是面条的意思？",
+      "file": "assets/audio/questions-holly/level-119-noodle.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "4b10e8361656e5d9ac3d0f5f8ecd9090b4ff434704e82b82c1c84a1a348a4c38"
+    },
+    {
+      "level": 120,
+      "word": "soup",
+      "zh": "汤",
+      "text": "小朋友，视频里学到的单词，哪一个是汤的意思？",
+      "file": "assets/audio/questions-holly/level-120-soup.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "a22b7f6726377c337b79ed0d4fb2b3b698727b3451da1c6055024e0d98b5ee27"
+    },
+    {
+      "level": 121,
+      "word": "door",
+      "zh": "门",
+      "text": "小朋友，视频里学到的单词，哪一个是门的意思？",
+      "file": "assets/audio/questions-holly/level-121-door.mp3",
+      "status": "generated",
+      "size": 37485,
+      "sha256": "aa5c51f931e5d37eaa45baf7d4747d9641624c211e4baa9bb33e90056018e6a9"
+    },
+    {
+      "level": 122,
+      "word": "window",
+      "zh": "窗户",
+      "text": "小朋友，视频里学到的单词，哪一个是窗户的意思？",
+      "file": "assets/audio/questions-holly/level-122-window.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "918ed292d8d1fa4f387ac93e8527c47289614bbbbf5395338f6ab524dd61a69b"
+    },
+    {
+      "level": 123,
+      "word": "light",
+      "zh": "灯",
+      "text": "小朋友，视频里学到的单词，哪一个是灯的意思？",
+      "file": "assets/audio/questions-holly/level-123-light.mp3",
+      "status": "generated",
+      "size": 37485,
+      "sha256": "90afa6953207d064899ed0b14dfc77595dc9c45af64b8eca3128bac600c6364d"
+    },
+    {
+      "level": 124,
+      "word": "sofa",
+      "zh": "沙发",
+      "text": "小朋友，视频里学到的单词，哪一个是沙发的意思？",
+      "file": "assets/audio/questions-holly/level-124-sofa.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "e891f8a2f12ce319cba7ad3fd598f7b4a04a8a9573c7f80668d11a8f3b5d26dc"
+    },
+    {
+      "level": 125,
+      "word": "pillow",
+      "zh": "枕头",
+      "text": "小朋友，视频里学到的单词，哪一个是枕头的意思？",
+      "file": "assets/audio/questions-holly/level-125-pillow.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "bb9f390453f709361c44aeff544b57472da052b456d9703e44f6dd38bcdb3834"
+    },
+    {
+      "level": 126,
+      "word": "blanket",
+      "zh": "被子",
+      "text": "小朋友，视频里学到的单词，哪一个是被子的意思？",
+      "file": "assets/audio/questions-holly/level-126-blanket.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "2a8d5cc30ffd66ec1672544537c078420429bc2c7c1e6aec097a1f44f17f6a52"
+    },
+    {
+      "level": 127,
+      "word": "clock",
+      "zh": "时钟",
+      "text": "小朋友，视频里学到的单词，哪一个是时钟的意思？",
+      "file": "assets/audio/questions-holly/level-127-clock.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "e418a70f61ec659339a27af297a98027ac531525a05a903d13c6e0c70cf0c7b0"
+    },
+    {
+      "level": 128,
+      "word": "mirror",
+      "zh": "镜子",
+      "text": "小朋友，视频里学到的单词，哪一个是镜子的意思？",
+      "file": "assets/audio/questions-holly/level-128-mirror.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "ebf74061008d9afe2b322a92489d3d61a0c6a42150f9c2fdf5eb623de60eba3f"
+    },
+    {
+      "level": 129,
+      "word": "brush",
+      "zh": "刷子",
+      "text": "小朋友，视频里学到的单词，哪一个是刷子的意思？",
+      "file": "assets/audio/questions-holly/level-129-brush.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "5e51cdb894deb7f5398ff39e6c0004c1d56b88a09d8fb72e44ebc8a5f8e582c3"
+    },
+    {
+      "level": 130,
+      "word": "towel",
+      "zh": "毛巾",
+      "text": "小朋友，视频里学到的单词，哪一个是毛巾的意思？",
+      "file": "assets/audio/questions-holly/level-130-towel.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "979ffbab0c2b4ee462bdbeda521add24bc1bbc563ee52659a603303e0c14c916"
+    },
+    {
+      "level": 131,
+      "word": "hat",
+      "zh": "帽子",
+      "text": "小朋友，视频里学到的单词，哪一个是帽子的意思？",
+      "file": "assets/audio/questions-holly/level-131-hat.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "dc6de9a67cc40c32bb0300289eb46ab4013bd5a0f0d38ab4b5a7bd489d16df44"
+    },
+    {
+      "level": 132,
+      "word": "socks",
+      "zh": "袜子",
+      "text": "小朋友，视频里学到的单词，哪一个是袜子的意思？",
+      "file": "assets/audio/questions-holly/level-132-socks.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "e54dbf09b139371505efeb21b2effe763500c9bb06353be2577ff4ed107552ee"
+    },
+    {
+      "level": 133,
+      "word": "pants",
+      "zh": "裤子",
+      "text": "小朋友，视频里学到的单词，哪一个是裤子的意思？",
+      "file": "assets/audio/questions-holly/level-133-pants.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "bc9f338b082fed313bd5fcce3f3cc3c4323f388a99e31ea2410819a75c2f4fbf"
+    },
+    {
+      "level": 134,
+      "word": "dress",
+      "zh": "裙子",
+      "text": "小朋友，视频里学到的单词，哪一个是裙子的意思？",
+      "file": "assets/audio/questions-holly/level-134-dress.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "2cf031c47d93b1a33a45d9d3e185bd410d7f5de70e3010ba9adc82db27076747"
+    },
+    {
+      "level": 135,
+      "word": "coat",
+      "zh": "外套",
+      "text": "小朋友，视频里学到的单词，哪一个是外套的意思？",
+      "file": "assets/audio/questions-holly/level-135-coat.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "d7bc66c9357058e8576fd48138f168242b34a9adc783c38af25723a837789462"
+    },
+    {
+      "level": 136,
+      "word": "jacket",
+      "zh": "夹克",
+      "text": "小朋友，视频里学到的单词，哪一个是夹克的意思？",
+      "file": "assets/audio/questions-holly/level-136-jacket.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "080de41e8e63462ed8540295906b6e22c68b2883cba62631492ef5eb6c3d6333"
+    },
+    {
+      "level": 137,
+      "word": "bag",
+      "zh": "包",
+      "text": "小朋友，视频里学到的单词，哪一个是包的意思？",
+      "file": "assets/audio/questions-holly/level-137-bag.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "1fbfd3ab5b0f28caadf4570a140b531340494ed5e54203878c28c48f78c7334d"
+    },
+    {
+      "level": 138,
+      "word": "scarf",
+      "zh": "围巾",
+      "text": "小朋友，视频里学到的单词，哪一个是围巾的意思？",
+      "file": "assets/audio/questions-holly/level-138-scarf.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "1b8f5fb99a1b5fc0a55d9a8bfd995f2ab833119a513bd7119e71f6e2df1368a1"
+    },
+    {
+      "level": 139,
+      "word": "gloves",
+      "zh": "手套",
+      "text": "小朋友，视频里学到的单词，哪一个是手套的意思？",
+      "file": "assets/audio/questions-holly/level-139-gloves.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "4642c03515a82483fde1b8a63dbfafce0e4512e10d68137366f244f60386f863"
+    },
+    {
+      "level": 140,
+      "word": "pajamas",
+      "zh": "睡衣",
+      "text": "小朋友，视频里学到的单词，哪一个是睡衣的意思？",
+      "file": "assets/audio/questions-holly/level-140-pajamas.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "ac7232fe912761aaaa8180e64c5f6b8f59e3e49e5f10b6dee1c34c6a531f0e87"
+    },
+    {
+      "level": 141,
+      "word": "toilet",
+      "zh": "马桶",
+      "text": "小朋友，视频里学到的单词，哪一个是马桶的意思？",
+      "file": "assets/audio/questions-holly/level-141-toilet.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "562e0cc92637eef4e31c1b8fbd793ceb251d112265630cc9046d10996729c0c3"
+    },
+    {
+      "level": 142,
+      "word": "sink",
+      "zh": "水池",
+      "text": "小朋友，视频里学到的单词，哪一个是水池的意思？",
+      "file": "assets/audio/questions-holly/level-142-sink.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "e9f5374a4f1c2afb413708bc0260617913efc80223e636a9fc7e5fe9ce34f737"
+    },
+    {
+      "level": 143,
+      "word": "toothbrush",
+      "zh": "牙刷",
+      "text": "小朋友，视频里学到的单词，哪一个是牙刷的意思？",
+      "file": "assets/audio/questions-holly/level-143-toothbrush.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "08f598657be1f2715ae426f1f4c9db55f3467450f9efe624fb1ba2e3b456f556"
+    },
+    {
+      "level": 144,
+      "word": "toothpaste",
+      "zh": "牙膏",
+      "text": "小朋友，视频里学到的单词，哪一个是牙膏的意思？",
+      "file": "assets/audio/questions-holly/level-144-toothpaste.mp3",
+      "status": "generated",
+      "size": 40749,
+      "sha256": "29625aa35e6c23c5a5862d12e484e4be2a787836a367c3ba8178895b9eadb8ea"
+    },
+    {
+      "level": 145,
+      "word": "soap",
+      "zh": "肥皂",
+      "text": "小朋友，视频里学到的单词，哪一个是肥皂的意思？",
+      "file": "assets/audio/questions-holly/level-145-soap.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "fe09d7b5aee3193b76c145e8868c8a9eb56a40d54766a0ef78b4df3cf1c199ec"
+    },
+    {
+      "level": 146,
+      "word": "shampoo",
+      "zh": "洗发水",
+      "text": "小朋友，视频里学到的单词，哪一个是洗发水的意思？",
+      "file": "assets/audio/questions-holly/level-146-shampoo.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "dc32eea2683e7706102edb3bbd069ba956d0724e8795e01ecf43fd45de859dd7"
+    },
+    {
+      "level": 147,
+      "word": "bathtub",
+      "zh": "浴缸",
+      "text": "小朋友，视频里学到的单词，哪一个是浴缸的意思？",
+      "file": "assets/audio/questions-holly/level-147-bathtub.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "7f8894b182902c397e18644581d43cdf65db84918d504741714bec618863a184"
+    },
+    {
+      "level": 148,
+      "word": "comb",
+      "zh": "梳子",
+      "text": "小朋友，视频里学到的单词，哪一个是梳子的意思？",
+      "file": "assets/audio/questions-holly/level-148-comb.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "8a1cf1169cdd2454c64c874cbef36c380a32042a03e912306a6f4ecccaf63720"
+    },
+    {
+      "level": 149,
+      "word": "diaper",
+      "zh": "尿布",
+      "text": "小朋友，视频里学到的单词，哪一个是尿布的意思？",
+      "file": "assets/audio/questions-holly/level-149-diaper.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "4d5bd970f37864c205b3c67d6b4c60b445af13c770be9be5001c0ba12f7c431e"
+    },
+    {
+      "level": 150,
+      "word": "tissue",
+      "zh": "纸巾",
+      "text": "小朋友，视频里学到的单词，哪一个是纸巾的意思？",
+      "file": "assets/audio/questions-holly/level-150-tissue.mp3",
+      "status": "generated",
+      "size": 39021,
+      "sha256": "355e00c9b79d6ee01db4ea27d0f28329db518436010abd17d11eb97ed29874bc"
+    },
+    {
+      "level": 151,
+      "word": "ice cream",
+      "zh": "冰激凌",
+      "text": "小朋友，视频里学到的单词，哪一个是冰激凌的意思？",
+      "file": "assets/audio/questions-holly/level-151-ice-cream.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "bb50be1ad21b21af603b3ae44435be2d8f5e4420fb13a10258aa1baa074ad0e8"
+    },
+    {
+      "level": 152,
+      "word": "yogurt",
+      "zh": "酸奶",
+      "text": "小朋友，视频里学到的单词，哪一个是酸奶的意思？",
+      "file": "assets/audio/questions-holly/level-152-yogurt.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "2056880de05ec1b493c1447f163d063e5d848f8231b6e30b40020c3374c910f2"
+    },
+    {
+      "level": 153,
+      "word": "candy",
+      "zh": "糖果",
+      "text": "小朋友，视频里学到的单词，哪一个是糖果的意思？",
+      "file": "assets/audio/questions-holly/level-153-candy.mp3",
+      "status": "generated",
+      "size": 39021,
+      "sha256": "944ab6bff8517087b7ec54c37ce6ce94a7359827d61272b1b75466822ef4a3a0"
+    },
+    {
+      "level": 154,
+      "word": "tomato",
+      "zh": "西红柿",
+      "text": "小朋友，视频里学到的单词，哪一个是西红柿的意思？",
+      "file": "assets/audio/questions-holly/level-154-tomato.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "3d771a43662b1c9e90fe3cbc827cbc7737569699e02aa17d96e7f35ebc38f1cb"
+    },
+    {
+      "level": 155,
+      "word": "carrot",
+      "zh": "胡萝卜",
+      "text": "小朋友，视频里学到的单词，哪一个是胡萝卜的意思？",
+      "file": "assets/audio/questions-holly/level-155-carrot.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "c48584a75e479d1c696b2b34437b4975e722eabe1a9c321a8f3589bcd38d9a8b"
+    },
+    {
+      "level": 156,
+      "word": "potato",
+      "zh": "土豆",
+      "text": "小朋友，视频里学到的单词，哪一个是土豆的意思？",
+      "file": "assets/audio/questions-holly/level-156-potato.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "d6353f490c6ba1fd18851f9b4e33fdb49b216e5b15acceb5828b274063434712"
+    },
+    {
+      "level": 157,
+      "word": "chicken",
+      "zh": "鸡肉",
+      "text": "小朋友，视频里学到的单词，哪一个是鸡肉的意思？",
+      "file": "assets/audio/questions-holly/level-157-chicken.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "c4870becdbdb0e2a9795362aa83fc1255d40fd135b9575d74638aac1cb33a165"
+    },
+    {
+      "level": 158,
+      "word": "meat",
+      "zh": "肉",
+      "text": "小朋友，视频里学到的单词，哪一个是肉的意思？",
+      "file": "assets/audio/questions-holly/level-158-meat.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "6a570332c26376910e9c4b6ad7bbf93310dd04c73db8803db9b59d847216e67a"
+    },
+    {
+      "level": 159,
+      "word": "cheese",
+      "zh": "奶酪",
+      "text": "小朋友，视频里学到的单词，哪一个是奶酪的意思？",
+      "file": "assets/audio/questions-holly/level-159-cheese.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "2a1c53950a42d6ef71f4f402198484ef13e5c9a1b837338fdaa3664675c562cf"
+    },
+    {
+      "level": 160,
+      "word": "strawberry",
+      "zh": "草莓",
+      "text": "小朋友，视频里学到的单词，哪一个是草莓的意思？",
+      "file": "assets/audio/questions-holly/level-160-strawberry.mp3",
+      "status": "generated",
+      "size": 37485,
+      "sha256": "a6b7996628a3f5792ceae6ae44f76a592205a18e6b3e8642cdcd841fa23d8707"
+    },
+    {
+      "level": 161,
+      "word": "school",
+      "zh": "学校",
+      "text": "小朋友，视频里学到的单词，哪一个是学校的意思？",
+      "file": "assets/audio/questions-holly/level-161-school.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "05a1cb5d1333feabecf24ed3175c5097d3a85a527a6fc76ecf1d1ece5743d63f"
+    },
+    {
+      "level": 162,
+      "word": "park",
+      "zh": "公园",
+      "text": "小朋友，视频里学到的单词，哪一个是公园的意思？",
+      "file": "assets/audio/questions-holly/level-162-park.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "019f009eba94286ef761afc7f62cb5e0593eaf06f952311bea095bf93ed139b8"
+    },
+    {
+      "level": 163,
+      "word": "playground",
+      "zh": "游乐场",
+      "text": "小朋友，视频里学到的单词，哪一个是游乐场的意思？",
+      "file": "assets/audio/questions-holly/level-163-playground.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "49cba93f92e8c330f687308d17c01ca0992625860f6026ee5a958d35bd7fd5fb"
+    },
+    {
+      "level": 164,
+      "word": "zoo",
+      "zh": "动物园",
+      "text": "小朋友，视频里学到的单词，哪一个是动物园的意思？",
+      "file": "assets/audio/questions-holly/level-164-zoo.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "2edac83ca9573862fe409782e22b78ccf82e657bec2efd2b3928192f5d6dc654"
+    },
+    {
+      "level": 165,
+      "word": "hospital",
+      "zh": "医院",
+      "text": "小朋友，视频里学到的单词，哪一个是医院的意思？",
+      "file": "assets/audio/questions-holly/level-165-hospital.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "92c9ef124680cd17cf755d199ae7ae2a3230fd3a14cad1c90aa5f3fbeb0269d6"
+    },
+    {
+      "level": 166,
+      "word": "supermarket",
+      "zh": "超市",
+      "text": "小朋友，视频里学到的单词，哪一个是超市的意思？",
+      "file": "assets/audio/questions-holly/level-166-supermarket.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "4257e54137fe9e7552d0ac0ea706a63fc0a55776a09ebc06f181842a3e300b14"
+    },
+    {
+      "level": 167,
+      "word": "restaurant",
+      "zh": "餐厅",
+      "text": "小朋友，视频里学到的单词，哪一个是餐厅的意思？",
+      "file": "assets/audio/questions-holly/level-167-restaurant.mp3",
+      "status": "generated",
+      "size": 40749,
+      "sha256": "0991b2ebd5f95356de66db4781e90946e4113f494e7a253ec840fe3780edd65c"
+    },
+    {
+      "level": 168,
+      "word": "library",
+      "zh": "图书馆",
+      "text": "小朋友，视频里学到的单词，哪一个是图书馆的意思？",
+      "file": "assets/audio/questions-holly/level-168-library.mp3",
+      "status": "generated",
+      "size": 42093,
+      "sha256": "614aefa805023cf944717d943f3902167322dd98b846eda1614565a7806db379"
+    },
+    {
+      "level": 169,
+      "word": "farm",
+      "zh": "农场",
+      "text": "小朋友，视频里学到的单词，哪一个是农场的意思？",
+      "file": "assets/audio/questions-holly/level-169-farm.mp3",
+      "status": "generated",
+      "size": 37101,
+      "sha256": "eaa171e6cb4e9eba4405c68af1c361287fa467bb3bbda48d20c5104f388f05ab"
+    },
+    {
+      "level": 170,
+      "word": "beach",
+      "zh": "海滩",
+      "text": "小朋友，视频里学到的单词，哪一个是海滩的意思？",
+      "file": "assets/audio/questions-holly/level-170-beach.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "fb2eda0f6bff87921a1630e668f51582536a0c02bccfb345759afc643c7d8ee8"
+    },
+    {
+      "level": 171,
+      "word": "bus",
+      "zh": "公交车",
+      "text": "小朋友，视频里学到的单词，哪一个是公交车的意思？",
+      "file": "assets/audio/questions-holly/level-171-bus.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "d1948a59f22cdda488473e5cd310ea4dfa3e0e0d1ef0504d727d50f35754658e"
+    },
+    {
+      "level": 172,
+      "word": "taxi",
+      "zh": "出租车",
+      "text": "小朋友，视频里学到的单词，哪一个是出租车的意思？",
+      "file": "assets/audio/questions-holly/level-172-taxi.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "156f8275ead378f3a93a129c17576c9babb9584930bfabf8e6118828f37e904d"
+    },
+    {
+      "level": 173,
+      "word": "subway",
+      "zh": "地铁",
+      "text": "小朋友，视频里学到的单词，哪一个是地铁的意思？",
+      "file": "assets/audio/questions-holly/level-173-subway.mp3",
+      "status": "generated",
+      "size": 40749,
+      "sha256": "d2459cbeb98a6e3d7fdf23e8d5ef9e68fb1c3c2357d5d01f3aad7fcff93c6a93"
+    },
+    {
+      "level": 174,
+      "word": "truck",
+      "zh": "卡车",
+      "text": "小朋友，视频里学到的单词，哪一个是卡车的意思？",
+      "file": "assets/audio/questions-holly/level-174-truck.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "fec02d02886bd35181f02ef1a05eec57af8ea8c9dd293638de9e9b88907557dc"
+    },
+    {
+      "level": 175,
+      "word": "scooter",
+      "zh": "滑板车",
+      "text": "小朋友，视频里学到的单词，哪一个是滑板车的意思？",
+      "file": "assets/audio/questions-holly/level-175-scooter.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "987dcc6d83ce1703dade59059dd72426a4620b3f5cab839bf37ccdd32cfd98b9"
+    },
+    {
+      "level": 176,
+      "word": "stroller",
+      "zh": "推车",
+      "text": "小朋友，视频里学到的单词，哪一个是推车的意思？",
+      "file": "assets/audio/questions-holly/level-176-stroller.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "52f2f2d0f659f1cc0a814b447ed5eb9d6a949596a642fedfacd86f7bc462277a"
+    },
+    {
+      "level": 177,
+      "word": "road",
+      "zh": "马路",
+      "text": "小朋友，视频里学到的单词，哪一个是马路的意思？",
+      "file": "assets/audio/questions-holly/level-177-road.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "cb084754757a2e93639379d37c22d42d893099b53e02add516a6b31fbd29635d"
+    },
+    {
+      "level": 178,
+      "word": "bridge",
+      "zh": "桥",
+      "text": "小朋友，视频里学到的单词，哪一个是桥的意思？",
+      "file": "assets/audio/questions-holly/level-178-bridge.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "ed75c00ea1eae1cb1ef78455470918e0ff2c4765288e5dc19183ab5f903ce79a"
+    },
+    {
+      "level": 179,
+      "word": "wheel",
+      "zh": "轮子",
+      "text": "小朋友，视频里学到的单词，哪一个是轮子的意思？",
+      "file": "assets/audio/questions-holly/level-179-wheel.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "a827c8061b58249d27ddf06adffaee6355708160e3d7b3c8a14bb90d3e172400"
+    },
+    {
+      "level": 180,
+      "word": "helmet",
+      "zh": "头盔",
+      "text": "小朋友，视频里学到的单词，哪一个是头盔的意思？",
+      "file": "assets/audio/questions-holly/level-180-helmet.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "bab7f3eeb6de3fd69f56d8d53446f11b4026852815d645f396fcdedffbafc95e"
+    },
+    {
+      "level": 181,
+      "word": "boy",
+      "zh": "男孩",
+      "text": "小朋友，视频里学到的单词，哪一个是男孩的意思？",
+      "file": "assets/audio/questions-holly/level-181-boy.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "f4fe4c8f1723db9f32dc897f98d98580934ca592ec67d4b74f14fb496de6184d"
+    },
+    {
+      "level": 182,
+      "word": "girl",
+      "zh": "女孩",
+      "text": "小朋友，视频里学到的单词，哪一个是女孩的意思？",
+      "file": "assets/audio/questions-holly/level-182-girl.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "d1cd37633d1d9d1e61cea744c00a9fca902c5654758e9854bb659a6379867c5f"
+    },
+    {
+      "level": 183,
+      "word": "teacher",
+      "zh": "老师",
+      "text": "小朋友，视频里学到的单词，哪一个是老师的意思？",
+      "file": "assets/audio/questions-holly/level-183-teacher.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "085a77150e6fe549ac715fcefc1e9673ceac7d67830a2592ac2973e962d14ee9"
+    },
+    {
+      "level": 184,
+      "word": "doctor",
+      "zh": "医生",
+      "text": "小朋友，视频里学到的单词，哪一个是医生的意思？",
+      "file": "assets/audio/questions-holly/level-184-doctor.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "9b9464a9d65e59e195e6f27ed3d9de630b9566676c98de5a7bb67c486ef58e22"
+    },
+    {
+      "level": 185,
+      "word": "nurse",
+      "zh": "护士",
+      "text": "小朋友，视频里学到的单词，哪一个是护士的意思？",
+      "file": "assets/audio/questions-holly/level-185-nurse.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "12c65b00e6128432c507c0a2c60b2a2684c4e8c3d349d0f060d15fa2c74e8e73"
+    },
+    {
+      "level": 186,
+      "word": "driver",
+      "zh": "司机",
+      "text": "小朋友，视频里学到的单词，哪一个是司机的意思？",
+      "file": "assets/audio/questions-holly/level-186-driver.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "485a4f76b01ccf4936ec10a5ad284929e97ef0d5f0b9b0f524970d7185642c55"
+    },
+    {
+      "level": 187,
+      "word": "cook",
+      "zh": "厨师",
+      "text": "小朋友，视频里学到的单词，哪一个是厨师的意思？",
+      "file": "assets/audio/questions-holly/level-187-cook.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "ddd82b037b75bbfa53e8757afc607598227652041b9aef0b1e6921d54099e287"
+    },
+    {
+      "level": 188,
+      "word": "police officer",
+      "zh": "警察",
+      "text": "小朋友，视频里学到的单词，哪一个是警察的意思？",
+      "file": "assets/audio/questions-holly/level-188-police-officer.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "81a8e1697457b7353d60726551ddb24e3ba8f2b69a2d34e4e3fd9eb8cfb7d0c0"
+    },
+    {
+      "level": 189,
+      "word": "classmate",
+      "zh": "同学",
+      "text": "小朋友，视频里学到的单词，哪一个是同学的意思？",
+      "file": "assets/audio/questions-holly/level-189-classmate.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "ca5f1b897b62e69bc9cbb02a564810c993b4fad0fc4e88807436c7c6d8c93759"
+    },
+    {
+      "level": 190,
+      "word": "neighbor",
+      "zh": "邻居",
+      "text": "小朋友，视频里学到的单词，哪一个是邻居的意思？",
+      "file": "assets/audio/questions-holly/level-190-neighbor.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "e331035390bc6777910c335b3eac309aeed3d2c8ade0e9ce4e396cc8dd3ec9c7"
+    },
+    {
+      "level": 191,
+      "word": "leaf",
+      "zh": "树叶",
+      "text": "小朋友，视频里学到的单词，哪一个是树叶的意思？",
+      "file": "assets/audio/questions-holly/level-191-leaf.mp3",
+      "status": "generated",
+      "size": 40557,
+      "sha256": "5d057976dc8d760dc9c54c35c3a559f2e4d3aa8cf65da7bed136ccd8c79cfec0"
+    },
+    {
+      "level": 192,
+      "word": "stone",
+      "zh": "石头",
+      "text": "小朋友，视频里学到的单词，哪一个是石头的意思？",
+      "file": "assets/audio/questions-holly/level-192-stone.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "7202a5d3aa013b3217b82d5da35f6cc91e68309ae705c439896feddb06124a3e"
+    },
+    {
+      "level": 193,
+      "word": "sand",
+      "zh": "沙子",
+      "text": "小朋友，视频里学到的单词，哪一个是沙子的意思？",
+      "file": "assets/audio/questions-holly/level-193-sand.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "b93cfb5f1e4d4e63f6c8481a4c7d1abea094019028aa57ec408ac448bba0eaad"
+    },
+    {
+      "level": 194,
+      "word": "butterfly",
+      "zh": "蝴蝶",
+      "text": "小朋友，视频里学到的单词，哪一个是蝴蝶的意思？",
+      "file": "assets/audio/questions-holly/level-194-butterfly.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "b1b0ac75c8698eb9695c6fa47754346b91aea2024af5413612333c37ada80ba5"
+    },
+    {
+      "level": 195,
+      "word": "bee",
+      "zh": "蜜蜂",
+      "text": "小朋友，视频里学到的单词，哪一个是蜜蜂的意思？",
+      "file": "assets/audio/questions-holly/level-195-bee.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "70cdc6546b300ff97b94dfcd5e07531db5015939a954a07b6b47ebe77f81f575"
+    },
+    {
+      "level": 196,
+      "word": "snail",
+      "zh": "蜗牛",
+      "text": "小朋友，视频里学到的单词，哪一个是蜗牛的意思？",
+      "file": "assets/audio/questions-holly/level-196-snail.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "c8c793e0421b8151bc683c5e5deec7363130d218ecd11c272ad1b6b036f1ba14"
+    },
+    {
+      "level": 197,
+      "word": "shell",
+      "zh": "贝壳",
+      "text": "小朋友，视频里学到的单词，哪一个是贝壳的意思？",
+      "file": "assets/audio/questions-holly/level-197-shell.mp3",
+      "status": "generated",
+      "size": 38637,
+      "sha256": "51f2a8574076ef4305fa0583959e3b0c761dbf0625e0a69a986d709457c49674"
+    },
+    {
+      "level": 198,
+      "word": "river",
+      "zh": "河",
+      "text": "小朋友，视频里学到的单词，哪一个是河的意思？",
+      "file": "assets/audio/questions-holly/level-198-river.mp3",
+      "status": "generated",
+      "size": 38829,
+      "sha256": "e3c45f695e877e5d169796fb7f16c7058b62075cfbb476f772120057666dfe3b"
+    },
+    {
+      "level": 199,
+      "word": "sea",
+      "zh": "海",
+      "text": "小朋友，视频里学到的单词，哪一个是海的意思？",
+      "file": "assets/audio/questions-holly/level-199-sea.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "f217ecef7105cf22d564c7e46542c04650a9a2614774da11c05930fbda7fa16b"
+    },
+    {
+      "level": 200,
+      "word": "mountain",
+      "zh": "山",
+      "text": "小朋友，视频里学到的单词，哪一个是山的意思？",
+      "file": "assets/audio/questions-holly/level-200-mountain.mp3",
+      "status": "generated",
+      "size": 37293,
+      "sha256": "03d2f26587024cdb91ce343d542ac552b32b38bc33764b7dc7c0aeb93e8e1c62"
+    }
+  ],
+  "summary": {
+    "total": 200,
+    "generated": 3,
+    "skipped": 197,
+    "available": 200,
+    "failed": 0,
+    "not_attempted": 0
+  }
+}

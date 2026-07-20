@@ -89,8 +89,8 @@
   ],
   "clientSideOnly": {
     "curriculum": {
-      "description": "100 levels in 10 units, hardcoded in script.js. No backend endpoint.",
-      "source": "script.js → curriculumUnits"
+      "description": "200 client-side levels, hardcoded in script.js. No backend endpoint.",
+      "source": "script.js → lessonOverrides, curriculumUnits, additionalLevelUnits"
     },
     "progress": {
       "description": "Stored in localStorage key baby-island-preview-progress-v1",

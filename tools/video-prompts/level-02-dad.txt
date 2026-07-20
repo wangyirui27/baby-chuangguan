@@ -1,0 +1,36 @@
+Title: Dad Comes Close
+
+Duration: 15 seconds
+
+Format: 16:9 horizontal
+
+Cinematic Style: Hand-painted watercolor and gouache storybook animation matching the current Magic English Voyage island art direction. Soft pencil outlines, visible paper grain, warm cream sunlight, pale turquoise sea, moss green plants, coral-pink accents, low-saturation colors, gentle imperfect brush texture, cozy quiet emotion. Characters should look warm, clean, attractive, and child-safe: bright eyes, soft cheeks, balanced proportions, gentle smiles. It must feel hand-drawn and alive, not glossy 3D or plastic CGI.
+
+Source Situation: A cute 4-year-old child waits quietly by the open island doorway, sees dad come home, points to him, says dad, and receives a gentle hug.
+
+CEFR Target: Pre-A1 / very young A1. The target word is "dad". Keep every spoken line short, natural, and easy for a 3-5 year old English learner to understand. The word "dad" must be heard clearly several times, with real affection, not a vocabulary drill.
+
+Zero-beginner clarity rule: Whenever the word "dad" is spoken, dad must be the only clear foreground meaning target. The child's eyes, finger, hug, or hand-holding must point to dad. The child's hands must be visibly empty when saying "dad". Do not introduce any prominent object during or immediately before the word "dad". No toy, block, car, book, bag, cup, food, animal, sign, or other learnable object may appear in the foreground, near the child, or in the child's hands. Background props must stay soft, distant, and non-salient.
+
+Scene: A simple seaside island home doorway in warm late-afternoon light. Empty wooden floor, open door, pale turquoise sea outside, soft curtains moving slightly. Keep the foreground calm and uncluttered. No readable text anywhere.
+
+Characters: Exactly two speaking characters. One handsome gentle father wearing a soft blue sweater and simple trousers, warm eyes, kind smile, calm protective body language. One cute 4-year-old child with bright eyes, soft cheeks, neat hair, and a tender storybook face. No mom, grandma, grandpa, teachers, narrator, or other speaking adults.
+
+Story Container: Dad appears clearly in the doorway. The child looks up, smiles, and points directly to dad before saying the word. Dad kneels to the child's eye level, opens his arms, and the child steps into a warm hug. Dad holds the child's empty hand at the end.
+
+Dialogue:
+0-3s: Child, happy and clear while pointing to dad: "Dad!"
+3-6s: Dad, soft and close: "Hi, sweetheart."
+3-6s: Child, relieved and proud: "My dad."
+6-10s: Dad, gentle: "I'm here."
+6-10s: Child, smiling at dad: "Dad."
+10-15s: Child, quiet happy voice: "Dad!"
+10-15s: Dad, warm smile: "Yes, honey."
+
+Action & Performance: Keep the acting tender, quiet, and emotionally specific. The child should sound happy and certain. Dad should sound protective, warm, and present. Use eye contact, pointing directly to dad, kneeling, a soft hug, and hand-holding. No overacting, no presenter energy, no classroom teaching.
+
+Camera: One continuous gentle storybook shot with slow natural movement. Start with dad clearly visible and centered as the child looks up and points to him. Whenever the child says "dad", dad's face and upper body should be visible and visually dominant. Keep the lower foreground floor empty. Avoid tight mouth close-ups; use pointing, hugging, hand-holding, and eye contact to carry the dialogue.
+
+Audio: Natural English father-child dialogue, not narration. No narrator. No robotic TTS voice. No flat recitation. No sing-song teaching voice. The child voice should be soft, young, and emotionally alive. Dad's voice should be gentle and affectionate. Very quiet seaside room ambience, no loud music.
+
+Negative Prompt: toy, block, car, book, bag, cup, food, animal, sign, object on floor near child, child holding an object, child looking at an object while saying dad, foreground prop, learnable object near the child, unclear word target, object confusion, subtitles, captions, written words, speech bubbles, labels, flashcards, card UI, classroom blackboard, teacher, student, narrator, vocabulary lesson, repeat-after-me lesson, robotic voice, monotone voice, emotionless voice, overacting, loud music, crowded background, extra talking characters, complex story, scary elements, fast cuts, distorted hands, incorrect lip sync, tight mouth close-ups, ugly faces, asymmetrical eyes, deformed face, glossy 3D render, plastic toy texture, neon colors, hard vector outlines, anime parody, artist signature, logo, readable text.

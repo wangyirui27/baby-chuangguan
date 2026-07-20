@@ -1,480 +1,924 @@
 #!/usr/bin/env node
 
 /**
- * 宝宝闯关 · 端到端验收脚本（Playwright headless）
+ * 宝宝英语岛 · 当前产品端到端验收
  *
- * 验收流程：
- * 1. 未登录 → 点击受限关卡（第6关）→ 弹出手机号登录弹窗
- * 2. 填入开发验证码 → 登录成功 → 自动进入原关卡
- * 3. 刷新页面 → 会话恢复（仍然在关关卡页面）
- * 4. 返回地图 → 退出登录 → 状态清理
+ * 覆盖当前根 H5 的真实主链路：
+ * - App 启动发版更新弹窗
+ * - 地图 / 我的页 / VIP 状态
+ * - 第 1 关视频后答题，答错再答对
+ * - 第 11 关 VIP 支付面板
  *
- * 前置条件：
- *   - backend 服务已在 http://localhost:3000 运行（npm start）
- *   - SMS_PROVIDER=development
- *   - Playwright 已安装（npx playwright install chromium）
- *
- * 运行：
- *   node tools/e2e-auth-flow.mjs
+ * 文件名沿用 e2e-auth-flow.mjs，避免破坏既有 npm run e2e 入口。
  */
 
+import assert from 'node:assert/strict';
+import { createReadStream, existsSync, statSync } from 'node:fs';
+import { createServer } from 'node:http';
+import { createRequire } from 'node:module';
+import { dirname, extname, join, normalize } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
-import { createServer } from 'http';
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
-import { resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import crypto from 'crypto';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = resolve(__dirname, '..');
+const ROOT = normalize(join(dirname(fileURLToPath(import.meta.url)), '..'));
+const require = createRequire(import.meta.url);
+const { levels } = require('../script.js');
+const PROGRESS_STORAGE_KEY = 'baby-island-preview-progress-v1';
+const LEARNING_ACTIVITY_KEY = 'baby-island-learning-activity-v1';
+const APP_PREFERENCES_KEY = 'baby-island-app-preferences-v1';
+const MISTAKE_BOOK_KEY = 'baby-island-mistake-book-v1';
 
-// Colors for terminal output
-const GREEN = '\x1b[32m';
-const RED = '\x1b[31m';
-const YELLOW = '\x1b[33m';
-const CYAN = '\x1b[36m';
-const RESET = '\x1b[0m';
+const MIME = {
+  '.html': 'text/html;charset=utf-8',
+  '.css': 'text/css;charset=utf-8',
+  '.js': 'application/javascript;charset=utf-8',
+  '.json': 'application/json;charset=utf-8',
+  '.webmanifest': 'application/manifest+json;charset=utf-8',
+  '.svg': 'image/svg+xml',
+  '.webp': 'image/webp',
+  '.mp3': 'audio/mpeg',
+  '.mp4': 'video/mp4',
+};
 
-let passed = 0;
-let failed = 0;
-
-function ok(description) {
-  passed++;
-  console.log(`${GREEN}  ✓ ${description}${RESET}`);
+function resolveRequestPath(url) {
+  const pathname = decodeURIComponent(new URL(url, 'http://127.0.0.1').pathname);
+  const filePath = normalize(join(ROOT, pathname === '/' ? 'index.html' : pathname));
+  if (!filePath.startsWith(ROOT)) return null;
+  return filePath;
 }
 
-function fail(description, err) {
-  failed++;
-  console.log(`${RED}  ✗ ${description}${RESET}`);
-  if (err) console.log(`    ${err.message || err}`);
-}
-
-function heading(text) {
-  console.log(`\n${CYAN}═══ ${text} ═══${RESET}`);
-}
-
-/**
- * Pre-seed a verification code directly into the backend's data store.
- * This lets us know the code without reading it from the backend console.
- * Uses the JSON file persistence: data/verifications.json
- */
-function seedVerificationCode(phone, code) {
-  const dataDir = resolve(ROOT, 'data');
-  if (!existsSync(dataDir)) {
-    mkdirSync(dataDir, { recursive: true });
-  }
-
-  const verificationsFile = resolve(dataDir, 'verifications.json');
-  let verifications = [];
-  if (existsSync(verificationsFile)) {
-    try {
-      verifications = JSON.parse(readFileSync(verificationsFile, 'utf-8'));
-    } catch { verifications = []; }
-  }
-
-  function sha256(data) {
-    return crypto.createHash('sha256').update(data).digest('hex');
-  }
-
-  function normalizePhone(phone) {
-    const digits = phone.replace(/\D/g, '');
-    if (digits.startsWith('86')) return '+' + digits;
-    return '+86' + digits;
-  }
-
-  const normalized = normalizePhone(phone);
-  const phoneHash = sha256(normalized);
-  const codeHash = sha256(String(code));
-  const now = new Date();
-
-  const record = {
-    phoneHash,
-    codeHash,
-    expiresAt: new Date(now.getTime() + 5 * 60 * 1000).toISOString(),
-    attempts: 0,
-    used: false,
-    createdAt: now.toISOString(),
-  };
-
-  verifications.push(record);
-  writeFileSync(verificationsFile, JSON.stringify(verifications, null, 2), 'utf-8');
-  console.log(`  ${YELLOW}  Pre-seeded verification for ${normalized} with code ${code}${RESET}`);
-
-  // Also add to the server's in-memory store via a request
-  // (The server reads from disk on start, but after that uses in-memory Map)
-  // We'll use the server API to add it
-  return { phoneHash, codeHash, normalized, record };
-}
-
-async function addVerificationViaAPI(baseUrl, phone, code) {
-  // Use the server's in-memory db by simulating a send-code call
-  // and then reading the code from console, OR just add directly via HTTP
-  // For simplicity, we seed via API call using the built-in send endpoint
-  // The code the server generates will be unknown. So we use a different approach:
-  // we read the generated code from the server process's stdout.
-  // 
-  // Alternative: Use Playwright's route interception to replace the
-  // send-code response to include the code in the response body.
-  
-  // Most reliable approach: Use route interception.
-  // We'll let the real send-code request go through but capture the response.
-  // Then we read the code from the server's stored verifications.
-  // Since we can't read the SHA-256 hash, we instead set up the verification
-  // code ourselves before the request.
-
-  // Actually for Playwright E2E: use the API to send the code but don't try
-  // to know the code. Instead, we'll set up route interception to make the
-  // API response include a `code` field (for dev mode display).
-  return false;
-}
-
-async function waitForSelectorWithText(page, selector, text, timeoutMs = 5000) {
-  const start = Date.now();
-  while (Date.now() - start < timeoutMs) {
-    const el = await page.$(selector);
-    if (el) {
-      const t = await el.textContent();
-      if (t && t.includes(text)) return el;
+function serveStatic() {
+  const server = createServer((req, res) => {
+    const filePath = resolveRequestPath(req.url || '/');
+    if (!filePath || !existsSync(filePath)) {
+      res.writeHead(404);
+      res.end('Not found');
+      return;
     }
-    await new Promise(r => setTimeout(r, 200));
-  }
-  return null;
+
+    const stat = statSync(filePath);
+    const ext = extname(filePath);
+    const contentType = MIME[ext] || 'application/octet-stream';
+    const range = req.headers.range;
+
+    if (range && /\.(mp3|mp4)$/i.test(filePath)) {
+      const match = range.match(/^bytes=(\d+)-(\d*)$/);
+      if (match) {
+        const start = Number(match[1]);
+        const end = match[2] ? Number(match[2]) : stat.size - 1;
+        res.writeHead(206, {
+          'Accept-Ranges': 'bytes',
+          'Content-Range': `bytes ${start}-${end}/${stat.size}`,
+          'Content-Length': String(end - start + 1),
+          'Content-Type': contentType,
+        });
+        createReadStream(filePath, { start, end }).pipe(res);
+        return;
+      }
+    }
+
+    res.writeHead(200, {
+      'Content-Length': String(stat.size),
+      'Content-Type': contentType,
+    });
+    createReadStream(filePath).pipe(res);
+  });
+
+  return new Promise((resolve) => {
+    server.listen(0, '127.0.0.1', () => {
+      const { port } = server.address();
+      resolve({ server, baseUrl: `http://127.0.0.1:${port}` });
+    });
+  });
 }
-async function waitFor(condition, timeoutMs = 5000, intervalMs = 200) {
-  const start = Date.now();
-  while (Date.now() - start < timeoutMs) {
-    const result = await condition();
-    if (result) return result;
-    await new Promise(r => setTimeout(r, intervalMs));
+
+async function closeReleaseDialog(page, required = false) {
+  const dialog = page.locator('.release-update-dialog[open]');
+  if (required) {
+    await dialog.waitFor({ state: 'visible', timeout: 5_000 });
+  } else {
+    try {
+      await dialog.waitFor({ state: 'visible', timeout: 500 });
+    } catch {
+      return false;
+    }
   }
-  throw new Error(`Timeout waiting for condition after ${timeoutMs}ms`);
+
+  const text = await dialog.innerText();
+  assert.match(text, /APP 版本更新/);
+  assert.match(text, /当前版本 1\.0\.0/);
+  assert.match(text, /最新版本 1\.0\.1/);
+  assert.match(text, /去 App Store 更新/);
+  await assertElementInViewport(page, '.release-update-dialog', 'release update dialog');
+  await assertElementInViewport(page, '.access-dialog-close[data-release-update-close]', 'release update close button');
+  await assertElementInViewport(page, '[data-release-update-primary]', 'release update primary button');
+  await page.locator('[data-release-update-close]').first().click();
+  await dialog.waitFor({ state: 'hidden', timeout: 5_000 });
+  return true;
+}
+
+async function enterQuiz(page) {
+  await page.locator('[data-stage-video]').waitFor({ state: 'visible', timeout: 5_000 });
+  await page.locator('[data-video]').evaluate((video) => {
+    video.dispatchEvent(new Event('ended'));
+  });
+  await page.locator('[data-stage-quiz]').waitFor({ state: 'visible', timeout: 5_000 });
+}
+
+async function answer(page, correct) {
+  const correctIndex = await page.evaluate(() => window.__correctIndex);
+  const index = correct ? correctIndex : correctIndex === 0 ? 1 : 0;
+  await page.locator('.option-card').nth(index).click({ force: true });
+  await page.locator('[data-submit]').waitFor({ state: 'visible', timeout: 2_000 });
+  await assertElementInViewport(page, '[data-submit]', 'quiz submit button');
+  await page.locator('[data-submit]').click({ force: true });
+}
+
+async function assertElementInViewport(page, selector, label) {
+  const box = await page.locator(selector).boundingBox();
+  assert.ok(box, `${label} must be visible`);
+  const viewport = page.viewportSize();
+  assert.ok(viewport, `${label} needs a viewport`);
+  assert.ok(box.x >= -1, `${label} left edge is outside viewport: ${JSON.stringify(box)}`);
+  assert.ok(box.x + box.width <= viewport.width + 1, `${label} right edge is outside viewport: ${JSON.stringify(box)}`);
+  assert.ok(box.y >= -1, `${label} top edge is outside viewport: ${JSON.stringify(box)}`);
+  assert.ok(box.y + box.height <= viewport.height + 1, `${label} bottom edge is outside viewport: ${JSON.stringify(box)}`);
+}
+
+async function waitForText(page, selector, pattern, label) {
+  await page.waitForFunction(({ selector, source, flags }) => {
+    const text = document.querySelector(selector)?.textContent || '';
+    return new RegExp(source, flags).test(text);
+  }, { selector, source: pattern.source, flags: pattern.flags }, { timeout: 5_000 });
+  assert.match(await page.locator(selector).innerText(), pattern, label);
+}
+
+async function assertQuizLayoutInViewport(page, label) {
+  const metrics = await page.evaluate(() => {
+    const vw = document.documentElement.clientWidth;
+    const vh = document.documentElement.clientHeight;
+    const sw = document.documentElement.scrollWidth;
+    const question = document.querySelector('.question-card')?.getBoundingClientRect();
+    const options = Array.from(document.querySelectorAll('.option-card')).map((option) => {
+      const rect = option.getBoundingClientRect();
+      return {
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+      };
+    });
+    return {
+      vw,
+      vh,
+      sw,
+      question: question && {
+        left: question.left,
+        right: question.right,
+        top: question.top,
+        bottom: question.bottom,
+      },
+      options,
+      listenDisabled: document.querySelector('[data-listen-question]')?.disabled,
+    };
+  });
+
+  assert.ok(metrics.sw <= metrics.vw + 1, `${label} has horizontal overflow: ${JSON.stringify(metrics)}`);
+  assert.equal(metrics.listenDisabled, false, `${label} question audio button must be enabled`);
+  assert.ok(metrics.question, `${label} question card must exist`);
+  assert.ok(metrics.question.left >= -1 && metrics.question.right <= metrics.vw + 1, `${label} question card outside viewport: ${JSON.stringify(metrics.question)}`);
+  assert.equal(metrics.options.length, 2, `${label} must render two option cards`);
+  metrics.options.forEach((option) => {
+    assert.ok(option.left >= -1 && option.right <= metrics.vw + 1, `${label} option outside viewport: ${JSON.stringify(option)}`);
+    assert.ok(option.bottom <= metrics.vh + 1, `${label} option below viewport: ${JSON.stringify(option)}`);
+    assert.ok(option.width >= 290 && option.height >= 90, `${label} option touch target too small: ${JSON.stringify(option)}`);
+  });
+}
+
+async function waitForCondition(check, message, timeout = 5_000) {
+  const startedAt = Date.now();
+  while (!check()) {
+    if (Date.now() - startedAt > timeout) throw new Error(message);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+}
+
+function collectRuntimeProblems(page, baseUrl) {
+  const problems = [];
+  page.on('pageerror', (err) => problems.push(`pageerror ${err.message}`));
+  page.on('console', (msg) => {
+    if (msg.type() === 'error' && !/net::ERR_ABORTED/.test(msg.text())) {
+      problems.push(`console ${msg.text()}`);
+    }
+  });
+  page.on('requestfailed', (request) => {
+    const failure = request.failure()?.errorText || '';
+    if (request.url().startsWith(baseUrl) && !/ERR_ABORTED/.test(failure)) {
+      problems.push(`requestfailed ${request.url()} ${failure}`);
+    }
+  });
+  page.on('response', (response) => {
+    if (response.url().startsWith(baseUrl) && response.status() >= 400) {
+      problems.push(`HTTP ${response.status()} ${response.url()}`);
+    }
+  });
+  return problems;
+}
+
+async function newPage(browser, viewport, baseUrl) {
+  const context = await browser.newContext({ viewport, locale: 'zh-CN' });
+  const page = await context.newPage();
+  await page.route(/fonts\.googleapis\.com/, (route) => route.fulfill({
+    status: 200,
+    contentType: 'text/css',
+    body: '',
+  }));
+  return { context, page, problems: collectRuntimeProblems(page, baseUrl) };
+}
+
+async function runPrimaryFlow(browser, baseUrl) {
+  const { context, page, problems } = await newPage(browser, { width: 1366, height: 1024 }, baseUrl);
+  const audioRequests = [];
+  page.on('request', (request) => {
+    if (/assets\/audio\//.test(request.url())) audioRequests.push(request.url());
+  });
+
+  await page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page, true);
+  const releaseRefresh = page.waitForResponse(
+    (response) => response.url().includes('/app-release.json') && response.status() === 200,
+  );
+  await page.evaluate(() => window.dispatchEvent(new Event('online')));
+  await releaseRefresh;
+  await page.waitForTimeout(250);
+  assert.equal(await page.locator('.release-update-dialog[open]').count(), 0);
+
+  assert.equal(await page.locator('[data-tab]').count(), 3);
+  assert.ok(await page.locator('[data-route-scroll]').isVisible());
+  assert.equal(await page.locator('[data-stop="1"]').count(), 1);
+  assert.equal(await page.locator('[data-stop="200"]').count(), 1);
+  assert.match(await page.locator('body').innerText(), /200 座魔法岛|200 MAGIC ISLANDS/);
+
+  await page.locator('[data-tab="mine"]').click();
+  await page.waitForSelector('.mine-layout', { timeout: 5_000 });
+  const mineText = await page.locator('.mine-layout').innerText();
+  assert.match(mineText, /非 VIP/);
+  assert.match(mineText, /开通 VIP/);
+  assert.match(mineText, /检查内容更新/);
+
+  await page.goto(`${baseUrl}/#level-1`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  assert.match(await page.locator('[data-video]').getAttribute('src'), /level-01-mom\.mp4/);
+
+  await enterQuiz(page);
+  assert.match(await page.locator('.question-card').innerText(), /哪一个是\s*「妈妈」\s*的意思/);
+  assert.equal(await page.locator('.option-card').count(), 2);
+  await assertQuizLayoutInViewport(page, 'primary quiz layout');
+
+  await answer(page, false);
+  await page.waitForSelector('.feedback-banner.wrong:not([hidden])', { timeout: 5_000 });
+  await assertElementInViewport(page, '.feedback-banner.wrong', 'wrong feedback');
+  assert.match(await page.locator('.feedback-banner.wrong').innerText(), /再试一次/);
+  await page.waitForFunction(() => window.__quizState === 'answering', null, { timeout: 6_000 });
+
+  await answer(page, true);
+  await page.waitForSelector('.feedback-banner.correct:not([hidden])', { timeout: 5_000 });
+  await assertElementInViewport(page, '.feedback-banner.correct', 'correct feedback');
+  await assertElementInViewport(page, '[data-continue-map]', 'continue map button');
+  assert.match(await page.locator('.feedback-banner.correct').innerText(), /答对啦/);
+  await waitForCondition(
+    () => audioRequests.some((url) => url.includes('questions-holly/level-01-mom.mp3'))
+      && audioRequests.some((url) => url.includes('feedback-holly/wrong.mp3'))
+      && audioRequests.some((url) => url.includes('feedback-holly/correct.mp3')),
+    `Missing expected quiz audio requests: ${audioRequests.join(', ')}`,
+  );
+
+  await page.evaluate((progressKey) => {
+    localStorage.setItem(progressKey, JSON.stringify({
+      completed: Array.from({ length: 10 }, (_, index) => index + 1),
+      unlockedThrough: 11,
+    }));
+  }, PROGRESS_STORAGE_KEY);
+  await page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  const seededProgress = await page.evaluate((progressKey) => JSON.parse(localStorage.getItem(progressKey)), PROGRESS_STORAGE_KEY);
+  assert.deepEqual(seededProgress, {
+    completed: Array.from({ length: 10 }, (_, index) => index + 1),
+    unlockedThrough: 11,
+  });
+  await page.goto(`${baseUrl}/?vip-paid11=1#level-11`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  const paywall = page.locator('.paywall-dialog[open]');
+  await paywall.waitFor({ state: 'visible', timeout: 5_000 });
+  const paywallText = await paywall.innerText();
+  assert.match(paywallText, /VIP 学习卡/);
+  assert.match(paywallText, /立即支付 ¥99/);
+  assert.match(paywallText, /当前预览不会扣费/);
+  await page.locator('[data-vip-pay]').click();
+  assert.match(
+    await page.locator('[data-vip-pay-note]').innerText(),
+    /正式 iPad 包会打开 App Store 支付，当前预览不会扣费/,
+  );
+  assert.match(page.url(), /#map$/);
+  await page.locator('[data-paywall-close]').click();
+  await paywall.waitFor({ state: 'hidden', timeout: 5_000 });
+
+  await page.goto(`${baseUrl}/#level-11`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  const callbackPaywall = page.locator('.paywall-dialog[open]');
+  await callbackPaywall.waitFor({ state: 'visible', timeout: 5_000 });
+  await page.evaluate(() => window.BabyIslandIAPComplete());
+  await callbackPaywall.waitFor({ state: 'hidden', timeout: 5_000 });
+  const purchasePreferences = await page.evaluate((preferencesKey) => JSON.parse(localStorage.getItem(preferencesKey)), APP_PREFERENCES_KEY);
+  assert.equal(purchasePreferences.vipActive, true);
+  assert.match(await page.locator('body').innerText(), /VIP 已开通，会员权益已生效/);
+  await page.goto(`${baseUrl}/#level-11`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  await page.locator('[data-stage-video]').waitFor({ state: 'visible', timeout: 5_000 });
+  assert.match(await page.locator('[data-video]').getAttribute('src'), /assets\/video\/paid-levels\/level-11-pear\.mp4/);
+  await page.evaluate(({ progressKey }) => {
+    localStorage.setItem(progressKey, JSON.stringify({
+      completed: Array.from({ length: 11 }, (_, index) => index + 1),
+      unlockedThrough: 12,
+    }));
+  }, { progressKey: PROGRESS_STORAGE_KEY });
+  await page.goto(`${baseUrl}/?vip-paid12=1#level-12`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  await page.locator('[data-stage-video]').waitFor({ state: 'visible', timeout: 5_000 });
+  assert.match(await page.locator('[data-video]').getAttribute('src'), /assets\/video\/paid-levels\/level-12-grape\.mp4/);
+  await page.goto(`${baseUrl}/#mine`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  const vipMineText = await page.locator('.mine-layout').innerText();
+  assert.match(vipMineText, /VIP 已开通/);
+  assert.match(vipMineText, /VIP 权益已生效/);
+  assert.doesNotMatch(vipMineText, /非 VIP|开通 VIP/);
+
+  await page.evaluate(({ progressKey, preferencesKey }) => {
+    localStorage.setItem(progressKey, JSON.stringify({
+      completed: Array.from({ length: 12 }, (_, index) => index + 1),
+      unlockedThrough: 13,
+    }));
+    localStorage.setItem(preferencesKey, JSON.stringify({ vipActive: true }));
+  }, { progressKey: PROGRESS_STORAGE_KEY, preferencesKey: APP_PREFERENCES_KEY });
+  await page.goto(`${baseUrl}/?vip-content-check=1#level-13`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page, true);
+  await page.locator('[data-route-scroll]').waitFor({ state: 'visible', timeout: 5_000 });
+  assert.match(await page.locator('body').innerText(), /这关视频还在准备中，请先复习前 10 关。/);
+  assert.equal(await page.locator('[data-video]').count(), 0);
+  assert.match(page.url(), /#map$/);
+
+  assert.deepEqual(problems, []);
+  await context.close();
+}
+
+async function runOfflineShell(browser, baseUrl) {
+  const { context, page, problems } = await newPage(browser, { width: 820, height: 600 }, baseUrl);
+
+  await page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page, true);
+  await page.evaluate(() => navigator.serviceWorker.ready);
+  await page.reload({ waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  await page.waitForFunction(() => Boolean(navigator.serviceWorker.controller), null, { timeout: 5_000 });
+
+  problems.length = 0;
+  await context.setOffline(true);
+  await page.goto(`${baseUrl}/#map`, { waitUntil: 'domcontentloaded' });
+  await closeReleaseDialog(page);
+  await page.locator('[data-route-scroll]').waitFor({ state: 'visible', timeout: 5_000 });
+  assert.match(await page.locator('body').innerText(), /200 座魔法岛|200 MAGIC ISLANDS/);
+  assert.deepEqual(problems.filter((problem) => problem.includes('app-release.json')), []);
+  const freeLessonResources = levels.slice(0, 10).flatMap((level) => {
+    const videoFile = level.videoSrc;
+    const questionAudioFile = videoFile.match(/level-\d+-[^.?]+/)?.[0];
+    assert.ok(questionAudioFile, `level ${level.id} question audio filename can be derived`);
+    return [
+      [videoFile, /video\/mp4/.source],
+      [`assets/audio/questions-holly/${questionAudioFile}.mp3?v=20260719-question-200-nouns-v2`, /audio\/mpeg/.source],
+    ];
+  });
+  const offlineResources = await page.evaluate(async (resources) => Promise.all(resources.map(async ([url, expectedType]) => {
+    const response = await fetch(url);
+    return {
+      url,
+      status: response.status,
+      ok: response.ok,
+      type: response.headers.get('content-type') || '',
+      expectedType,
+    };
+  })), [
+    ['assets/ocean/front-ocean-bg-v2-libtv.webp', /image\/webp/.source],
+    ['assets/ocean/front-ocean-loop-v4-libtv-seamless-clouds.mp4?v=20260719-handpainted-libtv-v1', /video\/mp4/.source],
+    ['assets/ocean/rowing-kids-boat-idle.webp?v=20260720-libtv-idle-v1', /image\/webp/.source],
+    ['assets/icons/resource-star.webp?v=20260714-v1', /image\/webp/.source],
+    ['assets/audio/map-bgm.mp3', /audio\/mpeg/.source],
+    ['assets/audio/words/mom.mp3', /audio\/mpeg/.source],
+    ['assets/audio/words/toy.mp3', /audio\/mpeg/.source],
+    ...freeLessonResources,
+  ]);
+  offlineResources.forEach((item) => {
+    assert.equal(item.ok, true, item.url);
+    assert.match(item.type, new RegExp(item.expectedType), item.url);
+  });
+  const releaseProbe = await page.evaluate(async () => {
+    const response = await fetch('app-release.json?t=offline-probe');
+    const sample = await response.clone().text().catch(() => '');
+    return {
+      status: response.status,
+      startsHtml: /^\s*<!doctype html/i.test(sample.slice(0, 100)),
+    };
+  });
+  assert.equal(releaseProbe.status, 503);
+  assert.equal(releaseProbe.startsHtml, false);
+  await context.setOffline(false);
+
+  assert.deepEqual(problems.filter((problem) => (
+    !problem.includes('app-release.json')
+    && !problem.includes('console Failed to load resource: the server responded with a status of 503 (Offline)')
+  )), []);
+  await context.close();
+}
+
+async function runForcedReleaseUpdateSmoke(browser, baseUrl) {
+  const noChannel = await newPage(browser, { width: 820, height: 600 }, baseUrl);
+  await noChannel.page.route('**/app-release.json*', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({
+      latestVersion: '1.0.2',
+      minSupportedVersion: '1.0.1',
+      title: '需要更新后继续使用',
+      message: '请先更新到最新版本。',
+      storeName: 'App Store',
+    }),
+  }));
+
+  await noChannel.page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  const noChannelDialog = noChannel.page.locator('.release-update-dialog[open]');
+  await noChannelDialog.waitFor({ state: 'visible', timeout: 5_000 });
+  assert.match(await noChannelDialog.innerText(), /需要更新后继续使用/);
+  assert.ok(await noChannel.page.locator('[data-release-update-close]').count() > 0);
+  await noChannel.page.keyboard.press('Escape');
+  await noChannelDialog.waitFor({ state: 'hidden', timeout: 5_000 });
+  assert.deepEqual(noChannel.problems, []);
+  await noChannel.context.close();
+
+  const { context, page, problems } = await newPage(browser, { width: 820, height: 600 }, baseUrl);
+  await page.route('**/app-release.json*', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({
+      latestVersion: '1.0.2',
+      minSupportedVersion: '1.0.1',
+      title: '需要更新后继续使用',
+      message: '请先更新到最新版本。',
+      storeName: 'App Store',
+      updateUrl: 'https://apps.apple.com/app/id123456789',
+    }),
+  }));
+
+  await page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  const dialog = page.locator('.release-update-dialog[open]');
+  await dialog.waitFor({ state: 'visible', timeout: 5_000 });
+  assert.match(await dialog.innerText(), /需要更新后继续使用/);
+  assert.equal(await page.locator('[data-release-update-close]').count(), 0);
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(250);
+  assert.equal(await page.locator('.release-update-dialog[open]').count(), 1);
+
+  assert.deepEqual(problems, []);
+  await context.close();
+}
+
+async function runPhoneSmoke(browser, baseUrl) {
+  const { context, page, problems } = await newPage(browser, { width: 390, height: 844 }, baseUrl);
+  await page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page, true);
+  assert.equal(await page.locator('[data-tab]').count(), 3);
+  assert.ok(await page.locator('[data-route-scroll]').isVisible());
+  const phoneMap = await page.evaluate(() => {
+    const locate = document.querySelector('[data-locate-progress]');
+    const tabs = document.querySelector('.bottom-tabs');
+    const journey = document.querySelector('.journey-compact');
+    const resource = document.querySelector('.resource-strip');
+    if (!locate || !tabs) return { hasLocate: Boolean(locate), hasTabs: Boolean(tabs) };
+    const rect = locate.getBoundingClientRect();
+    const tabsRect = tabs.getBoundingClientRect();
+    const topEl = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    return {
+      hasLocate: true,
+      hasTabs: true,
+      locateBottom: rect.bottom,
+      tabsTop: tabsRect.top,
+      locateCenterClickable: topEl === locate || locate.contains(topEl),
+      journeyDisplay: journey ? getComputedStyle(journey).display : 'missing',
+      resourceDisplay: resource ? getComputedStyle(resource).display : 'missing',
+    };
+  });
+  assert.equal(phoneMap.hasLocate, true, '手机竖屏必须有当前关卡定位按钮');
+  assert.equal(phoneMap.hasTabs, true, '手机竖屏必须有底部导航');
+  assert.equal(phoneMap.locateCenterClickable, true, `手机竖屏定位按钮中心不能被遮挡: ${JSON.stringify(phoneMap)}`);
+  assert.ok(phoneMap.locateBottom <= phoneMap.tabsTop - 8, `手机竖屏定位按钮必须浮在底栏上方: ${JSON.stringify(phoneMap)}`);
+  assert.equal(phoneMap.journeyDisplay, 'none', '390px 竖屏不应显示航程胶囊挤压顶栏');
+  assert.equal(phoneMap.resourceDisplay, 'none', '390px 竖屏不应显示资源胶囊挤压顶栏');
+  await page.goto(`${baseUrl}/#level-1`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  await enterQuiz(page);
+  assert.equal(await page.locator('.option-card').count(), 2);
+  await assertQuizLayoutInViewport(page, 'phone quiz layout');
+
+  await page.evaluate((progressKey) => {
+    localStorage.setItem(progressKey, JSON.stringify({
+      completed: Array.from({ length: 10 }, (_, index) => index + 1),
+      unlockedThrough: 11,
+    }));
+  }, PROGRESS_STORAGE_KEY);
+  await page.goto(`${baseUrl}/#level-11`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  await page.locator('.paywall-dialog[open]').waitFor({ state: 'visible', timeout: 5_000 });
+  await assertElementInViewport(page, '.paywall-card', 'phone paywall card');
+  await assertElementInViewport(page, '[data-paywall-close]', 'phone paywall close button');
+  await assertElementInViewport(page, '[data-vip-pay]', 'phone paywall pay button');
+  assert.deepEqual(problems, []);
+  await context.close();
+}
+
+async function gestureScrollToStop(page, stopId) {
+  await page.locator('[data-route-scroll]').dispatchEvent('pointerdown', {
+    pointerType: 'touch',
+    clientX: 200,
+    clientY: 500,
+    bubbles: true,
+  });
+  await page.evaluate((id) => {
+    const scroll = document.querySelector('[data-route-scroll]');
+    const stop = document.querySelector(`[data-stop="${id}"]`);
+    scroll.scrollTo({
+      left: Math.max(0, stop.offsetLeft - (scroll.clientWidth - stop.offsetWidth) / 2),
+      behavior: 'auto',
+    });
+  }, stopId);
+}
+
+async function boatMetrics(page) {
+  return page.evaluate(() => {
+    const boat = document.querySelector('[data-current-boat]');
+    const idle = boat?.querySelector('[data-boat-asset-idle]');
+    const sailing = boat?.querySelector('[data-boat-asset-sailing]');
+    const centered = document.querySelector('.level-stop.is-centered');
+    const boatRect = boat?.getBoundingClientRect();
+    const centeredRect = centered?.getBoundingClientRect();
+    return {
+      centered: centered?.dataset.stop,
+      boatX: getComputedStyle(boat).getPropertyValue('--boat-x').trim(),
+      sailing: boat?.classList.contains('is-sailing'),
+      boatVisible: !!boatRect && boatRect.width > 80 && boatRect.height > 50,
+      boatCenterX: boatRect ? Math.round(boatRect.left + boatRect.width / 2) : null,
+      centeredX: centeredRect ? Math.round(centeredRect.left + centeredRect.width / 2) : null,
+      idleVisibility: idle ? getComputedStyle(idle).visibility : null,
+      sailingVisibility: sailing ? getComputedStyle(sailing).visibility : null,
+    };
+  });
+}
+
+async function runBoatQuickReturnSmoke(browser, baseUrl) {
+  const { context, page, problems } = await newPage(browser, { width: 820, height: 600 }, baseUrl);
+  await page.addInitScript((progressKey) => {
+    localStorage.setItem(progressKey, JSON.stringify({
+      completed: Array.from({ length: 10 }, (_, index) => index + 1),
+      unlockedThrough: 11,
+    }));
+  }, PROGRESS_STORAGE_KEY);
+
+  await page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page, true);
+  await page.locator('[data-route-scroll]').waitFor({ state: 'visible', timeout: 5_000 });
+  await page.waitForTimeout(300);
+
+  await gestureScrollToStop(page, 9);
+  await page.waitForTimeout(900);
+  assert.equal((await boatMetrics(page)).sailing, true);
+
+  await gestureScrollToStop(page, 8);
+  await page.waitForTimeout(3_750);
+  const final = await boatMetrics(page);
+  assert.equal(final.centered, '8', `boat should return to level 8: ${JSON.stringify(final)}`);
+  assert.equal(final.sailing, false, `boat should stop rowing: ${JSON.stringify(final)}`);
+  assert.ok(Math.abs(Number.parseFloat(final.boatX) || 0) < 1, `boat should dock at center: ${JSON.stringify(final)}`);
+  assert.equal(final.idleVisibility, 'visible', `idle boat should be visible: ${JSON.stringify(final)}`);
+  assert.equal(final.sailingVisibility, 'hidden', `sailing boat should be hidden: ${JSON.stringify(final)}`);
+  assert.ok(final.boatVisible, `boat should stay visible: ${JSON.stringify(final)}`);
+  assert.ok(Math.abs(final.boatCenterX - final.centeredX) <= 1, `boat should align with centered stop: ${JSON.stringify(final)}`);
+
+  assert.deepEqual(problems, []);
+  await context.close();
+}
+
+async function runFreeLevelLessonsSmoke(browser, baseUrl) {
+  const { context, page, problems } = await newPage(browser, { width: 820, height: 600 }, baseUrl);
+  const audioRequests = [];
+  const videoRequests = [];
+  page.on('request', (request) => {
+    const url = request.url();
+    if (/assets\/audio\//.test(url)) audioRequests.push(url);
+    if (/assets\/video\//.test(url)) videoRequests.push(url);
+  });
+  await page.addInitScript((progressKey) => {
+    localStorage.setItem(progressKey, JSON.stringify({
+      completed: Array.from({ length: 9 }, (_, index) => index + 1),
+      unlockedThrough: 10,
+    }));
+  }, PROGRESS_STORAGE_KEY);
+
+  for (const level of levels.slice(0, 10)) {
+    audioRequests.length = 0;
+    videoRequests.length = 0;
+    await page.goto(`${baseUrl}/#level-${level.id}`, { waitUntil: 'networkidle' });
+    await closeReleaseDialog(page, level.id === 1);
+    await page.locator('[data-stage-video]').waitFor({ state: 'visible', timeout: 5_000 });
+    assert.equal(await page.locator('[data-video]').getAttribute('src'), level.videoSrc);
+    assert.ok(
+      videoRequests.some((url) => url.includes(level.videoSrc.split('?')[0])),
+      `level ${level.id} video request missing: ${videoRequests.join(', ')}`,
+    );
+
+    await enterQuiz(page);
+    assert.match(await page.locator('.question-card').innerText(), new RegExp(level.zhTitle));
+    assert.equal(await page.locator('[data-listen-question]').isDisabled(), false);
+    await page.locator('[data-listen-question]').click({ force: true });
+    const questionAudioFile = level.videoSrc
+      .match(/level-\d+-[^.?]+/)?.[0]
+      .replace(/^/, 'questions-holly/')
+      .replace(/$/, '.mp3');
+    assert.ok(questionAudioFile, `level ${level.id} question audio filename can be derived`);
+    await waitForCondition(
+      () => audioRequests.some((url) => url.includes(questionAudioFile)),
+      `level ${level.id} question audio missing ${questionAudioFile}: ${audioRequests.join(', ')}`,
+    );
+
+    const optionWords = await page.locator('.option-card .option-word')
+      .evaluateAll((items) => items.map((item) => item.textContent.trim().toLowerCase()));
+    assert.equal(optionWords.length, 2, `level ${level.id} should show two options`);
+    assert.equal(new Set(optionWords).size, 2, `level ${level.id} options must be unique`);
+    assert.ok(optionWords.includes(level.options[level.correct].toLowerCase()), `level ${level.id} correct option missing: ${optionWords.join(', ')}`);
+
+    await answer(page, true);
+    await page.waitForSelector('.feedback-banner.correct:not([hidden])', { timeout: 5_000 });
+    const feedbackText = await page.locator('.feedback-banner.correct').innerText();
+    if (level.id === 10) {
+      assert.match(feedbackText, /第 11 关起是会员关卡，后续课程内容会随更新开放。/);
+      assert.doesNotMatch(feedbackText, /第 11 关已解锁/);
+    }
+  }
+
+  assert.deepEqual(problems, []);
+  await context.close();
+}
+
+async function runMapAudioRuntimeSmoke(browser, baseUrl) {
+  const { context, page, problems } = await newPage(browser, { width: 820, height: 600 }, baseUrl);
+  await page.addInitScript(() => {
+    Math.random = () => 0;
+    window.__mediaPlayCalls = [];
+    const originalPlay = HTMLMediaElement.prototype.play;
+    HTMLMediaElement.prototype.play = function patchedPlay() {
+      window.__mediaPlayCalls.push(this.currentSrc || this.src || this.id || this.tagName);
+      return originalPlay.call(this);
+    };
+  });
+  const audioRequests = [];
+  page.on('request', (request) => {
+    if (/assets\/audio\//.test(request.url())) audioRequests.push(request.url());
+  });
+
+  await page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page, true);
+  await page.locator('[data-route-scroll]').waitFor({ state: 'visible', timeout: 5_000 });
+  await page.locator('[data-route-scroll]').click({ position: { x: 320, y: 300 }, force: true });
+  await page.waitForFunction(() => {
+    const music = document.querySelector('#map-music');
+    return music && !music.paused && music.volume === 0.3;
+  }, null, { timeout: 5_000 });
+  await page.waitForFunction(
+    () => window.__mediaPlayCalls.some((src) => String(src).includes('random-ambient.mp3')),
+    null,
+    { timeout: 7_000 },
+  );
+  assert.ok(audioRequests.some((url) => url.includes('map-bgm.mp3')), `missing bgm request: ${audioRequests.join(', ')}`);
+  assert.ok(audioRequests.some((url) => url.includes('random-ambient.mp3')), `missing ambient request: ${audioRequests.join(', ')}`);
+
+  await page.goto(`${baseUrl}/#level-1`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  await enterQuiz(page);
+  assert.equal(await page.evaluate(() => document.querySelector('#map-music').volume), 0.3);
+  await page.locator('.option-card').first().locator('.speak-btn').click({ force: true });
+  await page.waitForFunction(() => document.querySelector('#map-music').volume === 0.12, null, { timeout: 5_000 });
+  await page.waitForFunction(
+    () => window.__mediaPlayCalls.some((src) => String(src).includes('/assets/audio/words/')),
+    null,
+    { timeout: 5_000 },
+  );
+  await page.waitForFunction(() => document.querySelector('#map-music').volume === 0.3, null, { timeout: 5_000 });
+
+  assert.deepEqual(problems, []);
+  await context.close();
+}
+
+async function runCorruptedStorageSmoke(browser, baseUrl) {
+  const { context, page, problems } = await newPage(browser, { width: 820, height: 600 }, baseUrl);
+  await page.addInitScript((keys) => {
+    for (const key of Object.values(keys)) localStorage.setItem(key, '{bad json');
+  }, {
+    progress: PROGRESS_STORAGE_KEY,
+    learningActivity: LEARNING_ACTIVITY_KEY,
+    preferences: APP_PREFERENCES_KEY,
+    mistakeBook: MISTAKE_BOOK_KEY,
+  });
+
+  await page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page, true);
+  await page.locator('[data-route-scroll]').waitFor({ state: 'visible', timeout: 5_000 });
+  assert.equal(await page.locator('[data-stop="1"]').count(), 1);
+
+  await page.goto(`${baseUrl}/#mine`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  assert.match(await page.locator('.mine-layout').innerText(), /非 VIP|VIP/);
+
+  assert.deepEqual(problems, []);
+  await context.close();
+}
+
+async function runLongOptionLayoutSmoke(browser, baseUrl) {
+  const { context, page, problems } = await newPage(browser, { width: 820, height: 600 }, baseUrl);
+  await page.goto(`${baseUrl}/#level-1`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page, true);
+  await enterQuiz(page);
+
+  const longText = '这是一段超过两百个汉字的选项内容，用来模拟未来题库里出现很长解释或家长误填长答案时，按钮文字仍然必须留在卡片里面，不能压住发音按钮，也不能冲出答题区域。小朋友可能看不懂这段字，但页面必须稳定，方便家长协助和测试人员发现布局问题。';
+  await page.evaluate((text) => {
+    document.querySelectorAll('.option-card').forEach((card, index) => {
+      card.classList.add('has-long-text', 'has-very-long-text');
+      const word = card.querySelector('.option-word');
+      if (word) word.textContent = index === 0 ? text : `${text}另一个选项`;
+    });
+  }, longText);
+
+  const metrics = await page.evaluate(() => Array.from(document.querySelectorAll('.option-card')).map((card) => {
+    const word = card.querySelector('.option-word');
+    const speak = card.querySelector('.speak-btn');
+    const cardRect = card.getBoundingClientRect();
+    const wordRect = word.getBoundingClientRect();
+    const speakRect = speak.getBoundingClientRect();
+    const wordStyle = getComputedStyle(word);
+    return {
+      cardBottom: cardRect.bottom,
+      cardRight: cardRect.right,
+      wordBottom: wordRect.bottom,
+      wordRight: wordRect.right,
+      speakWidth: speakRect.width,
+      speakHeight: speakRect.height,
+      overflowWrap: wordStyle.overflowWrap,
+    };
+  }));
+
+  metrics.forEach((item) => {
+    assert.ok(item.wordBottom <= item.cardBottom + 1, `long option text overflowed vertically: ${JSON.stringify(item)}`);
+    assert.ok(item.wordRight <= item.cardRight + 1, `long option text overflowed horizontally: ${JSON.stringify(item)}`);
+    assert.ok(item.speakWidth >= 60 && item.speakHeight >= 60, `speak button was squeezed: ${JSON.stringify(item)}`);
+    assert.equal(item.overflowWrap, 'anywhere');
+  });
+
+  assert.deepEqual(problems, []);
+  await context.close();
+}
+
+async function runSecondaryRoutes(browser, baseUrl) {
+  const { context, page, problems } = await newPage(browser, { width: 820, height: 600 }, baseUrl);
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true });
+    if (!localStorage.getItem('baby-island-preview-progress-v1')) {
+      localStorage.setItem('baby-island-preview-progress-v1', JSON.stringify({
+        completed: Array.from({ length: 20 }, (_, index) => index + 1),
+        unlockedThrough: 21,
+      }));
+    }
+    if (!localStorage.getItem('baby-island-app-preferences-v1')) {
+      localStorage.setItem('baby-island-app-preferences-v1', JSON.stringify({
+        childName: '测试宝宝',
+        childAge: '5',
+      }));
+    }
+  });
+
+  await page.goto(`${baseUrl}/#ranking`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page, true);
+  const rankingText = await page.locator('body').innerText();
+  assert.match(rankingText, /本周积分/);
+  assert.match(rankingText, /测试宝宝同学/);
+  assert.match(rankingText, /我的排名/);
+  assert.match(rankingText, /我的英语星/);
+  assert.equal(await page.locator('[data-current-user="true"]').count(), 1);
+  assert.equal(await page.locator('[data-tab="ranking"][aria-current="page"]').count(), 1);
+
+  await page.goto(`${baseUrl}/#mine`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  await page.locator('[data-word-chips]').waitFor({ state: 'visible', timeout: 5_000 });
+  const collapsedWordBank = await page.evaluate(() => ({
+    visible: Array.from(document.querySelectorAll('.word-chips span'))
+      .filter((word) => getComputedStyle(word).display !== 'none').length,
+    total: document.querySelectorAll('.word-chips span').length,
+    toggle: document.querySelector('[data-words-expand]')?.textContent?.trim(),
+    expanded: document.querySelector('[data-words-expand]')?.getAttribute('aria-expanded'),
+  }));
+  assert.deepEqual(collapsedWordBank, {
+    visible: 12,
+    total: 20,
+    toggle: '+8 词',
+    expanded: 'false',
+  });
+  await page.locator('[data-words-expand]').click();
+  const expandedWordBank = await page.evaluate(() => ({
+    visible: Array.from(document.querySelectorAll('.word-chips span'))
+      .filter((word) => getComputedStyle(word).display !== 'none').length,
+    toggle: document.querySelector('[data-words-expand]')?.textContent?.trim(),
+    expanded: document.querySelector('[data-words-expand]')?.getAttribute('aria-expanded'),
+  }));
+  assert.deepEqual(expandedWordBank, {
+    visible: 20,
+    toggle: '收起',
+    expanded: 'true',
+  });
+  await page.locator('[data-preference="showChineseHints"]').click();
+  assert.equal(await page.locator('[data-preference="showChineseHints"]').getAttribute('aria-checked'), 'false');
+  await page.locator('[data-child-profile="childName"]').fill('小雨');
+  await page.locator('[data-child-profile="childName"]').dispatchEvent('change', { bubbles: true });
+  assert.match(await page.locator('.profile-card').innerText(), /小雨同学/);
+  await page.locator('[data-check-update]').click();
+  await page.waitForFunction(() => {
+    const note = document.querySelector('[data-check-update-note]');
+    return note && note.textContent !== '检查课程资源和页面内容更新';
+  }, null, { timeout: 5_000 });
+  assert.match(
+    await page.locator('[data-check-update-note]').innerText(),
+    /正在检查更新|当前已是最新版本|发现内容更新|内容更新已准备好|更新服务尚未就绪|当前环境不支持自动更新|网络不可用/,
+  );
+
+  for (const route of ['privacy', 'terms', 'about']) {
+    await page.goto(`${baseUrl}/#${route}`, { waitUntil: 'networkidle' });
+    await closeReleaseDialog(page);
+    assert.ok(await page.locator('.info-card').isVisible());
+    await page.locator('[data-nav-route="mine"]').click();
+    await page.waitForSelector('.mine-layout', { timeout: 5_000 });
+  }
+
+  await page.goto(`${baseUrl}/#support`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  await page.locator('[data-support-message]').fill('坏');
+  await page.locator('[data-support-form]').evaluate((form) => form.requestSubmit());
+  await waitForText(page, '[data-support-error]', /至少写 4 个字/, 'support validation');
+  await page.locator('[data-support-message]').fill('第 3 关喇叭没有声音');
+  await page.locator('[data-copy-support]').click();
+  await waitForText(page, '[data-support-status]', /不能自动复制|复制失败|已复制/, 'support copy status');
+  assert.equal(
+    await page.evaluate(() => localStorage.getItem('baby-island-support-draft-v1')),
+    '第 3 关喇叭没有声音',
+  );
+
+  await page.goto(`${baseUrl}/#mine`, { waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  await page.reload({ waitUntil: 'networkidle' });
+  await closeReleaseDialog(page);
+  assert.match(await page.locator('.profile-card').innerText(), /小雨同学/);
+  assert.equal(await page.locator('[data-preference="showChineseHints"]').getAttribute('aria-checked'), 'false');
+
+  assert.deepEqual(problems, []);
+  await context.close();
 }
 
 async function main() {
-  console.log(`\n${YELLOW}🔍 宝宝闯关 · 端到端验收测试${RESET}`);
-  console.log(`   ${new Date().toISOString()}`);
-  console.log(`   ${'-'.repeat(50)}`);
-
-  // ─── Check server is running ─────────────────────────
-  heading('前置检查');
-
-  let serverOnline = false;
+  const { server, baseUrl } = await serveStatic();
+  const browser = await chromium.launch({ headless: true });
   try {
-    const res = await fetch('http://localhost:3000/api/health');
-    const data = await res.json();
-    serverOnline = data.status === 'ok';
-  } catch {}
-
-  if (!serverOnline) {
-    fail('后端服务未运行。请先在 backend/ 目录执行 npm start', null);
-    console.log(`\n${RED}请先启动后端服务：${RESET}`);
-    console.log('  cd backend && npm start');
-    process.exit(1);
-  }
-  ok('后端服务 http://localhost:3000 运行中');
-
-  // ─── Launch browser ──────────────────────────────────
-  heading('启动浏览器');
-
-  const browser = await chromium.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  });
-  const context = await browser.newContext({
-    viewport: { width: 390, height: 844 },
-    deviceScaleFactor: 2,
-    locale: 'zh-CN',
-  });
-  const page = await context.newPage();
-
-  // Capture console for debugging
-  const pageErrors = [];
-  page.on('console', msg => {
-    if (msg.type() === 'error' || msg.type() === 'warning') {
-      pageErrors.push(`[${msg.type()}] ${msg.text()}`);
-    }
-  });
-  page.on('pageerror', err => {
-    pageErrors.push(`[pageerror] ${err.message}`);
-  });
-
-  ok('Chromium headless 已启动');
-
-  try {
-    // ─── Step 1: Navigate to the app ────────────────────
-    heading('1. 加载首页');
-    await page.goto('http://localhost:3000/', { waitUntil: 'networkidle' });
-    await page.waitForSelector('[data-tab="map"]', { timeout: 10000 });
-    ok('首页加载完成，地图可见');
-
-    // Click map tab if not already on map
-    await page.click('[data-tab="map"]');
-    await page.waitForTimeout(500);
-
-    // ─── Step 2: Click a locked level (level 6) ──────
-    heading('2. 点击受限关卡（第6关）');
-
-    // Scroll to find level 6
-    const routeScroll = await page.$('[data-route-scroll]');
-    if (routeScroll) {
-      await page.evaluate((el) => {
-        const stop = el.querySelector('[data-stop="6"]');
-        if (stop) {
-          el.scrollLeft = stop.offsetLeft - 100;
-        }
-      }, routeScroll);
-      await page.waitForTimeout(500);
-    }
-
-    // Click level 6 button (use force:true since button has aria-disabled="true" but is JS-clickable)
-    const level6Btn = await page.$('[data-level="6"]');
-    if (!level6Btn) {
-      fail('未找到第6关按钮');
-      throw new Error('Level 6 button not found');
-    }
-    await level6Btn.click({ force: true });
-    await page.waitForTimeout(800);
-
-    // Check login dialog appeared
-    const dialog = await page.$('[data-access-dialog][open]');
-    if (!dialog) {
-      fail('未弹出登录弹窗');
-      throw new Error('Login dialog did not appear');
-    }
-    ok('点击第6关后弹出手机号登录弹窗');
-
-    // ─── Step 3: Check login form elements ──────────────
-    heading('3. 验证登录弹窗元素');
-
-    const phoneInput = await page.$('[data-sms-phone]');
-    const codeInput = await page.$('[data-sms-code]');
-    const sendBtn = await page.$('[data-sms-send]');
-    const submitBtn = await page.$('[data-sms-submit]');
-
-    if (!phoneInput) { fail('缺少手机号输入框'); throw new Error('Phone input not found'); }
-    if (!codeInput) { fail('缺少验证码输入框'); throw new Error('Code input not found'); }
-    if (!sendBtn) { fail('缺少发送按钮'); throw new Error('Send button not found'); }
-    if (!submitBtn) { fail('缺少登录按钮'); throw new Error('Submit button not found'); }
-
-    ok('登录弹窗包含手机号输入框、验证码输入框、发送按钮、登录按钮');
-
-    const devBadge = await page.$('[data-sms-dev][hidden]');
-    ok('开发模式验证码区域初始为隐藏状态');
-
-    // ─── Step 4: Fill phone and send verification code ──
-    heading('4. 发送验证码');
-
-    // Fill phone
-    await phoneInput.fill('13800138000');
-    await page.waitForTimeout(300);
-
-    // Check send button is now enabled
-    const sendEnabled = await sendBtn.isEnabled();
-    if (!sendEnabled) {
-      fail('输入有效手机号后发送按钮未启用');
-      throw new Error('Send button should be enabled');
-    }
-    ok('输入11位手机号后发送按钮已启用');
-
-    // Click send
-    await sendBtn.click();
-
-    // Wait for API response — dev badge should become visible
-    // or the code should be set in the JS context
-    await page.waitForTimeout(1000);
-    // Allow one more tick for async operations
-    await page.waitForTimeout(500);
-
-    // Check dev badge appeared (development mode shows code)
-    const devBadgeVisible = await page.$('[data-sms-dev]:not([hidden])');
-    if (devBadgeVisible) {
-      ok('开发模式验证码区域已显示');
-    } else {
-      ok('发送验证码请求已触发');
-    }
-
-    // Read the dev code — try from DOM first, then from JS context
-    let devCode = null;
-    const devCodeEl = await page.$('[data-sms-dev-code]');
-    if (devCodeEl) {
-      devCode = await devCodeEl.textContent();
-    }
-
-    // ─── Step 5: Fill code and login ────────────────────
-    heading('5. 填入验证码并登录');
-
-    if (!devCode) {
-      // Read from JavaScript apiClient context
-      console.log(`  ${YELLOW}  ⚠ 从弹窗DOM未获取验证码，尝试从 JS 上下文...${RESET}`);
-      devCode = await page.evaluate(() => {
-        try {
-          return window.babyIslandApi.getLastDevCode();
-        } catch (e) {
-          return 'ERR:' + e.message;
-        }
-      });
-    }
-
-    if (!devCode || devCode === 'null' || devCode.startsWith('ERR:')) {
-      // Last resort: API response contains debugCode — intercept via evaluation
-      console.log(`  ${YELLOW}  ⚠ 无法从 JS 上下文获取，检查后端返回...${RESET}`);
-      devCode = await page.evaluate(async () => {
-        // Make a fresh send-code request and capture the code from the response
-        try {
-          const res = await window.babyIslandApi.sendVerificationCode(
-            document.querySelector('[data-sms-phone]').value
-          );
-          return window.babyIslandApi.getLastDevCode();
-        } catch {
-          return null;
-        }
-      });
-    }
-
-    if (devCode && devCode !== 'null') {
-      console.log(`  ${YELLOW}  验证码: ${devCode}${RESET}`);
-
-      // Fill the code
-      await codeInput.fill(String(devCode));
-      await page.waitForTimeout(300);
-
-      // Submit should now be enabled (use isEnabled or force:true)
-      const submitEnabled = await submitBtn.isEnabled();
-      ok(`填入6位验证码后登录按钮${submitEnabled ? '已启用' : '未启用'}`);
-
-      // Submit via the form directly (works even if button is disabled)
-      await page.evaluate(() => {
-        const form = document.querySelector('[data-sms-login-form]');
-        if (form) {
-          form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-        }
-      });
-      await page.waitForTimeout(1500);
-
-      // ─── Step 6: Verify login success ─────────────────
-      heading('6. 验证登录成功');
-
-      // Dialog should be closed
-      const dialogStillOpen = await page.$('[data-access-dialog][open]');
-      if (dialogStillOpen) {
-        fail('登录后弹窗未关闭');
-        throw new Error('Dialog still open after login');
-      }
-      ok('登录成功后弹窗已关闭');
-
-      // Should have navigated to the level detail page
-      const detailView = await page.$('.detail-view');
-      if (detailView) {
-        ok('登录成功后自动进入关卡详情页');
-      } else {
-        ok('登录后回到地图页面（自动导航取决于 pendingLevelId 设置）');
-      }
-
-      // ─── Step 7: Refresh and check session recovery ────
-      heading('7. 刷新页面 → 会话恢复');
-
-      await page.reload({ waitUntil: 'networkidle' });
-      await page.waitForTimeout(1000);
-
-      // Session should be restored — page should show login state
-      // Check that the map loads correctly
-      const mapViewAfterRefresh = await page.$('.view');
-      if (mapViewAfterRefresh) {
-        ok('刷新后页面正常加载');
-      }
-
-      // Check session by looking at the "我的" tab for logout button
-      await page.click('[data-tab="mine"]');
-      await page.waitForTimeout(500);
-
-      const logoutBtn = await page.$('[data-logout]');
-      if (logoutBtn) {
-        ok('刷新后会话恢复——「我的」页面显示退出登录按钮');
-      } else {
-        // Try checking the logout row
-        const logoutRow = await page.$('[data-logout-row]:not([hidden])');
-        if (logoutRow) {
-          ok('刷新后会话恢复——退出登录行可见');
-        } else {
-          fail('刷新后未检测到登录状态');
-        }
-      }
-
-      // ─── Step 8: Logout ─────────────────────────────────
-      heading('8. 退出登录 → 状态清理');
-
-      if (logoutBtn) {
-        // Scroll to the logout button first, then force-click
-        await logoutBtn.scrollIntoViewIfNeeded();
-        await page.waitForTimeout(300);
-        await logoutBtn.click({ force: true });
-        await page.waitForTimeout(1000);
-
-        // Check that logout state is clean
-        const logoutRowAfter = await page.$('[data-logout-row]:not([hidden])');
-        if (logoutRowAfter) {
-          fail('退出后退出登录行仍可见');
-        } else {
-          ok('退出登录后退出按钮已隐藏');
-        }
-
-        // Return to map and try clicking level 6 again
-        await page.click('[data-tab="map"]');
-        await page.waitForTimeout(500);
-
-        // Click level 6 again — should prompt login again
-        const level6BtnAgain = await page.$('[data-level="6"]');
-        if (level6BtnAgain) {
-          await level6BtnAgain.click({ force: true });
-          await page.waitForTimeout(800);
-
-          const dialogAgain = await page.$('[data-access-dialog][open]');
-          if (dialogAgain) {
-            ok('退出后再次点击受限关卡，登录弹窗重新弹出');
-          } else {
-            fail('退出后点击受限关卡未弹出登录弹窗');
-          }
-        }
-      }
-
-    } else {
-      // If we can't get the dev code, note it
-      console.log(`  ${YELLOW}⚠ 无法获取开发验证码 — 请检查后端终端输出${RESET}`);
-      console.log(`  ${YELLOW}  后端应该在终端显示类似：${RESET}`);
-      console.log(`  ${YELLOW}  ║  验证码: 123456${RESET}`);
-      fail('验证码获取失败（后端终端中应可见）');
-    }
-
-  } catch (err) {
-    if (!err.message?.includes('not found')) {
-      fail('测试执行异常', err);
-    }
-    if (pageErrors.length > 0) {
-      console.log(`\n  ${YELLOW}📋 页面错误日志:${RESET}`);
-      pageErrors.forEach(e => console.log(`    ${e}`));
-    }
+    await runPrimaryFlow(browser, baseUrl);
+    await runSecondaryRoutes(browser, baseUrl);
+    await runPhoneSmoke(browser, baseUrl);
+    await runBoatQuickReturnSmoke(browser, baseUrl);
+    await runFreeLevelLessonsSmoke(browser, baseUrl);
+    await runMapAudioRuntimeSmoke(browser, baseUrl);
+    await runCorruptedStorageSmoke(browser, baseUrl);
+    await runLongOptionLayoutSmoke(browser, baseUrl);
+    await runOfflineShell(browser, baseUrl);
+    await runForcedReleaseUpdateSmoke(browser, baseUrl);
+    console.log('E2E PASS: release update, forced release update, map, mobile map layout, boat quick-return, free level lessons, map audio runtime, local ranking, mine, VIP state, content update check, settings, support, quiz, audio, VIP paywall, corrupted storage, long options, offline shell');
   } finally {
-    // Take screenshot for debugging
-    try {
-      await page.screenshot({ path: resolve(ROOT, 'tools', 'e2e-screenshot.png'), fullPage: true });
-      console.log(`  ${YELLOW}📸 截图已保存: tools/e2e-screenshot.png${RESET}`);
-    } catch {}
-
     await browser.close();
-    ok('浏览器已关闭');
+    await new Promise((resolve) => server.close(resolve));
   }
-
-  // ─── Summary ──────────────────────────────────────────
-  console.log(`\n${CYAN}═══ 验收结果 ═══${RESET}`);
-  console.log(`  ${GREEN}通过: ${passed}${RESET}`);
-  if (failed > 0) console.log(`  ${RED}失败: ${failed}${RESET}`);
-  console.log(`  共执行: ${passed + failed} 项`);
-  console.log();
-
-  process.exit(failed > 0 ? 1 : 0);
 }
 
 main().catch((err) => {
-  console.error(`${RED}Fatal:${RESET}`, err);
+  console.error(err.stack || err.message);
   process.exit(1);
 });

@@ -61,3 +61,24 @@ _verify_button.mjs
 
 # ─── Generated source assets (intermediate AI output, not runtime) ──
 assets/generated/
+
+# InsForge & AI agent skills
+.insforge
+.agent
+.agents
+.augment
+.claude
+.cline
+.github/copilot*
+.kilocode
+.qoder
+.qwen
+.roo
+.trae
+.windsurf
+
+# Local tool/runtime workdirs
+.codegraph/
+.hermes/
+.reasonix/
+.workbuddy/

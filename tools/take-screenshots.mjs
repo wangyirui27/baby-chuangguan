@@ -1,10 +1,18 @@
 import { chromium } from 'playwright';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const URL = 'http://localhost:8765';
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const URL = process.env.FRONTEND_URL || 'http://localhost:5173/#map';
 const VIEWPORTS = [
   { width: 1024, height: 577, name: '1024x577' },
   { width: 390, height: 844, name: '390x844' },
 ];
+
+async function closeReleaseDialog(page) {
+  const close = page.locator('[data-release-update-close]').first();
+  if (await close.count()) await close.click();
+}
 
 async function main() {
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
@@ -27,28 +35,24 @@ async function main() {
       });
     });
 
-    // Set localStorage and sessionStorage before page load
-    const page = await context.newPage();
-
-    await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
-
-    // Set storage state after page is loaded but before app initializes
-    await page.evaluate(() => {
+    await context.addInitScript(() => {
       localStorage.setItem('baby-island-preview-progress-v1', JSON.stringify({
         completed: Array.from({ length: 42 }, (_, i) => i + 1),
         unlockedThrough: 43,
       }));
-      sessionStorage.setItem('baby-island-auth-token', 'test-token-abc123');
-      sessionStorage.setItem('baby-island-preview-login', '1');
+      localStorage.setItem('baby-island-app-preferences-v1', JSON.stringify({
+        vipActive: true,
+      }));
     });
 
-    // Reload to pick up storage
-    await page.reload({ waitUntil: 'networkidle', timeout: 30000 });
+    const page = await context.newPage();
+    await page.goto(URL, { waitUntil: 'networkidle', timeout: 30000 });
+    await closeReleaseDialog(page);
     await page.waitForTimeout(3000);
 
     // Take full-page screenshot
     await page.screenshot({
-      path: `/Users/yr/宝宝闯关/pinchtab-${vp.name}.png`,
+      path: path.join(ROOT, `pinchtab-${vp.name}.png`),
       fullPage: true,
     });
     console.log(`Captured ${vp.name}`);
@@ -89,11 +93,10 @@ async function main() {
     if (journey) {
       const rect = await journey.boundingBox();
       console.log(`  journey-compact rect: ${JSON.stringify(rect)}`);
-      const svg = await journey.$('.j-svg');
-      if (svg) {
-        const svgRect = await svg.boundingBox();
-        console.log(`  j-svg rect: ${JSON.stringify(svgRect)}`);
-      }
+      const badge = await journey.$('.j-badge');
+      const pearls = await journey.$('.j-pearls');
+      const next = await journey.$('.j-next');
+      console.log(`  journey parts: badge=${Boolean(badge)} pearls=${Boolean(pearls)} next=${Boolean(next)}`);
     } else {
       console.log(`  .journey-compact NOT FOUND`);
     }
