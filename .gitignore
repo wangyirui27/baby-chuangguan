@@ -44,6 +44,8 @@ Thumbs.db
 
 # ─── Screenshots (verification artifacts) ──────────
 *.png
+!assets/brand/hirota-logo.png
+!assets/brand/hirota-wordmark.png
 !assets/**/*.webp
 *.jpg
 *.jpeg
