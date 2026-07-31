@@ -586,7 +586,7 @@ function validateSupportMessage(message) {
 function supportFeedbackText(message, context = {}) {
   const value = String(message || '').trim();
   return [
-    '宝宝英语岛反馈',
+    '嗨洛塔少儿启蒙APP反馈',
     `问题：${value}`,
     `当前关卡：第 ${context.currentLevel || 1} 关`,
     `完成关卡：${context.completed || 0}/${DISPLAY_LEVEL_COUNT}`,
@@ -599,7 +599,7 @@ function buildLearningDataExport(progress, activity, preferences, mistakeBook, _
   const safeActivity = normalizeLearningActivity(activity);
   const safeMistakes = normalizeMistakeBook(mistakeBook, allLevels);
   return {
-    app: '宝宝英语岛',
+    app: '嗨洛塔少儿启蒙APP',
     version: 1,
     exportedAt,
     childProfile: normalizeChildProfile(preferences),
@@ -655,7 +655,7 @@ function releaseUpdateInfo(config, currentVersion = APP_RELEASE_VERSION) {
     latestVersion,
     force,
     title: String(config?.title || '发现新版本'),
-    message: String(config?.message || '请前往 App Store 更新宝宝英语岛。'),
+    message: String(config?.message || '请前往 App Store 更新嗨洛塔少儿启蒙APP。'),
     releaseNotes: Array.isArray(config?.releaseNotes) ? config.releaseNotes.slice(0, 4).map(String) : [],
     storeName: String(config?.storeName || 'App Store'),
     updateUrl,
@@ -816,9 +816,9 @@ if (typeof document !== 'undefined') {
     terms: {
       eyebrow: 'TERMS',
       title: '使用条款',
-      intro: '宝宝英语岛是面向家庭的英语启蒙闯关产品，家长负责陪同使用和安排学习时间。',
+      intro: '嗨洛塔少儿启蒙APP是面向家庭的少儿启蒙产品，家长负责陪同使用和安排学习时间。',
       sections: [
-        ['学习内容', '课程用于英语启蒙，不替代学校教学或专业评估。'],
+        ['学习内容', '课程用于少儿启蒙，不替代学校教学或专业评估。'],
         ['使用方式', '按关卡顺序完成学习，已解锁内容可以反复复习。'],
         ['使用边界', '请勿复制、售卖或批量抓取课程、图片、音频等内容。'],
       ],
@@ -826,7 +826,7 @@ if (typeof document !== 'undefined') {
     about: {
       eyebrow: 'ABOUT',
       title: '关于应用',
-      intro: '宝宝英语岛把英文单词、视频理解和海岛闯关组合成适合 iPad 横屏的学习体验。',
+      intro: '嗨洛塔少儿启蒙APP把启蒙内容、视频理解和海岛闯关组合成适合 iPad 横屏的学习体验。',
       sections: [
         ['当前版本', `v${APP_RELEASE_VERSION}，适配 iPad 横屏与移动浏览器。`],
         ['适合人群', '主要面向 3-5 岁宝宝，由家长陪同使用体验更好。'],
@@ -1610,7 +1610,7 @@ if (typeof document !== 'undefined') {
       button.addEventListener('click', () => releaseUpdateDialog.close());
     });
     releaseUpdateDialog.querySelector('[data-release-update-primary]')?.addEventListener('click', () => {
-      if (!requestReleaseUpdate(updateInfo, window)) showToast(`请打开 ${updateInfo.storeName} 搜索宝宝英语岛更新`);
+      if (!requestReleaseUpdate(updateInfo, window)) showToast(`请打开 ${updateInfo.storeName} 搜索嗨洛塔少儿启蒙APP更新`);
     });
     releaseUpdateDialog.addEventListener('cancel', (event) => {
       if (mustBlockForUpdate) event.preventDefault();
@@ -3403,7 +3403,7 @@ if (typeof document !== 'undefined') {
         if (access === 'paid') {
           requestAnimationFrame(() => openPaywallDialog(route.id));
         }
-        document.title = '宝宝英语岛';
+        document.title = '嗨洛塔少儿启蒙APP';
         syncMapMusic();
         return;
       }
@@ -3415,7 +3415,7 @@ if (typeof document !== 'undefined') {
         document.body.classList.add('map-game-active');
         setActiveTab('map');
         renderMap(lessonUnavailableMessage);
-        document.title = '宝宝英语岛';
+        document.title = '嗨洛塔少儿启蒙APP';
         syncMapMusic();
         return;
       }
@@ -3423,29 +3423,29 @@ if (typeof document !== 'undefined') {
       appShell.classList.add('detail-shell');
       document.body.classList.add('level-quiz-active');
       renderDetail(level);
-      document.title = `${level.title} · 宝宝英语岛`;
+      document.title = `${level.title} · 嗨洛塔少儿启蒙APP`;
     } else {
       bottomTabs.hidden = false;
       appShell.classList.remove('detail-shell');
       document.body.classList.remove('level-quiz-active');
       if (route.type === 'ranking') {
         renderRanking();
-        document.title = '英语星排行榜 · 宝宝英语岛';
+        document.title = '英语星排行榜 · 嗨洛塔少儿启蒙APP';
       } else if (route.type === 'mine') {
         renderMine();
-        document.title = '我的 · 宝宝英语岛';
+        document.title = '我的 · 嗨洛塔少儿启蒙APP';
       } else if (route.type === 'support') {
         renderSupport();
-        document.title = '帮助与反馈 · 宝宝英语岛';
+        document.title = '帮助与反馈 · 嗨洛塔少儿启蒙APP';
       } else if (route.type === 'info') {
         renderInfoPage(route.page);
-        document.title = `${appInfoPages[route.page].title} · 宝宝英语岛`;
+        document.title = `${appInfoPages[route.page].title} · 嗨洛塔少儿启蒙APP`;
       } else if (route.type === 'not-found') {
         renderNotFound();
-        document.title = '页面走丢了 · 宝宝英语岛';
+        document.title = '页面走丢了 · 嗨洛塔少儿启蒙APP';
       } else {
         renderMap();
-        document.title = '宝宝英语岛';
+        document.title = '嗨洛塔少儿启蒙APP';
       }
     }
 

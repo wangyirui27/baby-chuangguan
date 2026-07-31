@@ -1,7 +1,7 @@
 {
-  "name": "宝宝英语岛",
-  "short_name": "英语岛",
-  "description": "面向 3–6 岁孩子的英语启蒙闯关 H5",
+  "name": "嗨洛塔少儿启蒙APP",
+  "short_name": "嗨洛塔",
+  "description": "面向 3–6 岁孩子的少儿启蒙闯关 H5",
   "start_url": "./#map",
   "scope": "./",
   "display": "standalone",
@@ -30,7 +30,7 @@
       "url": "./#ranking"
     },
     {
-      "name": "我的英语岛",
+      "name": "我的",
       "short_name": "我的",
       "url": "./#mine"
     }
