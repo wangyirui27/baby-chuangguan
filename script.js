@@ -3430,7 +3430,7 @@ if (typeof document !== 'undefined') {
       document.body.classList.remove('level-quiz-active');
       if (route.type === 'ranking') {
         renderRanking();
-        document.title = '英语星排行榜 · 嗨洛塔少儿启蒙APP';
+        document.title = '排行榜 · 嗨洛塔少儿启蒙APP';
       } else if (route.type === 'mine') {
         renderMine();
         document.title = '我的 · 嗨洛塔少儿启蒙APP';
