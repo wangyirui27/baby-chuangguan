@@ -1,0 +1,23 @@
+{
+  "nodeKey": "773c794b-d47d-4e12-992b-d673049f4932",
+  "taskId": "20260723093203289436515",
+  "status": 2,
+  "url": "https://libtv-res.liblib.art/sd-gen-save-img/genius_playground/video/5d55be9134184b4dabdb5e5a560d5450/fb55ee9770c11418177e1f6a52fc7038898a7e125ad6c1d2325adf37675a8510.mp4",
+  "model": "Seedance 2.0 Mini",
+  "name": "Desert L003 Good morning 20260722-desert-l003-good-morning-v1",
+  "resourceMeta": {
+    "items": [
+      {
+        "kind": "video",
+        "width": 1280,
+        "height": 720,
+        "durationSec": 15.104
+      }
+    ]
+  },
+  "final": "output/media-production/desert-level-003-good-morning-v1/final/level-003-good-morning.mp4",
+  "asset": "assets/video/free-levels/level-003-good-morning.mp4",
+  "contactSheet": "output/media-production/desert-level-003-good-morning-v1/contact-sheets/level-003-good-morning.jpg",
+  "meanVolume": "-20.9 dB",
+  "maxVolume": "-3.8 dB"
+}

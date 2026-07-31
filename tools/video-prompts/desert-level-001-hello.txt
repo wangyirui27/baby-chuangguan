@@ -1,0 +1,34 @@
+Title: A Gentle Hello in the Desert
+
+Duration: 15 seconds
+
+Format: 16:9 horizontal
+
+Cinematic Style: Hand-painted watercolor and gouache storybook animation matching the current Magic English Voyage art direction, adapted for the desert map. Warm cream sunlight, soft sand and clay earth tones, pale mint-green oasis plants, tiny coral-pink accents, soft pencil outlines, visible paper grain, low-saturation colors, gentle imperfect brush texture, cozy quiet emotion. Characters should look warm, clean, attractive, and child-safe: bright clean eyes, soft cheeks, balanced proportions, gentle smiles, refined hand-painted character design. It must feel hand-drawn and alive, not glossy 3D or plastic CGI.
+
+Source Situation: Two young children meet on a quiet desert-oasis path for the first time. One child feels a little shy, then bravely waves and says hello. The other child answers warmly. The meaning of the English expression "Hello" must be visually clear through waving, eye contact, smiling, and friendly greeting. No classroom, no flashcards, no written labels.
+
+CEFR Target: Pre-A1 / very young A1. The target English expression is "Hello". Keep every spoken line short, natural, and easy for a young English learner to understand. The word "Hello" must be heard clearly several times, but it should sound like real friendly greeting, not a vocabulary drill.
+
+Zero-beginner clarity rule: Whenever "Hello" is spoken, the greeting action must be the only clear foreground meaning target. The speaking child must wave, smile, make eye contact, or step closer in a friendly way. Do not place another learnable object in the foreground during or immediately before "Hello". No toys, books, cards, signs, cups, food, animals, balls, letters, written words, or confusing props near the children. Background oasis plants and tents must stay soft, distant, and non-salient.
+
+Scene: A simple warm desert-oasis path with soft sand, a small cream tent far in the background, a few pale mint-green plants, and golden morning light. The foreground is uncluttered and safe. No readable text anywhere. No classroom, no blackboard, no teacher, no flashcards, no UI.
+
+Characters: Exactly two speaking children, about 6 years old. Child A is a shy but brave child with bright eyes, soft cheeks, neat hair, and simple cream-and-mint clothes. Child B is a friendly child with warm eyes, soft cheeks, and a gentle smile, wearing earthy storybook desert-travel clothes. No adults, no teachers, no narrator, no extra speaking characters.
+
+Story Container: Child A stands on the quiet path, notices Child B approaching, hesitates for one small beat, then raises an empty hand and waves. Child B stops, smiles, and waves back. They step closer, relax, and share a small friendly laugh. The emotional beat is the shy child becoming brave enough to greet a new friend. The final frame leaves a tender feeling of two children beginning a friendship.
+
+Dialogue:
+0-3s: Child A, shy but clear, waving: "Hello."
+3-6s: Child B, warm and happy, waving back: "Hello!"
+6-9s: Child A, a little braver: "Hello, friend."
+9-12s: Child B, gentle smile: "Hi. Hello."
+12-15s: Both children, soft happy laugh, together: "Hello!"
+
+Action & Performance: Keep the acting quiet, tender, and emotionally specific. Child A should sound shy at first, then more confident. Child B should sound warm and welcoming. Use small pauses, eye contact, clear waving gestures, soft smiles, and a tiny shared laugh. Both children's hands remain empty and visible. No object enters their hands or the foreground. No presenter energy, no classroom teaching, no repeat-after-me drill.
+
+Camera: One continuous gentle storybook shot with slow natural movement. Start with Child A in the foreground and Child B approaching from the soft background. Whenever "Hello" is spoken, keep the waving child and the friendly response visually dominant. Use medium shots that show faces and empty waving hands clearly. Avoid tight mouth close-ups. End on both children standing together, smiling and waving softly.
+
+Audio: Natural English child-to-child dialogue generated inside the video. No narrator. No Chinese speech. No robotic TTS voice. No flat recitation. No whisper, mumble, gibberish, or non-English. Child voices should be clear, young, warm, and emotionally alive. Very quiet desert breeze ambience only. No loud music.
+
+Negative Prompt: subtitles, captions, readable text, written words, letters, labels, signs, speech bubbles, flashcards, card UI, blackboard, classroom, teacher, students in classroom, narrator, vocabulary lesson, repeat-after-me drill, robotic voice, monotone voice, gibberish, non-English speech, whispering, mumbling, loud music, toy, book, open book, card, ball, cup, bowl, plate, spoon, food, animal, foreground prop, child holding an object, confusing object near the children, unclear greeting, crowded background, extra talking characters, adults, scary elements, fast cuts, distorted hands, incorrect lip sync, tight mouth close-ups, ugly faces, asymmetrical eyes, deformed face, glossy 3D render, plastic toy texture, neon colors, hard vector outlines, anime parody, artist signature, logo, watermark.

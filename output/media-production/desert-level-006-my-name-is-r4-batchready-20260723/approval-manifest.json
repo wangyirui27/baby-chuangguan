@@ -1,0 +1,60 @@
+{
+  "$schema": "desert-video-approval/v1",
+  "level": {
+    "id": 6,
+    "title": "My name is...",
+    "zhTitle": "我的名字是……",
+    "questionType": "situation",
+    "transferProbe": "Tell a friend your name."
+  },
+  "spokenTarget": "My name is Tom.",
+  "promptSha256": "a77b895b42ee404bfc47bdedc409813d89d1b133f2fdd048c680609d902d018e",
+  "checks": {
+    "structure": {
+      "pass": true,
+      "checker": "check-desert-video-prompt.js",
+      "details": {
+        "ok": true,
+        "promptPath": "/Users/yr/宝宝闯关/output/media-production/desert-level-006-my-name-is-r4-batchready-20260723/prompts/level-006-my-name-is-r4-batchready-20260723.txt",
+        "spokenTarget": "My name is Tom.",
+        "answerLabel": "My name is...",
+        "levelId": 6,
+        "contractSpoken": "My name is Tom.",
+        "contractSpokenSource": "level-id+contract-spoken",
+        "spokenCount": 1,
+        "spokenCountSource": "dialogue-quoted-lines",
+        "dialogueLines": 5,
+        "chars": 7323,
+        "targetExpression": "My name is Tom.",
+        "targetCount": 1
+      }
+    },
+    "automated_preflight": {
+      "pass": true,
+      "checker": "desert-semantic-gate+structure",
+      "details": "spokenDialogue authored; visualSemantics authored; no title fallback"
+    },
+    "independent_prompt_qa": {
+      "pass": false,
+      "reviewer": null,
+      "details": "awaiting independent Codex/DeepSeek/M3 prompt QA — automated checker must not self-approve"
+    }
+  },
+  "evidence": {
+    "asr": false,
+    "silent": false,
+    "entailment": false
+  },
+  "executionApproval": {
+    "approved": false,
+    "scope": null,
+    "approvedBy": null
+  },
+  "userAcceptance": {
+    "accepted": false,
+    "acceptedBy": null
+  },
+  "approved": false,
+  "dryRun": true,
+  "creditsBurned": false
+}

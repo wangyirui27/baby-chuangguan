@@ -1,0 +1,48 @@
+{
+  "level": "desert-013",
+  "title": "friend mind map",
+  "zhTitle": "朋友思维导图",
+  "version": "20260723-desert-l013-friend-mind-map-v1",
+  "model": "Seedance 2.0 Mini",
+  "nodeName": "Desert L013 friend mind map v1 20260723",
+  "nodeKey": "d88ae62c-eed2-4425-b292-34c1438e010e",
+  "taskId": "20260723163503544136515",
+  "sourceUrl": "https://libtv-res.liblib.art/sd-gen-save-img/genius_playground/video/5d55be9134184b4dabdb5e5a560d5450/faca499d236c1b2bd81046ebff7aaeec20412dc03b6181c92671b77ac5e93eea.mp4",
+  "prompt": "output/media-production/desert-level-013-friend-mind-map-v1/prompts/level-013-friend-mind-map-v1.txt",
+  "raw": "output/media-production/desert-level-013-friend-mind-map-v1/raw/level-013-friend-mind-map-v1.mp4",
+  "final": "output/media-production/desert-level-013-friend-mind-map-v1/final/level-013-friend-mind-map-v1.mp4",
+  "contactSheet": "output/media-production/desert-level-013-friend-mind-map-v1/contact-sheets/level-013-friend-mind-map-v1.jpg",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "96000",
+        "channels": 2
+      }
+    ],
+    "format": {
+      "duration": "15.200000",
+      "size": "7118106"
+    }
+  },
+  "volume": {
+    "mean_volume": "-23.0 dB",
+    "max_volume": "-3.4 dB"
+  },
+  "qaRequired": [
+    "silent-viewer",
+    "unknown-language",
+    "face-mouth-visible",
+    "no-text-cards-logo",
+    "target-semantic-clear"
+  ]
+}

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+<script>
+window.BABY_ISLAND_RELEASE_UPDATE_URL = 'data:application/json,{"latestVersion":"1.0.0","minSupportedVersion":"1.0.0"}';
+localStorage.setItem('baby-island-app-preferences-v1', JSON.stringify({mapMusic:true,autoPronunciation:true,showChineseHints:true,mapWorld:'desert',childName:'小禾',childAge:'6'}));
+localStorage.setItem('baby-island-preview-progress-v1', JSON.stringify({ocean:{completed:[],unlockedThrough:1,completedAt:{}},desert:{completed:[1,2,3,4],unlockedThrough:5,completedAt:{"1":"2026-07-23","2":"2026-07-23","3":"2026-07-23","4":"2026-07-23"}},castle:{completed:[],unlockedThrough:1,completedAt:{}}}));
+window.addEventListener('DOMContentLoaded', () => setTimeout(() => document.querySelector('[data-splash-skip]')?.click(), 700));
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#19c8b9">
+    <meta name="description" content="星愿少儿英语：面向孩子的英语启蒙闯关">
+    <meta name="application-name" content="星愿少儿英语">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="星愿少儿英语">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="app-marker" content="VIDEO_LEVEL_APP_READY">
+    <title>星愿少儿英语</title>
+    <link rel="manifest" href="manifest.webmanifest?v=20260717-app-shell-v1">
+    <link rel="icon" href="assets/icons/app-icon.svg?v=20260717-app-shell-v1" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/icons/app-icon.svg?v=20260717-app-shell-v1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=20260722-splash-v30">
+    <link rel="stylesheet" href="assets/brand/splash/splash.css?v=20260722-splash-v30">
+    <link rel="stylesheet" href="assets/brand/splash/motion.css?v=20260722-splash-v30">
+    <link rel="preload" as="audio" fetchpriority="high" href="assets/brand/audio/xingyuan-shaer-yingyu-peiqi.mp3?v=20260722-splash-v30">
+    <script src="assets/audio/words/word-audio-manifest.js?v=20260723-word-manifest-desert-l005-v1"></script>
+    <script src="assets/vendor/lottie.min.js"></script>
+    <script src="assets/lottie/hand-tap-data.js?v=20260718-hand-user-edit"></script>
+    <script src="assets/lottie/correct-celebration-data.js?v=20260718-correct-lottie-v1"></script>
+    <script src="auth/apiClient.js?v=20260720-learning-sync-v1" defer></script>
+    <script src="script.js?v=20260723-desert-l005-prompt-simplified-v1" defer></script>
+  </head>
+  <body class="splash-lock">
+    <div id="app-splash" class="app-splash" role="dialog" aria-modal="true" aria-label="星愿少儿英语启动画面">
+      <div class="app-splash-stage">
+        <div class="app-splash-figure" id="splash-figure-root" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="996.90 632.85 1019.06 1155.36" width="480" height="544.2" role="img" aria-label="HALO ENGLISH">
+  <title>HALO ENGLISH</title>
+  <!-- EPS figure; wordmark sized to original DREAMER width (~939px) -->
+  <g fill="#f8f8f0" fill-rule="evenodd">
+    <path id="ground" d="M1526.840 1485.700 C1695.570 1485.700 1839.000 1515.230 1891.300 1556.570 C1805.530 1532.380 1674.200 1517.200 1526.840 1517.200 C1379.480 1517.200 1248.150 1532.380 1162.380 1556.570 C1214.680 1515.230 1358.110 1485.700 1526.840 1485.700"/>
+    <g id="figure">
+      <path id="body" d="M1279.370 1173.550 C1349.950 1208.700 1404.510 1180.580 1443.880 1175.510 C1437.410 1296.720 1347.700 1402.180 1361.480 1440.710 C1388.760 1431.990 1436.570 1350.430 1462.440 1322.590 C1521.220 1260.160 1521.220 1473.890 1539.210 1486.260 C1572.400 1496.110 1556.650 1417.080 1556.650 1383.340 C1556.650 1301.780 1545.120 1203.920 1568.180 1131.920 C1584.490 1080.740 1636.800 1014.940 1634.550 927.480 C1588.430 1012.120 1488.880 1151.050 1279.370 1173.550"/>
+      <path id="head" d="M1493.090 899.920 C1516.150 903.010 1517.280 931.980 1515.310 951.660 C1511.940 984.560 1542.870 1011.000 1522.900 1052.900 C1500.970 1098.460 1444.440 1095.930 1414.910 1020.560 C1401.420 986.250 1418.010 980.910 1455.130 947.440 C1490.000 922.700 1500.120 907.230 1493.090 899.920"/>
+    </g>
+    <g id="stars">
+      <g id="star-main"><path d="M1680.110 787.150 L1695.850 838.610 L1751.250 838.610 L1707.380 869.540 L1724.260 922.130 L1681.230 889.790 L1636.240 922.130 L1653.950 871.510 L1609.240 838.610 L1662.950 839.730 L1680.110 787.150"/></g>
+      <g id="star-mid"><path d="M1751.820 681.970 L1746.760 711.500 L1774.600 725.280 L1744.790 729.780 L1740.290 760.150 L1726.790 733.430 L1696.420 738.500 L1717.790 717.680 L1703.450 690.120 L1730.160 703.910 L1751.820 681.970"/></g>
+      <g id="star-a"><path d="M1611.490 662.850 L1621.050 694.340 L1653.670 703.910 L1622.170 713.470 L1612.610 746.090 L1603.050 714.590 L1570.430 705.030 L1601.930 695.470 L1611.490 662.850"/></g>
+    </g>
+  </g>
+  <g id="wordmark" fill="#f8f8f0" font-family="Nunito, Avenir Next, system-ui, sans-serif" font-weight="800" font-size="108" text-anchor="middle">
+    <text id="L0" x="1081.38" y="1715.81">H</text>
+    <text id="L1" x="1170.35" y="1715.81">A</text>
+    <text id="L2" x="1250.66" y="1715.81">L</text>
+    <text id="L3" x="1334.68" y="1715.81">O</text>
+    <text id="L4" x="1469.98" y="1715.81">E</text>
+    <text id="L5" x="1556.47" y="1715.81">N</text>
+    <text id="L6" x="1651.00" y="1715.81">G</text>
+    <text id="L7" x="1735.02" y="1715.81">L</text>
+    <text id="L8" x="1790.62" y="1715.81">I</text>
+    <text id="L9" x="1848.69" y="1715.81">S</text>
+    <text id="L10" x="1931.48" y="1715.81">H</text>
+  </g>
+</svg>
+
+        </div>
+        <span class="app-splash-logo-frame" role="presentation">
+          <img
+            class="app-splash-logo"
+            src="assets/brand/splash/xingyuan-logo.png?v=20260722-splash-v30"
+            width="1646"
+            height="956"
+            alt="星愿少儿英语"
+            decoding="async"
+            fetchpriority="high"
+          />
+        </span>
+      </div>
+      <audio id="splash-brand-voice" preload="auto" src="assets/brand/audio/xingyuan-shaer-yingyu-peiqi.mp3?v=20260722-splash-v30" aria-hidden="true"></audio>
+      <audio id="splash-melody-end" preload="auto" src="assets/brand/audio/splash-melody-end.mp3?v=20260722-splash-v30" aria-hidden="true"></audio>
+      <button class="app-splash-skip" type="button" data-splash-skip>跳过</button>
+    </div>
+
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <div class="network-banner" data-network-status role="status" aria-live="polite" hidden></div>
+    <div class="app-toast" data-app-toast role="status" aria-live="polite" hidden></div>
+
+    <div class="app-shell">
+      <main id="main-content" tabindex="-1"></main>
+    </div>
+
+    <audio id="map-music" src="assets/audio/map-bgm.mp3" loop preload="auto" aria-hidden="true"></audio>
+
+    <nav class="bottom-tabs" aria-label="主要导航">
+      <button class="tab-button" type="button" data-tab="map">
+        <span class="tab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M7 20V4.5"/>
+            <path d="M7 5.2h8.2l-1.7 2.9 1.7 2.9H7"/>
+            <path d="M4.5 20h15"/>
+          </svg>
+        </span>
+        <span class="tab-label">闯关</span>

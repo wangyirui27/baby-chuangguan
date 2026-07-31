@@ -1,0 +1,32 @@
+<!doctype html><meta charset="utf-8"><title>Open Desert L005 Preview</title>
+<body style="font-family:system-ui;padding:24px">正在打开沙漠第 5 关体验版…</body>
+<script>
+(async function () {
+  const prefs = {
+    mapMusic: true,
+    autoPronunciation: true,
+    showChineseHints: true,
+    mapWorld: 'desert',
+    childName: '小禾',
+    childAge: '6'
+  };
+  const progress = {
+    ocean: { completed: [], unlockedThrough: 1, completedAt: {} },
+    desert: { completed: [1,2,3,4], unlockedThrough: 5, completedAt: { '1':'2026-07-23','2':'2026-07-23','3':'2026-07-23','4':'2026-07-23' } },
+    castle: { completed: [], unlockedThrough: 1, completedAt: {} }
+  };
+  localStorage.setItem('baby-island-app-preferences-v1', JSON.stringify(prefs));
+  localStorage.setItem('baby-island-preview-progress-v1', JSON.stringify(progress));
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((reg) => reg.unregister()));
+    }
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((key) => caches.delete(key)));
+    }
+  } catch (_) {}
+  location.replace('/#level-5');
+})();
+</script>

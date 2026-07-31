@@ -1,0 +1,220 @@
+{
+  "schema": "desert-level-semantic-contracts/v1",
+  "sourceFiles": [
+    "output/qa/desert-curriculum-r2/03-zai-l006-l020-content-contract.md",
+    "output/qa/desert-curriculum-r2/03b-zai-l021-l050-content-contract.md"
+  ],
+  "generatedAt": "2026-07-23T15:48:26Z",
+  "levelCount": 45,
+  "missingLevelIds": [],
+  "levels": {
+    "6": {
+      "levelId": 6,
+      "title": "My name is...",
+      "titleCategory": "D — 占位句，缺真实名字",
+      "curriculumVerdict": "REGENERATE",
+      "learningObjective": {
+        "text": "学会用 \"My name is [name]\" 介绍自己。同伴用 Hello, [name]! 回应。理解这是自我介绍，不是见面握手礼，也不是齐喊名字清单。",
+        "status": "proposed",
+        "needsTextbookCheck": true
+      },
+      "questionTask": {
+        "templateId": "task.my-name-is.v1",
+        "learnerAction": "小朋友，课堂情境：Two children tell each other their names on a desert-oasis path.。哪一句英语表达是「My name is...」？"
+      },
+      "spokenDialogue": {
+        "status": "authored",
+        "templateId": "dialogue.my-name-is.v1.r3",
+        "lines": [
+          "My name is Tom.",
+          "My name is Lily.",
+          "Hello, Lily!",
+          "Hello, Tom!",
+          "Let's play!"
+        ],
+        "requiredLines": [
+          "My name is Tom.",
+          "My name is Lily.",
+          "I'm Tom.",
+          "I'm Lily.",
+          "Tom and Lily!"
+        ],
+        "cefrTargetExpression": "My name is Tom.",
+        "forbiddenAutofillFromTitle": true,
+        "beats": [
+          "0-3s",
+          "3-6s",
+          "6-9s",
+          "9-12s",
+          "12-15s"
+        ],
+        "targetExpression": "My name is Tom.",
+        "notes": "A/B/A/B/Both aligned. Each child says own My name is once; then greet by name; play. No name-pair chant."
+      },
+      "visualSemantics": {
+        "status": "authored",
+        "templateId": "visual.my-name-is.v1.r3",
+        "mustShow": [
+          "Child A points to own chest while saying My name is Tom",
+          "Child B points to own chest while saying My name is Lily",
+          "Child A greets Lily by name; Child B greets Tom by name; smiles, no handshake",
+          "Uncluttered desert-oasis path; two children only in the foreground"
+        ],
+        "mustNotShow": [
+          "Nice to meet you gesture",
+          "handshake",
+          "greeting wave as the main lesson",
+          "name chant cards",
+          "readable text, letters, labels, blackboard, teacher, flashcards, UI, titles"
+        ],
+        "sceneHint": "Child A introduces as Tom, Child B as Lily, each with chest-point; they greet each other by name and turn to play; no handshake."
+      },
+      "answerOption": {
+        "correct": "My name is...",
+        "distractors": [
+          "Nice to meet you"
+        ]
+      },
+      "videoPromptInput": {
+        "source": "spokenDialogue+visualSemantics",
+        "forbidTitleFallback": true,
+        "sourceSituation": "Two children introduce themselves with My name is [name], greet each other by name, then go play; self-intro lesson, not a handshake meeting"
+      },
+      "dialogueRevision": "2026-07-23 natural-name-exchange-v2"
+    },
+    "7": {
+      "levelId": 7,
+      "title": "What's your name?",
+      "titleCategory": "A — 自然可说问句",
+      "curriculumVerdict": "REGENERATE",
+      "learningObjective": {
+        "text": "学会用 \"What's your name?\" 问名字，并用 My name is [name] 回答。对话要像小朋友真的在问，而不是两边各喊两遍同一句。",
+        "status": "proposed",
+        "needsTextbookCheck": true
+      },
+      "questionTask": {
+        "templateId": "task.what-s-your-name.v1",
+        "learnerAction": "小朋友，课堂情境：Ask a friend for a name.。哪一句英语表达是「你叫什么名字？」？"
+      },
+      "spokenDialogue": {
+        "status": "authored",
+        "templateId": "dialogue.what-s-your-name.v1.r4",
+        "lines": [
+          "What's your name?",
+          "My name is Lily.",
+          "My name is Tom.",
+          "Hello, Tom!",
+          "Let's play!"
+        ],
+        "requiredLines": [
+          "What's your name?",
+          "My name is Lily.",
+          "What's your name?",
+          "My name is Tom.",
+          "We are friends!"
+        ],
+        "cefrTargetExpression": "What's your name?",
+        "forbiddenAutofillFromTitle": true,
+        "beats": [
+          "0-3s",
+          "3-6s",
+          "6-9s",
+          "9-12s",
+          "12-15s"
+        ],
+        "targetExpression": "What's your name?",
+        "notes": "Single clear What's your name? A=Tom B=Lily consistent. No robot double question. No empty We are friends."
+      },
+      "visualSemantics": {
+        "status": "authored",
+        "templateId": "visual.what-s-your-name.v1.r4",
+        "mustShow": [
+          "Child A asks with a small open-palm gesture toward Child B",
+          "Child B points to own chest while answering My name is Lily",
+          "Child A points to own chest while saying My name is Tom",
+          "Child B greets Tom by name; both turn to play; no handshake"
+        ],
+        "mustNotShow": [
+          "handshake",
+          "Nice to meet you gesture",
+          "high-five",
+          "readable text, letters, labels, blackboard, teacher, flashcards, UI, titles"
+        ],
+        "sceneHint": "Child A asks What's your name?; Child B answers Lily; Child A says My name is Tom; Child B says Hello, Tom; they play."
+      },
+      "answerOption": {
+        "correct": "What's your name?",
+        "distractors": [
+          "I'm Chen Jie"
+        ]
+      },
+      "videoPromptInput": {
+        "source": "spokenDialogue+visualSemantics",
+        "forbidTitleFallback": true,
+        "sourceSituation": "One child asks What's your name?, hears My name is Lily, then says My name is Tom, and is greeted Hello, Tom before they play"
+      },
+      "dialogueRevision": "2026-07-23 natural-name-exchange-v2"
+    },
+    "8": {
+      "levelId": 8,
+      "title": "I'm Chen Jie",
+      "titleCategory": "E — 绑定教材人物身份",
+      "curriculumVerdict": "REGENERATE",
+      "learningObjective": {
+        "text": "学会用 \"I'm [name]\" 介绍自己，并听懂对方用 Hello, [name]! 回应。与 L006 的 My name is 形成句型对比；不要肯定句自我重复两遍。",
+        "status": "proposed",
+        "needsTextbookCheck": true
+      },
+      "questionTask": {
+        "templateId": "task.i-m-chen-jie.v1",
+        "learnerAction": "小朋友，课堂情境：A child states her name to a peer; the peer listens and gives a name statement back.。哪一句英语表达是「I'm Chen Jie」？"
+      },
+      "spokenDialogue": {
+        "status": "authored",
+        "templateId": "dialogue.i-m-chen-jie.v1.r3",
+        "lines": [
+          "I'm Chen Jie.",
+          "I'm Mike.",
+          "Hello, Mike!",
+          "Hello, Chen Jie!",
+          "Let's play!"
+        ],
+        "requiredLines": [
+          "I'm Chen Jie.",
+          "Hi, Chen Jie.",
+          "Yes, I'm Chen Jie.",
+          "I'm Mike.",
+          "Chen Jie and Mike!"
+        ],
+        "cefrTargetExpression": "I'm Chen Jie.",
+        "forbiddenAutofillFromTitle": true,
+        "beats": [
+          "0-3s",
+          "3-6s",
+          "6-9s",
+          "9-12s",
+          "12-15s"
+        ],
+        "targetExpression": "I'm Chen Jie.",
+        "notes": "A=Chen Jie B=Mike consistent with A/B/A/B/Both. I'm + name once each; greet by name; play. No Yes-I'm loop, no name-pair chant."
+      },
+      "visualSemantics": {
+        "status": "authored",
+        "templateId": "visual.i-m-chen-jie.v1.r3",
+        "mustShow": [
+          "Girl Child A points to own chest while saying I'm Chen Jie",
+          "Boy Child B points to own chest while saying I'm Mike",
+          "Child A greets Mike by name; Child B greets Chen Jie by name",
+          "No nametag or readable text; uncluttered desert-oasis path"
+        ],
+        "mustNotShow": [
+          "questioning gesture as if asking for a name",
+          "readable nametag",
+          "readable text, letters, labels, blackboard, teacher, flashcards, UI, titles",
+          "name-pair cheer pose with mouthed list of both names"
+        ],
+        "sceneHint": "Girl says I'm Chen Jie, boy says I'm Mike, each with chest-point; they greet each other by name and go play."
+      },
+      "answerOption": {
+        "correct": "I'm Chen Jie",
+        "distractors": [

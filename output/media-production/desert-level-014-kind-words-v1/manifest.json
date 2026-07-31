@@ -1,0 +1,48 @@
+{
+  "level": "desert-014",
+  "title": "kind words",
+  "zhTitle": "友好的话",
+  "version": "20260723-desert-l014-kind-words-v1",
+  "model": "Seedance 2.0 Mini",
+  "nodeName": "Desert L014 kind words v1 20260723",
+  "nodeKey": "96eb94d0-e192-4453-8175-fa05723495d0",
+  "taskId": "20260723163803054476515",
+  "sourceUrl": "https://libtv-res.liblib.art/sd-gen-save-img/genius_playground/video/5d55be9134184b4dabdb5e5a560d5450/8dcebf583f8218ef3dce76082d6d7fb092b921faf1f1bd8ca68e312b283bbabc.mp4",
+  "prompt": "output/media-production/desert-level-014-kind-words-v1/prompts/level-014-kind-words-v1.txt",
+  "raw": "output/media-production/desert-level-014-kind-words-v1/raw/level-014-kind-words-v1.mp4",
+  "final": "output/media-production/desert-level-014-kind-words-v1/final/level-014-kind-words-v1.mp4",
+  "contactSheet": "output/media-production/desert-level-014-kind-words-v1/contact-sheets/level-014-kind-words-v1.jpg",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "96000",
+        "channels": 2
+      }
+    ],
+    "format": {
+      "duration": "15.200000",
+      "size": "8653248"
+    }
+  },
+  "volume": {
+    "mean_volume": "-22.0 dB",
+    "max_volume": "-1.5 dB"
+  },
+  "qaRequired": [
+    "silent-viewer",
+    "unknown-language",
+    "face-mouth-visible",
+    "no-text-cards-logo",
+    "target-semantic-clear"
+  ]
+}

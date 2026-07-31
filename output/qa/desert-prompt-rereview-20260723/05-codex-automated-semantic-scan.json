@@ -1,0 +1,120 @@
+{
+  "generatedAt": "2026-07-23T11:10:00.381Z",
+  "repoRoot": "/Users/yr/宝宝闯关",
+  "scope": "canonical r2 prompt-only QA for desert L006-L050; no video generation, no LibTV/Seedance calls, no MP4/ASR/contact-sheet review",
+  "checker": "tools/video-prompts/check-desert-video-prompt.js",
+  "contract": "tools/video-prompts/desert-level-semantic-contracts-l006-l050.json",
+  "counts": {
+    "expectedLevels": 45,
+    "canonicalR2Dirs": 45,
+    "levelsWithExactlyOneR2": 45,
+    "promptFiles": 45,
+    "manifests": 45,
+    "promptChecks": 45,
+    "oldV1DirsIgnored": 45,
+    "checkerPass": 45,
+    "checkerFail": 0,
+    "promptOnlyBlockedManifests": 45,
+    "passLevels": 33,
+    "failLevels": 12,
+    "totalFindings": 14
+  },
+  "topFailures": [
+    {
+      "code": "VISUAL_CONTRACT_MUST_SHOW_MISSING",
+      "count": 7,
+      "levels": [
+        "L013",
+        "L014",
+        "L030",
+        "L031",
+        "L048"
+      ]
+    },
+    {
+      "code": "VISUAL_ANCHOR_TOO_FEW_SPECIFIC",
+      "count": 4,
+      "levels": [
+        "L032",
+        "L034",
+        "L049",
+        "L050"
+      ]
+    },
+    {
+      "code": "POSITIVE_TEACHER_CUE",
+      "count": 2,
+      "levels": [
+        "L039",
+        "L047"
+      ]
+    },
+    {
+      "code": "DIALOGUE_NON_ENGLISH_SOUND",
+      "count": 1,
+      "levels": [
+        "L046"
+      ]
+    }
+  ],
+  "levels": [
+    {
+      "levelId": 6,
+      "title": "My name is...",
+      "questionType": "situation",
+      "promptDir": "desert-level-006-my-name-is-r2",
+      "promptPath": "output/media-production/desert-level-006-my-name-is-r2/prompts/level-006-my-name-is-r2.txt",
+      "manifestPath": "output/media-production/desert-level-006-my-name-is-r2/approval-manifest.json",
+      "promptCheckPath": "output/media-production/desert-level-006-my-name-is-r2/prompt-check.json",
+      "v1Dirs": [
+        "desert-level-006-my-name-is-v1"
+      ],
+      "answer": "My name is...",
+      "spoken": "My name is Tom.",
+      "promptSha256": "58e9c6b6bf94e99613b11ffbd1fe42cfa162cc47ace24e8e5f8d6512d72d6a2f",
+      "promptChars": 6742,
+      "dialogueLines": [
+        "My name is Tom.",
+        "My name is Lily.",
+        "I'm Tom. What's your name?",
+        "I'm Lily.",
+        "Nice to meet you!"
+      ],
+      "visualAnchors": [
+        "手指胸口 + 微笑 + 面对新朋友",
+        "speaker face and mouth visible in front or three-quarter view",
+        "speaker face and mouth visible in front or three-quarter view; no readable text",
+        "speaker face and mouth visible in front or three-quarter view; no readable text",
+        "The visible action stays the only clear learnable foreground meaning; no competing prop steals the lesson. Answer label \"My name is...\" is for the quiz card, not a required chant in Dialogue."
+      ],
+      "checker": {
+        "ok": true,
+        "status": 0,
+        "parsed": {
+          "ok": true,
+          "promptPath": "/Users/yr/宝宝闯关/output/media-production/desert-level-006-my-name-is-r2/prompts/level-006-my-name-is-r2.txt",
+          "spokenTarget": "My name is Tom.",
+          "answerLabel": "My name is...",
+          "spokenCount": 1,
+          "spokenCountSource": "dialogue-quoted-lines",
+          "dialogueLines": 5,
+          "chars": 6742,
+          "targetExpression": "My name is Tom.",
+          "targetCount": 1
+        },
+        "stderr": ""
+      },
+      "manifestState": {
+        "approved": false,
+        "dryRun": true,
+        "creditsBurned": false,
+        "independentPromptQaPass": false,
+        "executionApproved": false,
+        "userAccepted": false
+      },
+      "promptCheckOk": true,
+      "status": "PASS",
+      "findings": [],
+      "notes": [
+        "old v1 dirs present but ignored: desert-level-006-my-name-is-v1",
+        "duplicate boilerplate anchors observed: speaker face and mouth visible in front or three-quarter view no readable text"

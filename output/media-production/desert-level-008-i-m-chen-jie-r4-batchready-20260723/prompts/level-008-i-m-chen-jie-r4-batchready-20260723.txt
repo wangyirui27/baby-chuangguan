@@ -1,0 +1,45 @@
+Title: Desert Level 008 — I'm Chen Jie
+
+Duration: 15 seconds
+
+Format: 16:9 horizontal
+
+Cinematic Style: Hand-painted watercolor and gouache storybook animation matching the Magic English Voyage desert map. Warm cream light, sand/clay tones, pale mint plants, coral accents, soft pencil outlines, paper grain, low saturation, gentle brush texture, clean child-safe faces. Not glossy 3D, plastic CGI, neon, or hard vector.
+
+Source Situation: A girl says I'm Chen Jie, a boy says I'm Mike, they greet each other by name and go play — I'm + name lesson. Desert-map PEP classroom-transfer expression video, but not a classroom scene. Quiz answer label (not forced into mouth): "I'm Chen Jie". Chinese learning goal: "我是陈洁". Learning objective: 学会用 "I'm [name]" 介绍自己，并听懂对方用 Hello, [name]! 回应。与 L006 的 My name is 形成句型对比；不要肯定句自我重复两遍。. Teach meaning through concrete child-safe story action and natural spoken lines. No readable text, subtitles, labels, flashcards, blackboard, or teacher-led classroom scene.
+
+CEFR Target: Pre-A1 / very young A1. The spoken English focus is "I'm Chen Jie.". The learner may know zero English. Keep every spoken line short, natural, and child-friendly. Spoken lines must sound like real talk in a tiny story, not a vocabulary drill or project-label chant. Anchor repeat for generation stability: I'm Chen Jie.; I'm Chen Jie..
+
+Zero-beginner clarity rule: Whenever a spoken line is heard, the image already teaches the meaning before audio is understood. Treat spoken English as alien-language noise. A zero-English viewer infers meaning from action, relationship, and objects. The speaking child's face and mouth must be visible. Use front-facing or three-quarter-facing shots. No back-facing speaking. No side-profile-only speaking. No rear-view or over-the-shoulder dialogue. Meaning must be shown by concrete visual anchors, not mood alone.
+
+Visual semantic anchors:
+1. Girl Child A points to own chest while saying I'm Chen Jie
+2. Boy Child B points to own chest while saying I'm Mike
+3. Child A greets Mike by name; Child B greets Chen Jie by name
+4. No nametag or readable text; uncluttered desert-oasis path
+5. The visible action stays the only clear learnable foreground meaning; no competing prop steals the lesson. Answer label "I'm Chen Jie" is for the quiz card, not a required chant in Dialogue.
+
+Silent-viewer test: A zero-English viewer watching the muted clip with no captions must understand the visible situation: Girl Child A points to own chest while saying I'm Chen Jie; Boy Child B points to own chest while saying I'm Mike; Child A greets Mike by name; Child B greets Chen Jie by name; No nametag or readable text; uncluttered desert-oasis path. If the viewer would only see children smiling or talking, reject the clip.
+
+Unknown-language test: Assume the learner hears the spoken English as alien-language noise, meaningless 巴拉巴拉. The picture must translate that alien-language noise into the intended meaning "我是陈洁" through visible action and context before any English is understood.
+
+Scene: A simple open desert-oasis path in soft daytime light, pale mint plants, cream sand, and uncluttered foreground. Girl says I'm Chen Jie, boy says I'm Mike, each with chest-point; they greet each other by name and go play. No classroom, signs, cards, books, or readable text. Keep the foreground uncluttered. Use warm cream daylight, soft sand, pale mint plants, and small coral accents. No readable text. No classroom, blackboard, teacher, flashcards, UI, signs, books with words, labels, speech bubbles, logos, watermarks, or cards.
+
+Characters: Exactly two speaking children unless family/animal meaning needs silent support. Children are about 6, friendly, bright-eyed, soft-cheeked, in cream/mint/earth-tone clothes. Family members or animals stay quiet and supportive. No extra speaking characters, adult narrator, or teacher.
+
+Story Container: Start with the target situation already visible in the first frame. Child A notices or demonstrates the key action, object, or relationship. Child B responds naturally. Spoken lines happen inside the scene while the exact visual meaning stays centered. The story ends with the same clear target action or object still visible.
+
+Dialogue:
+0-3s: Child A, front-three-quarter face visible, says: "I'm Chen Jie."
+3-6s: Child B, face and mouth visible, says: "I'm Mike."
+6-9s: Child A, clear mouth visible, says: "Hello, Mike!"
+9-12s: Child B, clear mouth visible, says: "Hello, Chen Jie!"
+12-15s: Both children, front-three-quarter faces, target action still visible, says: "Let's play!"
+
+Action & Performance: Quiet, tender, emotionally specific, and easy for young children. Small natural gestures, warm eye contact, and clear body language. During every spoken line, the speaker's face and mouth are visible; never let a child speak with back to camera or in pure side profile. Hands should be empty unless the action requires drawing, pointing, helping, sharing, or showing a simple picture-only object. No presenter energy, no classroom teaching, no repeat-after-me drill.
+
+Camera: One continuous gentle storybook front-facing medium two-shot or front-three-quarter two-shot. Keep faces, upper bodies, hands, and the target visual anchor visible in every beat. Do not crop tighter than a medium two-shot. Whenever a child speaks, keep the speaking child's face, eyes, mouth, smile, and the target visual anchor clear. Do not use rear-view, back-facing, over-the-shoulder, silhouette, pure side-profile shots, or shots where both children face away. Avoid tight mouth close-ups.
+
+Audio: Natural English child-to-child dialogue generated inside the video. No narrator. No Chinese speech. No robotic TTS voice. No flat recitation. No whisper, mumble, gibberish, or non-English. Child voices should be clear, young, warm, and aligned with the mouth movement. Very quiet desert breeze ambience only. No loud music.
+
+Negative Prompt: subtitles, captions, readable text, written words, letters, labels, signs, speech bubbles, flashcards, blackboard, classroom, teacher, narrator, vocabulary lesson, repeat-after-me drill, robotic voice, gibberish, non-English speech, Chinese speech, whispering, mumbling, loud music, back-facing speaking, backs to camera while speaking, both children facing away, rear-view dialogue, speaking away from camera, mouth not visible while speaking, face hidden while speaking, side-profile-only speaking, pure side-profile conversation, over-the-shoulder shot, profile-only conversation, silhouette faces, unclear target meaning, children only smiling/waving, generic mood only, hidden target, competing foreground object, clutter, dark scene, crowded background, extra talking characters, scary elements, fast cuts, distorted hands, incorrect lip sync, ugly faces, glossy 3D render, plastic toy texture, neon colors, hard vector outlines, anime parody, artist signature, logo, watermark.

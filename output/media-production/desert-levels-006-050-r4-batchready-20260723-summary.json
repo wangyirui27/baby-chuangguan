@@ -1,0 +1,200 @@
+{
+  "start": 6,
+  "end": 50,
+  "version": "r4-batchready-20260723",
+  "mode": "prompts-only",
+  "total": 45,
+  "completed": 29,
+  "skipped": [
+    {
+      "level": 13,
+      "title": "friend mind map",
+      "status": "skipped",
+      "reason": "curriculumVerdict=DELETE, skipGeneration=true"
+    },
+    {
+      "level": 14,
+      "title": "kind words",
+      "status": "skipped",
+      "reason": "curriculumVerdict=DELETE, skipGeneration=true"
+    },
+    {
+      "level": 30,
+      "title": "family tree",
+      "status": "skipped",
+      "reason": "curriculumVerdict=DELETE, skipGeneration=true"
+    },
+    {
+      "level": 31,
+      "title": "add a family photo",
+      "status": "skipped",
+      "reason": "curriculumVerdict=DELETE, skipGeneration=true"
+    }
+  ],
+  "failed": 1,
+  "results": [
+    {
+      "level": 6,
+      "title": "My name is...",
+      "status": "prompt-ready",
+      "prompt": "output/media-production/desert-level-006-my-name-is-r4-batchready-20260723/prompts/level-006-my-name-is-r4-batchready-20260723.txt",
+      "check": {
+        "ok": true,
+        "promptPath": "/Users/yr/宝宝闯关/output/media-production/desert-level-006-my-name-is-r4-batchready-20260723/prompts/level-006-my-name-is-r4-batchready-20260723.txt",
+        "spokenTarget": "My name is Tom.",
+        "answerLabel": "My name is...",
+        "levelId": 6,
+        "contractSpoken": "My name is Tom.",
+        "contractSpokenSource": "level-id+contract-spoken",
+        "spokenCount": 1,
+        "spokenCountSource": "dialogue-quoted-lines",
+        "dialogueLines": 5,
+        "chars": 7020,
+        "targetExpression": "My name is Tom.",
+        "targetCount": 1
+      },
+      "approval": {
+        "approved": false,
+        "creditsBurned": false,
+        "independent_prompt_qa": false,
+        "promptSha256": "e0932b30ece2379d137ae0525b1c0b5b9a321fe243881e5c78db4698fcabee41"
+      },
+      "spokenTarget": "My name is Tom."
+    },
+    {
+      "level": 7,
+      "title": "What's your name?",
+      "status": "prompt-ready",
+      "prompt": "output/media-production/desert-level-007-what-s-your-name-r4-batchready-20260723/prompts/level-007-what-s-your-name-r4-batchready-20260723.txt",
+      "check": {
+        "ok": true,
+        "promptPath": "/Users/yr/宝宝闯关/output/media-production/desert-level-007-what-s-your-name-r4-batchready-20260723/prompts/level-007-what-s-your-name-r4-batchready-20260723.txt",
+        "spokenTarget": "What's your name?",
+        "answerLabel": "What's your name?",
+        "levelId": 7,
+        "contractSpoken": "What's your name?",
+        "contractSpokenSource": "level-id+contract-spoken",
+        "spokenCount": 1,
+        "spokenCountSource": "dialogue-quoted-lines",
+        "dialogueLines": 5,
+        "chars": 6971,
+        "targetExpression": "What's your name?",
+        "targetCount": 1
+      },
+      "approval": {
+        "approved": false,
+        "creditsBurned": false,
+        "independent_prompt_qa": false,
+        "promptSha256": "1a4a9498fe0f4ad4491424d0876b23d7eaa97b597dff59fe90157f2d10a00c81"
+      },
+      "spokenTarget": "What's your name?"
+    },
+    {
+      "level": 8,
+      "title": "I'm Chen Jie",
+      "status": "prompt-ready",
+      "prompt": "output/media-production/desert-level-008-i-m-chen-jie-r4-batchready-20260723/prompts/level-008-i-m-chen-jie-r4-batchready-20260723.txt",
+      "check": {
+        "ok": true,
+        "promptPath": "/Users/yr/宝宝闯关/output/media-production/desert-level-008-i-m-chen-jie-r4-batchready-20260723/prompts/level-008-i-m-chen-jie-r4-batchready-20260723.txt",
+        "spokenTarget": "I'm Chen Jie.",
+        "answerLabel": "I'm Chen Jie",
+        "levelId": 8,
+        "contractSpoken": "I'm Chen Jie.",
+        "contractSpokenSource": "level-id+contract-spoken",
+        "spokenCount": 1,
+        "spokenCountSource": "dialogue-quoted-lines",
+        "dialogueLines": 5,
+        "chars": 6907,
+        "targetExpression": "I'm Chen Jie.",
+        "targetCount": 1
+      },
+      "approval": {
+        "approved": false,
+        "creditsBurned": false,
+        "independent_prompt_qa": false,
+        "promptSha256": "ea30181cbcf39f671ad8096746981ac2f9fc9419c284843e6bbf2584b8fadd76"
+      },
+      "spokenTarget": "I'm Chen Jie."
+    },
+    {
+      "level": 9,
+      "title": "Let's play together",
+      "status": "prompt-ready",
+      "prompt": "output/media-production/desert-level-009-let-s-play-together-r4-batchready-20260723/prompts/level-009-let-s-play-together-r4-batchready-20260723.txt",
+      "check": {
+        "ok": true,
+        "promptPath": "/Users/yr/宝宝闯关/output/media-production/desert-level-009-let-s-play-together-r4-batchready-20260723/prompts/level-009-let-s-play-together-r4-batchready-20260723.txt",
+        "spokenTarget": "Let's play together!",
+        "answerLabel": "Let's play together",
+        "levelId": 9,
+        "contractSpoken": "Let's play together!",
+        "contractSpokenSource": "level-id+contract-spoken",
+        "spokenCount": 1,
+        "spokenCountSource": "dialogue-quoted-lines",
+        "dialogueLines": 5,
+        "chars": 7296,
+        "targetExpression": "Let's play together!",
+        "targetCount": 1
+      },
+      "approval": {
+        "approved": false,
+        "creditsBurned": false,
+        "independent_prompt_qa": false,
+        "promptSha256": "c250dd586fae89cc38e98e7ce02b7fc8248597420e6547d618f9657e722aa841"
+      },
+      "spokenTarget": "Let's play together!"
+    },
+    {
+      "level": 10,
+      "title": "Share with friends",
+      "status": "prompt-ready",
+      "prompt": "output/media-production/desert-level-010-share-with-friends-r4-batchready-20260723/prompts/level-010-share-with-friends-r4-batchready-20260723.txt",
+      "check": {
+        "ok": true,
+        "promptPath": "/Users/yr/宝宝闯关/output/media-production/desert-level-010-share-with-friends-r4-batchready-20260723/prompts/level-010-share-with-friends-r4-batchready-20260723.txt",
+        "spokenTarget": "Here, you can have this.",
+        "answerLabel": "Share with friends",
+        "levelId": 10,
+        "contractSpoken": "Here, you can have this.",
+        "contractSpokenSource": "level-id+contract-spoken",
+        "spokenCount": 1,
+        "spokenCountSource": "dialogue-quoted-lines",
+        "dialogueLines": 5,
+        "chars": 7360,
+        "targetExpression": "Here, you can have this.",
+        "targetCount": 1
+      },
+      "approval": {
+        "approved": false,
+        "creditsBurned": false,
+        "independent_prompt_qa": false,
+        "promptSha256": "ff3176520dda9069a0fd96f2ef9505d8d7607ef155cbf6ae284f79b9b82766d4"
+      },
+      "spokenTarget": "Here, you can have this."
+    },
+    {
+      "level": 11,
+      "title": "Are you OK?",
+      "status": "prompt-ready",
+      "prompt": "output/media-production/desert-level-011-are-you-ok-r4-batchready-20260723/prompts/level-011-are-you-ok-r4-batchready-20260723.txt",
+      "check": {
+        "ok": true,
+        "promptPath": "/Users/yr/宝宝闯关/output/media-production/desert-level-011-are-you-ok-r4-batchready-20260723/prompts/level-011-are-you-ok-r4-batchready-20260723.txt",
+        "spokenTarget": "Are you OK?",
+        "answerLabel": "Are you OK?",
+        "levelId": 11,
+        "contractSpoken": "Are you OK?",
+        "contractSpokenSource": "level-id+contract-spoken",
+        "spokenCount": 1,
+        "spokenCountSource": "dialogue-quoted-lines",
+        "dialogueLines": 5,
+        "chars": 7096,
+        "targetExpression": "Are you OK?",
+        "targetCount": 1
+      },
+      "approval": {
+        "approved": false,
+        "creditsBurned": false,
+        "independent_prompt_qa": false,
+        "promptSha256": "0d5c2588c2224768f7771b7de4d409d29e72e78ff5d1db03d017854a22f66a4c"

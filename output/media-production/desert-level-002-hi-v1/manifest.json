@@ -1,0 +1,13 @@
+{
+  "nodeKey": "8d8e6206-58bd-447c-972e-9d70deeeff26",
+  "taskId": "20260723020403135726515",
+  "status": 2,
+  "url": "https://libtv-res.liblib.art/sd-gen-save-img/genius_playground/video/5d55be9134184b4dabdb5e5a560d5450/6ff0034c7eac59f61f2bd51ed8d454f8bbdb4526ade7949a2d9021c2cb0ebabd.mp4",
+  "model": "Seedance 2.0 Mini",
+  "name": "Desert L002 Hi 20260722-desert-l002-hi-v1",
+  "final": "output/media-production/desert-level-002-hi-v1/final/level-002-hi.mp4",
+  "asset": "assets/video/free-levels/level-002-hi.mp4",
+  "contactSheet": "output/media-production/desert-level-002-hi-v1/contact-sheets/level-002-hi.jpg",
+  "meanVolume": "-23.2 dB",
+  "maxVolume": "-1.3 dB"
+}

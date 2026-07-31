@@ -1,0 +1,44 @@
+Title: Goodbye on the Desert Path
+
+Duration: 15 seconds
+
+Format: 16:9 horizontal
+
+Cinematic Style: Hand-painted watercolor and gouache storybook animation matching the Magic English Voyage desert map. Warm cream daylight, soft sand and clay earth tones, pale mint-green oasis plants, tiny coral-pink accents, soft pencil outlines, visible paper grain, low saturation, gentle imperfect brush texture. Child-safe attractive faces: bright clean eyes, soft cheeks, balanced proportions, gentle smiles. Not glossy 3D, not plastic CGI, not neon, not hard vector.
+
+Source Situation: Two young children have finished a short friendly moment at the desert oasis path. Now one child begins leaving along a side path while still facing the camera in a front-three-quarter pose. The other child stays near the oasis. They look at each other, smile softly, and use a farewell wave while saying "Goodbye." The meaning of "Goodbye" must be visually clear through separation, one child beginning to leave, the distance slowly increases, and both children waving farewell. No classroom, no flashcards, no written labels.
+
+CEFR Target: Pre-A1 / very young A1. The target English expression is "Goodbye". The learner may not know any English. Keep every line short and natural. The expression "Goodbye" must sound like a real farewell, not a vocabulary drill.
+
+Zero-beginner clarity rule: Whenever "Goodbye" is spoken, the image must teach the meaning before the learner understands the audio. The speaking child's face and mouth must be visible to the camera. The speaking child must be front-facing or three-quarter-facing, with eyes, smile, mouth, and empty waving hand visible. No back-facing speaking. No side-profile-only speaking. No rear-view or over-the-shoulder dialogue. A simple wave alone is not enough; the farewell meaning must come from one child begins leaving, a farewell wave, and distance slowly increases. This is not just a hello greeting.
+
+Visual semantic anchors:
+1. farewell wave: both children wave with empty hands while looking at each other.
+2. one child begins leaving: Child B takes small side-steps along the desert path while keeping face visible to camera.
+3. distance slowly increases: the gap between the two children becomes wider over the 15 seconds.
+4. not just a hello greeting: the scene clearly shows separation and leaving, not two children arriving to meet.
+
+Silent-viewer test: A zero-English viewer watching muted video with no captions should still understand: two friends are separating, one child is leaving, they wave to each other, and the unknown phrase means goodbye.
+
+Unknown-language test: Assume the learner hears "Goodbye" as alien-language noise, like meaningless 巴拉巴拉. The picture must translate that alien-language noise into meaning: one friend leaves + the distance grows + both children wave farewell = goodbye.
+
+Scene: A simple open desert-oasis path in soft daytime light. The oasis plants stay in the background. A clear curved path leads from the children toward the right side of the frame, showing where one child will leave. The foreground is uncluttered and safe. No readable text anywhere. No classroom, blackboard, teacher, flashcards, UI, signs, cups, food, animals, toys, or books.
+
+Characters: Exactly two speaking children, about 6 years old. Child A is cheerful but gentle, with bright eyes, soft cheeks, neat hair, and simple cream-and-mint clothes. Child B is friendly and relaxed, with warm eyes, soft cheeks, and earthy storybook desert-travel clothes. No adults, teachers, narrator, or extra speaking characters.
+
+Story Container: Start with both children together in a front-facing medium two-shot near the oasis path. Child B softly begins leaving by taking small side-steps to the right along the path while still in a front-three-quarter pose, face visible to the camera. Child A stays on the left. Child A lifts an empty hand in a farewell wave and says "Goodbye." Child B keeps face and mouth visible, waves back, and says "Goodbye." The distance slowly increases. Both children keep smiling gently, then the final frame shows them farther apart, still waving farewell with faces visible. The scene must feel like the end of a meeting, not the start of one.
+
+Dialogue:
+0-3s: Child A, front-three-quarter face visible, small farewell wave: "Goodbye."
+3-6s: Child B, face and mouth visible, waving back: "Goodbye!"
+6-9s: Child A, soft smile, hand still waving: "Bye."
+9-12s: Child B, stepping away, face visible: "Goodbye, friend."
+12-15s: Both children, farther apart, waving: "Goodbye!"
+
+Action & Performance: Quiet, tender, emotionally specific. Small pauses, friendly eye contact, gentle farewell wave, soft smiles, calm breathing. Both hands remain empty and visible. No object enters their hands or the foreground. No presenter energy, no classroom teaching, no repeat-after-me drill. During every spoken line, the speaker's face and mouth are visible; never let a child speak with their back to the camera or in pure side profile.
+
+Camera: One continuous gentle storybook front-facing medium two-shot with slow natural movement. Keep faces, upper bodies, empty waving hands, the path, and the growing distance visible. Use front or front-three-quarter angle, not side profile. Whenever "Goodbye" is spoken, keep the speaking child's face, eyes, mouth, smile, wave, and the leaving/separation cue clear. Do not use rear-view, back-facing, over-the-shoulder, silhouette, pure side-profile shots, or shots where both children face away. Avoid tight mouth close-ups.
+
+Audio: Natural English child-to-child dialogue generated inside the video. No narrator. No Chinese speech. No robotic TTS voice. No flat recitation. No whisper, mumble, gibberish, or non-English. Child voices should be clear, young, warm, and emotionally alive. Very quiet desert breeze ambience only. No loud music.
+
+Negative Prompt: subtitles, captions, readable text, written words, letters, labels, signs, speech bubbles, flashcards, card UI, blackboard, classroom, teacher, students in classroom, narrator, vocabulary lesson, repeat-after-me drill, robotic voice, monotone voice, gibberish, non-English speech, whispering, mumbling, loud music, back-facing speaking, backs to camera while speaking, both children facing away, rear-view dialogue, speaking away from camera, mouth not visible while speaking, face hidden while speaking, side-profile-only speaking, pure side-profile conversation, over-the-shoulder shot, profile-only conversation, silhouette faces, only waving with no leaving, greeting arrival, hello greeting, not just a hello greeting, toy, book, open book, card, ball, cup, bowl, plate, spoon, food, animal, foreground prop, child holding an object, confusing object near the children, unclear farewell, dark scene, crowded background, extra talking characters, adults, scary elements, fast cuts, distorted hands, incorrect lip sync, tight mouth close-ups, ugly faces, asymmetrical eyes, deformed face, glossy 3D render, plastic toy texture, neon colors, hard vector outlines, anime parody, artist signature, logo, watermark.

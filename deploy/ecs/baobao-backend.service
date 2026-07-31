@@ -1,0 +1,20 @@
+[Unit]
+Description=宝宝闯关 Express backend (H5 + /api)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=baobao
+Group=baobao
+WorkingDirectory=/opt/baobao-chuangguan
+EnvironmentFile=-/etc/baobao-backend.env
+ExecStart=/usr/bin/node backend/src/index.js
+Restart=on-failure
+RestartSec=5
+# 限制权限面（可按发行版微调）
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

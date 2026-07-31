@@ -1,0 +1,48 @@
+{
+  "level": "desert-006",
+  "title": "My name is...",
+  "zhTitle": "我的名字是……",
+  "version": "20260723-desert-l006-my-name-is-v1",
+  "model": "Seedance 2.0 Mini",
+  "nodeName": "Desert L006 My name is... v1 20260723",
+  "nodeKey": "0877c25f-51fe-4f80-94aa-ed3bc763971f",
+  "taskId": "20260723160903147846515",
+  "sourceUrl": "https://libtv-res.liblib.art/sd-gen-save-img/genius_playground/video/5d55be9134184b4dabdb5e5a560d5450/8f00699e83f1c2f7a60c288dad604ce959ae2aa37589135269d2d32d7e439194.mp4",
+  "prompt": "output/media-production/desert-level-006-my-name-is-v1/prompts/level-006-my-name-is-v1.txt",
+  "raw": "output/media-production/desert-level-006-my-name-is-v1/raw/level-006-my-name-is-v1.mp4",
+  "final": "output/media-production/desert-level-006-my-name-is-v1/final/level-006-my-name-is-v1.mp4",
+  "contactSheet": "output/media-production/desert-level-006-my-name-is-v1/contact-sheets/level-006-my-name-is-v1.jpg",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "96000",
+        "channels": 2
+      }
+    ],
+    "format": {
+      "duration": "15.200000",
+      "size": "9395714"
+    }
+  },
+  "volume": {
+    "mean_volume": "-20.3 dB",
+    "max_volume": "-0.9 dB"
+  },
+  "qaRequired": [
+    "silent-viewer",
+    "unknown-language",
+    "face-mouth-visible",
+    "no-text-cards-logo",
+    "target-semantic-clear"
+  ]
+}

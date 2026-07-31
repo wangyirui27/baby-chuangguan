@@ -1,0 +1,160 @@
+/* 嗨洛塔启动页 · 字标 logo 居中 + 丝滑出场（桌面 HIROTA.png，非 app 图标小人）
+   Animal-Island mint · 2026-07-30
+   丝滑要点：
+   1) 动画挂在 frame，img 只负责出图（避免替换元素 + 解码抢帧）
+   2) fade / move 两条动画拆开——opacity 不用 overshoot 曲线（会脏）
+   3) move 只用 from→to + 单条 overshoot cubic，浏览器连续插值（禁多关键帧段切）
+   4) JS 在 img.decode() + 双 rAF 后再加 .is-logo-enter
+*/
+.app-splash {
+  --splash-mint: #19c8b9;
+  --splash-mint-active: #11a89b;
+  --splash-cream: #f8f8f0;
+  --splash-earth: #794f27;
+  --splash-focus: #ffcc00;
+  --splash-focus-dark: #e0b800;
+  --splash-shadow: rgba(9, 90, 84, 0.35);
+  --logo-fade-ms: 520ms;
+  --logo-move-ms: 1.18s;
+  --logo-in-delay: 40ms;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding:
+    max(1.25rem, env(safe-area-inset-top))
+    max(1.25rem, env(safe-area-inset-right))
+    max(1.25rem, env(safe-area-inset-bottom))
+    max(1.25rem, env(safe-area-inset-left));
+  background:
+    radial-gradient(90% 70% at 50% 28%, #3dd4c6 0%, transparent 55%),
+    radial-gradient(80% 60% at 80% 90%, rgba(13, 143, 132, 0.55) 0%, transparent 50%),
+    linear-gradient(165deg, #19c8b9 0%, #14b5a7 48%, #11a89b 100%);
+  color: var(--splash-cream);
+  transition: opacity 0.45s ease, visibility 0.45s ease;
+  /* 启动层自身不触发子树 paint 以外的滚动/选择 */
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+.app-splash.is-leaving {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.app-splash-stage {
+  display: grid;
+  place-items: center;
+  width: min(86vw, 28rem);
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+  /* 舞台稳定尺寸，减少子元素缩放时的布局抖动 */
+  contain: layout style;
+}
+
+/* 动画载体：合成层预提升，等 .is-logo-enter 再跑 */
+.app-splash-logo-frame {
+  display: block;
+  width: 100%;
+  line-height: 0;
+  margin: 0;
+  background: transparent;
+  transform-origin: 50% 55%;
+  opacity: 0;
+  transform: translate3d(0, 40px, 0) scale(0.62);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  /* 预提升合成层；动画结束后由 .is-logo-settled 卸掉 */
+  will-change: transform, opacity;
+  /* 隔离：动画期间不和兄弟层搅在一起 */
+  isolation: isolate;
+}
+
+.app-splash-logo-frame.is-logo-enter {
+  /* 双轨：淡入短且平稳；位移/缩放一条 overshoot 连续曲线 */
+  animation:
+    hirota-logo-fade var(--logo-fade-ms) cubic-bezier(0.25, 0.1, 0.25, 1) var(--logo-in-delay) both,
+    hirota-logo-enter var(--logo-move-ms) cubic-bezier(0.22, 1.42, 0.36, 1) var(--logo-in-delay) both;
+}
+
+.app-splash-logo-frame.is-logo-settled {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  animation: none;
+  will-change: auto;
+}
+
+/* 字标本体：不动画，避免 <img> 替换元素合成坑 */
+.app-splash-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  /* 固定栅格提示，减少缩放时反复 decode */
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* 仅 opacity：禁止 overshoot 曲线，否则会闪/脏 */
+@keyframes hirota-logo-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 仅 transform：单段 from→to，浏览器连续插值（这是丝滑的关键） */
+@keyframes hirota-logo-enter {
+  from {
+    transform: translate3d(0, 40px, 0) scale(0.62);
+  }
+  to {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-splash-logo-frame,
+  .app-splash-logo-frame.is-logo-enter {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+}
+
+.app-splash-skip {
+  position: absolute;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  min-height: 2.75rem;
+  min-width: 4.5rem;
+  padding: 0.5rem 1.05rem;
+  border: 0.15rem solid var(--splash-focus-dark);
+  border-radius: 999px;
+  background: var(--splash-focus);
+  color: var(--splash-earth);
+  font: inherit;
+  font-weight: 900;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 0.22rem 0 var(--splash-shadow);
+  z-index: 1;
+}
+.app-splash-skip:active {
+  transform: translateY(0.1rem);
+  box-shadow: 0 0.08rem 0 var(--splash-shadow);
+}
+
+body.splash-lock { overflow: hidden; }
+body.splash-lock .app-shell,
+body.splash-lock .bottom-tabs,
+body.splash-lock .network-banner { visibility: hidden; }

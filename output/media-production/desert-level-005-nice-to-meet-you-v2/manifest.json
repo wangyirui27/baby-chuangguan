@@ -1,0 +1,47 @@
+{
+  "level": "desert-005",
+  "slug": "nice-to-meet-you",
+  "version": "20260723-desert-l005-nice-to-meet-you-v2",
+  "model": "Seedance 2.0 Mini",
+  "nodeKey": "0ebe1775-bc37-4bec-be40-4aa95a5b4383",
+  "taskId": "20260723105303748006515",
+  "sourceUrl": "https://libtv-res.liblib.art/sd-gen-save-img/genius_playground/video/5d55be9134184b4dabdb5e5a560d5450/353d349a00164f121a82fe596f2a43b16c296707a95067037a6a260a45e3bebb.mp4",
+  "prompt": "tools/video-prompts/desert-level-005-nice-to-meet-you-v2.txt",
+  "raw": "output/media-production/desert-level-005-nice-to-meet-you-v2/raw/level-005-nice-to-meet-you-v2.mp4",
+  "final": "output/media-production/desert-level-005-nice-to-meet-you-v2/final/level-005-nice-to-meet-you-v2.mp4",
+  "contactSheet": "output/media-production/desert-level-005-nice-to-meet-you-v2/contact-sheets/level-005-nice-to-meet-you-v2.jpg",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "96000",
+        "channels": 2
+      }
+    ],
+    "format": {
+      "duration": "15.200000",
+      "size": "8172145"
+    }
+  },
+  "volume": {
+    "mean_volume": "-19.9 dB",
+    "max_volume": "-1.0 dB"
+  },
+  "qaRequired": [
+    "first-time-meeting",
+    "different-paths",
+    "gentle-handshake-from-first-line",
+    "not-just-hello",
+    "face-mouth-visible",
+    "no-text-cards-logo"
+  ]
+}

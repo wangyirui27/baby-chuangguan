@@ -1,0 +1,6 @@
+已完成报告：[09-codex-dialogue-count-bypass.md](/Users/yr/宝宝闯关/output/qa/desert-l006-l050-prompt-reqa-20260723/09-codex-dialogue-count-bypass.md)。
+
+结论首行是 `# FAIL`。跑了 9 个样本、63 次 checker probe；未调用 LibTV/Seedance/provider，未运行 `--prompts-only` 或 `--run-libtv`。主要发现是 L029 误传 `--spoken=<title>` 仍可 PASS，因为 title 在 Dialogue quoted line 里真实出现一次；项目关卡 metadata/title 计数绕过被拦住。Phase A 执行门禁和 Phase B release 门禁都仍 blocked。
+
+只主动写了该报告文件；没有改源 prompt/manifest/source。
+

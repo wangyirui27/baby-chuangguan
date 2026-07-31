@@ -1,0 +1,34 @@
+Title: Good Morning Face-to-Face at the Desert Oasis
+
+Duration: 15 seconds
+
+Format: 16:9 horizontal
+
+Cinematic Style: Hand-painted watercolor and gouache storybook animation matching the current Magic English Voyage art direction, adapted for the desert map. Warm early-morning cream sunlight, soft sand and clay earth tones, pale mint-green oasis plants, tiny coral-pink accents, soft pencil outlines, visible paper grain, low-saturation colors, gentle imperfect brush texture, cozy quiet emotion. Characters should look warm, clean, attractive, and child-safe: bright clean eyes, soft cheeks, balanced proportions, gentle smiles, refined hand-painted character design. It must feel hand-drawn and alive, not glossy 3D or plastic CGI.
+
+Source Situation: Two young children meet face-to-face at the desert oasis in the morning. The sun is low and warm behind the camera side, so both children's faces are softly lit and visible. They look at each other, then turn slightly toward the viewer with friendly open faces and greet each other politely with "Good morning." The meaning of the English expression "Good morning" must be visually clear through morning light, waking-up freshness, a friendly wave, eye contact, front-facing or three-quarter-facing faces, and a warm morning greeting. No classroom, no flashcards, no written labels.
+
+CEFR Target: Pre-A1 / very young A1. The target English expression is "Good morning". Keep every spoken line short, natural, and easy for a young English learner to understand. The expression "Good morning" must be heard clearly several times, but it should sound like a real morning greeting, not a vocabulary drill.
+
+Zero-beginner clarity rule: Whenever "Good morning" is spoken, the morning greeting action must be the only clear foreground meaning target, and the speaking child's face and mouth must be visible to the camera. The speaking child must be front-facing or three-quarter-facing, with eyes, smile, mouth, and waving hand visible. No back-facing speaking. The environment must clearly read as morning through soft sunrise light and calm waking-up mood, not through written text. Do not place another learnable object in the foreground during or immediately before "Good morning". No toys, books, cards, signs, cups, food, animals, balls, letters, written words, or confusing props near the children. Background oasis plants and tents must stay soft, distant, and non-salient.
+
+Scene: A simple warm desert-oasis path at sunrise. Soft golden light comes from the camera side and touches both children's faces, the sand, a small cream tent far in the background, a few pale mint-green plants, and a calm early sky. The foreground is uncluttered and safe. No readable text anywhere. No classroom, no blackboard, no teacher, no flashcards, no UI.
+
+Characters: Exactly two speaking children, about 6 years old. Child A is cheerful but gentle, with bright eyes, soft cheeks, neat hair, and simple cream-and-mint clothes. Child B is friendly and relaxed, with warm eyes, soft cheeks, and a gentle smile, wearing earthy storybook desert-travel clothes. No adults, no teachers, no narrator, no extra speaking characters.
+
+Story Container: Child A steps onto the quiet morning path facing mostly toward the viewer in a three-quarter pose. Child B stands nearby also in a three-quarter pose, not with their back to the camera. Child A smiles, waves with an empty hand, and says "Good morning." Child B keeps their face visible, smiles, waves back, and answers "Good morning." They remain face-to-face or three-quarter-to-camera while speaking, then take one small step closer and share a warm morning smile. The emotional beat is a polite, calm, friendly new-day greeting. The final frame leaves a tender feeling of two children starting the morning together, both faces visible.
+
+Dialogue:
+0-3s: Child A, front three-quarter face visible, small wave: "Good morning."
+3-6s: Child B, front three-quarter face visible, waving back: "Good morning!"
+6-9s: Child A, smiling, mouth visible: "Morning."
+9-12s: Child B, soft smile, mouth visible: "Good morning, friend."
+12-15s: Both children, both faces visible, together: "Good morning!"
+
+Action & Performance: Keep the acting quiet, tender, and emotionally specific. Child A should sound fresh and kind. Child B should sound warm and welcoming. Use small pauses, eye contact, clear gentle waving gestures, soft smiles, and calm breathing. Both children's hands remain empty and visible. No object enters their hands or the foreground. No presenter energy, no classroom teaching, no repeat-after-me drill. During every spoken line, the speaker's face and mouth are visible; never let a child speak with their back to the camera.
+
+Camera: One continuous gentle storybook shot with slow natural movement. Use a stable front or front-three-quarter camera angle, like a warm picture-book scene. Keep the camera on the children's faces, upper bodies, empty waving hands, and soft morning light. Whenever "Good morning" is spoken, keep the speaking child's face, eyes, mouth, smile, and wave clearly visible. Do not use rear-view shots, over-the-shoulder shots, silhouette shots, profile-only shots, or shots where both children face away. Avoid tight mouth close-ups. End on both children visible from the front or three-quarter front, smiling and waving softly in golden morning light.
+
+Audio: Natural English child-to-child dialogue generated inside the video. No narrator. No Chinese speech. No robotic TTS voice. No flat recitation. No whisper, mumble, gibberish, or non-English. Child voices should be clear, young, warm, and emotionally alive. Very quiet desert breeze ambience only. No loud music.
+
+Negative Prompt: subtitles, captions, readable text, written words, letters, labels, signs, speech bubbles, flashcards, card UI, blackboard, classroom, teacher, students in classroom, narrator, vocabulary lesson, repeat-after-me drill, robotic voice, monotone voice, gibberish, non-English speech, whispering, mumbling, loud music, back-facing speaking, backs to camera while speaking, both children facing away, rear-view dialogue, speaking away from camera, mouth not visible while speaking, face hidden while speaking, over-the-shoulder shot, profile-only conversation, silhouette faces, toy, book, open book, card, ball, cup, bowl, plate, spoon, food, animal, foreground prop, child holding an object, confusing object near the children, unclear greeting, nighttime, sunset, dark scene, crowded background, extra talking characters, adults, scary elements, fast cuts, distorted hands, incorrect lip sync, tight mouth close-ups, ugly faces, asymmetrical eyes, deformed face, glossy 3D render, plastic toy texture, neon colors, hard vector outlines, anime parody, artist signature, logo, watermark.

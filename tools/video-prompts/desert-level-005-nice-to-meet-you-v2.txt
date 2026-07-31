@@ -1,0 +1,44 @@
+Title: Nice to Meet You on the Desert Oasis Path
+
+Duration: 15 seconds
+
+Format: 16:9 horizontal
+
+Cinematic Style: Hand-painted watercolor and gouache storybook animation matching the Magic English Voyage desert map. Warm cream daylight, soft sand and clay earth tones, pale mint-green oasis plants, tiny coral-pink accents, soft pencil outlines, visible paper grain, low saturation, gentle imperfect brush texture. Child-safe attractive faces: bright clean eyes, soft cheeks, balanced proportions, gentle smiles. Not glossy 3D, not plastic CGI, not neon, not hard vector.
+
+Source Situation: Two young children meet each other for the first time on a desert-oasis path. They are not together at the start. Child A comes from the left path; Child B comes from the right path. They pause with shy smiles, then immediately use an empty-handed gentle handshake while saying "Nice to meet you." The meaning must read as first-time meeting, not just a casual hello greeting. No classroom, no flashcards, no written labels.
+
+CEFR Target: Pre-A1 / very young A1. The target English expression is "Nice to meet you". The learner may know zero English. Keep every line short and natural. "Nice to meet you" must sound like a real first-meeting sentence, not a vocabulary drill.
+
+Zero-beginner clarity rule: Whenever "Nice to meet you" is spoken, the image must already teach the meaning. The speaking child's face and mouth must be visible to the camera. The speaker must be front-facing or three-quarter-facing, with eyes, smile, mouth, and empty hands visible. No back-facing speaking. No side-profile-only speaking. No rear-view or over-the-shoulder dialogue. A wave or smile alone is not enough; the first spoken beat must already show the empty hand offered for a handshake. The meaning comes from two children come from different paths, a gentle handshake, shy first-meeting body language, and not just a hello greeting.
+
+Visual semantic anchors:
+1. first-time meeting: the children begin apart and unfamiliar, then stop with shy friendly smiles.
+2. two children come from different paths: Child A comes from the left path and Child B comes from the right path.
+3. gentle handshake: Child A offers an empty hand during the first spoken line; Child B accepts during the second spoken line; the handshake remains visible through the final beat.
+4. not just hello greeting: no wave-only or smile-only greeting; the scene must read as new friends meeting for the first time.
+
+Silent-viewer test: A zero-English viewer watching muted video with no captions should understand: two children did not know each other before, they come from two paths, they meet for the first time, gently shake hands, smile, and the unknown phrase means nice to meet you / happy to meet you.
+
+Unknown-language test: Assume the learner hears "Nice to meet you" as alien-language noise, meaningless 巴拉巴拉. The picture must translate that alien-language noise: two new children come from different paths + shy pause + empty-handed handshake already starting on the first line + warm smiles = nice to meet you.
+
+Scene: A simple open desert-oasis path in soft daytime light. Two curved paths meet near a small oasis plant cluster. The foreground is uncluttered and safe. The left and right path ribbons stay visible behind each child so the viewer sees they came from different directions. No readable text. No classroom, blackboard, teacher, flashcards, UI, signs, cups, food, animals, toys, or books.
+
+Characters: Exactly two speaking children, about 6 years old. Child A is kind and slightly shy, with bright eyes, soft cheeks, neat hair, and simple cream-and-mint clothes. Child B is friendly and relaxed, with warm eyes, soft cheeks, and earthy storybook desert-travel clothes. No adults, teachers, narrator, or extra speaking characters.
+
+Story Container: Start with Child A on the left path and Child B on the right path, with a clear gap between them. They are not already standing together in the first frame. Both walk gently toward the center while faces stay open to camera in front-three-quarter view. During the first spoken line, Child A already offers an empty hand for a gentle handshake. During the second spoken line, Child B accepts the handshake. They hold the handshake in the center of the frame through the final spoken beat, then relax only during the last quiet fade. This must feel like meeting a new classmate, not greeting an old friend.
+
+Dialogue:
+0-3s: Child A, front-three-quarter face visible, empty hand already offered for handshake: "Nice to meet you."
+3-6s: Child B, face and mouth visible, accepts the empty-handed handshake: "Nice to meet you."
+6-9s: Child A, handshake held, clear face: "Nice to meet you."
+9-12s: Child B, warm smile, clear mouth: "Nice to meet you, too."
+12-15s: Both children, handshake still visible, front-three-quarter faces: "Nice to meet you."
+
+Action & Performance: Quiet, tender, emotionally specific. Small shy pause, friendly eye contact, gentle handshake, soft smiles, calm breathing. Both hands remain empty and visible except for the handshake. No presenter energy, no classroom teaching, no repeat-after-me drill. During every spoken line, the speaker's face and mouth are visible; never let a child speak with back to camera or in pure side profile.
+
+Camera: One continuous gentle storybook front-facing medium two-shot. Keep faces, upper bodies, empty hands, the center handshake, and both left and right curved paths visible in every beat. Do not crop tighter than a medium two-shot; never crop out the two paths. Bodies may angle toward each other, but faces stay open to camera in front or front-three-quarter view during the handshake. Whenever "Nice to meet you" is spoken, keep the speaking child's face, eyes, mouth, smile, handshake, and first-time meeting cue clear. Do not use rear-view, back-facing, over-the-shoulder, silhouette, pure side-profile shots, or shots where both children face away. Avoid tight mouth close-ups.
+
+Audio: Natural English child-to-child dialogue generated inside the video. No narrator. No Chinese speech. No robotic TTS voice. No flat recitation. No whisper, mumble, gibberish, or non-English. Child voices should be clear, young, warm, and emotionally alive. Very quiet desert breeze ambience only. No loud music.
+
+Negative Prompt: subtitles, captions, readable text, written words, letters, labels, signs, speech bubbles, flashcards, card UI, blackboard, classroom, teacher, students in classroom, narrator, vocabulary lesson, repeat-after-me drill, robotic voice, monotone voice, gibberish, non-English speech, whispering, mumbling, loud music, back-facing speaking, backs to camera while speaking, both children facing away, rear-view dialogue, speaking away from camera, mouth not visible while speaking, face hidden while speaking, side-profile-only speaking, pure side-profile conversation, over-the-shoulder shot, profile-only conversation, silhouette faces, only waving, wave-only greeting, smile-only greeting, greeting old friend, hello greeting, not just a hello greeting, already standing together from the first frame, friends who already know each other, no opposite-path approach, casual hello wave instead of handshake, farewell leaving, walking away, toy, book, open book, card, ball, cup, bowl, plate, spoon, food, animal, foreground prop, child holding an object, confusing object near the children, unclear first meeting, dark scene, crowded background, extra talking characters, adults, scary elements, fast cuts, distorted hands, incorrect lip sync, tight mouth close-ups, ugly faces, asymmetrical eyes, deformed face, glossy 3D render, plastic toy texture, neon colors, hard vector outlines, anime parody, artist signature, logo, watermark.

@@ -1,0 +1,1 @@
+项目路径：/tmp/baobao-chuangguan。你是 Codex gpt-5.5/xhigh，继续作为 script.js/quiz.test.js 唯一写手。\n\n任务：修掉父级复核发现的 R3 漏洞：沙漠 UI 题干已不叫“单词”，但 `desertLevels[].question` 内部字段仍是 `Which word means ...`。这会污染后续音频/文档/数据真相源。\...[truncated]
