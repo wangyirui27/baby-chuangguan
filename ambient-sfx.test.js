@@ -55,8 +55,8 @@ test('map randomly plays both ambient sounds over the original BGM', () => {
   assert.match(source, /stopMapAmbient\(\)/);
   assert.match(source, /stopMapRareAmbient\(\)/);
   assert.doesNotMatch(source, /createStereoPanner|createMediaElementSource|MAP_AMBIENT_MUSIC_DUCK_VOLUME|mapMusic\.volume = 0(?:;|\n)/);
-  assert.match(html, /script\.js\?v=20260720-learning-sync-v1/);
-  assert.match(worker, /script\.js\?v=20260720-learning-sync-v1/);
+  assert.match(html, /script\.js\?v=20260801-desert-decor-v13c/);
+  assert.match(worker, /script\.js\?v=20260801-desert-decor-v13c/);
   assert.match(worker, /assets\/audio\/sfx\/random-ambient\.mp3\?v=20260718-surround-ambient-v1/);
   assert.match(worker, /assets\/audio\/sfx\/random-ambient-rare\.mp3\?v=20260718-rare-ambient-v1/);
 });

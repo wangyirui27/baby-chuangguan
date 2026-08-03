@@ -1,8 +1,8 @@
-// 虚拟登录单测：任意 11 位手机号 + 1234
+// 虚拟登录单测：任意 11 位手机号 + 任意 4–6 位验证码
 
 'use strict';
 
-const { test, before, after } = require('node:test');
+const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('node:http');
 const path = require('node:path');
@@ -15,6 +15,7 @@ process.env.NODE_ENV = 'test';
 process.env.SMS_PROVIDER = 'development';
 // 显式开启（test 环境默认也是开）
 process.env.VIRTUAL_LOGIN = '1';
+delete process.env.VIRTUAL_LOGIN_STRICT;
 process.env.VIRTUAL_LOGIN_CODE = '1234';
 
 const db = require('./db');
@@ -22,35 +23,57 @@ const {
   isVirtualLoginEnabled,
   isVirtualLoginCode,
   getVirtualLoginCode,
+  isVirtualLoginStrict,
 } = require('./virtual-login');
 
-test('virtual login helpers default on in test', () => {
+test('virtual login helpers default on in test (any 4-6 digit)', () => {
   assert.equal(isVirtualLoginEnabled(), true);
+  assert.equal(isVirtualLoginStrict(), false);
   assert.equal(getVirtualLoginCode(), '1234');
   assert.equal(isVirtualLoginCode('1234'), true);
-  assert.equal(isVirtualLoginCode('0000'), false);
+  assert.equal(isVirtualLoginCode('0000'), true);
+  assert.equal(isVirtualLoginCode('999999'), true);
+  assert.equal(isVirtualLoginCode('12'), false);
+});
+
+test('virtual login strict mode only accepts fixed code', () => {
+  const orig = process.env.VIRTUAL_LOGIN_STRICT;
+  try {
+    process.env.VIRTUAL_LOGIN_STRICT = '1';
+    assert.equal(isVirtualLoginCode('1234'), true);
+    assert.equal(isVirtualLoginCode('0000'), false);
+  } finally {
+    if (orig === undefined) delete process.env.VIRTUAL_LOGIN_STRICT;
+    else process.env.VIRTUAL_LOGIN_STRICT = orig;
+  }
 });
 
 test('virtual login disabled in production unless ALLOW_VIRTUAL_LOGIN=1', () => {
   const origEnv = process.env.NODE_ENV;
   const origAllow = process.env.ALLOW_VIRTUAL_LOGIN;
   const origVirtual = process.env.VIRTUAL_LOGIN;
+  const origStrict = process.env.VIRTUAL_LOGIN_STRICT;
   try {
     process.env.NODE_ENV = 'production';
     delete process.env.ALLOW_VIRTUAL_LOGIN;
-    // re-require not needed — functions read env each call
+    delete process.env.VIRTUAL_LOGIN_STRICT;
     assert.equal(isVirtualLoginEnabled(), false);
     assert.equal(isVirtualLoginCode('1234'), false);
 
     process.env.ALLOW_VIRTUAL_LOGIN = '1';
     assert.equal(isVirtualLoginEnabled(), true);
+    assert.equal(isVirtualLoginCode('5678'), true);
+    process.env.VIRTUAL_LOGIN_STRICT = '1';
     assert.equal(isVirtualLoginCode('1234'), true);
+    assert.equal(isVirtualLoginCode('5678'), false);
   } finally {
     process.env.NODE_ENV = origEnv;
     if (origAllow === undefined) delete process.env.ALLOW_VIRTUAL_LOGIN;
     else process.env.ALLOW_VIRTUAL_LOGIN = origAllow;
     if (origVirtual === undefined) delete process.env.VIRTUAL_LOGIN;
     else process.env.VIRTUAL_LOGIN = origVirtual;
+    if (origStrict === undefined) delete process.env.VIRTUAL_LOGIN_STRICT;
+    else process.env.VIRTUAL_LOGIN_STRICT = origStrict;
   }
 });
 
@@ -110,13 +133,13 @@ function postJson(base, p, body) {
   });
 }
 
-test('HTTP: any 11-digit phone + 1234 logs in without send-code', async () => {
+test('HTTP: any 11-digit phone + any 4-digit code logs in without send-code', async () => {
   const { server, base, tmp } = await createServer();
   try {
     const phone = '18812345678';
     const { status, data } = await postJson(base, '/api/auth/verify-code', {
       phone,
-      code: '1234',
+      code: '8888',
     });
     assert.equal(status, 200, JSON.stringify(data));
     assert.ok(data.token && data.token.length >= 32);
@@ -129,12 +152,12 @@ test('HTTP: any 11-digit phone + 1234 logs in without send-code', async () => {
   }
 });
 
-test('HTTP: wrong virtual code still fails without prior SMS', async () => {
+test('HTTP: short code still fails without prior SMS', async () => {
   const { server, base, tmp } = await createServer();
   try {
     const { status, data } = await postJson(base, '/api/auth/verify-code', {
       phone: '18812345679',
-      code: '9999',
+      code: '12',
     });
     assert.equal(status, 400);
     assert.ok(data.code === 'VERIFICATION_EXPIRED' || data.code === 'PARAMS_REQUIRED' || data.code === 'INVALID_CODE');

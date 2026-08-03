@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#f8f8f0">
+    <meta name="theme-color" content="#7DC395">
     <meta name="description" content="嗨洛塔少儿启蒙APP：面向 3-6 岁孩子的启蒙闯关 H5">
     <meta name="application-name" content="嗨洛塔少儿启蒙APP">
     <meta name="mobile-web-app-capable" content="yes">
@@ -19,16 +19,35 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20260720-camel-idle-stable-v3">
-    <script src="assets/audio/words/word-audio-manifest.js?v=20260720-word-manifest-200-v1"></script>
+    <link rel="stylesheet" href="style.css?v=20260801-desert-decor-v13c">
+    <link rel="stylesheet" href="assets/brand/splash/splash.css?v=20260801-desert-decor-v13c">
+    <script src="assets/audio/words/word-audio-manifest.js?v=20260801-desert-natural-dialogue-v1"></script>
     <script src="assets/vendor/lottie.min.js"></script>
     <script src="assets/lottie/hand-tap-data.js?v=20260718-hand-user-edit"></script>
     <script src="assets/lottie/correct-celebration-data.js?v=20260718-correct-lottie-v1"></script>
-    <script src="auth/apiClient.js?v=20260720-learning-sync-v1" defer></script>
-    <script src="script.js?v=20260720-camel-idle-walkmatch-v1" defer></script>
+    <script src="auth/apiClient.js?v=20260801-desert-decor-v13c" defer></script>
+    <script src="script.js?v=20260801-desert-decor-v13c" defer></script>
   </head>
-  <body>
+
+<body>
     <a class="skip-link" href="#main-content">跳到主要内容</a>
+
+    <!-- 启动页：Animal-Island #7DC395 + home_bg 叶子纹理 + 白字标 + 奶油3D跳过 + 佩奇 VO -->
+    <div id="app-splash" class="app-splash" role="dialog" aria-modal="true" aria-label="启动画面">
+      <div class="app-splash-stage">
+        <img
+          src="assets/brand/splash-logo.png"
+          alt="嗨洛塔少儿启蒙APP"
+          class="app-splash-logo"
+          decoding="sync"
+        >
+      </div>
+      <button id="splash-skip-btn" class="splash-skip" type="button">跳过直接进入</button>
+      <audio id="splash-voice" preload="auto" style="display:none;">
+        <source src="assets/brand/audio/hirota-qimeng-app-peiqi.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+
     <div class="network-banner" data-network-status role="status" aria-live="polite" hidden></div>
     <div class="app-toast" data-app-toast role="status" aria-live="polite" hidden></div>
 

@@ -11,6 +11,7 @@ const crypto = require('crypto');
 // ─── 加载后端模块 ────────────────────────────────
 process.env.SMS_PROVIDER = 'development';
 process.env.NODE_ENV = 'test';
+process.env.VIRTUAL_LOGIN = '0';
 
 const db = require('./db');
 const { maskPhone, createSmsProvider, DevelopmentSmsProvider } = require('./sms-provider');

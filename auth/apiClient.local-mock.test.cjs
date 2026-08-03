@@ -40,10 +40,10 @@ function loadApiClient({ token = null, cookies = '', fileProtocol = false, fetch
   };
 }
 
-test('local mock fallback: verifyCode with valid 11-digit phone + code 1234 returns token', async () => {
+test('local mock fallback: verifyCode with valid 11-digit phone + any 4-6 digit code returns token', async () => {
   const { babyIslandApi } = loadApiClient();
   // The fetch in this sandbox is configured to reject (simulating no backend).
-  const data = await babyIslandApi.verifyCode('11111111111', '1234');
+  const data = await babyIslandApi.verifyCode('11111111111', '5678');
   assert.ok(data, 'verifyCode should resolve');
   assert.equal(typeof data.token, 'string', 'token should be a string');
   assert.ok(data.token.length > 0, 'token should be non-empty');
@@ -52,11 +52,11 @@ test('local mock fallback: verifyCode with valid 11-digit phone + code 1234 retu
   assert.match(data.user.normalizedPhone, /^\+8611111111111$/);
 });
 
-test('local mock fallback: verifyCode with wrong code throws', async () => {
+test('local mock fallback: verifyCode with empty/short code throws', async () => {
   const { babyIslandApi } = loadApiClient();
   await assert.rejects(
-    () => babyIslandApi.verifyCode('11111111111', '5678'),
-    /验证码错误/
+    () => babyIslandApi.verifyCode('11111111111', '12'),
+    /验证码|请输入/
   );
 });
 

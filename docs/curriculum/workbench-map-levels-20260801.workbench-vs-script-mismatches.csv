@@ -1,0 +1,211 @@
+﻿map_world,level_id,workbench,script_js
+desert,1,Hello,Good morning
+desert,2,Hi,How are you
+desert,3,Good morning,See you later
+desert,4,Goodbye,Good night
+desert,5,Nice to meet you,Have fun
+desert,6,My name is...,Goodbye
+desert,7,What's your name?,Thank you
+desert,8,I'm Chen Jie,You're welcome
+desert,9,Let's play together,Excuse me
+desert,10,Share with friends,I'm sorry
+island,11,Apple,Banana
+desert,11,Are you OK?,Listen up
+island,12,Banana,Papaya
+desert,12,I can help,Hands up
+island,13,Orange,Mango
+desert,13,friend mind map,Line up
+island,14,Watermelon,Lemon
+desert,14,kind words,Sit down
+island,15,Strawberry,Kiwi
+desert,15,help a friend,Stand up
+island,16,Grape,Apple
+desert,16,say hello first,Look here
+island,17,Pear,Peach
+desert,17,be a good friend,Quiet please
+island,18,Peach,Pear
+desert,18,This is my mum,Raise your hand
+island,19,Mango,Grape
+desert,19,This is my dad,Answer me
+island,20,Cherry,Coconut
+desert,20,This is my grandma,Work in pairs
+desert,21,This is my grandpa,Have breakfast
+desert,22,Who lives with you?,Have lunch
+desert,23,My family is big,Have dinner
+desert,24,My family is small,Drink milk
+desert,25,I live with my parents,Wash hands
+desert,26,I have a sister,Wipe mouth
+desert,27,I have a brother,Use chopsticks
+desert,28,This is my family,Taste it
+desert,29,We love each other,Full up
+desert,30,family tree,More rice
+desert,31,add a family photo,Cut apple
+desert,32,draw my family,Peel banana
+desert,33,talk about family,Open snack
+desert,34,different families,Share cookie
+desert,35,a pet dog,Sweet candy
+desert,36,a little cat,Sour lemon
+desert,37,a fish,Eat slowly
+desert,38,a bird,No sugar
+desert,39,What pets do you know?,Yummy taste
+desert,40,I like dogs,Bite it
+desert,41,I have a cat,Brush teeth
+desert,42,Is it a pet?,Wash face
+desert,43,a wild panda,Comb hair
+desert,44,a big tiger,Take a bath
+desert,45,an elephant,Flush toilet
+desert,46,a monkey,Use soap
+desert,47,What wild animals do you know?,Dry hands
+desert,48,animal picture book,Change clothes
+desert,49,draw a pet,Cut nails
+desert,50,draw a wild animal,Blow nose
+desert,51,tell about my animal,Run fast
+desert,52,a green plant,Jump high
+desert,53,a big tree,Clap hands
+desert,54,a small flower,Stamp feet
+desert,55,plant seeds,Touch nose
+desert,56,water the plant,Close eyes
+desert,57,help plants,Open mouth
+desert,58,We get fruit,Shake head
+desert,59,We get vegetables,Turn around
+desert,60,We get wood,Sit still
+desert,61,We get shade,I'm happy
+desert,62,What do we get from plants?,I'm sad
+desert,63,How can we help plants?,I'm angry
+desert,64,Don't pick flowers,I'm scared
+desert,65,paper garden,Be brave
+desert,66,make a paper garden,Calm down
+desert,67,draw leaves,Don't cry
+desert,68,care for a plant,Cheer up
+desert,69,red apple,Smile big
+desert,70,blue sky,Laugh loud
+desert,71,green leaf,Help mom
+desert,72,yellow sun,Hug dad
+desert,73,black and white,Kiss baby
+desert,74,What colours do you see?,Play with me
+desert,75,I see red,Read to me
+desert,76,It is blue,Tell a story
+desert,77,Colours help us see,Go to bed
+desert,78,red means stop,Wake up
+desert,79,colour signs,Get dressed
+desert,80,mix colours,Come here
+desert,81,my favourite colour,Play ball
+desert,82,colour flip book,Ride bike
+desert,83,make a colour card,Fly kite
+desert,84,sort by colour,Build blocks
+desert,85,find colours,Hide and seek
+desert,86,one book,Tag you're it
+desert,87,two pencils,My turn
+desert,88,three apples,Your turn
+desert,89,four chairs,I win
+desert,90,five stars,You lose
+desert,91,How many?,Red and blue
+desert,92,I am eight,Yellow sun
+desert,93,my birthday,Green grass
+desert,94,What number is it?,Black night
+desert,95,count to ten,White snow
+desert,96,number in a line,Round circle
+desert,97,birthday card,Square box
+desert,98,write age,Triangle roof
+desert,99,count candles,Star shape
+desert,100,make a birthday card,Mix colors
+desert,101,use numbers in class,One to ten
+desert,102,numbers are useful,Count to twenty
+desert,103,"Hello, I'm new",Plus one
+desert,104,Nice to meet you,Minus one
+desert,105,This is my friend,What time
+desert,106,Are you new here?,Morning time
+desert,107,Welcome to our class,Night time
+desert,108,Please come in,One hour
+desert,109,Thank you,Today is
+desert,110,You're welcome,Tomorrow is
+desert,111,Excuse me,Sunny day
+desert,112,Sorry,Rainy day
+desert,113,May I join you?,Windy day
+desert,114,Be polite,Cloudy day
+desert,115,greet new people,Hot summer
+desert,116,role-play greeting,Cold winter
+desert,117,polite word card,Warm spring
+desert,118,introduce a friend,Cool autumn
+desert,119,say goodbye politely,It's raining
+desert,120,I'm happy,Snow is falling
+desert,121,I'm sad,Feed dog
+desert,122,I'm excited,Walk dog
+desert,123,I'm tired,Pet cat
+desert,124,It's big,Watch fish
+desert,125,It's small,Chase bird
+desert,126,It's long,Catch butterfly
+desert,127,It's short,Ride horse
+desert,128,How do you feel?,Milk cow
+desert,129,I feel happy,Shear sheep
+desert,130,This is beautiful,Collect eggs
+desert,131,I like it,See panda
+desert,132,Tell your feeling,Watch monkey
+desert,133,feeling face card,Feed giraffe
+desert,134,describe my toy,Touch turtle
+desert,135,show and say,Hear lion
+desert,136,express yourself,See tiger
+desert,137,my pencil,Big elephant
+desert,138,my ruler,Small mouse
+desert,139,my book,Long snake
+desert,140,my bag,Tall camel
+desert,141,I can see,By bus
+desert,142,I can hear,By car
+desert,143,I can touch,By bike
+desert,144,Listen carefully,By train
+desert,145,Look closely,Get on
+desert,146,Use your eyes,Get off
+desert,147,Use your ears,Fasten seatbelt
+desert,148,What helps you learn?,Traffic light
+desert,149,learning tools,Go straight
+desert,150,make a tool list,Turn left
+desert,151,sense chart,How much
+desert,152,ask and answer,Too expensive
+desert,153,healthy food,Can I pay
+desert,154,fresh fruit,Buy this
+desert,155,green vegetables,Sell that
+desert,156,drink water,Keep change
+desert,157,eat breakfast,Save money
+desert,158,What do we eat?,Count money
+desert,159,What shall we eat?,Cheap price
+desert,160,I like rice,High price
+desert,161,I don't like candy,Read book
+desert,162,Let's eat fruit,Write word
+desert,163,choose healthy food,Draw picture
+desert,164,food plate,Do homework
+desert,165,make a lunch menu,Ask question
+desert,166,sort food,Answer question
+desert,167,talk about lunch,Learn English
+desert,168,share healthy choices,Speak English
+desert,169,old toy,Study hard
+desert,170,old book,Try again
+desert,171,old box,Sing song
+desert,172,old clothes,Play piano
+desert,173,This is my old toy,Play drum
+desert,174,It can be reused,Dance well
+desert,175,make a new toy,Draw line
+desert,176,use an old box,Paint red
+desert,177,share old things,Make music
+desert,178,keep memories,Clap rhythm
+desert,179,What old things do you have?,Loud sound
+desert,180,How can we reuse it?,Soft sound
+desert,181,old things show,Kick ball
+desert,182,reuse poster,Throw ball
+desert,183,toy story card,Catch ball
+desert,184,make and tell,Bounce ball
+desert,185,count and sort,Run race
+desert,186,how many books,Swim fast
+desert,187,sort by number,Jump rope
+desert,188,more or less,Play soccer
+desert,189,first place,Score goal
+desert,190,second place,Win game
+desert,191,choose the bigger number,I want to be
+desert,192,read a room number,Be a doctor
+desert,193,date on a card,Be a teacher
+desert,194,make a decision,Be a cook
+desert,195,Which number is bigger?,Be a driver
+desert,196,How many groups?,Be a singer
+desert,197,number survey,Be a player
+desert,198,class tally chart,Be a scientist
+desert,199,sort and count project,Be an artist
+desert,200,numbers in life,Be a writer

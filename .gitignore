@@ -22,6 +22,10 @@ build/
 *.log
 *.lock
 
+# ─── Local tooling venvs ──────────────────────────
+.venv-rembg/
+.venv*/
+
 # ─── OS files ──────────────────────────────────────
 .DS_Store
 Thumbs.db
@@ -46,7 +50,22 @@ Thumbs.db
 *.png
 !assets/brand/hirota-logo.png
 !assets/brand/hirota-wordmark.png
+!assets/brand/splash-logo.png
+!assets/egypt-map/background/egypt-desert-infinite-clean-bg-dreamina-v2.png
 !assets/**/*.webp
+assets/assets/
+assets/**/__pycache__/
+assets/**/raw-v*/
+assets/**/qa-sheets/
+assets/egypt-map/cutouts/buildings/*.py
+assets/egypt-map/cutouts/decor/*.py
+assets/egypt-map/cutouts/decor/*.json
+assets/egypt-map/cutouts/decor/runtime-v2-bak*/
+assets/egypt-map/cutouts/decor/runtime-v2-pre-strip/
+assets/egypt-map/cutouts/characters/libtv/camel-idle-alpha-v[7-9].*
+assets/egypt-map/cutouts/characters/libtv/camel-idle-loop-magenta-v[7-9].mp4
+assets/egypt-map/cutouts/characters/libtv/camel-idle-sway-v6.*
+assets/audio/voice-trials/
 *.jpg
 *.jpeg
 # Allow runtime jpg/jpeg in assets (none currently needed)
@@ -57,9 +76,12 @@ pinchtab-*
 # ─── Preview/standalone HTML test pages ─────────────
 voice-samples.html
 voice-samples-v2.html
+voice-trials-*.html
+__desert_decor_qa.html
 preview-word-audio.png
 mobile-state-check.png
 _verify_button.mjs
+tools/_verify-*.mjs
 
 # ─── Generated source assets (intermediate AI output, not runtime) ──
 assets/generated/

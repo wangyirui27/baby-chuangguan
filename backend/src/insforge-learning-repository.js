@@ -367,7 +367,9 @@ class InsForgeLearningRepository {
 module.exports = {
   InsForgeLearningRepository,
   WORLD_IDS,
+  clampInteger,
   normalizeLearningSnapshot: normalizeSnapshot,
+  stateFromRows,
   toProfilePatch,
   createInsForgeLearningRepository: (options) => new InsForgeLearningRepository(options),
 };

@@ -1,0 +1,201 @@
+level,noun,zh,status,note
+001,Mom,妈妈,pass,Passed current prompt-level curriculum check.
+002,Dad,爸爸,pass,Passed current prompt-level curriculum check.
+003,Grandma,奶奶,pass,Passed current prompt-level curriculum check.
+004,Grandpa,爷爷,pass,Passed current prompt-level curriculum check.
+005,Hand,手,pass,Passed current prompt-level curriculum check.
+006,Rice,饭,pass,Passed current prompt-level curriculum check.
+007,Water,水,pass,Passed current prompt-level curriculum check.
+008,Car,车,pass,Passed current prompt-level curriculum check.
+009,Dog,狗,pass,Passed current prompt-level curriculum check.
+010,Book,书,pass,Passed current prompt-level curriculum check.
+011,Apple,苹果,pass,Passed current prompt-level curriculum check.
+012,Banana,香蕉,pass,Passed current prompt-level curriculum check.
+013,Orange,橙子,pass,Passed current prompt-level curriculum check.
+014,Watermelon,西瓜,pass,Passed current prompt-level curriculum check.
+015,Strawberry,草莓,pass,Passed current prompt-level curriculum check.
+016,Grape,葡萄,pass,Passed current prompt-level curriculum check.
+017,Pear,梨,pass,Passed current prompt-level curriculum check.
+018,Peach,桃子,pass,Passed current prompt-level curriculum check.
+019,Mango,芒果,pass,Passed current prompt-level curriculum check.
+020,Cherry,樱桃,pass,Passed current prompt-level curriculum check.
+021,Muffin,小松饼,pass,Passed current prompt-level curriculum check.
+022,Pudding,布丁,pass,Passed current prompt-level curriculum check.
+023,Candy,糖果,pass,Passed current prompt-level curriculum check.
+024,Cookie,饼干,pass,Passed current prompt-level curriculum check.
+025,Chocolate,巧克力,pass,Passed current prompt-level curriculum check.
+026,Ice Cream,冰激凌,pass,Passed current prompt-level curriculum check.
+027,Cake,蛋糕,pass,Passed current prompt-level curriculum check.
+028,Donut,甜甜圈,pass,Passed current prompt-level curriculum check.
+029,Pancake,煎饼,pass,Passed current prompt-level curriculum check.
+030,Honey,蜂蜜,pass,Passed current prompt-level curriculum check.
+031,Egg,鸡蛋,pass,Passed current prompt-level curriculum check.
+032,Steamed Bun,包子,pass,Passed current prompt-level curriculum check.
+033,Bread,面包,pass,Passed current prompt-level curriculum check.
+034,Milk,牛奶,pass,Passed current prompt-level curriculum check.
+035,Juice,果汁,pass,Passed current prompt-level curriculum check.
+036,Yogurt,酸奶,pass,Passed current prompt-level curriculum check.
+037,Cheese,奶酪,pass,Passed current prompt-level curriculum check.
+038,Soup,汤,pass,Passed current prompt-level curriculum check.
+039,Noodles,面条,pass,Passed current prompt-level curriculum check.
+040,Dumpling,饺子,pass,Passed current prompt-level curriculum check.
+041,Tomato,西红柿,pass,Passed current prompt-level curriculum check.
+042,Potato,土豆,pass,Passed current prompt-level curriculum check.
+043,Pizza,披萨,pass,Passed current prompt-level curriculum check.
+044,Burger,汉堡,pass,Passed current prompt-level curriculum check.
+045,Salad,沙拉,pass,Passed current prompt-level curriculum check.
+046,Carrot,胡萝卜,pass,Passed current prompt-level curriculum check.
+047,Corn,玉米,pass,Passed current prompt-level curriculum check.
+048,Pumpkin,南瓜,pass,Passed current prompt-level curriculum check.
+049,Mushroom,蘑菇,pass,Passed current prompt-level curriculum check.
+050,Sandwich,三明治,pass,Passed current prompt-level curriculum check.
+051,Puppy,小狗,pass,Passed current prompt-level curriculum check.
+052,Kitty,小猫,pass,Passed current prompt-level curriculum check.
+053,Bunny,小兔,pass,Passed current prompt-level curriculum check.
+054,Duck,鸭子,pass,Passed current prompt-level curriculum check.
+055,Chick,小鸡,pass,Passed current prompt-level curriculum check.
+056,Pig,猪,pass,Passed current prompt-level curriculum check.
+057,Cow,奶牛,pass,Passed current prompt-level curriculum check.
+058,Cat,猫,pass,Passed current prompt-level curriculum check.
+059,Sheep,绵羊,pass,Passed current prompt-level curriculum check.
+060,Horse,马,pass,Passed current prompt-level curriculum check.
+061,Panda,熊猫,pass,Passed current prompt-level curriculum check.
+062,Koala,考拉,pass,Passed current prompt-level curriculum check.
+063,Hippo,河马,pass,Passed current prompt-level curriculum check.
+064,Monkey,猴子,pass,Passed current prompt-level curriculum check.
+065,Tiger,老虎,pass,Passed current prompt-level curriculum check.
+066,Lion,狮子,pass,Passed current prompt-level curriculum check.
+067,Zebra,斑马,pass,Passed current prompt-level curriculum check.
+068,Giraffe,长颈鹿,pass,Passed current prompt-level curriculum check.
+069,Elephant,大象,pass,Passed current prompt-level curriculum check.
+070,Kangaroo,袋鼠,pass,Passed current prompt-level curriculum check.
+071,Butterfly,蝴蝶,pass,Passed current prompt-level curriculum check.
+072,Fish,鱼,pass,Passed current prompt-level curriculum check.
+073,Frog,青蛙,pass,Passed current prompt-level curriculum check.
+074,Bee,蜜蜂,pass,Passed current prompt-level curriculum check.
+075,Bird,小鸟,pass,Passed current prompt-level curriculum check.
+076,Turtle,乌龟,pass,Passed current prompt-level curriculum check.
+077,Crab,螃蟹,pass,Passed current prompt-level curriculum check.
+078,Ant,蚂蚁,pass,Passed current prompt-level curriculum check.
+079,Snail,蜗牛,pass,Passed current prompt-level curriculum check.
+080,Ladybug,瓢虫,pass,Passed current prompt-level curriculum check.
+081,Tummy,小肚子,pass,Passed current prompt-level curriculum check.
+082,Eye,眼睛,pass,Passed current prompt-level curriculum check.
+083,Ear,耳朵,pass,Passed current prompt-level curriculum check.
+084,Nose,鼻子,pass,Passed current prompt-level curriculum check.
+085,Mouth,嘴巴,pass,Passed current prompt-level curriculum check.
+086,Head,头,pass,Passed current prompt-level curriculum check.
+087,Hair,头发,pass,Passed current prompt-level curriculum check.
+088,Foot,脚,pass,Passed current prompt-level curriculum check.
+089,Leg,腿,pass,Passed current prompt-level curriculum check.
+090,Arm,手臂,pass,Passed current prompt-level curriculum check.
+091,Clothes,衣服,bridge-fixed,Pajamas -> Clothes. 用户指出 Pajamas 太难；Clothes 对应沙漠 Change your clothes。
+092,Shoes,鞋子,pass,Passed current prompt-level curriculum check.
+093,Socks,袜子,pass,Passed current prompt-level curriculum check.
+094,Hat,帽子,pass,Passed current prompt-level curriculum check.
+095,Dress,裙子,watch,Dress 保留为最简单衣物词之一；成片需避免时装展示。
+096,Scarf,围巾,bridge-fixed,Jacket -> Scarf. 去掉 Jacket/Coat 近义负担，同时保持 091-100 的衣物穿戴连续性。
+097,Shirt,上衣,pass,Passed current prompt-level curriculum check.
+098,Pants,裤子,pass,Passed current prompt-level curriculum check.
+099,Coat,外套,watch,Coat 保留但需与 Shirt/Pants 区分，厚外套视觉要清楚。
+100,Boots,靴子,watch,Boots 保留为可见衣物；成片需鞋靴清楚，不和 Shoes 混。
+101,Teddy Bear,泰迪熊,pass,Passed current prompt-level curriculum check.
+102,Bubble,泡泡,pass,Passed current prompt-level curriculum check.
+103,Balloon,气球,pass,Passed current prompt-level curriculum check.
+104,Ball,球,pass,Passed current prompt-level curriculum check.
+105,Camel,骆驼,bridge-fixed,Robot -> Camel. 去掉 Robot；Camel 是沙漠强相关且可视化动物。
+106,Doll,娃娃,pass,Passed current prompt-level curriculum check.
+107,Kite,风筝,pass,Passed current prompt-level curriculum check.
+108,Blocks,积木,pass,Passed current prompt-level curriculum check.
+109,Mouse,老鼠,bridge-fixed,Puzzle -> Mouse. 去掉 Puzzle；Mouse 对应沙漠 The mouse is small。
+110,Slide,滑梯,pass,Passed current prompt-level curriculum check.
+111,Baby,宝宝,pass,Passed current prompt-level curriculum check.
+112,Boy,男孩,pass,Passed current prompt-level curriculum check.
+113,Girl,女孩,pass,Passed current prompt-level curriculum check.
+114,Face,脸,pass,Passed current prompt-level curriculum check.
+115,Tooth,牙齿,pass,Passed current prompt-level curriculum check.
+116,Finger,手指,pass,Passed current prompt-level curriculum check.
+117,Toe,脚趾,pass,Passed current prompt-level curriculum check.
+118,Knee,膝盖,watch,Knee 保留为相对可指身体词；成片必须明确膝盖。
+119,Snake,蛇,bridge-fixed,Elbow -> Snake. 去掉细身体部位 Elbow；Snake 对应沙漠 The snake is long。
+120,Piano,钢琴,bridge-fixed,Shoulder -> Piano. 去掉细身体部位 Shoulder；Piano 对应沙漠 Play the piano。
+121,Sofa,沙发,pass,Passed current prompt-level curriculum check.
+122,Bed,床,pass,Passed current prompt-level curriculum check.
+123,Pillow,枕头,pass,Passed current prompt-level curriculum check.
+124,Blanket,被子,pass,Passed current prompt-level curriculum check.
+125,Lamp,台灯,pass,Passed current prompt-level curriculum check.
+126,Clock,时钟,pass,Passed current prompt-level curriculum check.
+127,Mirror,镜子,pass,Passed current prompt-level curriculum check.
+128,Door,门,pass,Passed current prompt-level curriculum check.
+129,Window,窗户,pass,Passed current prompt-level curriculum check.
+130,Chair,椅子,pass,Passed current prompt-level curriculum check.
+131,Cup,杯子,pass,Passed current prompt-level curriculum check.
+132,Bowl,碗,pass,Passed current prompt-level curriculum check.
+133,Spoon,勺子,pass,Passed current prompt-level curriculum check.
+134,Plate,盘子,pass,Passed current prompt-level curriculum check.
+135,Bottle,瓶子,pass,Passed current prompt-level curriculum check.
+136,Box,盒子,pass,Passed current prompt-level curriculum check.
+137,Bag,包,pass,Passed current prompt-level curriculum check.
+138,Table,桌子,pass,Passed current prompt-level curriculum check.
+139,Fork,叉子,pass,Passed current prompt-level curriculum check.
+140,Chopsticks,筷子,pass,Passed current prompt-level curriculum check.
+141,Drum,鼓,bridge-fixed,Potty -> Drum. Potty 与 Toilet 重复且场景敏感；Drum 对应沙漠 Play the drum。
+142,Rope,绳子,bridge-fixed,Shampoo -> Rope. 去掉 Shampoo；Rope 对应沙漠 Jump rope。
+143,Soap,肥皂,pass,Passed current prompt-level curriculum check.
+144,Towel,毛巾,pass,Passed current prompt-level curriculum check.
+145,Tissue,纸巾,pass,Passed current prompt-level curriculum check.
+146,Money,钱,bridge-fixed,Brush -> Money. 去掉 Brush/Comb 相近负担；Money 对应沙漠 Save/Count money。
+147,Comb,梳子,pass,Passed current prompt-level curriculum check.
+148,Bathtub,浴缸,pass,Passed current prompt-level curriculum check.
+149,Toilet,马桶,pass,Passed current prompt-level curriculum check.
+150,Toothbrush,牙刷,pass,Passed current prompt-level curriculum check.
+151,Moon,月亮,pass,Passed current prompt-level curriculum check.
+152,Sun,太阳,pass,Passed current prompt-level curriculum check.
+153,Star,星星,pass,Passed current prompt-level curriculum check.
+154,Rainbow,彩虹,pass,Passed current prompt-level curriculum check.
+155,Sky,天空,pass,Passed current prompt-level curriculum check.
+156,Cloud,云,pass,Passed current prompt-level curriculum check.
+157,Rain,雨,pass,Passed current prompt-level curriculum check.
+158,Snow,雪,pass,Passed current prompt-level curriculum check.
+159,Wind,风,pass,Passed current prompt-level curriculum check.
+160,Umbrella,雨伞,pass,Passed current prompt-level curriculum check.
+161,Flower,花,pass,Passed current prompt-level curriculum check.
+162,Tree,树,pass,Passed current prompt-level curriculum check.
+163,Grass,草地,pass,Passed current prompt-level curriculum check.
+164,Leaf,树叶,pass,Passed current prompt-level curriculum check.
+165,Rock,石头,pass,Passed current prompt-level curriculum check.
+166,Road,路,pass,Passed current prompt-level curriculum check.
+167,Traffic Light,红绿灯,bridge-fixed,Bridge -> Traffic Light. Bridge 让位给更高频交通名词；Traffic Light 对应沙漠 Stop at the light。
+168,Snack,零食,bridge-fixed,Gate -> Snack. Gate 让位给沙漠 Open the snack bag 的核心词。
+169,Sugar,糖,bridge-fixed,Garden -> Sugar. Garden 让位给沙漠 No sugar 的核心词。
+170,Nails,指甲,bridge-fixed,Hill -> Nails. Hill 让位给沙漠 Cut your nails 的核心词。
+171,Taxi,出租车,pass,Passed current prompt-level curriculum check.
+172,Bus,公交车,pass,Passed current prompt-level curriculum check.
+173,Bike,自行车,pass,Passed current prompt-level curriculum check.
+174,Train,火车,pass,Passed current prompt-level curriculum check.
+175,Plane,飞机,pass,Passed current prompt-level curriculum check.
+176,Boat,小船,pass,Passed current prompt-level curriculum check.
+177,Night,夜晚,bridge-fixed,Ship -> Night. Ship/Boat 重复；Night 对应 Good night / night time / black night。
+178,Truck,卡车,pass,Passed current prompt-level curriculum check.
+179,Morning,早晨,bridge-fixed,Scooter -> Morning. Scooter 低复用；Morning 对应 Good morning / morning time。
+180,Breakfast,早餐,bridge-fixed,Van -> Breakfast. Van 低复用；Breakfast 对应 Let’s have breakfast。
+181,Backpack,书包,pass,Passed current prompt-level curriculum check.
+182,Lunch,午餐,bridge-fixed,Lunchbox -> Lunch. Lunchbox 让位给沙漠 Let’s have lunch。
+183,Crayon,蜡笔,pass,Passed current prompt-level curriculum check.
+184,Pencil,铅笔,pass,Passed current prompt-level curriculum check.
+185,Dinner,晚餐,bridge-fixed,Eraser -> Dinner. Eraser 低复用；Dinner 对应 Let’s have dinner。
+186,Goal,球门,bridge-fixed,Ruler -> Goal. Ruler 低复用；Goal 对应 Score goal。
+187,Paper,纸,pass,Passed current prompt-level curriculum check.
+188,Bath,洗澡,bridge-fixed,Scissors -> Bath. Scissors 有安全风险；Bath 对应 Take a bath。
+189,Song,歌曲,bridge-watch,Glue -> Song. Glue 低复用；Song 对应 Sing a song。 Watch: Song 是听觉名词，成片必须用听歌情境而不是抽象符号。
+190,Soccer,足球运动,bridge-watch,Desk -> Soccer. Desk 低复用；Soccer 对应 Play soccer。 Watch: Soccer 是运动名词，成片要让 soccer ball/小球门辅助但不抢词。
+191,Circle,圆形,watch,Circle 保留以呼应沙漠形状句；不能变课堂卡片。
+192,Square,正方形,watch,Square 保留以呼应沙漠形状句；不能变课堂卡片。
+193,Triangle,三角形,watch,Triangle 保留以呼应沙漠形状句；不能变课堂卡片。
+194,Heart,心形,watch,Heart 保留为生活心形；不要变身体心脏或胸口动作。
+195,Picture,图画,bridge-fixed,Rectangle -> Picture. Rectangle 不在沙漠主线；Picture 对应 Draw a picture。
+196,Key,钥匙,pass,Passed current prompt-level curriculum check.
+197,Button,纽扣,pass,Passed current prompt-level curriculum check.
+198,Bucket,小桶,pass,Passed current prompt-level curriculum check.
+199,Toothpaste,牙膏,pass,Passed current prompt-level curriculum check.
+200,Sponge,海绵,pass,Passed current prompt-level curriculum check.

@@ -1,0 +1,201 @@
+﻿level_id,island_word,island_chinese,island_topic,island_video,island_status,desert_phrase,desert_chinese,desert_spoken_focus,desert_type,desert_video,desert_status
+1,Mom,妈妈,Free Starter · 免费体验,level-001-mom,video-ready,Hello,,,expression,level-001-hello,video-ready
+2,Dad,爸爸,Free Starter · 免费体验,level-002-dad,video-ready,Hi,,,expression,level-002-hi,video-ready
+3,Grandma,奶奶,Free Starter · 免费体验,level-003-grandma,video-ready,Good morning,,,expression,level-003-good-morning,video-ready
+4,Grandpa,爷爷,Free Starter · 免费体验,level-004-grandpa,video-ready,Goodbye,,,expression,level-004-goodbye,video-ready
+5,Hand,手,Free Starter · 免费体验,level-005-hand,video-ready,Nice to meet you,,,expression,level-005-nice-to-meet-you,video-ready
+6,Rice,饭,Free Starter · 免费体验,level-006-rice,video-ready,My name is...,,My name is Tom.,expression label,level-006-my-name-is,video-ready
+7,Water,水,Free Starter · 免费体验,level-007-water,video-ready,What's your name?,,What's your name?,expression label,level-007-what-s-your-name,video-ready
+8,Car,车,Free Starter · 免费体验,level-008-car,video-ready,I'm Chen Jie,,I'm Chen Jie.,expression label,level-008-i-m-chen-jie,video-ready
+9,Dog,狗,Free Starter · 免费体验,level-009-dog,video-ready,Let's play together,,Let's play together!,expression label,level-009-let-s-play-together,video-ready
+10,Book,书,Free Starter · 免费体验,level-010-book,video-ready,Share with friends,,"Here, you can have this.",expression label,level-010-share-with-friends,video-ready
+11,Apple,苹果,水果先遣队,level-011-apple,video-ready,Are you OK?,,Are you OK?,expression label,level-011-are-you-ok,video-ready
+12,Banana,香蕉,水果先遣队,level-012-banana,video-ready,I can help,,I can help!,expression label,level-012-i-can-help,video-ready
+13,Orange,橙子,水果先遣队,level-013-orange,video-ready,friend mind map,朋友思维导图,Look! She is my friend.,expression label,level-013-friend-mind-map,video-ready
+14,Watermelon,西瓜,水果先遣队,level-014-watermelon,video-ready,kind words,友好的话,Here you go.,expression label,level-014-kind-words,ready
+15,Strawberry,草莓,水果先遣队,level-015-strawberry,video-ready,help a friend,,Let me help you!,expression label,level-015-help-a-friend,needs-redraw
+16,Grape,葡萄,水果先遣队,level-016-grape,video-ready,say hello first,,Hello! I'm Tom.,expression label,level-016-say-hello-first,needs-redraw
+17,Pear,梨,水果先遣队,level-017-pear,video-ready,be a good friend,,You are my friend.,expression label,level-017-be-a-good-friend,needs-redraw
+18,Peach,桃子,水果先遣队,level-018-peach,video-ready,This is my mum,,This is my mum.,expression label,level-018-this-is-my-mum,video-ready
+19,Mango,芒果,水果先遣队,level-019-mango,video-ready,This is my dad,,This is my dad.,expression label,level-019-this-is-my-dad,needs-redraw
+20,Cherry,樱桃,水果先遣队,level-020-cherry,video-ready,This is my grandma,,This is my grandma.,expression label,level-020-this-is-my-grandma,needs-redraw
+21,Lollipop,棒棒糖,零食甜点,level-021-lollipop,video-ready,This is my grandpa,,This is my grandpa.,expression label,level-021-this-is-my-grandpa,ready
+22,Jelly,果冻,零食甜点,level-022-jelly,video-ready,Who lives with you?,,Who lives with you?,expression label,level-022-who-lives-with-you,ready
+23,Candy,糖果,零食甜点,level-023-candy,video-ready,My family is big,,My family is big.,expression label,level-023-my-family-is-big,ready
+24,Cookie,饼干,零食甜点,level-024-cookie,video-ready,My family is small,,My family is small.,expression label,level-024-my-family-is-small,ready
+25,Chocolate,巧克力,零食甜点,level-025-chocolate,video-ready,I live with my parents,,I live with my parents.,expression label,level-025-i-live-with-my-parents,ready
+26,Ice Cream,冰激凌,零食甜点,level-026-ice-cream,video-ready,I have a sister,,I have a sister.,expression label,level-026-i-have-a-sister,ready
+27,Cake,蛋糕,零食甜点,level-027-cake,video-ready,I have a brother,,I have a brother.,expression label,level-027-i-have-a-brother,ready
+28,Donut,甜甜圈,零食甜点,level-028-donut,video-ready,This is my family,,This is my family.,expression label,level-028-this-is-my-family,ready
+29,Popcorn,爆米花,零食甜点,level-029-popcorn,video-ready,We love each other,,We love each other.,expression label,level-029-we-love-each-other,ready
+30,Honey,蜂蜜,零食甜点,level-030-honey,video-ready,family tree,,This is my mum and dad.,expression label,level-030-family-tree,ready
+31,Egg,鸡蛋,吃饭喝喝,level-031-egg,video-ready,add a family photo,,Let me add her.,expression label,level-031-add-a-family-photo,ready
+32,Bun,包子,吃饭喝喝,level-032-bun,video-ready,draw my family,,I'm drawing my family.,expression label,level-032-draw-my-family,ready
+33,Bread,面包,吃饭喝喝,level-033-bread,video-ready,talk about family,,This is my family.,expression label,level-033-talk-about-family,ready
+34,Milk,牛奶,吃饭喝喝,level-034-milk,video-ready,different families,,My family is big!,expression label,level-034-different-families,ready
+35,Juice,果汁,吃饭喝喝,level-035-juice,video-ready,a pet dog,,Look! A pet dog!,expression label,level-035-a-pet-dog,ready
+36,Yogurt,酸奶,吃饭喝喝,level-036-yogurt,video-ready,a little cat,,Look! A little cat!,expression label,level-036-a-little-cat,ready
+37,Cheese,奶酪,吃饭喝喝,level-037-cheese,video-ready,a fish,,Look! A fish!,expression label,level-037-a-fish,ready
+38,Soup,汤,吃饭喝喝,level-038-soup,ready,a bird,,Look! A bird!,expression label,level-038-a-bird,ready
+39,Noodle,面条,吃饭喝喝,level-039-noodle,ready,What pets do you know?,,What pets do you know?,expression label,level-039-what-pets-do-you-know,ready
+40,Dumpling,饺子,吃饭喝喝,level-040-dumpling,ready,I like dogs,,I like dogs.,expression label,level-040-i-like-dogs,ready
+41,Tomato,西红柿,蔬菜大餐,level-041-tomato,ready,I have a cat,,I have a cat.,expression label,level-041-i-have-a-cat,ready
+42,Potato,土豆,蔬菜大餐,level-042-potato,ready,Is it a pet?,,Is it a pet?,expression label,level-042-is-it-a-pet,ready
+43,Pizza,披萨,蔬菜大餐,level-043-pizza,ready,a wild panda,,Look! A wild panda!,expression label,level-043-a-wild-panda,ready
+44,Burger,汉堡,蔬菜大餐,level-044-burger,ready,a big tiger,,Look! A big tiger!,expression label,level-044-a-big-tiger,ready
+45,Salad,沙拉,蔬菜大餐,level-045-salad,ready,an elephant,,Look! An elephant!,expression label,level-045-an-elephant,ready
+46,Carrot,胡萝卜,蔬菜大餐,level-046-carrot,ready,a monkey,,Look! A monkey!,expression label,level-046-a-monkey,ready
+47,Corn,玉米,蔬菜大餐,level-047-corn,ready,What wild animals do you know?,,What wild animals do you know?,expression label,level-047-what-wild-animals-do-you-know,ready
+48,Pumpkin,南瓜,蔬菜大餐,level-048-pumpkin,ready,animal picture book,,We made a book about animals!,expression label,level-048-animal-picture-book,ready
+49,Mushroom,蘑菇,蔬菜大餐,level-049-mushroom,ready,draw a pet,,I'm drawing a cat!,expression label,level-049-draw-a-pet,ready
+50,Sandwich,三明治,蔬菜大餐,level-050-sandwich,ready,draw a wild animal,,Now I'm drawing a tiger!,expression label,level-050-draw-a-wild-animal,ready
+51,Puppy,小狗,萌宠动物,level-051-puppy,ready,tell about my animal,介绍我的动物,This turtle page is ready.,phrase/task label,level-051-tell-about-my-animal,ready
+52,Kitty,小猫,萌宠动物,level-052-kitty,ready,a green plant,一株绿色植物,Here is a green plant.,phrase/task label,level-052-a-green-plant,ready
+53,Bunny,小兔,萌宠动物,level-053-bunny,ready,a big tree,一棵大树,I see a big tree.,phrase/task label,level-053-a-big-tree,ready
+54,Duck,鸭子,萌宠动物,level-054-duck,ready,a small flower,一朵小花,"Look, a small flower.",phrase/task label,level-054-a-small-flower,ready
+55,Chick,小鸡,萌宠动物,level-055-chick,ready,plant seeds,种下种子,I can plant seeds.,phrase/task label,level-055-plant-seeds,ready
+56,Pig,猪,萌宠动物,level-056-pig,ready,water the plant,给植物浇水,Now we water the plant.,phrase/task label,level-056-water-the-plant,ready
+57,Cow,奶牛,萌宠动物,level-057-cow,ready,help plants,帮助植物,Let's help plants.,phrase/task label,level-057-help-plants,ready
+58,Cat,猫,萌宠动物,level-058-cat,ready,We get fruit,我们得到水果,We get fruit from plants.,phrase/task label,level-058-we-get-fruit,ready
+59,Sheep,绵羊,萌宠动物,level-059-sheep,ready,We get vegetables,我们得到蔬菜,We get vegetables from plants.,phrase/task label,level-059-we-get-vegetables,ready
+60,Horse,马,萌宠动物,level-060-horse,ready,We get wood,我们得到木材,We get wood from plants.,phrase/task label,level-060-we-get-wood,ready
+61,Panda,熊猫,大动物,level-061-panda,ready,We get shade,我们得到树荫,We get shade from plants.,phrase/task label,level-061-we-get-shade,ready
+62,Koala,考拉,大动物,level-062-koala,ready,What do we get from plants?,我们从植物得到什么？,What do we get from plants?,phrase/task label,level-062-what-do-we-get-from-plants,ready
+63,Hippo,河马,大动物,level-063-hippo,ready,How can we help plants?,我们怎样帮助植物？,How can we help plants?,phrase/task label,level-063-how-can-we-help-plants,ready
+64,Monkey,猴子,大动物,level-064-monkey,ready,Don't pick flowers,不要摘花,"Don't pick flowers, please.",phrase/task label,level-064-don-t-pick-flowers,ready
+65,Tiger,老虎,大动物,level-065-tiger,ready,paper garden,纸花园,The empty mat is ready.,phrase/task label,level-065-paper-garden,ready
+66,Lion,狮子,大动物,level-066-lion,ready,make a paper garden,制作纸花园,Fold the paper stems.,phrase/task label,level-066-make-a-paper-garden,ready
+67,Zebra,斑马,大动物,level-067-zebra,ready,draw leaves,画叶子,This stem needs leaves.,phrase/task label,level-067-draw-leaves,ready
+68,Giraffe,长颈鹿,大动物,level-068-giraffe,ready,care for a plant,照顾一株植物,The soil feels dry.,phrase/task label,level-068-care-for-a-plant,ready
+69,Elephant,大象,大动物,level-069-elephant,ready,red apple,红苹果,"Look, red apple.",phrase/task label,level-069-red-apple,ready
+70,Kangaroo,袋鼠,大动物,level-070-kangaroo,ready,blue sky,蓝色天空,Here is blue sky.,phrase/task label,level-070-blue-sky,ready
+71,Butterfly,蝴蝶,小小动物,level-071-butterfly,ready,green leaf,绿色叶子,I see green leaf.,phrase/task label,level-071-green-leaf,ready
+72,Fish,鱼,小小动物,level-072-fish,ready,yellow sun,黄色太阳,"Look, yellow sun.",phrase/task label,level-072-yellow-sun,ready
+73,Frog,青蛙,小小动物,level-073-frog,ready,black and white,黑色和白色,Here is black and white.,phrase/task label,level-073-black-and-white,ready
+74,Bee,蜜蜂,小小动物,level-074-bee,ready,What colours do you see?,你看见什么颜色？,What colours do you see?,phrase/task label,level-074-what-colours-do-you-see,ready
+75,Bird,小鸟,小小动物,level-075-bird,ready,I see red,我看见红色,I see red on the apple.,phrase/task label,level-075-i-see-red,ready
+76,Turtle,乌龟,小小动物,level-076-turtle,ready,It is blue,它是蓝色的,It is blue.,phrase/task label,level-076-it-is-blue,ready
+77,Crab,螃蟹,小小动物,level-077-crab,ready,Colours help us see,颜色帮助我们看清楚,"Look, Colours help us see.",phrase/task label,level-077-colours-help-us-see,ready
+78,Ant,蚂蚁,小小动物,level-078-ant,ready,red means stop,红色表示停下,"Look, red means stop.",phrase/task label,level-078-red-means-stop,ready
+79,Snail,蜗牛,小小动物,level-079-snail,ready,colour signs,颜色标志,"Look, colour signs.",phrase/task label,level-079-colour-signs,ready
+80,Ladybug,瓢虫,小小动物,level-080-ladybug,ready,mix colours,混合颜色,Now we mix colours.,phrase/task label,level-080-mix-colours,ready
+81,Tummy,小肚子,我的身体,level-081-tummy,ready,my favourite colour,我最喜欢的颜色,"Look, my favourite colour.",phrase/task label,level-081-my-favourite-colour,ready
+82,Eye,眼睛,我的身体,level-082-eye,ready,colour flip book,颜色翻翻书,Open the first page.,phrase/task label,level-082-colour-flip-book,ready
+83,Ear,耳朵,我的身体,level-083-ear,ready,make a colour card,制作颜色卡,This card is blank.,phrase/task label,level-083-make-a-colour-card,ready
+84,Nose,鼻子,我的身体,level-084-nose,ready,sort by colour,按颜色分类,The pebbles are mixed.,phrase/task label,level-084-sort-by-colour,ready
+85,Mouth,嘴巴,我的身体,level-085-mouth,ready,find colours,寻找颜色,Look around the oasis.,phrase/task label,level-085-find-colours,ready
+86,Head,头,我的身体,level-086-head,ready,one book,一本书,I see one book.,phrase/task label,level-086-one-book,ready
+87,Hair,头发,我的身体,level-087-hair,ready,two pencils,两支铅笔,"Look, two pencils.",phrase/task label,level-087-two-pencils,ready
+88,Foot,脚,我的身体,level-088-foot,ready,three apples,三个苹果,Here is three apples.,phrase/task label,level-088-three-apples,ready
+89,Leg,腿,我的身体,level-089-leg,ready,four chairs,四把椅子,I see four chairs.,phrase/task label,level-089-four-chairs,ready
+90,Arm,手臂,我的身体,level-090-arm,ready,five stars,五颗星星,"Look, five stars.",phrase/task label,level-090-five-stars,ready
+91,Pajamas,睡衣,穿衣出门,level-091-pajamas,ready,How many?,有多少？,How many?,phrase/task label,level-091-how-many,ready
+92,Shoes,鞋子,穿衣出门,level-092-shoes,ready,I am eight,我八岁,I am eight.,phrase/task label,level-092-i-am-eight,ready
+93,Socks,袜子,穿衣出门,level-093-socks,ready,my birthday,我的生日,"Look, my birthday.",phrase/task label,level-093-my-birthday,ready
+94,Hat,帽子,穿衣出门,level-094-hat,ready,What number is it?,它是几号？,What number is it?,phrase/task label,level-094-what-number-is-it,ready
+95,Dress,裙子,穿衣出门,level-095-dress,ready,count to ten,数到十,Now we count to ten.,phrase/task label,level-095-count-to-ten,ready
+96,Jacket,夹克,穿衣出门,level-096-jacket,ready,number in a line,队伍里的号码,"Look, number in a line.",phrase/task label,level-096-number-in-a-line,ready
+97,Shirt,上衣,穿衣出门,level-097-shirt,ready,birthday card,生日卡片,Open the blank card.,phrase/task label,level-097-birthday-card,ready
+98,Pants,裤子,穿衣出门,level-098-pants,ready,write age,写年龄,The card needs an age.,phrase/task label,level-098-write-age,ready
+99,Coat,外套,穿衣出门,level-099-coat,ready,count candles,数蜡烛,The cake needs candles.,phrase/task label,level-099-count-candles,ready
+100,Boots,靴子,穿衣出门,level-100-boots,ready,make a birthday card,制作生日卡片,Fold the card first.,phrase/task label,level-100-make-a-birthday-card,ready
+101,Teddy Bear,泰迪熊,玩具游戏,level-101-teddy-bear,ready,use numbers in class,在课堂中使用数字,Now we use numbers in class.,phrase/task label,level-101-use-numbers-in-class,ready
+102,Bubble,泡泡,玩具游戏,level-102-bubble,ready,numbers are useful,数字很有用,This number helps us.,phrase/task label,level-102-numbers-are-useful,ready
+103,Balloon,气球,玩具游戏,level-103-balloon,ready,"Hello, I'm new",你好，我是新来的,"Hello, I'm new.",phrase/task label,level-103-hello-i-m-new,ready
+104,Ball,球,玩具游戏,level-104-ball,ready,Nice to meet you,很高兴见到你,Nice to meet you.,phrase/task label,level-104-nice-to-meet-you,ready
+105,Robot,机器人,玩具游戏,level-105-robot,ready,This is my friend,这是我的朋友,This is my friend.,phrase/task label,level-105-this-is-my-friend,ready
+106,Doll,娃娃,玩具游戏,level-106-doll,ready,Are you new here?,你是新来的吗？,Are you new here?,phrase/task label,level-106-are-you-new-here,ready
+107,Kite,风筝,玩具游戏,level-107-kite,ready,Welcome to our class,欢迎来到我们班,Welcome to our class.,phrase/task label,level-107-welcome-to-our-class,ready
+108,Block,积木,玩具游戏,level-108-block,ready,Please come in,请进,Please come in.,phrase/task label,level-108-please-come-in,ready
+109,Puzzle,拼图,玩具游戏,level-109-puzzle,ready,Thank you,谢谢你,Thank you.,phrase/task label,level-109-thank-you,ready
+110,Slide,滑梯,玩具游戏,level-110-slide,ready,You're welcome,不用谢,You're welcome.,phrase/task label,level-110-you-re-welcome,ready
+111,Baby,宝宝,身边的人,level-111-baby,ready,Excuse me,打扰一下,"Excuse me, please.",phrase/task label,level-111-excuse-me,ready
+112,Boy,男孩,身边的人,level-112-boy,ready,Sorry,对不起,"Sorry, I bumped it.",phrase/task label,level-112-sorry,ready
+113,Girl,女孩,身边的人,level-113-girl,ready,May I join you?,我可以加入你们吗？,May I join you?,phrase/task label,level-113-may-i-join-you,ready
+114,Sister,姐妹,身边的人,level-114-sister,ready,Be polite,要有礼貌,"Look, Be polite.",phrase/task label,level-114-be-polite,ready
+115,Brother,兄弟,身边的人,level-115-brother,ready,greet new people,问候新朋友,A new child is here.,phrase/task label,level-115-greet-new-people,ready
+116,Aunt,阿姨,身边的人,level-116-aunt,ready,role-play greeting,角色扮演问候,Stand by the gate.,phrase/task label,level-116-role-play-greeting,ready
+117,Uncle,叔叔,身边的人,level-117-uncle,ready,polite word card,礼貌用语卡,This card shows a kind moment.,phrase/task label,level-117-polite-word-card,ready
+118,Friend,朋友,身边的人,level-118-friend,ready,introduce a friend,介绍一位朋友,Noah is beside me.,phrase/task label,level-118-introduce-a-friend,ready
+119,Teacher,老师,身边的人,level-119-teacher,ready,say goodbye politely,有礼貌地告别,Noah is leaving now.,phrase/task label,level-119-say-goodbye-politely,ready
+120,Family,家人,身边的人,level-120-family,ready,I'm happy,我很开心,I'm happy now.,phrase/task label,level-120-i-m-happy,ready
+121,Sofa,沙发,客厅卧室,level-121-sofa,ready,I'm sad,我很难过,I'm sad now.,phrase/task label,level-121-i-m-sad,ready
+122,Bed,床,客厅卧室,level-122-bed,ready,I'm excited,我很兴奋,I'm excited now.,phrase/task label,level-122-i-m-excited,ready
+123,Pillow,枕头,客厅卧室,level-123-pillow,ready,I'm tired,我累了,I'm tired now.,phrase/task label,level-123-i-m-tired,ready
+124,Blanket,被子,客厅卧室,level-124-blanket,ready,It's big,它很大,It is big.,phrase/task label,level-124-it-s-big,ready
+125,Lamp,台灯,客厅卧室,level-125-lamp,ready,It's small,它很小,It is small.,phrase/task label,level-125-it-s-small,ready
+126,Clock,时钟,客厅卧室,level-126-clock,ready,It's long,它很长,It is long.,phrase/task label,level-126-it-s-long,ready
+127,Mirror,镜子,客厅卧室,level-127-mirror,ready,It's short,它很短,It is short.,phrase/task label,level-127-it-s-short,ready
+128,Door,门,客厅卧室,level-128-door,ready,How do you feel?,你感觉怎么样？,How do you feel?,phrase/task label,level-128-how-do-you-feel,ready
+129,Window,窗户,客厅卧室,level-129-window,ready,I feel happy,我感到开心,I feel happy now.,phrase/task label,level-129-i-feel-happy,ready
+130,Chair,椅子,客厅卧室,level-130-chair,ready,This is beautiful,这很漂亮,This is beautiful.,phrase/task label,level-130-this-is-beautiful,ready
+131,Cup,杯子,厨房餐桌,level-131-cup,ready,I like it,我喜欢它,I like it.,phrase/task label,level-131-i-like-it,ready
+132,Bowl,碗,厨房餐桌,level-132-bowl,ready,Tell your feeling,说出你的感受,Choose one face.,phrase/task label,level-132-tell-your-feeling,ready
+133,Spoon,勺子,厨房餐桌,level-133-spoon,ready,feeling face card,表情卡,This card has no face.,phrase/task label,level-133-feeling-face-card,ready
+134,Plate,盘子,厨房餐桌,level-134-plate,ready,describe my toy,描述我的玩具,Hold the toy still.,phrase/task label,level-134-describe-my-toy,ready
+135,Bottle,瓶子,厨房餐桌,level-135-bottle,ready,show and say,展示并说明,Hold it up gently.,phrase/task label,level-135-show-and-say,ready
+136,Box,盒子,厨房餐桌,level-136-box,ready,express yourself,表达自己,Pick a face first.,phrase/task label,level-136-express-yourself,ready
+137,Bag,包,厨房餐桌,level-137-bag,ready,my pencil,我的铅笔,I see my pencil.,phrase/task label,level-137-my-pencil,ready
+138,Table,桌子,厨房餐桌,level-138-table,ready,my ruler,我的尺子,"Look, my ruler.",phrase/task label,level-138-my-ruler,ready
+139,Fork,叉子,厨房餐桌,level-139-fork,ready,my book,我的书,Here is my book.,phrase/task label,level-139-my-book,ready
+140,Chopsticks,筷子,厨房餐桌,level-140-chopsticks,ready,my bag,我的书包,I see my bag.,phrase/task label,level-140-my-bag,ready
+141,Potty,小马桶,洗漱浴室,level-141-potty,ready,I can see,我能看见,I can see this.,phrase/task label,level-141-i-can-see,ready
+142,Shampoo,洗发水,洗漱浴室,level-142-shampoo,ready,I can hear,我能听见,I can hear this.,phrase/task label,level-142-i-can-hear,ready
+143,Soap,肥皂,洗漱浴室,level-143-soap,ready,I can touch,我能触摸,I can touch this.,phrase/task label,level-143-i-can-touch,ready
+144,Towel,毛巾,洗漱浴室,level-144-towel,ready,Listen carefully,认真听,Listen carefully to the bell.,phrase/task label,level-144-listen-carefully,ready
+145,Tissue,纸巾,洗漱浴室,level-145-tissue,ready,Look closely,仔细看,Look closely at the leaf.,phrase/task label,level-145-look-closely,ready
+146,Brush,刷子,洗漱浴室,level-146-brush,ready,Use your eyes,用你的眼睛,Use your eyes to find it.,phrase/task label,level-146-use-your-eyes,ready
+147,Comb,梳子,洗漱浴室,level-147-comb,ready,Use your ears,用你的耳朵,Use your ears for the bell.,phrase/task label,level-147-use-your-ears,ready
+148,Bathtub,浴缸,洗漱浴室,level-148-bathtub,ready,What helps you learn?,什么帮助你学习？,What helps you learn?,phrase/task label,level-148-what-helps-you-learn,ready
+149,Toilet,马桶,洗漱浴室,level-149-toilet,ready,learning tools,学习工具,Put the tools here.,phrase/task label,level-149-learning-tools,ready
+150,Toothbrush,牙刷,洗漱浴室,level-150-toothbrush,ready,make a tool list,制作工具清单,Start with the pencil.,phrase/task label,level-150-make-a-tool-list,ready
+151,Moon,月亮,天气天空,level-151-moon,ready,sense chart,感官表格,Match eye to seeing.,phrase/task label,level-151-sense-chart,ready
+152,Sun,太阳,天气天空,level-152-sun,ready,ask and answer,问答练习,Ask me one question.,phrase/task label,level-152-ask-and-answer,ready
+153,Star,星星,天气天空,level-153-star,ready,healthy food,健康食物,"Look, healthy food.",phrase/task label,level-153-healthy-food,ready
+154,Rainbow,彩虹,天气天空,level-154-rainbow,ready,fresh fruit,新鲜水果,Here is fresh fruit.,phrase/task label,level-154-fresh-fruit,ready
+155,Sky,天空,天气天空,level-155-sky,ready,green vegetables,绿色蔬菜,I see green vegetables.,phrase/task label,level-155-green-vegetables,ready
+156,Cloud,云,天气天空,level-156-cloud,ready,drink water,喝水,Let's drink water.,phrase/task label,level-156-drink-water,ready
+157,Rain,雨,天气天空,level-157-rain,ready,eat breakfast,吃早餐,I can eat breakfast.,phrase/task label,level-157-eat-breakfast,ready
+158,Snow,雪,天气天空,level-158-snow,ready,What do we eat?,我们吃什么？,What do we eat?,phrase/task label,level-158-what-do-we-eat,ready
+159,Wind,风,天气天空,level-159-wind,ready,What shall we eat?,我们该吃什么？,What shall we eat?,phrase/task label,level-159-what-shall-we-eat,ready
+160,Umbrella,雨伞,天气天空,level-160-umbrella,ready,I like rice,我喜欢米饭,I like rice.,phrase/task label,level-160-i-like-rice,ready
+161,Flower,花,大自然,level-161-flower,ready,I don't like candy,我不喜欢糖果,I don't like candy.,phrase/task label,level-161-i-don-t-like-candy,ready
+162,Tree,树,大自然,level-162-tree,ready,Let's eat fruit,我们吃水果吧,Let's eat fruit.,phrase/task label,level-162-let-s-eat-fruit,ready
+163,Grass,草地,大自然,level-163-grass,ready,choose healthy food,选择健康食物,I can choose healthy food.,phrase/task label,level-163-choose-healthy-food,ready
+164,Leaf,树叶,大自然,level-164-leaf,ready,food plate,餐盘,This plate is empty.,phrase/task label,level-164-food-plate,ready
+165,Sea,大海,大自然,level-165-sea,ready,make a lunch menu,制作午餐菜单,Pick lunch pictures.,phrase/task label,level-165-make-a-lunch-menu,ready
+166,Beach,海滩,大自然,level-166-beach,ready,sort food,给食物分类,The foods are mixed.,phrase/task label,level-166-sort-food,ready
+167,Shell,贝壳,大自然,level-167-shell,ready,talk about lunch,谈论午餐,Show your lunch plate.,phrase/task label,level-167-talk-about-lunch,ready
+168,Sand,沙子,大自然,level-168-sand,ready,share healthy choices,分享健康选择,Choose one good thing.,phrase/task label,level-168-share-healthy-choices,ready
+169,River,河,大自然,level-169-river,ready,old toy,旧玩具,Here is old toy.,phrase/task label,level-169-old-toy,ready
+170,Mountain,山,大自然,level-170-mountain,ready,old book,旧书,I see old book.,phrase/task label,level-170-old-book,ready
+171,Taxi,出租车,交通工具,level-171-taxi,ready,old box,旧盒子,"Look, old box.",phrase/task label,level-171-old-box,ready
+172,Bus,公交车,交通工具,level-172-bus,ready,old clothes,旧衣服,Here is old clothes.,phrase/task label,level-172-old-clothes,ready
+173,Bike,自行车,交通工具,level-173-bike,ready,This is my old toy,这是我的旧玩具,This is my old toy.,phrase/task label,level-173-this-is-my-old-toy,ready
+174,Train,火车,交通工具,level-174-train,ready,It can be reused,它可以被再利用,It can be reused.,phrase/task label,level-174-it-can-be-reused,ready
+175,Plane,飞机,交通工具,level-175-plane,ready,make a new toy,做一个新玩具,I can make a new toy.,phrase/task label,level-175-make-a-new-toy,ready
+176,Boat,小船,交通工具,level-176-boat,ready,use an old box,使用旧盒子,Now we use an old box.,phrase/task label,level-176-use-an-old-box,ready
+177,Ship,大船,交通工具,level-177-ship,ready,share old things,分享旧物,Let's share old things.,phrase/task label,level-177-share-old-things,ready
+178,Subway,地铁,交通工具,level-178-subway,ready,keep memories,保留回忆,I can keep memories.,phrase/task label,level-178-keep-memories,ready
+179,Scooter,滑板车,交通工具,level-179-scooter,ready,What old things do you have?,你有哪些旧物？,What old things do you have?,phrase/task label,level-179-what-old-things-do-you-have,ready
+180,Ambulance,救护车,交通工具,level-180-ambulance,ready,How can we reuse it?,我们怎样再利用它？,How can we reuse it?,phrase/task label,level-180-how-can-we-reuse-it,ready
+181,Zoo,动物园,常去的场所,level-181-zoo,ready,old things show,旧物展示,Place the old toy here.,phrase/task label,level-181-old-things-show,ready
+182,Park,公园,常去的场所,level-182-park,ready,reuse poster,再利用海报,Show the old box first.,phrase/task label,level-182-reuse-poster,ready
+183,Home,家,常去的场所,level-183-home,ready,toy story card,玩具故事卡,Put the toy picture first.,phrase/task label,level-183-toy-story-card,ready
+184,Farm,农场,常去的场所,level-184-farm,ready,make and tell,制作并讲述,Start with the old box.,phrase/task label,level-184-make-and-tell,ready
+185,School,学校,常去的场所,level-185-school,ready,count and sort,计数并分类,Now we count and sort.,phrase/task label,level-185-count-and-sort,ready
+186,Store,商店,常去的场所,level-186-store,ready,how many books,有多少本书,how many books,phrase/task label,level-186-how-many-books,ready
+187,Playground,游乐场,常去的场所,level-187-playground,ready,sort by number,按数字分类,I can sort by number.,phrase/task label,level-187-sort-by-number,ready
+188,Supermarket,超市,常去的场所,level-188-supermarket,ready,more or less,更多或更少,I see more or less.,phrase/task label,level-188-more-or-less,ready
+189,Hospital,医院,常去的场所,level-189-hospital,ready,first place,第一名,"Look, first place.",phrase/task label,level-189-first-place,ready
+190,Library,图书馆,常去的场所,level-190-library,ready,second place,第二名,Here is second place.,phrase/task label,level-190-second-place,ready
+191,Jump,跳,动作游戏,level-191-jump,ready,choose the bigger number,选择更大的数字,Now we choose the bigger number.,phrase/task label,level-191-choose-the-bigger-number,ready
+192,Run,跑,动作游戏,level-192-run,ready,read a room number,读房间号,Let's read a room number.,phrase/task label,level-192-read-a-room-number,ready
+193,Swim,游泳,动作游戏,level-193-swim,ready,date on a card,卡片上的日期,I can date on a card.,phrase/task label,level-193-date-on-a-card,ready
+194,Dance,跳舞,动作游戏,level-194-dance,ready,make a decision,做决定,Now we make a decision.,phrase/task label,level-194-make-a-decision,ready
+195,Sing,唱歌,动作游戏,level-195-sing,ready,Which number is bigger?,哪个数字更大？,Which number is bigger?,phrase/task label,level-195-which-number-is-bigger,ready
+196,Play,玩,动作游戏,level-196-play,ready,How many groups?,有多少组？,How many groups?,phrase/task label,level-196-how-many-groups,ready
+197,Eat,吃,动作游戏,level-197-eat,ready,number survey,数字调查,Ask with fruit pictures.,phrase/task label,level-197-number-survey,ready
+198,Drink,喝,动作游戏,level-198-drink,ready,class tally chart,班级统计表,Each mark shows one choice.,phrase/task label,level-198-class-tally-chart,ready
+199,Walk,走,动作游戏,level-199-walk,ready,sort and count project,分类计数项目,Sort the shells first.,phrase/task label,level-199-sort-and-count-project,ready
+200,Sleep,睡觉,动作游戏,level-200-sleep,ready,numbers in life,生活中的数字,Numbers help here.,phrase/task label,level-200-numbers-in-life,ready

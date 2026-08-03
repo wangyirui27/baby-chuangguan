@@ -227,6 +227,47 @@ function collectRuntimeProblems(page, baseUrl) {
   return problems;
 }
 
+
+async function dismissSplashIfPresent(page) {
+  const splash = page.locator('#app-splash');
+  if (await splash.count()) {
+    const skip = page.locator('#app-splash-skip, #splash-skip-btn, .splash-skip, [data-splash-skip]');
+    if (await skip.count()) {
+      await skip.first().click({ force: true }).catch(() => {});
+    }
+    await page.waitForSelector('#app-splash', { state: 'detached', timeout: 8_000 }).catch(() => {});
+  }
+}
+
+async function ensureLoggedIn(page) {
+  await dismissSplashIfPresent(page);
+  // already past gate?
+  const dialog = page.locator('dialog.login-dialog[open], dialog.login-dialog');
+  const visible = await dialog.count();
+  if (!visible) {
+    // may still be checking — wait briefly for dialog or map
+    try {
+      await Promise.race([
+        page.waitForSelector('dialog.login-dialog', { timeout: 3_000 }),
+        page.waitForSelector('[data-route-scroll], .map-stage, [data-tab]', { timeout: 3_000 }),
+      ]);
+    } catch (_) {}
+  }
+  if (await page.locator('dialog.login-dialog').count()) {
+    await page.locator('[data-login-phone]').fill('13800138000');
+    const send = page.locator('[data-login-send-code]');
+    if (await send.count()) {
+      await send.click();
+      await page.waitForTimeout(200);
+    }
+    await page.locator('[data-login-code]').fill('1234');
+    await page.locator('[data-login-submit]').click();
+    await page.waitForSelector('dialog.login-dialog', { state: 'detached', timeout: 8_000 });
+  }
+  // map / shell should be interactive
+  await page.waitForSelector('[data-tab]', { timeout: 8_000 });
+}
+
 async function newPage(browser, viewport, baseUrl) {
   const context = await browser.newContext({ viewport, locale: 'zh-CN' });
   const page = await context.newPage();
@@ -246,6 +287,7 @@ async function runPrimaryFlow(browser, baseUrl) {
   });
 
   await page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  await ensureLoggedIn(page);
   await closeReleaseDialog(page, true);
   const releaseRefresh = page.waitForResponse(
     (response) => response.url().includes('/app-release.json') && response.status() === 200,
@@ -302,6 +344,7 @@ async function runPrimaryFlow(browser, baseUrl) {
     }));
   }, PROGRESS_STORAGE_KEY);
   await page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  await ensureLoggedIn(page);
   await closeReleaseDialog(page);
   const seededProgress = await page.evaluate((progressKey) => JSON.parse(localStorage.getItem(progressKey)), PROGRESS_STORAGE_KEY);
   assert.deepEqual(seededProgress, {

@@ -78,3 +78,46 @@ test('loadState maps MySQL rows to the existing learning state contract', async 
 });
 
 test('saveState writes only existing learning fields inside a transaction', async () => {
+  const pool = makePool(
+    [
+      [[PROFILE]],
+      [[{ world_id: 'desert', completed_levels: '[1,3]', unlocked_through: 4 }]],
+      [[{ activity_day: '2026-07-21' }]],
+      [[]],
+    ],
+    [
+      [[PROFILE]],
+      [{ affectedRows: 1 }],
+      [[PROFILE]],
+      [{ affectedRows: 1 }],
+      [{ affectedRows: 1 }],
+      [{ affectedRows: 1 }],
+      [{ affectedRows: 1 }],
+      [[]],
+    ],
+  );
+  const repository = createMysqlLearningRepository({ pool });
+
+  const saved = await repository.saveState(USER, {
+    profile: { childName: '豆豆', childAge: '5' },
+    preferences: {
+      mapMusic: false,
+      autoPronunciation: true,
+      showChineseHints: false,
+      mapWorld: 'desert',
+    },
+    progressByWorld: {
+      ocean: { completed: [1], unlockedThrough: 2 },
+      desert: { completed: [1, 3], unlockedThrough: 4 },
+    },
+    learningActivity: { dates: ['2026-07-21'] },
+    mistakeBook: { items: [] },
+  });
+
+  assert.deepEqual(saved.progressByWorld.desert, { completed: [1, 3], unlockedThrough: 4 });
+  assert.deepEqual(pool.calls.filter((call) => call.tx).map((call) => call.tx), ['begin', 'commit', 'release']);
+  assert.ok(pool.calls.some((call) => /INSERT INTO baby_profiles/.test(call.sql)));
+  assert.ok(pool.calls.some((call) => /INSERT INTO baby_world_progress/.test(call.sql)));
+  assert.ok(pool.calls.some((call) => /INSERT INTO baby_learning_activity/.test(call.sql)));
+  assert.ok(pool.calls.some((call) => /SELECT world_id, level_id FROM baby_mistakes/.test(call.sql)));
+});

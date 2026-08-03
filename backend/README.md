@@ -328,15 +328,15 @@ node --test voice-samples-v2.test.js
 
 ---
 
-## 关卡单词音频生成器（模型 2.0 + Natasha 正式声线）
+## 关卡单词音频生成器（模型 2.0 + 地图声线）
 
-> 本项目正式声线：**Natasha**（`en_female_natasha_uranus_bigtts`）
+> 本项目正式声线：海岛 **Natasha**（`en_female_natasha_uranus_bigtts`），沙漠 **Hayley**（`en_female_hayley_uranus_bigtts`）。
 > 所有关卡单词发音统一使用豆包语音合成模型 2.0，不再使用 V1 Bearer/BV 音色。
 
 ```bash
 # 1. 确保 backend/.env 已配置真实凭据
 #    必需: DOUBAO_APP_ID, DOUBAO_TOKEN
-#    （DOUBAO_VOICE_TYPE 已固定为 en_female_natasha_uranus_bigtts）
+#    （声线已在生成器中固定；DOUBAO_VOICE_TYPE 仅兼容旧脚本）
 
 # 2. 生成全部关卡单词音频（幂等：已存在的有效 MP3 自动跳过）
 cd backend
@@ -354,15 +354,15 @@ npm run generate-word-audio
 | 接口 | `POST https://openspeech.bytedance.com/api/v3/tts/unidirectional` |
 | 鉴权 | `X-Api-App-Id` + `X-Api-Access-Key`（旧版控制台） |
 | 资源 ID | `seed-tts-2.0` |
-| 声线 | `en_female_natasha_uranus_bigtts`（Natasha · 视频配音 · 美式英语） |
+| 声线 | 海岛 `en_female_natasha_uranus_bigtts`；沙漠 `en_female_hayley_uranus_bigtts` |
 | 输出格式 | MP3, 24000 Hz, 正常语速/音量 |
-| 合成内容 | 每次只合成单词本身（不拼句子） |
+| 合成内容 | `word` 保持展示/查找文本；`tts_text` 仅用于补问号、感叹号等合成提示 |
 | 输出目录 | `assets/audio/words/` |
 | 输出文件 | `{word}.mp3`（小写，特殊字符转为下划线） |
 
 ### 缓存/幂等策略
 
-- **缓存键**：`word|speaker|resource|format|sample_rate` — 换声线会重新生成
+- **缓存键**：`word|tts_text|speaker|resource|format|sample_rate|rate|emotion` — 换声线、标点、情绪或语速会重新生成
 - **跳过条件**：文件存在 + MP3 头有效 + manifest hash 一致 + cache_key 一致
 - **重试**：可重试错误（并发/服务忙）最多 3 次指数退避
 - **原子写入**：manifest 先写临时文件再 rename，中断不破坏已有数据
@@ -373,12 +373,20 @@ npm run generate-word-audio
 {
   "version": "2.0",
   "model": "豆包语音合成模型2.0",
-  "speaker": "en_female_natasha_uranus_bigtts",
+  "speaker": "mixed",
+  "speakers": {
+    "ocean": "en_female_natasha_uranus_bigtts",
+    "desert": "en_female_hayley_uranus_bigtts"
+  },
   "audio_format": "mp3",
   "sample_rate": 24000,
   "entries": [
     {
       "word": "hello",
+      "tts_text": "Hello!",
+      "speaker": "en_female_hayley_uranus_bigtts",
+      "emotion": "happy",
+      "speech_rate": 0,
       "level_ids": [1],
       "level_count": 1,
       "zh": "你好",
@@ -387,7 +395,7 @@ npm run generate-word-audio
       "status": "generated",
       "size_bytes": 12345,
       "sha256": "abc...",
-      "cache_key": "hello|en_female_natasha_uranus_bigtts|seed-tts-2.0|mp3|24000"
+      "cache_key": "hello|tts=Hello!|en_female_hayley_uranus_bigtts|seed-tts-2.0|mp3|24000|rate=0|emotion=happy"
     }
   ],
   "summary": {
@@ -397,8 +405,8 @@ npm run generate-word-audio
     "available": 101,
     "failed": 0,
     "not_attempted": 99,
-    "levels": 200,
-    "speaker": "en_female_natasha_uranus_bigtts"
+    "levels": 400,
+    "speaker": "mixed"
   }
 }
 ```

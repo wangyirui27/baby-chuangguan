@@ -1,0 +1,157 @@
+{
+  "generated_at": "2026-08-01",
+  "source_files": {
+    "island": "/Users/yr/Library/Application Support/libtv-workbench/projects/baby-island-levels-v1/tasks.json",
+    "desert": "/Users/yr/Library/Application Support/libtv-workbench/projects/baby-desert-levels-v1/tasks.json"
+  },
+  "outputs": {
+    "wideCsv": "/Users/yr/嗨洛塔少儿启蒙APP/docs/curriculum/workbench-map-levels-20260801.wide.csv",
+    "longCsv": "/Users/yr/嗨洛塔少儿启蒙APP/docs/curriculum/workbench-map-levels-20260801.long.csv",
+    "wideJson": "/Users/yr/嗨洛塔少儿启蒙APP/docs/curriculum/workbench-map-levels-20260801.wide.json",
+    "longJson": "/Users/yr/嗨洛塔少儿启蒙APP/docs/curriculum/workbench-map-levels-20260801.long.json",
+    "mdFile": "/Users/yr/嗨洛塔少儿启蒙APP/docs/curriculum/workbench-map-levels-20260801.md",
+    "mismatchCsv": "/Users/yr/嗨洛塔少儿启蒙APP/docs/curriculum/workbench-map-levels-20260801.workbench-vs-script-mismatches.csv"
+  },
+  "checks": {
+    "island_task_count": 200,
+    "desert_task_count": 200,
+    "wide_row_count": 200,
+    "long_row_count": 400,
+    "island_non_empty": 200,
+    "island_chinese_non_empty": 200,
+    "desert_non_empty": 200,
+    "desert_chinese_non_empty": 152,
+    "desert_target_meaning_count": 150,
+    "desert_answer_label_count": 45,
+    "desert_expression_count": 5,
+    "missing_level_ids": [],
+    "low_confidence_rows": []
+  },
+  "runtime_compare_to_script_js": {
+    "script_island_count": 200,
+    "script_desert_count": 200,
+    "mismatch_count": 210,
+    "sample_mismatches": [
+      {
+        "map_world": "desert",
+        "level_id": 1,
+        "workbench": "Hello",
+        "script_js": "Good morning"
+      },
+      {
+        "map_world": "desert",
+        "level_id": 2,
+        "workbench": "Hi",
+        "script_js": "How are you"
+      },
+      {
+        "map_world": "desert",
+        "level_id": 3,
+        "workbench": "Good morning",
+        "script_js": "See you later"
+      },
+      {
+        "map_world": "desert",
+        "level_id": 4,
+        "workbench": "Goodbye",
+        "script_js": "Good night"
+      },
+      {
+        "map_world": "desert",
+        "level_id": 5,
+        "workbench": "Nice to meet you",
+        "script_js": "Have fun"
+      },
+      {
+        "map_world": "desert",
+        "level_id": 6,
+        "workbench": "My name is...",
+        "script_js": "Goodbye"
+      },
+      {
+        "map_world": "desert",
+        "level_id": 7,
+        "workbench": "What's your name?",
+        "script_js": "Thank you"
+      },
+      {
+        "map_world": "desert",
+        "level_id": 8,
+        "workbench": "I'm Chen Jie",
+        "script_js": "You're welcome"
+      },
+      {
+        "map_world": "desert",
+        "level_id": 9,
+        "workbench": "Let's play together",
+        "script_js": "Excuse me"
+      },
+      {
+        "map_world": "desert",
+        "level_id": 10,
+        "workbench": "Share with friends",
+        "script_js": "I'm sorry"
+      },
+      {
+        "map_world": "island",
+        "level_id": 11,
+        "workbench": "Apple",
+        "script_js": "Banana"
+      },
+      {
+        "map_world": "desert",
+        "level_id": 11,
+        "workbench": "Are you OK?",
+        "script_js": "Listen up"
+      },
+      {
+        "map_world": "island",
+        "level_id": 12,
+        "workbench": "Banana",
+        "script_js": "Papaya"
+      },
+      {
+        "map_world": "desert",
+        "level_id": 12,
+        "workbench": "I can help",
+        "script_js": "Hands up"
+      },
+      {
+        "map_world": "island",
+        "level_id": 13,
+        "workbench": "Orange",
+        "script_js": "Mango"
+      },
+      {
+        "map_world": "desert",
+        "level_id": 13,
+        "workbench": "friend mind map",
+        "script_js": "Line up"
+      },
+      {
+        "map_world": "island",
+        "level_id": 14,
+        "workbench": "Watermelon",
+        "script_js": "Lemon"
+      },
+      {
+        "map_world": "desert",
+        "level_id": 14,
+        "workbench": "kind words",
+        "script_js": "Sit down"
+      },
+      {
+        "map_world": "island",
+        "level_id": 15,
+        "workbench": "Strawberry",
+        "script_js": "Kiwi"
+      },
+      {
+        "map_world": "desert",
+        "level_id": 15,
+        "workbench": "help a friend",
+        "script_js": "Stand up"
+      }
+    ]
+  }
+}

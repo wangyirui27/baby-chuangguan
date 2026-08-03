@@ -38,16 +38,16 @@ function fakeHash(buf) {
 //  1. 单词提取 / 去重 / 关卡映射
 // ═══════════════════════════════════════════════════════════
 
-test('extractWordEntries returns current unique words from script.js levels', () => {
+test('extractWordEntries returns current unique map audio targets from script.js levels', () => {
   const { extractWordEntries, CURRICULUM_UNITS } = require('./backend/src/generate-word-audio-v2.js');
-  const { levels } = require('./script.js');
+  const { levels, desertLevels } = require('./script.js');
 
   const entries = extractWordEntries();
   const totalLevels = CURRICULUM_UNITS.reduce((s, u) => s + u.words.length, 0);
-  const uniqueWords = new Set(levels.map(l => l.title.toLowerCase()));
+  const uniqueWords = new Set([...levels, ...desertLevels].map(l => l.title.toLowerCase()));
 
-  assert.equal(entries.length, uniqueWords.size, 'Must have one entry per unique current word');
-  assert.equal(totalLevels, 200, 'Must have 200 total levels');
+  assert.equal(entries.length, uniqueWords.size, 'Must have one entry per unique current map audio target');
+  assert.equal(totalLevels, 400, 'Must have 400 total map audio targets');
 
   // All words must be unique
   const words = entries.map(e => e.word);
@@ -56,13 +56,18 @@ test('extractWordEntries returns current unique words from script.js levels', ()
   // Check first and last words
   assert.equal(entries[0].word, 'mom');
   assert.deepEqual(entries[0].level_ids, [1]);
-  assert.equal(entries.at(-1).word, 'sleep');
+  assert.deepEqual(entries[0].world_ids, ['ocean']);
+  assert.equal(entries.at(-1).word, 'what do you want to be');
   assert.equal(entries.at(-1).level_ids[0], 200);
+  assert.deepEqual(entries.at(-1).world_ids, ['desert']);
 
   // Each entry must have level_ids array
   entries.forEach((entry) => {
     assert.ok(Array.isArray(entry.level_ids), `${entry.word}: must have level_ids array`);
     assert.ok(entry.level_ids.length >= 1, `${entry.word}: must have at least 1 level_id`);
+    assert.ok(Array.isArray(entry.level_refs), `${entry.word}: must have level_refs array`);
+    assert.ok(entry.level_refs.length >= 1, `${entry.word}: must have at least 1 level_ref`);
+    assert.ok(Array.isArray(entry.world_ids), `${entry.word}: must have world_ids array`);
     assert.ok(typeof entry.zh === 'string', `${entry.word}: must have zh`);
     assert.ok(typeof entry.unit === 'string', `${entry.word}: must have unit`);
     assert.ok(typeof entry.unit_index === 'number', `${entry.word}: must have unit_index`);
@@ -105,10 +110,24 @@ test('extractWordEntries level_ids match expected pattern', () => {
 
   const sleep = entries.find(e => e.word === 'sleep');
   assert.deepEqual(sleep.level_ids, [200]);
+  assert.deepEqual(sleep.world_ids, ['ocean']);
 
-  // Verify all level_ids are 1..200 exactly once
-  const allIds = entries.flatMap(e => e.level_ids).sort((a, b) => a - b);
-  assert.deepEqual(allIds, Array.from({ length: 200 }, (_, i) => i + 1));
+  const goodMorning = entries.find(e => e.word === 'good morning');
+  assert.deepEqual(goodMorning.level_ids, [1]);
+  assert.deepEqual(goodMorning.world_ids, ['desert']);
+
+  const dreamQuestion = entries.find(e => e.word === 'what do you want to be');
+  assert.deepEqual(dreamQuestion.level_ids, [200]);
+  assert.deepEqual(dreamQuestion.world_ids, ['desert']);
+
+  // Verify all map refs are ocean/desert 1..200 exactly once.
+  const allRefs = entries
+    .flatMap(e => e.level_refs.map((ref) => `${ref.world_id}:${ref.level_id}`))
+    .sort();
+  const expectedRefs = ['ocean', 'desert']
+    .flatMap((worldId) => Array.from({ length: 200 }, (_, i) => `${worldId}:${i + 1}`))
+    .sort();
+  assert.deepEqual(allRefs, expectedRefs);
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -253,13 +272,15 @@ test('generator uses V3 body structure: req_params with audio_params', () => {
     'Body must include loudness_rate');
 });
 
-test('generator uses Natasha speaker fixed', () => {
+test('generator uses map-specific production speakers', () => {
   const source = read('backend/src/generate-word-audio-v2.js');
 
   assert.ok(source.includes('en_female_natasha_uranus_bigtts'),
-    'Must use Natasha speaker');
+    'Must use Natasha speaker for ocean/default audio');
+  assert.ok(source.includes('en_female_hayley_uranus_bigtts'),
+    'Must use Hayley speaker for desert audio');
   assert.ok(!source.includes('DOUBAO_VOICE_TYPE'),
-    'Speaker must NOT come from env variable — it is fixed');
+    'Speakers must NOT come from env variable — they are fixed');
 });
 
 test('generator uses mp3 format at 24000 Hz', () => {
@@ -271,13 +292,11 @@ test('generator uses mp3 format at 24000 Hz', () => {
     'Must use 24000 Hz sample rate');
 });
 
-test('generator synthesizes word only (no sentence)', () => {
+test('generator keeps display word separate from synthesis text', () => {
   const source = read('backend/src/generate-word-audio-v2.js');
 
-  // The text passed to API is the word itself, not a sentence
-  const bodyMatch = source.match(/callV3Tts\(([a-zA-Z]+)\)/);
-  assert.ok(bodyMatch || source.includes("callV3Tts(word)") || source.includes("callV3Tts(text)"),
-    'Must pass only the word to API');
+  assert.ok(source.includes('tts_text'), 'Must keep tts_text in generated entries');
+  assert.ok(source.includes('ttsTextForTarget'), 'Must derive synthesis text explicitly');
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -331,6 +350,8 @@ test('manifest entry structure is correct', () => {
 
   // Must include all required fields
   assert.ok(source.includes('word:'), 'Entry needs word');
+  assert.ok(source.includes('tts_text:'), 'Entry needs tts_text');
+  assert.ok(source.includes('speaker:'), 'Entry needs per-entry speaker');
   assert.ok(source.includes('level_ids:'), 'Entry needs level_ids');
   assert.ok(source.includes('level_count:'), 'Entry needs level_count');
   assert.ok(source.includes('zh:'), 'Entry needs zh');
@@ -352,6 +373,8 @@ test('manifest has V2 structure with speaker and resource', () => {
     'Manifest must reference seed-tts-2.0');
   assert.ok(source.includes('en_female_natasha_uranus_bigtts'),
     'Manifest must reference Natasha speaker');
+  assert.ok(source.includes('en_female_hayley_uranus_bigtts'),
+    'Manifest must reference Hayley speaker');
 });
 
 test('manifest summary includes levels count and speaker', () => {
@@ -403,6 +426,25 @@ test('manifest entries have all fields needed by frontend (word, url, status)', 
   assert.ok(source.includes("word:"), 'Entry must have word (for wordAudioMap)');
   assert.ok(source.includes("url:"), 'Entry must have url (for wordAudioMap)');
   assert.ok(source.includes("status:"), 'Entry must have status (for frontend compatibility)');
+});
+
+test('desert synthesis text uses punctuation without changing display key', () => {
+  const { extractWordEntries, ttsTextForTarget, voiceProfileForEntry, DESERT_SPEAKER } = require('./backend/src/generate-word-audio-v2.js');
+  const entries = extractWordEntries();
+
+  const howAreYou = entries.find((entry) => entry.word === 'how are you');
+  assert.equal(howAreYou.tts_text, 'How are you?');
+  assert.equal(howAreYou.word, 'how are you');
+  assert.equal(voiceProfileForEntry(howAreYou).speaker, DESERT_SPEAKER);
+  assert.equal(voiceProfileForEntry(howAreYou).emotion, 'happy');
+
+  const goodNight = entries.find((entry) => entry.word === 'good night');
+  assert.equal(goodNight.tts_text, 'Good night!');
+
+  const shareCookie = entries.find((entry) => entry.word === "let's share this cookie");
+  assert.equal(shareCookie.tts_text, "Let's share this cookie.");
+
+  assert.equal(ttsTextForTarget('traffic light', 'Traffic light', 'desert'), 'Traffic light');
 });
 
 test('manifest has voice_type compat field', () => {
@@ -457,17 +499,23 @@ test('README references word audio generator', () => {
     'README must mention Natasha voice');
   assert.ok(readme.includes('en_female_natasha_uranus_bigtts'),
     'README must reference the Natasha speaker ID');
+  assert.ok(readme.includes('Hayley'),
+    'README must mention Hayley voice');
+  assert.ok(readme.includes('en_female_hayley_uranus_bigtts'),
+    'README must reference the Hayley speaker ID');
 });
 
 // ═══════════════════════════════════════════════════════════
 //  11. .env.example 更新测试
 // ═══════════════════════════════════════════════════════════
 
-test('.env.example has Natasha voice type set', () => {
+test('.env.example keeps legacy voice type without placeholder', () => {
   const envExample = read('backend/.env.example');
 
   assert.ok(envExample.includes('en_female_natasha_uranus_bigtts'),
-    '.env.example must have Natasha voice type');
+    '.env.example must keep legacy Natasha voice type for old scripts');
+  assert.ok(envExample.includes('沙漠 Hayley'),
+    '.env.example must explain current map-specific voices');
   assert.ok(!envExample.includes('your_voice_type_here'),
     '.env.example must not have placeholder voice type');
 });
@@ -526,9 +574,11 @@ test('frontend script.js manifest loading is compatible with V2 structure', () =
   assert.ok(scriptSource.includes('localAudioEl.play'),
     'script.js must play local MP3');
 
-  // Frontend must not fall back to browser/system TTS for words without generated MP3.
+  // Frontend must not fall back to browser/system TTS for targets without generated MP3.
   assert.ok(!scriptSource.includes('speechSynthesis.speak'),
     'script.js must not fall back to browser/system speechSynthesis');
+  assert.ok(!scriptSource.includes("utterance.lang = 'en-US'"),
+    'script.js must not force browser/system TTS fallback');
 
   // Frontend ducks BGM during local playback
   assert.ok(scriptSource.includes('mapMusic.volume = MAP_MUSIC_DUCK_VOLUME'),
@@ -546,12 +596,12 @@ test('generated manifest has correct entry count coverage', () => {
 
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 
-  // Manifest must match the current 200-level course table.
+  // Manifest must match the current ocean + desert map target table.
   assert.equal(manifest.version, '2.0', 'Manifest version must be 2.0');
   assert.ok(Array.isArray(manifest.entries), 'Must have entries array');
-  assert.equal(manifest.entries.length, 200, 'Manifest must cover all unique current words');
-  assert.equal(manifest.summary.total, 200, 'Manifest summary total must cover unique current words');
-  assert.equal(manifest.summary.levels, 200, 'Manifest summary levels must cover 200 levels');
+  assert.equal(manifest.entries.length, 400, 'Manifest must cover all unique current map targets');
+  assert.equal(manifest.summary.total, 400, 'Manifest summary total must cover unique current map targets');
+  assert.equal(manifest.summary.levels, 400, 'Manifest summary levels must cover 400 map targets');
 
   // Verify structure
   manifest.entries.forEach((entry) => {
@@ -559,6 +609,8 @@ test('generated manifest has correct entry count coverage', () => {
     assert.ok(typeof entry.url === 'string', 'Must have url');
     assert.ok(entry.url.startsWith('assets/audio/words/'), 'URL must be in words dir');
     assert.ok(Array.isArray(entry.level_ids), 'Must have level_ids array');
+    assert.ok(Array.isArray(entry.level_refs), 'Must have level_refs array');
+    assert.ok(Array.isArray(entry.world_ids), 'Must have world_ids array');
     assert.ok(['generated', 'pending', 'failed', 'not_attempted'].includes(entry.status),
       `Status must be valid: ${entry.status}`);
     if (entry.status === 'generated') {

@@ -5,6 +5,12 @@ const path = require('node:path');
 const { MAP_WORLDS, activateVipPreferences, addLearningActivityDay, applyQuizAnswer, buildLearningDataExport, buildLocalRankings, calendarDays, canForceReleaseUpdate, canRegisterServiceWorker, compareAppVersions, completedLearningMinutes, completionUnlockText, desertLandmarkImage, desertLevels, formatActivityDate, getLevelAccess, islandStyleId, learningDays, learningReport, learningStreak, levels, levelsForMapWorld, membershipSummary, networkStatusText, normalizeMapWorldId, normalizeWorldProgress, notificationStatusText, normalizeChildProfile, normalizeLearningActivity, normalizeMistakeBook, normalizeProgress, parseRouteHash, profileAvatarText, questionPromptText, rankingScore, recordMistake, releaseUpdateInfo, requestReleaseUpdate, requestVipPurchase, requestVipRestore, resolveMistake, routePoint, supportFeedbackText, validateSupportMessage, wordButtonDisabled } = require('./script.js');
 
 const read = (file) => fs.readFileSync(path.join(__dirname, file), 'utf8');
+const mapAudioTargets = () => [...levels, ...desertLevels].map((level) => ({
+  word: level.title.toLowerCase().replace(/[.!?]+$/g, ''),
+  levelId: level.id,
+  worldId: desertLevels.includes(level) ? 'desert' : 'ocean',
+}));
+const ONLINE_RECONNECT_HANDLER_RE = /window\.addEventListener\('online', \(\) => \{\s*\n\s*updateNetworkStatus\(true\);\s*\n\s*checkReleaseUpdate\(\);\s*\n\s*if \(authGatePassed\) hydrateLearningStateFromBackend\(\);\s*\n\s*\}\)/;
 
 const progress = { completed: [1, 2], unlockedThrough: 3 };
 
@@ -228,8 +234,8 @@ test('unknown hash routes show a branded not-found screen instead of silently fa
   assert.match(source, /navigate\('map'\)/);
   assert.match(css, /\.not-found-view\s*\{[\s\S]*?place-items:\s*center/);
   assert.match(css, /\.not-found-icon\s*\{[\s\S]*?border-radius:\s*50%/);
-  assert.match(html, /style\.css\?v=20260720-camel-idle-stable-v3/);
-  assert.match(html, /script\.js\?v=20260720-camel-idle-walkmatch-v1/);
+  assert.match(html, /style\.css\?v=20260801-desert-decor-v13c/);
+  assert.match(html, /script\.js\?v=20260801-desert-decor-v13c/);
 });
 
 test('app shell exposes child-safe network status for offline use', () => {
@@ -244,7 +250,7 @@ test('app shell exposes child-safe network status for offline use', () => {
   assert.match(html, /data-network-status[^>]*role="status"[^>]*aria-live="polite"[^>]*hidden/);
   assert.match(source, /function updateNetworkStatus\(restored = false\)/);
   assert.match(source, /window\.addEventListener\('offline', \(\) => updateNetworkStatus\(false\)\)/);
-  assert.match(source, /window\.addEventListener\('online', \(\) => \{\s*\n\s*updateNetworkStatus\(true\);\s*\n\s*checkReleaseUpdate\(\);\s*\n\s*hydrateLearningStateFromBackend\(\);\s*\n\s*\}\)/);
+  assert.match(source, ONLINE_RECONNECT_HANDLER_RE);
   assert.match(source, /networkStatus\.dataset\.state = navigator\.onLine \? 'online' : 'offline'/);
   assert.match(source, /function showAppUpdateReady\(\)/);
   assert.match(source, /data-app-refresh/);
@@ -271,7 +277,7 @@ test('app startup checks App Store release version and opens centered update dia
     latestVersion: '1.0.1',
     force: false,
     title: '发现新版本',
-    message: '请前往 App Store 更新宝宝英语岛。',
+    message: '请前往 App Store 更新嗨洛塔少儿启蒙APP。',
     releaseNotes: ['视频更稳定'],
     storeName: 'App Store',
     updateUrl: '',
@@ -315,13 +321,13 @@ test('app startup checks App Store release version and opens centered update dia
   assert.match(source, /openReleaseUpdateDialog\(releaseUpdateInfo/);
   assert.doesNotMatch(source, /更新地址待配置/);
   assert.match(source, /requestReleaseUpdate\(updateInfo, window\)/);
-  assert.match(source, /请打开 \$\{updateInfo\.storeName\} 搜索宝宝英语岛更新/);
+  assert.match(source, /请打开 \$\{updateInfo\.storeName\} 搜索嗨洛塔少儿启蒙APP更新/);
   assert.match(source, /const mustBlockForUpdate = canForceReleaseUpdate\(updateInfo, window\)/);
   assert.match(source, /if \(mustBlockForUpdate\) event\.preventDefault\(\)/);
   assert.match(source, /let promptedReleaseVersion = ''/);
   assert.match(source, /if \(!updateInfo\.force && promptedReleaseVersion === updateInfo\.latestVersion\) return/);
   assert.match(source, /if \(!updateInfo\.force\) promptedReleaseVersion = updateInfo\.latestVersion/);
-  assert.match(source, /window\.addEventListener\('online', \(\) => \{\s*\n\s*updateNetworkStatus\(true\);\s*\n\s*checkReleaseUpdate\(\);\s*\n\s*hydrateLearningStateFromBackend\(\);\s*\n\s*\}\)/);
+  assert.match(source, ONLINE_RECONNECT_HANDLER_RE);
   assert.match(source, /APP 版本更新/);
   assert.match(source, /checkReleaseUpdate\(\)/);
   assert.match(css, /\.release-update-dialog\s*\{/);
@@ -383,12 +389,12 @@ test('app shell has a reusable Animal-style toast for common app feedback', () =
 
   assert.match(html, /data-app-toast[^>]*role="status"[^>]*aria-live="polite"[^>]*hidden/);
   assert.match(source, /const appToast = document\.querySelector\('\[data-app-toast\]'\)/);
-  assert.match(source, /function showToast\(message\)/);
-  assert.match(source, /appToast\.textContent = message/);
-  assert.match(source, /toastTimer = setTimeout\(\(\) => \{ appToast\.hidden = true; \}, 1800\)/);
+  assert.match(source, /function showToast\(message, preferredHost\)/);
+  assert.match(source, /toastEl\.textContent = message/);
+  assert.match(source, /toastTimer = setTimeout\(\(\) => \{[\s\S]*?toastEl\.hidden = true;[\s\S]*?\}, 2200\)/);
   assert.match(source, /showToast\(`\$\{preferenceLabels\[key\]\}已\$\{value \? '开启' : '关闭'\}`\)/);
   assert.match(source, /showToast\('反馈已保存在本机'\)/);
-  assert.doesNotMatch(source, /家长登录成功|已退出登录/);
+  assert.match(source, /showToast\('已退出登录'\);/);
   assert.match(css, /\.app-toast\s*\{[\s\S]*?border-radius:\s*var\(--pill-radius\)[\s\S]*?background:\s*rgba\(247, 243, 223, 0\.96\)[\s\S]*?box-shadow:\s*0 3px 10px rgba\(61, 52, 40, 0\.14\)/);
   assert.match(css, /\.app-toast\[hidden\]\s*\{[\s\S]*?display:\s*none/);
   assert.match(css, /@keyframes\s+toast-pop/);
@@ -427,7 +433,7 @@ test('mine page removes nonessential account UI, reminder, report, calendar, and
   assert.doesNotMatch(source, /function render(?:Account|Report|Calendar|Reminders|Mistakes)\(/);
   assert.doesNotMatch(source, /账号与会员|本周英语报告|学习日历|学习提醒|错题本/);
   assert.doesNotMatch(source, /data-open-login|data-logout|data-request-notification|data-reminder-time|data-open-mistake-clear/);
-  assert.doesNotMatch(source, /state\.account|sessionStorage/);
+  // sessionStorage used by auth token persistence (forced login)
   assert.match(source, /babyIslandApi/);
 });
 
@@ -440,7 +446,7 @@ test('mine page help and feedback saves a validated local draft', () => {
     currentLevel: 6,
     completed: 5,
     userAgent: 'iPad Safari',
-  }), '宝宝英语岛反馈\n问题：喇叭没有声音\n当前关卡：第 6 关\n完成关卡：5/200\n设备信息：iPad Safari');
+  }), '嗨洛塔少儿启蒙APP反馈\n问题：喇叭没有声音\n当前关卡：第 6 关\n完成关卡：5/200\n设备信息：iPad Safari');
 
   const source = read('script.js');
   const css = read('style.css');
@@ -463,7 +469,7 @@ test('mine page help and feedback saves a validated local draft', () => {
   assert.match(source, /学习记录优先保存在本机，清理浏览器数据会影响本地记录。/);
   assert.doesNotMatch(source, /当前 H5 预览/);
   assert.match(source, /当前浏览器不能自动复制，请手动长按复制。/);
-  assert.match(source, /帮助与反馈 · 宝宝英语岛/);
+  assert.match(source, /帮助与反馈 · 嗨洛塔少儿启蒙APP/);
   assert.match(source, /关卡顺序/);
   assert.doesNotMatch(source, /第 6 关开始需要家长登录并解锁/);
   assert.match(css, /\.support-view\s*\{/);
@@ -482,8 +488,8 @@ test('H5 app shell has install metadata for tablet packaging', () => {
   assert.ok(fs.existsSync(iconPath));
 
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-  assert.equal(manifest.name, '宝宝英语岛');
-  assert.equal(manifest.short_name, '英语岛');
+  assert.equal(manifest.name, '嗨洛塔少儿启蒙APP');
+  assert.equal(manifest.short_name, '嗨洛塔');
   assert.equal(manifest.start_url, './#map');
   assert.equal(manifest.scope, './');
   assert.equal(manifest.display, 'standalone');
@@ -502,7 +508,7 @@ test('H5 app shell has install metadata for tablet packaging', () => {
   assert.match(html, /<link rel="manifest" href="manifest\.webmanifest\?v=20260717-app-shell-v1">/);
   assert.match(html, /<meta name="mobile-web-app-capable" content="yes">/);
   assert.match(html, /<meta name="apple-mobile-web-app-capable" content="yes">/);
-  assert.match(html, /<meta name="apple-mobile-web-app-title" content="宝宝英语岛">/);
+  assert.match(html, /<meta name="apple-mobile-web-app-title" content="嗨洛塔少儿启蒙APP">/);
   assert.match(html, /<link rel="icon" href="assets\/icons\/app-icon\.svg\?v=20260717-app-shell-v1" type="image\/svg\+xml">/);
   assert.match(html, /<link rel="apple-touch-icon" href="assets\/icons\/app-icon\.svg\?v=20260717-app-shell-v1">/);
 });
@@ -516,17 +522,17 @@ test('H5 app shell registers a minimal offline cache', () => {
   const source = read('script.js');
   const worker = read('sw.js');
 
-  assert.match(html, /style\.css\?v=20260720-camel-idle-stable-v3/);
-  assert.match(html, /script\.js\?v=20260720-camel-idle-walkmatch-v1/);
+  assert.match(html, /style\.css\?v=20260801-desert-decor-v13c/);
+  assert.match(html, /script\.js\?v=20260801-desert-decor-v13c/);
   assert.match(source, /function registerServiceWorker\(\)/);
   assert.match(source, /navigator\.serviceWorker\.register\('\.\/sw\.js(\?[^']*)?'\)/);
   assert.match(source, /canRegisterServiceWorker\(location\.protocol\)/);
   assert.match(source, /registration\.addEventListener\('updatefound'/);
   assert.match(source, /worker\.state === 'installed' && navigator\.serviceWorker\.controller/);
-  assert.match(worker, /CACHE_NAME = 'baby-island-shell-20260720-v169'/);
+  assert.match(worker, /CACHE_NAME = 'baby-island-shell-20260801-desert-hayley-v37'/);
   assert.match(worker, /APP_SHELL = \[/);
-  assert.match(worker, /style\.css\?v=20260720-camel-idle-stable-v3/);
-  assert.match(worker, /script\.js\?v=20260720-camel-idle-walkmatch-v1/);
+  assert.match(worker, /style\.css\?v=20260801-desert-decor-v13c/);
+  assert.match(worker, /script\.js\?v=20260801-desert-decor-v13c/);
   assert.match(worker, /assets\/ocean\/front-ocean-bg-v2-libtv\.webp\?v=20260720-clean-ocean-v1/);
   assert.match(worker, /assets\/ocean\/front-ocean-loop-v4-libtv-seamless-clouds\.mp4\?v=20260719-handpainted-libtv-v1/);
   assert.match(worker, /assets\/ocean\/seagull-fly\.webp\?v=20260720-libtv-flap-v1/);
@@ -552,7 +558,7 @@ test('H5 app shell registers a minimal offline cache', () => {
     if (!clean) continue;
     assert.ok(fs.existsSync(path.join(__dirname, clean)), `service worker cached file must exist: ${match[1]}`);
   }
-  assert.match(worker, /auth\/apiClient\.js\?v=20260720-learning-sync-v1/);
+  assert.match(worker, /auth\/apiClient\.js\?v=20260801-desert-decor-v13c/);
   assert.doesNotMatch(worker, /sms-login|babyIslandApi/);
   assert.doesNotMatch(worker, /assets\/audio\/sfx\/(?:correct|wrong)\.mp3/);
 });
@@ -843,7 +849,8 @@ test('map course exposes two hundred preschool English levels', () => {
   assert.equal(levels.filter((level) => /Colors|Numbers|Actions/.test(level.topic)).length, 0);
   assert.deepEqual(levels.filter((level) => ['love', 'bath', 'good night'].includes(level.title.toLowerCase())), []);
   levels.forEach((level) => assert.equal(level.options[level.correct].toLowerCase(), level.title.toLowerCase()));
-  assert.deepEqual(levels[2], {
+  const { curriculum: grandmaCurriculum, ...grandmaLevel } = levels[2];
+  assert.deepEqual(grandmaLevel, {
     id: 3,
     title: 'Grandma',
     zhTitle: '奶奶',
@@ -860,7 +867,10 @@ test('map course exposes two hundred preschool English levels', () => {
       qa: 'no-lip-sync-book-narration',
       audio: 'native-libtv',
     },
+    worldId: 'ocean',
+    itemType: 'word',
   });
+  assert.deepEqual(grandmaCurriculum.pepUnits, ['PEP三上 U2 Different families', 'PEP三上 U1 Making friends']);
 });
 
 test('map worlds keep independent progress while castle is coming soon', () => {
@@ -887,7 +897,32 @@ test('map worlds keep independent progress while castle is coming soon', () => {
   });
   assert.match(desertLandmarkImage(1), /01-great-pyramid-complex/);
   assert.match(desertLandmarkImage(1), /v6-sand-blend/);
+  assert.match(desertLandmarkImage(1), /desert-landmarks-v30/);
   assert.match(desertLandmarkImage(200), /10-monumental-city-gate/);
+  assert.match(source, /desert-world-cover-v1\.webp/);
+  assert.match(source, /assets\/egypt-map\/covers\/desert-world-cover-v1\.webp/);
+  // 10 座沙漠地标文件必须齐（缺失则地图建筑空白）
+  const desertLandmarkDir = path.join(__dirname, 'assets/egypt-map/cutouts/buildings/v6-sand-blend');
+  const desertLandmarks = [
+    '01-great-pyramid-complex.webp',
+    '02-large-sphinx-monument.webp',
+    '03-pharaoh-palace-facade.webp',
+    '04-grand-egyptian-temple.webp',
+    '05-abu-simbel-rock-temple.webp',
+    '06-step-pyramid-monument.webp',
+    '07-obelisk-plaza.webp',
+    '08-desert-royal-palace.webp',
+    '09-valley-kings-tomb-facade.webp',
+    '10-monumental-city-gate.webp',
+  ];
+  for (const name of desertLandmarks) {
+    const filePath = path.join(desertLandmarkDir, name);
+    assert.ok(fs.existsSync(filePath), `missing desert landmark ${name}`);
+    assert.ok(fs.statSync(filePath).size > 50_000, `desert landmark too small: ${name}`);
+  }
+  const desertCover = path.join(__dirname, 'assets/egypt-map/covers/desert-world-cover-v1.webp');
+  assert.ok(fs.existsSync(desertCover), 'missing desert world cover thumb');
+  assert.ok(fs.statSync(desertCover).size > 10_000, 'desert cover too small');
   assert.equal(MAP_WORLDS.ocean.startLevel, 1);
   assert.equal(MAP_WORLDS.ocean.endLevel, 200);
   assert.equal(MAP_WORLDS.desert.startLevel, 1);
@@ -907,13 +942,17 @@ test('map worlds keep independent progress while castle is coming soon', () => {
   assert.match(source, /class="map-level-chip"/);
   // 营销受众文案不属于游戏 HUD，已从头部移除
   assert.doesNotMatch(source, /learner-badge/);
-  // 宝宝英语岛 remains in document.title but not as map h1
-  assert.match(source, /宝宝英语岛/);
+  // 嗨洛塔品牌名在 document.title，不作为 map h1 硬编码
+  assert.match(source, /嗨洛塔少儿启蒙APP/);
+  assert.doesNotMatch(source, /宝宝英语岛/);
   assert.match(source, /data-map-world="\$\{activeWorld\.id\}"/);
   assert.match(source, /data-route-scroll/);
   assert.match(source, /data-locate-progress/);
-  assert.match(source, /data-locate-progress[^>]*aria-label="定位到第 \$\{currentLevel\.id\} 关"/);
+  assert.match(source, /data-locate-progress[^>]*aria-label="回到第 \$\{currentLevel\.id\} 关最新进度"/);
   assert.match(source, /class="locate-progress-icon"/);
+  assert.match(source, /data-map-jump/);
+  assert.match(source, /class="map-fab-cluster"/);
+  assert.match(source, /class="map-jump-btn"/);
   assert.doesNotMatch(source, /data-locate-progress>定位第/);
   assert.match(source, /routeScroll\.scrollTo/);
   assert.match(source, /resource-strip/);
@@ -962,23 +1001,63 @@ test('map worlds keep independent progress while castle is coming soon', () => {
   });
 });
 
-test('desert map uses the fixed 200 phrase curriculum', () => {
+test('desert map uses the fixed 200 natural expression curriculum', () => {
   const desert = levelsForMapWorld('desert');
 
   assert.equal(desert, desertLevels);
   assert.equal(desert.length, 200);
   assert.equal(new Set(desert.map(({ id }) => id)).size, 200);
-  assert.deepEqual(desert.slice(0, 10).map(({ title }) => title), ['Good morning', 'How are you', 'See you later', 'Good night', 'Have fun', 'Goodbye', 'Thank you', "You're welcome", 'Excuse me', "I'm sorry"]);
+  assert.deepEqual(desert.slice(0, 10).map(({ title }) => title), ['Good morning!', 'How are you?', 'See you later!', 'Good night!', 'Have fun!', 'Goodbye!', 'Thank you!', "You're welcome!", 'Excuse me.', "I'm sorry."]);
   assert.deepEqual(desert.slice(0, 10).map(({ zhTitle }) => zhTitle), ['早上好', '你好吗', '待会儿见', '晚安', '玩得开心', '再见', '谢谢你', '不用谢', '打扰一下', '对不起']);
   assert.deepEqual(desert.slice(10, 20).map(({ topic }) => topic), Array(10).fill('课堂规则'));
-  assert.equal(desert[20].title, 'Have breakfast');
-  assert.equal(desert[60].title, "I'm happy");
-  assert.equal(desert[140].title, 'By bus');
-  assert.equal(desert[199].title, 'Be a writer');
-  assert.equal(desert[199].zhTitle, '当作家');
+  assert.equal(desert[20].title, "Let's have breakfast.");
+  assert.equal(desert[33].title, "Let's share this cookie.");
+  assert.equal(desert[60].title, "I'm happy.");
+  assert.equal(desert[75].title, 'Can you tell me a story?');
+  assert.equal(desert[89].title, 'Good game!');
+  assert.equal(desert[140].title, "Let's take the bus.");
+  assert.equal(desert[199].title, 'What do you want to be?');
+  assert.equal(desert[199].zhTitle, '你想当什么');
   assert.equal(new Set(desert.map(({ topic }) => topic)).size, 20);
   desert.forEach((level) => assert.equal(level.options[level.correct], level.title));
   assert.deepEqual(levels.slice(0, 10).map(({ title }) => title), ['Mom', 'Dad', 'Grandma', 'Grandpa', 'Hand', 'Rice', 'Water', 'Car', 'Dog', 'Book']);
+});
+
+test('map levels carry PEP and 2022-standard alignment metadata', () => {
+  const allMapLevels = [...levels, ...desertLevels];
+  const validAlignment = new Set(['core', 'bridge', 'extension']);
+
+  allMapLevels.forEach((level) => {
+    assert.equal(level.curriculum.standard, '义务教育英语课程标准2022 预备级-一级');
+    assert.equal(level.curriculum.claim, '参考人教PEP主题，做6-8岁场景化先修与拓展');
+    assert.ok(validAlignment.has(level.curriculum.alignment), `${level.title} has invalid alignment`);
+    assert.ok(level.curriculum.theme, `${level.title} must name a theme`);
+    assert.ok(Array.isArray(level.curriculum.pepUnits), `${level.title} must have PEP theme bridges`);
+    assert.ok(level.curriculum.pepUnits.length >= 1, `${level.title} must have at least one PEP theme bridge`);
+  });
+
+  assert.ok(levels[0].curriculum.pepUnits.includes('PEP三上 U2 Different families'));
+  assert.ok(levels[56].curriculum.pepUnits.includes('PEP三上 U3 Amazing animals'));
+  assert.ok(desertLevels[0].curriculum.pepUnits.includes('PEP三上 U1 Making friends'));
+  assert.ok(desertLevels[90].curriculum.pepUnits.includes('PEP三上 U5 The colourful world'));
+  assert.ok(desertLevels[100].curriculum.pepUnits.includes('PEP三上 U6 Useful numbers'));
+  assert.equal(desertLevels[150].topic, '购物消费');
+  assert.equal(desertLevels[150].curriculum.alignment, 'extension');
+});
+
+test('desert levels use natural expressions instead of bare labels', () => {
+  assert.equal(desertLevels.length, 200);
+  assert.equal(desertLevels[33].title, "Let's share this cookie.");
+  assert.equal(desertLevels[75].title, 'Can you tell me a story?');
+  assert.equal(desertLevels[89].title, 'Good game!');
+  assert.equal(questionPromptText(desertLevels[33]), '小朋友，视频里的英语，哪一句是在说「我们分享这块饼干吧」？');
+
+  const banned = new Set(['share cookie', 'tell a story', 'you lose', 'sell that', 'cheap price', 'high price']);
+  desertLevels.forEach((level) => {
+    assert.equal(level.itemType, 'expression');
+    assert.equal(level.worldId, 'desert');
+    assert.ok(!banned.has(level.title.toLowerCase()), `banned desert label survived: ${level.title}`);
+  });
 });
 
 test('source keeps three tabs and removes obsolete generic course copy', () => {
@@ -990,8 +1069,8 @@ test('source keeps three tabs and removes obsolete generic course copy', () => {
   assert.match(source, /appShell\.classList\.remove\('detail-shell'\)/);
   assert.match(read('style.css'), /\.app-shell\.detail-shell\s*\{[^}]*padding-bottom:/);
   assert.match(read('style.css'), /\.bottom-tabs\[hidden\]\s*\{[^}]*display:\s*none/);
-  assert.match(source, /宝宝英语岛/);
-  ['宝宝视频闯关', '自然观察', '数学启蒙', '安全过马路', '情绪认知'].forEach((copy) => {
+  assert.match(source, /嗨洛塔少儿启蒙APP/);
+  ['宝宝视频闯关', '数学启蒙', '安全过马路', '情绪认知'].forEach((copy) => {
     assert.doesNotMatch(source, new RegExp(copy));
   });
 });
@@ -1038,8 +1117,8 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
   assert.match(css, /\.level-node\s*\{[\s\S]*?display:\s*inline-grid[\s\S]*?place-items:\s*center/);
   assert.match(css, /\.current \.node-icon\s*\{[\s\S]*?animation:\s*play-button-pop/);
   assert.match(css, /\.map-topbar\s*\{/);
-  assert.match(css, /\.map-locate-btn\s*\{[\s\S]*?width:\s*3rem[\s\S]*?height:\s*3rem[\s\S]*?min-width:\s*44px[\s\S]*?min-height:\s*44px/);
-  assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?\.map-locate-btn\s*\{[^}]*width:\s*2\.75rem[^}]*height:\s*2\.75rem/);
+  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn\s*\{[\s\S]*?width:\s*3rem[\s\S]*?height:\s*3rem[\s\S]*?min-width:\s*44px[\s\S]*?min-height:\s*44px/);
+  assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?\.map-locate-btn,[\s\S]*?\.map-jump-btn\s*\{[^}]*width:\s*2\.75rem[^}]*height:\s*2\.75rem/);
   assert.match(css, /\.map-locate-btn svg circle\s*\{[\s\S]*?fill:\s*var\(--focus\)/);
   assert.match(css, /\.resource-strip\s*\{/);
   assert.match(css, /\.route-scroll\s*\{[\s\S]*?overflow-x:\s*auto/);
@@ -1065,19 +1144,106 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
   assert.match(script, /egypt-desert-infinite-bg-libtv-v4\.mp4\?v=20260720-desert-bg-v4/);
   assert.match(css, /\.route-ocean\[data-map-theme="desert"\] \.ocean-loop--desert\s*\{[\s\S]*?height:\s*42%[\s\S]*?object-position:\s*center top[\s\S]*?mask-image:\s*linear-gradient\(to bottom,\s*#000 0 64%,\s*transparent 100%\)/);
   assert.match(css, /\.level-stop\[data-map-theme="desert"\] \.island-art\s*\{[\s\S]*?mask-image:\s*linear-gradient/);
-  assert.match(css, /\.level-stop\[data-map-theme="desert"\] \.island-art\s*\{[\s\S]*?filter:\s*sepia\(0\.08\) saturate\(0\.84\)/);
+  assert.match(css, /\.level-stop\[data-map-theme="desert"\] \.island-art\s*\{[\s\S]*?filter:\s*sepia\(0\.12\) saturate\(0\.86\)/);
   assert.match(css, /\.level-stop\[data-map-theme="desert"\]::before\s*\{[\s\S]*?radial-gradient\(ellipse at center,\s*rgba\(132,\s*83,\s*34,\s*0\.17\)/);
   assert.match(css, /\.level-stop\[data-map-theme="desert"\]::after\s*\{[\s\S]*?linear-gradient\(180deg,\s*rgba\(246,\s*216,\s*150,\s*0\)/);
   assert.doesNotMatch(`${script}\n${css}`, /egypt-railway-bg-libtv-v1|egypt-desert-rail-bg|lizard|蜥蜴/);
   assert.match(script, /data-desert-decor/);
-  assert.match(script, /assets\/egypt-map\/cutouts\/decor\/runtime-v1\/\$\{asset\}\?v=20260720-desert-decor-v1/);
-  assert.match(css, /\.desert-decor\s*\{[\s\S]*?width:\s*clamp\(3rem,\s*5\.8cqw,\s*6\.5rem\)/);
+  assert.match(script, /runtime-v2\/\$\{slot\.asset\}\?v=\$\{DESERT_DECOR_VERSION\}/);
+  assert.match(script, /DESERT_DECOR_VERSION = '20260801-desert-decor-v13c'/);
+  assert.match(script, /DESERT_DECOR_BY_KIND/);
+  assert.match(script, /DESERT_DECOR_CACTUS_STYLES/);
+  assert.match(script, /pickCactus/);
+  assert.match(script, /25-cactus-saguaro-y/);
+  assert.match(script, /26-cactus-single-arm/);
+  assert.match(script, /27-cactus-candelabra/);
+  assert.match(script, /28-cactus-short-plump/);
+  assert.match(script, /29-cactus-tall-thin/);
+  assert.match(script, /30-cactus-prickly-pear/);
+  assert.match(script, /31-cactus-curved-arm/);
+  assert.match(script, /32-cactus-seedling/);
+  assert.match(script, /DESERT_DECOR_FOOTPRINTS/);
+  assert.match(script, /DESERT_DECOR_MICRO/);
+  assert.match(script, /43-foot-trail-lr/);
+  assert.match(script, /43b-foot-trail-lr/);
+  assert.doesNotMatch(script, /DESERT_DECOR_FOOTPRINTS[\s\S]*?33-footprint-sandal/);
+  assert.doesNotMatch(script, /DESERT_DECOR_FOOTPRINTS[\s\S]*?40-sandal-trail-lr/);
+  assert.doesNotMatch(script, /DESERT_DECOR_FOOTPRINTS[\s\S]*?41-animal-trail-lr/);
+  assert.doesNotMatch(script, /DESERT_DECOR_FOOTPRINTS[\s\S]*?42-oval-print/);
+  assert.match(script, /36-pottery-sherd/);
+  assert.match(script, /37-linen-scrap/);
+  assert.match(script, /38-tumbleweed/);
+  assert.match(script, /39-scarab-stone/);
+  assert.match(script, /kind: 'footprint'|pushGround\('footprint'/);
+  assert.match(script, /pushGround\('micro'/);
+  assert.match(css, /data-decor-kind=\"footprint\"/);
+  assert.match(css, /rotateX\(/);
+  assert.match(css, /data-decor-kind=\"micro\"/);
+  assert.match(script, /17-broken-clay-pot/);
+  assert.match(script, /18-barrel-cactus/);
+  assert.match(script, /19-pebble-cluster/);
+  assert.match(script, /20-small-stone-block/);
+  assert.match(script, /21-cracked-amphora-shard/);
+  assert.match(script, /22-tiny-gravel-scatter/);
+  assert.match(script, /23-small-stone-cairn/);
+  assert.match(script, /24-gravel-dust-foot/);
+  assert.match(script, /data-decor-kind/);
+  assert.match(script, /DESERT_DECOR_TEMPLATES/);
+  assert.match(script, /data-decor-template/);
+  assert.match(script, /lone_hero|almost_clean|cactus_pair/);
+  assert.match(script, /kind: 'plant'|push\('plant'/);
+  assert.match(script, /kind: 'pot'|push\('pot'/);
+  assert.match(script, /kind: 'pebble'|push\('pebble'/);
+  assert.match(script, /kind: 'stone'|push\('stone'/);
+  assert.match(script, /DESERT_DECOR_NATURAL_SIZE/);
+  // 体量跨度：石子必须明显小于棕榈/巨石
+  assert.match(script, /'19-pebble-cluster\.webp': 0\.[3-5][0-9]/);
+  assert.match(script, /'22-tiny-gravel-scatter\.webp': 0\.[2-4][0-9]/);
+  assert.match(script, /'05-date-palm-sapling\.webp': 1\.[2-9]/);
+  assert.match(script, /'08-boulder-slab\.webp': 1\.[0-9]/);
+
+  assert.match(script, /is-\$\{slot\.layer\}/);
+  assert.match(script, /08-boulder-slab\.webp/);
+  assert.match(script, /12-column-stub\.webp/);
+  assert.doesNotMatch(script, /14-clay-water-jug|02-dry-grass-tuft|16-stone-block|04-terracotta-jar|10-woven-basket/);
+  assert.match(css, /--decor-size/);
+  assert.match(css, /\.desert-decor\s*\{[\s\S]*?calc\(var\(--decor-size/);
+  assert.match(script, /DESERT_DECOR_NATURAL_SIZE/);
+  assert.match(script, /--decor-size:\$\{size\.toFixed\(2\)\}/);
   assert.match(css, /\.desert-decor\s*\{[\s\S]*?background:\s*var\(--decor-image\) center bottom \/ contain no-repeat/);
-  assert.match(worker, /assets\/egypt-map\/cutouts\/decor\/runtime-v1\/01-cactus-cluster\.webp\?v=20260720-desert-decor-v1/);
-  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v1/01-cactus-cluster.webp')));
+  assert.match(css, /\.desert-decor\.is-back\s*\{/);
+  assert.match(worker, /assets\/egypt-map\/cutouts\/decor\/runtime-v2\/01-cactus-cluster\.webp\?v=20260801-desert-decor-v13c/);
+  assert.match(worker, /assets\/egypt-map\/cutouts\/decor\/runtime-v2\/17-broken-clay-pot\.webp\?v=20260801-desert-decor-v13c/);
+  assert.match(worker, /assets\/egypt-map\/cutouts\/decor\/runtime-v2\/19-pebble-cluster\.webp\?v=20260801-desert-decor-v13c/);
+  assert.match(worker, /assets\/egypt-map\/cutouts\/decor\/runtime-v2\/22-tiny-gravel-scatter\.webp\?v=20260801-desert-decor-v13c/);
+  assert.match(worker, /assets\/egypt-map\/cutouts\/decor\/runtime-v2\/24-gravel-dust-foot\.webp\?v=20260801-desert-decor-v13c/);
+  assert.match(worker, /assets\/egypt-map\/cutouts\/decor\/runtime-v2\/43-foot-trail-lr\.webp\?v=20260801-desert-decor-v13c/);
+  assert.match(worker, /assets\/egypt-map\/cutouts\/decor\/runtime-v2\/43b-foot-trail-lr\.webp\?v=20260801-desert-decor-v13c/);
+  assert.match(worker, /assets\/egypt-map\/cutouts\/decor\/runtime-v2\/39-scarab-stone\.webp\?v=20260801-desert-decor-v13c/);
+  assert.match(worker, /baby-island-shell-20260801-desert-hayley-v37/);
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/01-cactus-cluster.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/13-acacia-sapling.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/17-broken-clay-pot.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/18-barrel-cactus.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/25-cactus-saguaro-y.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/30-cactus-prickly-pear.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/32-cactus-seedling.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/43-foot-trail-lr.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/43b-foot-trail-lr.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/36-pottery-sherd.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/37-linen-scrap.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/38-tumbleweed.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/39-scarab-stone.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/19-pebble-cluster.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/20-small-stone-block.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/21-cracked-amphora-shard.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/22-tiny-gravel-scatter.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/23-small-stone-cairn.webp')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/24-gravel-dust-foot.webp')));
   assert.doesNotMatch(`${script}\n${css}\n${worker}`, /vulture|desert-vulture|data-desert-vulture|data-vulture-clip|DESERT_VULTURE|scareDesertVulture/);
   assert.match(css, /\.island-art\s*\{[\s\S]*?background:\s*var\(--island-image\) center \/ contain no-repeat/);
-  assert.doesNotMatch(css, /\.level-stop:has\(\.locked\) \.island-art\s*\{[\s\S]*?grayscale/);
+  const lockedIslandArtBlock = css.match(/\.level-stop:has\(\.locked\) \.island-art\s*\{([^}]*)\}/)?.[1] ?? '';
+  assert.doesNotMatch(lockedIslandArtBlock, /grayscale/);
   assert.match(script, /status === 'locked' \|\| status === 'premium' \? icons\.islandLock : ''/);
   assert.match(css, /\.island-lock\s*\{[\s\S]*?width:\s*clamp\(5\.75rem,\s*8\.5vw,\s*7rem\)[\s\S]*?border-radius:\s*50%[\s\S]*?background:\s*radial-gradient[\s\S]*?pointer-events:\s*none/);
   assert.match(css, /\.level-stop:not\(\.is-centered\) \.island-art\s*\{[\s\S]*?opacity:\s*0\.88/);
@@ -1122,6 +1288,8 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
     assert.doesNotMatch(script, /pendingBoatDirection|--boat-facing|recordBoatFacing/);
     assert.match(script, /const BOAT_HOLD_MS = 300/);
     assert.match(script, /const BOAT_SAIL_MS = 2800/);
+    assert.match(script, /const sailMs = BOAT_SAIL_MS/);
+    assert.doesNotMatch(script, /distanceScale/);
     assert.match(script, /const eased = t/);
     assert.doesNotMatch(script, /1 - \(\(1 - t\) \*\* 3\)/);
     assert.match(script, /scheduleBoatCrossing/);
@@ -1132,20 +1300,20 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
     assert.match(css, /\.steamboat-asset--idle-video,[\s\S]*?\.steamboat-asset--sailing-video\s*\{\s*visibility:\s*hidden/);
     assert.match(css, /\.toy-steamboat\.has-idle-video:not\(\.is-sailing\) \.steamboat-asset--idle-video\s*\{\s*visibility:\s*visible/);
     assert.match(css, /\.toy-steamboat\.is-sailing \.steamboat-asset--sailing\s*\{\s*visibility:\s*visible/);
-    assert.match(script, /setTimeout\(startBoatSailToCenter, BOAT_HOLD_MS\)/);
+    assert.match(script, /setTimeout\(startBoatSailToCenter, fromCurrent \? 0 : BOAT_HOLD_MS\)/);
     assert.match(script, /boatPhase = 'holding'/);
     assert.match(script, /boatPhase = 'sailing'/);
     assert.match(script, /setProperty\('--boat-x'/);
     assert.match(script, /getStopOffsetX/);
-    assert.match(script, /scheduleBoatCrossing\(travelDirection\);[\s\S]*?if \(!state\.preferences\.autoPronunciation\)/);
+    assert.match(script, /scheduleBoatCrossing\(travelDirection, \{ fromCurrent: (?:true|false) \}\);[\s\S]*?if \(!state\.preferences\.autoPronunciation\)/);
     assert.doesNotMatch(script, /settleBoatAfterScroll|if \(feedbackArmed\) setBoatSailing\(true\)|setTimeout\(\(\) => setBoatSailing\(false\), 620\)/);
     assert.doesNotMatch(script, /is-entering|--boat-enter-x|sailBoatToCenteredStop/);
     assert.doesNotMatch(script, /--boat-facing|pendingBoatDirection|scaleX\(var\(--boat-facing/);
     assert.match(script, /camel-walk-alpha-v2\.mov\?v=20260720-libtv-camel-v2/);
     assert.match(script, /camel-walk-alpha-v2\.webm\?v=20260720-libtv-camel-v2/);
     assert.match(script, /camel-walk-frame96-idle-v6\.png\?v=20260720-camel-idle-walkmatch-v6/);
-    assert.match(script, /camel-idle-alpha-v6\.mov\?v=20260720-camel-idle-walkmatch-v6/);
-    assert.match(script, /camel-idle-alpha-v6\.webm\?v=20260720-camel-idle-walkmatch-v6/);
+    assert.match(script, /camel-idle-expressive-v6\.mov\?v=20260801-camel-idle-expressive-v6/);
+    assert.match(script, /camel-idle-expressive-v6\.webm\?v=20260801-camel-idle-expressive-v6/);
     assert.match(script, /data-boat-idle-video/);
     assert.match(script, /idleVideo\.play\(\)[\s\S]*?has-idle-video/);
     assert.doesNotMatch(script, /if \(activeMapTheme === 'desert'\) \{\s*idleVideo\.pause\(\);\s*currentBoat\.classList\.remove\('has-idle-video'\);\s*\}/);
@@ -1167,8 +1335,8 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
     assert.ok(fs.statSync(path.join(__dirname, 'assets/egypt-map/cutouts/characters/libtv/camel-walk-alpha-v2.mov')).size > 1_000_000);
     assert.ok(fs.statSync(path.join(__dirname, 'assets/egypt-map/cutouts/characters/libtv/camel-walk-alpha-v2.webm')).size > 1_000_000);
     assert.ok(fs.statSync(path.join(__dirname, 'assets/egypt-map/cutouts/characters/runtime/camel-walk-frame96-idle-v6.png')).size > 100_000);
-    assert.ok(fs.statSync(path.join(__dirname, 'assets/egypt-map/cutouts/characters/libtv/camel-idle-alpha-v6.mov')).size > 100_000);
-    assert.ok(fs.statSync(path.join(__dirname, 'assets/egypt-map/cutouts/characters/libtv/camel-idle-alpha-v6.webm')).size > 100_000);
+    assert.ok(fs.statSync(path.join(__dirname, 'assets/egypt-map/cutouts/characters/libtv/camel-idle-expressive-v6.mov')).size > 1_000_000);
+    assert.ok(fs.statSync(path.join(__dirname, 'assets/egypt-map/cutouts/characters/libtv/camel-idle-expressive-v6.webm')).size > 1_000_000);
     assert.match(css, /\.toy-steamboat\s*\{[\s\S]*?pointer-events:\s*none/);
     assert.match(css, /\.boat-dock\s*\{[\s\S]*?position:\s*sticky[\s\S]*?z-index:\s*30/);
     assert.match(css, /\.toy-steamboat\s*\{[\s\S]*?z-index:\s*30/);
@@ -1196,16 +1364,19 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
     assert.match(script, /const interruptBoatSail = \(\) =>/);
     assert.doesNotMatch(script, /const settledStop = boatHomeStop\?\.dataset\?\.stop \? boatHomeStop : centeredStop/);
     assert.match(script, /let boatHomeFrozen = false/);
-    assert.match(script, /const freezeBoatHomeAtCurrentX = \(\) =>/);
-    assert.match(script, /const interruptBoatSail = \(\) => \{[\s\S]*?freezeBoatHomeAtCurrentX\(\);[\s\S]*?cancelBoatSail\(\);/);
-    assert.match(script, /else if \(!boatHomeFrozen\) \{\s*boatHomeStop = lastFeedbackStop;/);
+    assert.doesNotMatch(script, /freezeBoatHomeAtCurrentX/);
+    assert.match(script, /const hardCancelBoatMotion = \(\) => \{[\s\S]*?boatHomeFrozen = false;[\s\S]*?setBoatSailing\(false\);[\s\S]*?\}/);
+    assert.match(script, /const interruptBoatSail = \(\) => \{[\s\S]*?if \(boatPhase === 'idle'\) return;[\s\S]*?hardCancelBoatMotion\(\);[\s\S]*?\}/);
+    assert.match(script, /boatHomeStop = lastFeedbackStop;[\s\S]*?boatHomeFrozen = false;[\s\S]*?snapBoatToHome\(\)/);
     assert.match(script, /const getBoatDepartureStop = \(targetStop, direction\) =>/);
     assert.match(script, /const departIndex = targetIndex - \(direction < 0 \? -1 : 1\)/);
-    assert.match(script, /centeredStop = nextStop;[\s\S]*?if \(boatPhase !== 'sailing'\) \{[\s\S]*?boatHomeStop = getBoatDepartureStop\(centeredStop, travelDirection\);/);
+    assert.match(script, /centeredStop = nextStop;[\s\S]*?if \(boatPhase === 'idle'\) \{[\s\S]*?boatHomeStop = getBoatDepartureStop\(centeredStop, travelDirection\);/);
     assert.match(script, /boatHomeStop = getBoatDepartureStop\(centeredStop, travelDirection\)/);
     assert.doesNotMatch(script, /boatHomeStop = centeredStop;[\s\S]*?lastFeedbackStop = centeredStop;[\s\S]*?setBoatX\(0\)/);
-    assert.match(script, /routeScroll\.addEventListener\('pointerdown', handleRouteIntent/);
-    assert.match(script, /routeScroll\.addEventListener\('touchstart', handleRouteIntent/);
+    assert.match(script, /routeScroll\.addEventListener\('pointerdown', onRoutePointerDown/);
+    assert.match(script, /routeScroll\.addEventListener\('pointermove', onRoutePointerMove/);
+    assert.match(script, /routeScroll\.addEventListener\('pointerup', onRoutePointerEnd/);
+    assert.match(script, /routeScroll\.addEventListener\('pointercancel', onRoutePointerEnd/);
     assert.match(script, /routeScroll\.addEventListener\('wheel', handleRouteIntent/);
     assert.match(script, /routeScroll\.addEventListener\('keydown', handleRouteIntent\)/);
     assert.match(script, /decodeAudioData\(buf\)/);
@@ -1232,47 +1403,60 @@ test('landscape map promotes the ocean into a full-screen game stage', () => {
   assert.match(css, /@media \(min-width: 700px\) and \(max-width: 899px\) and \(orientation: landscape\)[\s\S]*?\.map-game-active \.route-stage\s*\{[\s\S]*?padding-top:/);
 });
 
-test('map-locate-btn inside route-ocean absolute with visible label', () => {
+test('map FAB cluster: locate + jump beside, absolute in route-ocean', () => {
   const css = read('style.css');
   const script = read('script.js');
 
-  // 1) position: absolute inside route-ocean, not fixed (must NOT be fixed within its own block)
-  assert.match(css, /\.map-locate-btn\s*\{[^}]*?position:\s*absolute[^}]*?\}/);
-  assert.doesNotMatch(css, /\.map-locate-btn\s*\{[^}]*?position:\s*fixed[^}]*?\}/);
+  // 1) cluster owns absolute bottom-right; buttons are relative inside
+  assert.match(css, /\.map-fab-cluster\s*\{[^}]*?position:\s*absolute[^}]*?\}/);
+  assert.doesNotMatch(css, /\.map-fab-cluster\s*\{[^}]*?position:\s*fixed[^}]*?\}/);
+  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn\s*\{[^}]*?position:\s*relative/);
 
-  // 2) Proper z-index (above ocean but below dialog)
-  assert.match(css, /\.map-locate-btn\s*\{[^}]*?z-index:\s*5/);
+  // 2) Proper z-index on cluster + buttons
+  assert.match(css, /\.map-fab-cluster\s*\{[^}]*?z-index:\s*5/);
+  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn\s*\{[^}]*?z-index:\s*5/);
 
   // 3) Positioned at bottom-right of ocean container
-  assert.match(css, /\.map-locate-btn\s*\{[^}]*?bottom:\s*clamp/);
-  assert.match(css, /\.map-locate-btn\s*\{[^}]*?right:\s*clamp/);
-  assert.match(css, /\.map-locate-btn\s*\{[^}]*?top:\s*auto/);
+  assert.match(css, /\.map-fab-cluster\s*\{[^}]*?bottom:\s*clamp/);
+  assert.match(css, /\.map-fab-cluster\s*\{[^}]*?right:\s*clamp/);
+  assert.match(css, /\.map-fab-cluster\s*\{[^}]*?top:\s*auto/);
+  assert.match(css, /\.map-fab-cluster\s*\{[^}]*?gap:\s*1rem/);
 
-  // 4) data-current-level attribute in HTML for ::after label
+  // 4) markup: jump beside locate
   assert.match(script, /data-current-level=/);
+  assert.match(script, /data-map-jump/);
+  assert.match(script, /map-fab-cluster/);
 
   // 5) ::after label shows "第 N 关" text (base); immersive map hides it
   assert.match(css, /\.map-locate-btn::after\s*\{[^}]*?content:\s*\"第[\s\S]*?关\"/);
   assert.match(css, /\.map-game-active\s+\.map-locate-btn::after\s*\{[^}]*?display:\s*none/);
 
-  // 6) Hit area ≥44px preserved
-  assert.match(css, /\.map-locate-btn\s*\{[^}]*?min-width:\s*44px[^}]*?min-height:\s*44px/);
+  // 6) Hit area ≥44px preserved on both FABs
+  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn\s*\{[^}]*?min-width:\s*44px[^}]*?min-height:\s*44px/);
 
-  // 7) focus-visible and aria unchanged
-  assert.match(css, /\.map-locate-btn:focus-visible\s*\{[^}]*?outline:\s*3px\s+solid\s+var\(--mint\);\s*outline-offset:\s*3px/);
-  assert.match(script, /aria-label="定位到第/);
-  assert.match(script, /title="定位到当前关卡/);
+  // 7) focus-visible + split semantics
+  assert.match(css, /\.map-locate-btn:focus-visible,[\s\S]*?\.map-jump-btn:focus-visible\s*\{[^}]*?outline:\s*3px\s+solid\s+var\(--mint\);\s*outline-offset:\s*3px/);
+  assert.match(script, /aria-label=\"回到第/);
+  assert.match(script, /title=\"回到当前最新进度/);
+  assert.match(script, /aria-label=\"跳关，仅移动地图到某一关/);
 });
 
 test('initial map locate bypasses smooth scroll so boat docks at current level after refresh', () => {
   const script = read('script.js');
 
-  assert.match(script, /const locateProgress = \(behavior = 'smooth'\) => \{/);
+  assert.match(script, /const locateProgress = \(behavior = 'smooth'\) => locateToStop\(currentStop, behavior\)/);
   assert.match(script, /const previousScrollBehavior = routeScroll\.style\.scrollBehavior/);
   assert.match(script, /if \(behavior === 'auto'\) routeScroll\.style\.scrollBehavior = 'auto'/);
   assert.match(script, /routeScroll\.scrollTo\(\{ left, behavior \}\)/);
   assert.match(script, /if \(behavior === 'auto'\) routeScroll\.style\.scrollBehavior = previousScrollBehavior/);
   assert.match(script, /requestAnimationFrame\(\(\) => \{[\s\S]*?locateProgress\('auto'\)[\s\S]*?setBoatX\(0\)/);
+});
+
+test('map vehicle arrival keeps a fixed natural duration', () => {
+  const script = read('script.js');
+
+  assert.match(script, /const startBoatSailToCenter = \(\) => \{[\s\S]*?const sailMs = BOAT_SAIL_MS;[\s\S]*?requestAnimationFrame\(tick\)/);
+  assert.doesNotMatch(script, /distanceScale|BOAT_SAIL_MS \* distanceScale/);
 });
 
 test('map stage vertical rhythm: name under island, boat above dock, locate FAB dock-aligned', () => {
@@ -1293,16 +1477,16 @@ test('map stage vertical rhythm: name under island, boat above dock, locate FAB 
   assert.match(css, /\.level-node\s*\{[\s\S]*?top:\s*30%/);
   assert.match(css, /\.map-game-active\s+\.level-node\s*\{[^}]*?top:\s*31%/);
 
-  // Locate FAB: dock-right companion, not stuck in screen corner
+  // FAB cluster: dock-right companion, not stuck in screen corner
   assert.match(
     css,
-    /\.map-game-active\s+\.map-locate-btn\s*\{[^}]*?right:\s*max\(2rem,\s*calc\(env\(safe-area-inset-right\)\s*\+\s*1\.5rem\)\)/,
+    /\.map-game-active\s+\.map-fab-cluster\s*\{[^}]*?right:\s*max\(2rem,\s*calc\(env\(safe-area-inset-right\)\s*\+\s*1\.5rem\)\)/,
   );
   assert.match(
     css,
-    /\.map-game-active\s+\.map-locate-btn\s*\{[^}]*?bottom:\s*max\(2\.15rem,\s*calc\(env\(safe-area-inset-bottom\)\s*\*\s*0\.35\s*\+\s*2\.4rem\)\)/,
+    /\.map-game-active\s+\.map-fab-cluster\s*\{[^}]*?bottom:\s*max\(2\.15rem,\s*calc\(env\(safe-area-inset-bottom\)\s*\*\s*0\.35\s*\+\s*2\.4rem\)\)/,
   );
-  assert.match(css, /\.map-game-active\s+\.map-locate-btn\s*\{[^}]*?z-index:\s*15/);
+  assert.match(css, /\.map-game-active\s+\.map-fab-cluster\s*\{[^}]*?z-index:\s*15/);
 });
 
 test('all levels reuse only the five approved natural square-island styles', () => {
@@ -1451,15 +1635,17 @@ test('word-audio manifest exists and has V2 valid structure', () => {
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   assert.equal(manifest.version, '2.0');
   assert.equal(manifest.model, '豆包语音合成模型2.0');
-  assert.ok(manifest.speaker.includes('natasha'), 'Must use Natasha speaker');
+  assert.equal(manifest.speaker, 'mixed', 'Top-level speaker must mark mixed map voices');
+  assert.equal(manifest.speakers?.ocean, 'en_female_natasha_uranus_bigtts');
+  assert.equal(manifest.speakers?.desert, 'en_female_hayley_uranus_bigtts');
   assert.equal(manifest.audio_format, 'mp3');
   assert.equal(manifest.sample_rate, 24000);
   assert.ok(Array.isArray(manifest.entries));
-  const uniqueWords = new Set(levels.map(level => level.title.toLowerCase()));
-  assert.equal(manifest.entries.length, uniqueWords.size, 'Must cover all unique current words');
+  const uniqueTargets = new Set(mapAudioTargets().map(({ word }) => word));
+  assert.equal(manifest.entries.length, uniqueTargets.size, 'Must cover all unique current map audio targets');
   assert.ok(typeof manifest.summary === 'object');
   assert.ok(typeof manifest.summary.total === 'number');
-  assert.equal(manifest.summary.total, uniqueWords.size);
+  assert.equal(manifest.summary.total, uniqueTargets.size);
   assert.ok(typeof manifest.summary.generated === 'number');
   assert.ok(typeof manifest.summary.skipped === 'number');
   assert.ok(typeof manifest.summary.available === 'number');
@@ -1469,20 +1655,25 @@ test('word-audio manifest exists and has V2 valid structure', () => {
   );
   assert.ok(typeof manifest.summary.failed === 'number');
   assert.ok(typeof manifest.summary.levels === 'number');
-  assert.equal(manifest.summary.levels, 200);
+  assert.equal(manifest.summary.levels, 400);
   assert.ok(typeof manifest.summary.speaker === 'string');
 
   manifest.entries.forEach((entry) => {
     assert.ok(typeof entry.word === 'string');
+    assert.ok(typeof entry.tts_text === 'string');
+    assert.ok(typeof entry.speaker === 'string');
     assert.ok(Array.isArray(entry.level_ids), 'Must have level_ids array');
     assert.ok(entry.level_ids.length >= 1, 'Must have at least 1 level_id');
+    assert.ok(Array.isArray(entry.level_refs), 'Must have level_refs array');
+    assert.ok(entry.level_refs.length >= 1, 'Must have at least 1 level_ref');
+    assert.ok(Array.isArray(entry.world_ids), 'Must have world_ids array');
     assert.ok(typeof entry.level_count === 'number');
     assert.ok(typeof entry.zh === 'string');
     assert.ok(typeof entry.url === 'string');
     assert.ok(entry.url.startsWith('assets/audio/words/'));
     assert.ok(entry.url.endsWith('.mp3'));
     assert.ok(typeof entry.cache_key === 'string', 'Must have cache_key');
-    assert.ok(entry.cache_key.includes(manifest.speaker), 'cache_key must include speaker');
+    assert.ok(entry.cache_key.includes(entry.speaker), 'cache_key must include per-entry speaker');
     assert.ok(['generated', 'pending', 'failed', 'not_attempted'].includes(entry.status));
     if (entry.status === 'generated') {
       assert.ok(entry.size_bytes > 0);
@@ -1493,48 +1684,58 @@ test('word-audio manifest exists and has V2 valid structure', () => {
   });
 });
 
-test('manifest matches current 200-level course word mapping', () => {
+test('manifest matches current ocean and desert map pronunciation targets', () => {
   const manifest = JSON.parse(fs.readFileSync(
     path.join(__dirname, 'assets', 'audio', 'words', 'word-audio-manifest.json'), 'utf8'));
 
   const expectedByWord = new Map();
-  levels.forEach((level) => {
-    const word = level.title.toLowerCase();
-    if (!expectedByWord.has(word)) expectedByWord.set(word, []);
-    expectedByWord.get(word).push(level.id);
+  mapAudioTargets().forEach(({ word, levelId, worldId }) => {
+    if (!expectedByWord.has(word)) expectedByWord.set(word, { levelIds: [], refs: [], worldIds: [] });
+    expectedByWord.get(word).levelIds.push(levelId);
+    expectedByWord.get(word).refs.push({ world_id: worldId, level_id: levelId });
+    if (!expectedByWord.get(word).worldIds.includes(worldId)) expectedByWord.get(word).worldIds.push(worldId);
   });
 
-  assert.equal(manifest.entries.length, expectedByWord.size, 'Must have all unique current words');
+  assert.equal(manifest.entries.length, expectedByWord.size, 'Must have all unique current map targets');
 
   // Check first 10
   levels.slice(0, 10).forEach((level, index) => {
     const word = level.title.toLowerCase();
     assert.equal(manifest.entries[index].word, word);
-    assert.deepEqual(manifest.entries[index].level_ids, expectedByWord.get(word));
+    assert.deepEqual(manifest.entries[index].level_ids, expectedByWord.get(word).levelIds);
+    assert.deepEqual(manifest.entries[index].world_ids, ['ocean']);
   });
 
   const byWord = new Map(manifest.entries.map(entry => [entry.word, entry]));
-  expectedByWord.forEach((levelIds, word) => {
+  expectedByWord.forEach(({ levelIds, refs, worldIds }, word) => {
     assert.deepEqual(byWord.get(word)?.level_ids, levelIds, `${word} level_ids`);
+    assert.deepEqual(byWord.get(word)?.level_refs.map(({ world_id, level_id }) => ({ world_id, level_id })), refs, `${word} level_refs`);
+    assert.deepEqual(byWord.get(word)?.world_ids, worldIds, `${word} world_ids`);
   });
-  assert.equal(manifest.entries.at(-1).word, 'sleep');
+  assert.equal(manifest.entries.at(-1).word, 'what do you want to be');
   assert.deepEqual(manifest.entries.at(-1).level_ids, [200]);
+  assert.deepEqual(manifest.entries.at(-1).world_ids, ['desert']);
 
-  // Verify all level IDs 1-200 are covered exactly once
-  const allIds = manifest.entries.flatMap(e => e.level_ids).sort((a, b) => a - b);
-  assert.deepEqual(allIds, Array.from({ length: 200 }, (_, i) => i + 1));
+  // Verify all map refs are covered exactly once.
+  const allRefs = manifest.entries
+    .flatMap((entry) => entry.level_refs.map((ref) => `${ref.world_id}:${ref.level_id}`))
+    .sort();
+  const expectedRefs = ['ocean', 'desert']
+    .flatMap((worldId) => Array.from({ length: 200 }, (_, i) => `${worldId}:${i + 1}`))
+    .sort();
+  assert.deepEqual(allRefs, expectedRefs);
 });
 
-test('script.js loads word-audio manifest and uses only local MP3 for word pronunciation', () => {
+test('script.js loads word-audio manifest and uses only local MP3 playback', () => {
   const source = read('script.js');
 
   // Must reference manifest loading
   assert.match(source, /word-audio-manifest\.json/);
-  assert.match(source, /WORD_AUDIO_MANIFEST_VERSION = '20260720-word-manifest-200-v1'/);
+  assert.match(source, /WORD_AUDIO_MANIFEST_VERSION = '20260801-desert-natural-dialogue-v1'/);
   assert.match(source, /loadWordAudioManifest\(\)/);
   assert.match(source, /wordAudioMap/);
 
-  // Must prefer local URL and avoid browser/system TTS fallback
+  // Must use local URL for playback.
   assert.match(source, /localUrl = wordAudioSrcFor\(word\)/);
   assert.match(source, /优先本地 MP3/);
 
@@ -1550,8 +1751,9 @@ test('script.js loads word-audio manifest and uses only local MP3 for word pronu
   assert.match(source, /localAudioEl\.pause\(\)/);
   assert.match(source, /localAudioEl\.currentTime = 0/);
 
+  assert.doesNotMatch(source, /new SpeechSynthesisUtterance\(String\(word\)\)/);
+  assert.doesNotMatch(source, /utterance\.lang = 'en-US'/);
   assert.doesNotMatch(source, /speechSynthesis\.speak\(utterance\)/);
-  assert.doesNotMatch(source, /new SpeechSynthesisUtterance\(word\)/);
 });
 
 test('papaya has generated local word audio so level 12 pronunciation is enabled', () => {
@@ -1567,8 +1769,8 @@ test('papaya has generated local word audio so level 12 pronunciation is enabled
   assert.equal(papaya?.url, 'assets/audio/words/papaya.mp3');
   assert.ok(fs.existsSync(papayaPath));
   assert.ok(fs.statSync(papayaPath).size > 1_000);
-  assert.match(html, /word-audio-manifest\.js\?v=20260720-word-manifest-200-v1/);
-  assert.match(worker, /word-audio-manifest\.json\?v=20260720-word-manifest-200-v1/);
+  assert.match(html, /word-audio-manifest\.js\?v=20260801-desert-natural-dialogue-v1/);
+  assert.match(worker, /word-audio-manifest\.json\?v=20260801-desert-natural-dialogue-v1/);
 });
 
 test('quiz question narration uses per-level Peppa local MP3 for released free levels', () => {
@@ -1629,7 +1831,7 @@ test('quiz feedback uses Holly local MP3 instead of Chinese system TTS', () => {
   assert.match(source, /\}, 2600\)/);
   assert.match(source, /\}, 3400\)/);
   assert.doesNotMatch(source, /function speakChinese|SpeechSynthesisUtterance\(text\)|speakChinese\(/);
-  assert.match(html, /script\.js\?v=20260720-camel-idle-walkmatch-v1/);
+  assert.match(html, /script\.js\?v=20260801-desert-decor-v13c/);
   assert.match(worker, /assets\/audio\/feedback-holly\/correct\.mp3\?v=20260718-holly-feedback-v1/);
   assert.match(worker, /assets\/audio\/feedback-holly\/wrong\.mp3\?v=20260718-holly-feedback-v1/);
 });
@@ -1661,7 +1863,7 @@ test('first ten free levels use local 15s videos and Natasha word MP3s', () => {
   assert.match(source, /data-video-qa="\$\{level\.videoMeta\?\.qa \|\| ''\}"/);
   assert.match(source, /data-video-audio="\$\{level\.videoMeta\?\.audio \|\| ''\}"/);
   assert.match(source, /wordAudioSrcFor\(word\)/);
-  assert.match(html, /script\.js\?v=20260720-camel-idle-walkmatch-v1/);
+  assert.match(html, /script\.js\?v=20260801-desert-decor-v13c/);
 });
 
 test('new paid course table does not bind stale pear and grape videos to levels 11 and 12', () => {
@@ -1715,27 +1917,29 @@ test('word-audio button is enabled only when local MP3 is available', () => {
   assert.equal(wordButtonDisabled('HELLO', false, localAudioUrls), false);   // case-insensitive match
 });
 
-test('word-audio button disabled logic is wired into source rendering with manifest fallback', () => {
+test('word-audio button disabled logic is wired into source rendering with manifest MP3 only', () => {
   const source = read('script.js');
 
   // wordButtonDisabled pure function exported for testing
   assert.match(source, /function wordButtonDisabled\(/);
   assert.match(source, /module\.exports.*wordButtonDisabled/);
 
-  // renderMap template enables only words backed by a local MP3
-  assert.match(source, /wordHasLocalAudio\(level\.title\) \? '' : ' disabled'/);
+  // renderMap template enables words that have local MP3.
+  assert.match(source, /wordCanPronounce\(level\.title\) \? '' : ' disabled'/);
 
-  // wordHasLocalAudio bridges runtime wordAudioMap with the pure decision
+  // wordCanPronounce bridges runtime wordAudioMap.
   assert.match(source, /function wordHasLocalAudio\(/);
-  assert.match(source, /if \(!wordHasLocalAudio\(centeredStop\.dataset\.word\)\) return;/);
+  assert.match(source, /function wordCanPronounce\(/);
+  assert.match(source, /if \(!wordCanPronounce\(centeredStop\.dataset\.word\)\) return;/);
 
   // manifest load callback updates ALL buttons after async fetch
   assert.match(source, /document\.querySelectorAll\('\[data-speak-word\]'\)\.forEach/);
-  assert.match(source, /button\.disabled = !wordHasLocalAudio\(w\)/);
+  assert.match(source, /button\.disabled = !wordCanPronounce\(w\)/);
 
-  // playWordPronunciation never falls back to browser/system TTS
+  // playWordPronunciation must not fall back to browser/system TTS.
   assert.match(source, /if \(!word\) return false/);
-  assert.doesNotMatch(source, /降级.*speechSynthesis/);
+  assert.doesNotMatch(source, /new SpeechSynthesisUtterance\(String\(word\)\)/);
+  assert.doesNotMatch(source, /speechSynthesis\.speak\(utterance\)/);
   assert.match(source, /new Audio\(\)/);
   assert.match(source, /localAudioEl\.play/);
   assert.match(source, /mapMusic\.volume = MAP_MUSIC_DUCK_VOLUME/);
@@ -1786,25 +1990,25 @@ test('generator script is idempotent and credential-safe', () => {
   assert.match(source, /Authorization.*Bearer.*\$\{TOKEN\}/);
 });
 
-test('word-audio manifest covers current course words and only marks real local MP3s generated', () => {
-  // The manifest was generated by generate-word-audio-v2.js with V3 Natasha voice
+test('word-audio manifest covers current map targets and only marks real local MP3s generated', () => {
+  // The manifest was generated by generate-word-audio-v2.js with V3 map-specific voices
   const manifest = JSON.parse(fs.readFileSync(
     path.join(__dirname, 'assets', 'audio', 'words', 'word-audio-manifest.json'), 'utf8'));
-  const uniqueWords = new Set(levels.map(level => level.title.toLowerCase()));
+  const uniqueTargets = new Set(mapAudioTargets().map(({ word }) => word));
 
   assert.equal(manifest.version, '2.0');
-  assert.equal(manifest.summary.total, uniqueWords.size);
+  assert.equal(manifest.summary.total, uniqueTargets.size);
   assert.equal(manifest.summary.failed, 0);
-  assert.equal(manifest.summary.levels, 200);
+  assert.equal(manifest.summary.levels, 400);
 
   const generatedEntries = manifest.entries.filter((entry) => entry.status === 'generated');
   assert.equal(manifest.summary.available, generatedEntries.length);
-  assert.ok(generatedEntries.length >= 100, 'First production batch must remain available');
+  assert.ok(generatedEntries.length >= 200, 'Existing production batch must remain available');
 
   generatedEntries.forEach((entry) => {
     assert.equal(entry.status, 'generated');
     assert.ok(entry.size_bytes > 0);
-    assert.ok(entry.cache_key.includes(manifest.speaker));
+    assert.ok(entry.cache_key.includes(entry.speaker));
     const mp3File = path.join(__dirname, entry.url);
     assert.ok(fs.existsSync(mp3File));
     assert.equal(fs.statSync(mp3File).size, entry.size_bytes);
@@ -2000,28 +2204,20 @@ test('voice-samples audition page exists with required structure', () => {
   assert.match(html, /lang="zh-CN"/);
 
   // Must have Chinese title
-  assert.match(html, /豆包美式英语音色试听库/);
+  assert.match(html, /豆包音色试听总表/);
 
-  // Must have three category sections
-  assert.match(html, /小模型 V1/);
-  assert.match(html, /大模型 1\.0/);
-  assert.match(html, /候选/);
+  // Must include the current consolidated voice libraries
+  assert.match(html, /SeedTTS 2\.0 English Voices/);
+  assert.match(html, /SeedTTS 2\.0 Chinese Female Voices/);
+  assert.match(html, /id="voice-data"/);
 
   // Must use native <audio> controls
   assert.match(html, /<audio controls preload="metadata"/);
 
-  // Must have filter checkbox
-  assert.match(html, /只显示已生成/);
-
-  // Must have pause all button
-  assert.match(html, /全部暂停/);
-
-  // Must load manifest from relative path
-  assert.match(html, /voice-samples-manifest\.json/);
-
-  // Must handle failed/pending states
-  assert.match(html, /failed/);
-  assert.match(html, /占位/);
+  // Must render from embedded generated manifests and pause other audio
+  assert.match(html, /data\.libraries\.map/);
+  assert.match(html, /document\.addEventListener\('play'/);
+  assert.match(html, /audio !== event\.target\) audio\.pause\(\)/);
 
   // Must support responsive layout
   assert.match(html, /@media/);
@@ -2073,9 +2269,9 @@ test('word-audio-manifest.js exists and sets window.WORD_AUDIO_MANIFEST', () => 
   assert.match(content, /^window\.WORD_AUDIO_MANIFEST\s*=\s*\{/, 'Must start with window.WORD_AUDIO_MANIFEST = {');
   assert.match(content, /;\n$/, 'Must end with semicolon and newline');
 
-  // Must contain the current first and last course words.
+  // Must contain the current first and last map audio targets.
   assert.ok(content.includes('"mom"'), 'Must contain current first word');
-  assert.ok(content.includes('"sleep.mp3"') || content.includes('"sleep"'), 'Must contain last word');
+  assert.ok(content.includes('"what_do_you_want_to_be.mp3"') || content.includes('"what do you want to be"'), 'Must contain last map target');
 });
 
 test('JS manifest and JSON manifest have same entries with same URLs', () => {
@@ -2091,8 +2287,8 @@ test('JS manifest and JSON manifest have same entries with same URLs', () => {
   // Same entry count
   assert.equal(jsManifest.entries.length, jsonManifest.entries.length,
     'Both manifests must have same number of entries');
-  assert.equal(jsManifest.entries.length, new Set(levels.map(level => level.title.toLowerCase())).size,
-    'Must have one entry per unique current word');
+  assert.equal(jsManifest.entries.length, new Set(mapAudioTargets().map(({ word }) => word)).size,
+    'Must have one entry per unique current map target');
 
   // Same URLs for each word
   const jsByWord = {};
@@ -2124,8 +2320,8 @@ test('JS manifest summary matches JSON summary (key fields)', () => {
   assert.equal(jsManifest.summary.available, jsonManifest.summary.available);
   assert.equal(jsManifest.summary.levels, jsonManifest.summary.levels);
   assert.equal(jsManifest.summary.speaker, jsonManifest.summary.speaker);
-  assert.equal(jsManifest.summary.total, new Set(levels.map(level => level.title.toLowerCase())).size);
-  assert.equal(jsManifest.summary.levels, 200);
+  assert.equal(jsManifest.summary.total, new Set(mapAudioTargets().map(({ word }) => word)).size);
+  assert.equal(jsManifest.summary.levels, 400);
 });
 
 test('JS manifest does not contain credentials', () => {
@@ -2148,7 +2344,7 @@ test('index.html loads JS manifest before script.js', () => {
   const scriptMatch = html.match(/script\.js/);
 
   assert.ok(jsMatch, 'index.html must reference word-audio-manifest.js');
-  assert.match(html, /word-audio-manifest\.js\?v=20260720-word-manifest-200-v1/);
+  assert.match(html, /word-audio-manifest\.js\?v=20260801-desert-natural-dialogue-v1/);
   assert.ok(scriptMatch, 'index.html must reference script.js');
 
   // word-audio-manifest.js must appear before script.js in the file
@@ -2199,8 +2395,10 @@ test('playWordPronunciation uses local Audio and rejects missing local MP3', () 
     'Must play local audio');
   const localBlock = source.match(/if \(localUrl\) \{[\s\S]*?\n  \}/);
   assert.ok(localBlock, 'Must have local URL block');
-  assert.match(source, /if \(localUrl\) \{[\s\S]*?localAudioEl\.play\(\)\.catch\(restoreMusic\);[\s\S]*?return true;[\s\S]*?\n    \}\n\n    return false;/);
-  assert.doesNotMatch(source, /new SpeechSynthesisUtterance\(word\)/);
+  assert.match(source, /if \(localUrl\) \{[\s\S]*?localAudioEl\.play\(\)\.catch\(restoreMusic\);[\s\S]*?return true;/);
+  assert.doesNotMatch(source, /new SpeechSynthesisUtterance\(String\(word\)\)/);
+  assert.doesNotMatch(source, /speechSynthesis\.speak\(utterance\)/);
+  assert.match(source, /return false;\s*\n  }\s*\n\s*function routeFromHash/);
 });
 
 test('generator exports generateJsManifestContent and produces valid output', () => {
@@ -2210,13 +2408,23 @@ test('generator exports generateJsManifestContent and produces valid output', ()
   const mockManifest = {
     version: '2.0',
     generated_at: new Date().toISOString(),
-    speaker: 'en_female_natasha_uranus_bigtts',
-    voice_type: 'en_female_natasha_uranus_bigtts',
+    speaker: 'mixed',
+    speakers: {
+      ocean: 'en_female_natasha_uranus_bigtts',
+      desert: 'en_female_hayley_uranus_bigtts',
+    },
+    voice_type: 'mixed',
     audio_format: 'mp3',
     sample_rate: 24000,
     entries: entries.map((e) => ({
       word: e.word,
+      tts_text: e.tts_text,
+      speaker: e.world_ids.includes('desert') ? 'en_female_hayley_uranus_bigtts' : 'en_female_natasha_uranus_bigtts',
+      emotion: e.world_ids.includes('desert') ? 'happy' : undefined,
+      speech_rate: 0,
       level_ids: e.level_ids,
+      level_refs: e.level_refs,
+      world_ids: e.world_ids,
       level_count: e.level_ids.length,
       zh: e.zh,
       unit: e.unit,
@@ -2224,9 +2432,22 @@ test('generator exports generateJsManifestContent and produces valid output', ()
       status: 'generated',
       size_bytes: 1024,
       sha256: 'abc123',
-      cache_key: cacheKey(e.word),
+      cache_key: cacheKey(e),
     })),
-    summary: { total: entries.length, generated: entries.length, skipped: 0, available: entries.length, failed: 0, not_attempted: 0, levels: 200, speaker: 'en_female_natasha_uranus_bigtts' },
+    summary: {
+      total: entries.length,
+      generated: entries.length,
+      skipped: 0,
+      available: entries.length,
+      failed: 0,
+      not_attempted: 0,
+      levels: 400,
+      speaker: 'mixed',
+      speakers: {
+        ocean: 'en_female_natasha_uranus_bigtts',
+        desert: 'en_female_hayley_uranus_bigtts',
+      },
+    },
   };
 
   const result = generateJsManifestContent(mockManifest);
@@ -2239,7 +2460,7 @@ test('generator exports generateJsManifestContent and produces valid output', ()
   const parsed = JSON.parse(payloadMatch[1]);
   assert.equal(parsed.entries.length, entries.length, 'Must have one entry per unique current word');
   assert.equal(parsed.summary.total, entries.length, 'Summary must match');
-  assert.equal(parsed.speaker, 'en_female_natasha_uranus_bigtts', 'Speaker must match');
+  assert.equal(parsed.speaker, 'mixed', 'Speaker must match');
   // SHA256 and cache_key must NOT be in JS manifest
   parsed.entries.forEach((entry) => {
     assert.ok(!entry.sha256, 'JS manifest must NOT contain sha256');
@@ -2247,95 +2468,57 @@ test('generator exports generateJsManifestContent and produces valid output', ()
   });
 });
 
-// ─── 航程胶囊 HUD（珍珠里程碑）测试 ──────────────────────
+// ─── 航程胶囊 HUD 已下线 ──────────────────────────
 
-test('renderCompactJourney builds voyage capsule with 5 pearl milestones', () => {
+test('map topbar no longer embeds voyage/journey capsule', () => {
   const source = read('script.js');
-  assert.match(source, /renderCompactJourney/);
-  assert.match(source, /msCheck\s*=\s*\[1,\s*2,\s*3,\s*4,\s*5\]\.map/);
-  assert.match(source, /\(mVal \/ totalLevels\) \* 100/);
-  assert.match(source, /class="j-capsule"/);
-  assert.match(source, /class="j-badge/);
-  assert.match(source, /class="j-pearls"/);
-  assert.match(source, /j-pearl--/);
-  assert.doesNotMatch(source, /j-boat/);
-  assert.doesNotMatch(source, /j-treasure/);
-  assert.doesNotMatch(source, /j-svg/);
-});
-
-test('compact journey handles all progress states: zero, mid, and completed total', () => {
-  const source = read('script.js');
-  assert.match(source, /allCompleted/);
-  // states assembled as j-pearl-- + done|pending|active
-  assert.match(source, /j-pearl--['"]?\s*\+\s*state|state\s*=\s*['"]done['"]/);
-  assert.match(source, /state\s*=\s*['"]done['"]/);
-  assert.match(source, /state\s*=\s*['"]pending['"]/);
-  assert.match(source, /state\s*=\s*['"]active['"]/);
-  assert.match(source, /nextMilestone/);
-  assert.match(source, /群岛通关/);
-  assert.match(source, /j-count/);
-  assert.match(source, /j-slash/);
-  assert.match(source, /j-badge-num/);
-  assert.match(source, /下一阶段/);
-});
-
-test('compact journey embedded in map-topbar (journey-header/voyage removed)', () => {
-  const source = read('script.js');
-  // The old journey-header section is removed
+  assert.doesNotMatch(source, /renderCompactJourney/);
   assert.doesNotMatch(source, /journey-header[\s\S]*?journey-voyage[\s\S]*?<\/section>/);
-  assert.doesNotMatch(source, /journey-header surface/);
-  // Compact journey is inside map-topbar via renderCompactJourney call
-  assert.match(source, /renderCompactJourney\(completed/);
-  // locate button is in route-ocean with absolute positioning
+  assert.doesNotMatch(source, /class="journey-compact"/);
+  assert.doesNotMatch(source, /j-pearl--/);
   assert.match(source, /data-locate-progress/);
-  assert.match(source, /route-ocean[\s\S]*?map-locate-btn/);
-  // data-current-level attribute on locate button
+  assert.match(source, /route-ocean[\s\S]*?map-fab-cluster[\s\S]*?map-jump-btn[\s\S]*?map-locate-btn/);
   assert.match(source, /data-current-level=/);
-  // map-brand still has the active world's title
   assert.match(source, /<h1 id="map-title">\$\{activeWorld\.title\}<\/h1>/);
 });
 
-test('front-end app surface has no SMS login UI and keeps account runtime for learning sync only', () => {
+test('front-end forced login gate + account runtime for learning sync', () => {
   const source = read('script.js');
   const html = read('index.html');
   const worker = read('sw.js');
+  const css = read('style.css');
 
-  assert.doesNotMatch(source, /function validatePhone|function validateCode|handleSmsLogin|handleLogout/);
-  assert.doesNotMatch(source, /sms-login|data-sms-|clearToken|sessionStorage/);
+  assert.match(source, /function openLoginDialog/);
+  assert.match(source, /function runAuthBootGate/);
   assert.match(source, /babyIslandApi/);
   assert.match(source, /checkSession/);
   assert.match(source, /hydrateLearningStateFromBackend/);
-  assert.doesNotMatch(source, /openAccessDialog|data-access-purchase|payment-required|login-required/);
   assert.match(source, /function openPaywallDialog/);
   assert.match(source, /paywall-dialog/);
-  assert.match(html, /auth\/apiClient\.js\?v=20260720-learning-sync-v1/);
+  assert.match(html, /auth\/apiClient\.js\?v=20260801-desert-decor-v13c/);
   assert.doesNotMatch(html, /data-access-dialog/);
-  assert.doesNotMatch(read('style.css'), /sms-login|data-kind="login"|logout-button|setting-row-logout|profile-login-button|access-hero\.login/);
-  assert.match(worker, /auth\/apiClient\.js\?v=20260720-learning-sync-v1/);
+  assert.match(css, /\.login-dialog/);
+  assert.doesNotMatch(css, /sms-login|data-kind="login"|logout-button|setting-row-logout|profile-login-button|access-hero\.login/);
+  assert.match(worker, /auth\/apiClient\.js\?v=20260801-desert-decor-v13c/);
   assert.doesNotMatch(worker, /babyIslandApi|sms-login/);
 });
 
-// ─── responsive / narrow-screen journey layout test ─────────
+// ─── responsive / narrow-screen map topbar ─────────
 
-test('compact journey responsive structure: narrow screens simplify but keep key info', () => {
+test('map topbar responsive structure without voyage capsule', () => {
   const css = read('style.css');
-  // Responsive map-topbar grid breakpoints
+  assert.match(css, /grid-template-areas:\s*["']brand resource["']/);
+  assert.match(css, /\.journey-compact[\s\S]*?display:\s*none/);
   assert.match(css, /@media\s*\(max-width:\s*899px\)[\s\S]*?grid-template-columns/);
   assert.match(css, /@media\s*\(max-width:\s*480px\)/);
-  // Narrow map hides side HUDs so the brand/current-level chip cannot be clipped.
   assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?grid-template-areas:\s*"brand"/);
-  assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?\.map-game-active \.journey-compact,[\s\S]*?\.map-game-active \.resource-strip\s*\{[\s\S]*?display:\s*none/);
+  assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?\.map-game-active \.resource-strip\s*\{[\s\S]*?display:\s*none/);
   assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?\.map-game-active \.map-level-chip\s*\{[\s\S]*?text-overflow:\s*ellipsis/);
   assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?\.map-game-active \.level-name\s*\{[\s\S]*?top:\s*64%/);
   assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?\.map-game-active \.word-audio-button\s*\{[\s\S]*?width:\s*3rem/);
-  assert.match(css, /@media\s*\(orientation:\s*portrait\)[\s\S]*?\.map-game-active \.map-locate-btn\s*\{[\s\S]*?bottom:\s*calc\(var\(--bottom-tabs-height\) \+ max\(0\.75rem, env\(safe-area-inset-bottom\)\)\)/);
-  assert.match(css, /\.j-capsule/);
-  assert.match(css, /\.j-pearl/);
-  // Narrow hides locate label
+  assert.match(css, /@media\s*\(orientation:\s*portrait\)[\s\S]*?\.map-game-active \.map-fab-cluster\s*\{[\s\S]*?bottom:\s*calc\(var\(--bottom-tabs-height\) \+ max\(0\.75rem, env\(safe-area-inset-bottom\)\)\)/);
   assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?map-locate-btn::after[\s\S]*?display:\s*none/);
-  // prefers-reduced-motion respected
   assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)/);
-  assert.match(css, /animation-duration:\s*0\.01ms/);
 });
 
 // ─── 地图切换入口恢复保护 ───────────────────────────────────
@@ -2464,7 +2647,7 @@ test('mine page removes local data management, cache, and share entries', () => 
     '2026-07-17T08:00:00.000Z',
   );
 
-  assert.equal(exported.app, '宝宝英语岛');
+  assert.equal(exported.app, '嗨洛塔少儿启蒙APP');
   assert.equal(exported.version, 1);
   assert.deepEqual(exported.childProfile, { childName: '安安', childAge: '5' });
   assert.deepEqual(exported.progress, { completed: [1, 2], unlockedThrough: 3 });
@@ -2530,4 +2713,108 @@ test('quiz hand hint is removed when leaving level view and ignores stale target
   assert.match(source, /if \(route\.type !== 'level'\) removeGlobalHintHand\(\)/);
   assert.match(source, /function isCurrentQuizView\(\)\s*\{[\s\S]*?route\.type === 'level'[\s\S]*?route\.id === level\.id[\s\S]*?stageQuiz\.isConnected/);
   assert.match(source, /if \(!el \|\| !el\.isConnected \|\| !isCurrentQuizView\(\)\)\s*\{[\s\S]*?hideHint\(\);[\s\S]*?return;/);
+});
+
+
+// ─── 强制登录门禁 ─────────────────────────────────
+test('forced login gate sources exist with Animal-Island login dialog', () => {
+  const source = read('script.js');
+  const css = read('style.css');
+  const html = read('index.html');
+  assert.match(source, /function openLoginDialog/);
+  assert.match(source, /function runAuthBootGate/);
+  assert.match(source, /is-required/);
+  assert.match(source, /登录 \/ 注册/);
+  assert.match(source, /新号码自动注册|自动注册/);
+  assert.match(source, /app-splash-finished/);
+  assert.match(source, /LAST_STAY_KEY|baby-island-last-stay/);
+  assert.match(source, /runAuthBootGate\(\)/);
+  assert.match(source, /nudgeMustLogin/);
+  assert.match(source, /请先登录后继续探险/);
+  assert.match(source, /clickedOutsideCard|!card\.contains/);
+  assert.match(source, /data-dialog-toast/);
+  assert.match(html, /auth\/apiClient\.js/);
+  assert.match(css, /\.login-dialog/);
+  assert.match(css, /\.login-submit/);
+  assert.match(css, /body\.auth-lock/);
+  assert.match(css, /login-card-nudge/);
+  assert.match(css, /app-toast-in-dialog/);
+  // 无关闭按钮路径（强制）
+  assert.doesNotMatch(source, /data-login-close/);
+});
+
+test('map jump segments are every 20 levels with two-step copy', () => {
+  const {
+    buildMapJumpSegments,
+    segmentContainingLevel,
+    levelsInJumpSegment,
+    MAP_JUMP_COPY,
+    MAP_JUMP_SEGMENT_SIZE,
+    levels,
+  } = require('./script.js');
+  assert.equal(MAP_JUMP_SEGMENT_SIZE, 20);
+  assert.equal(MAP_JUMP_COPY.title, '要去哪里');
+  assert.equal(MAP_JUMP_COPY.segmentsLabel, '路线段');
+  assert.equal(MAP_JUMP_COPY.levelsHint, '共 200 关 · 左边选段，右边点关，再出发');
+  assert.equal(MAP_JUMP_COPY.totalLevels, 200);
+  assert.equal(MAP_JUMP_COPY.depart, '出发前往');
+  assert.equal(MAP_JUMP_COPY.arrived, '已到达');
+  assert.ok(!('quickGo' in MAP_JUMP_COPY));
+
+  const segs = buildMapJumpSegments(200, 20);
+  assert.equal(segs.length, 10);
+  assert.deepEqual(
+    segs.map((s) => [s.start, s.end]),
+    [[1,20],[21,40],[41,60],[61,80],[81,100],[101,120],[121,140],[141,160],[161,180],[181,200]],
+  );
+  assert.equal(segmentContainingLevel(11, segs).label, '1–20 关');
+  assert.equal(segmentContainingLevel(37, segs).start, 21);
+  assert.equal(segmentContainingLevel(200, segs).end, 200);
+
+  const inFirst = levelsInJumpSegment(levels, segs[0]);
+  assert.ok(inFirst.length <= 20);
+  assert.ok(inFirst.every((lv) => lv.id >= 1 && lv.id <= 20));
+});
+
+test('jump dialog sources cover 200 levels with left-right segments', () => {
+  const source = fs.readFileSync(path.join(__dirname, 'script.js'), 'utf8');
+  const css = fs.readFileSync(path.join(__dirname, 'style.css'), 'utf8');
+  assert.match(source, /function openMapJumpDialog/);
+  assert.match(source, /function buildMapJumpSegments/);
+  assert.match(source, /locateToLevelId/);
+  assert.match(source, /openMapJumpDialog\(/);
+  assert.match(source, /禁跨段飞|不跨岛连飞/);
+  assert.match(source, /data-jump-segment/);
+  assert.match(source, /data-jump-level/);
+  assert.match(source, /data-jump-depart/);
+  assert.match(source, /data-map-jump/);
+  assert.match(source, /data-jump-body/);
+  assert.match(source, /data-jump-rail/);
+  // 无数字输入跳关
+  assert.doesNotMatch(source, /data-jump-quick-input/);
+  assert.doesNotMatch(source, /data-jump-quick-go/);
+  // 200 关硬边界：跳关 total 以 DISPLAY_LEVEL_COUNT 为准
+  assert.match(source, /Math\.max\(DISPLAY_LEVEL_COUNT, dataMax/);
+  assert.match(source, /DISPLAY_LEVEL_COUNT = 200/);
+  // 定位与跳关分钮：定位只回进度，跳关才开弹窗
+  assert.match(source, /locateBtn\?\.addEventListener\('click'/);
+  assert.match(source, /jumpBtn\?\.addEventListener\('click'/);
+  assert.match(source, /locateProgress\('auto'\)/);
+  // 跳关不写 unlockedThrough / 通关进度
+  assert.match(source, /仅移动地图，不写通关进度/);
+  assert.match(css, /\.jump-dialog/);
+  assert.match(css, /\.jump-body/);
+  assert.match(css, /\.jump-rail/);
+  assert.match(css, /\.jump-segments/);
+  assert.match(css, /\.jump-levels/);
+  assert.match(css, /jump-depart-btn/);
+  assert.doesNotMatch(css, /\.jump-quick/);
+  assert.match(css, /\.jump-segment-btn\.is-active\s*\{/);
+  assert.match(css, /\.jump-segment-btn\.is-current-seg:not\(\.is-active\)/);
+  // 禁：当前段与浏览段共用同一套满高亮（会导致双选中）
+  assert.doesNotMatch(css, /\.jump-segment-btn\.is-active\s*,\s*\n?\s*\.jump-segment-btn\.is-current-seg\s*\{/);
+  assert.match(css, /\.map-fab-cluster/);
+  assert.match(css, /\.map-jump-btn/);
+  // 禁 1fr 珠串布局
+  assert.doesNotMatch(css, /\.jump-segments\s*\{[^}]*grid-template-columns:\s*repeat\([^)]*1fr/s);
 });

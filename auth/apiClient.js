@@ -36,24 +36,22 @@
   // ─── Token 存取 ──────────────────────────────
 
   function getToken() {
-    if (isFileProtocol()) {
-      try { return sessionStorage.getItem('baby-island-auth-token'); } catch (_) { return null; }
-    }
-    // HTTP: cookie 由后端设置，前端无需手动读写；这里作为 fallback
+    var ss = null;
+    try { ss = sessionStorage.getItem('baby-island-auth-token'); } catch (_) { ss = null; }
+    if (isFileProtocol()) return ss;
+    // HTTP: cookie（后端会话）优先，sessionStorage 兜底本地 mock
     var match = document.cookie.match(/(?:^|;\s*)session_token=([^;]*)/);
-    return match ? decodeURIComponent(match[1]) : null;
+    if (match) return decodeURIComponent(match[1]);
+    return ss;
   }
 
   function setToken(token) {
-    if (isFileProtocol()) {
-      try {
-        if (token) {
-          sessionStorage.setItem('baby-island-auth-token', token);
-        } else {
-          sessionStorage.removeItem('baby-island-auth-token');
-        }
-      } catch (_) { /* noop */ }
-    } else {
+    // 始终同步 sessionStorage，保证静态预览 / mock 登录可读
+    try {
+      if (token) sessionStorage.setItem('baby-island-auth-token', token);
+      else sessionStorage.removeItem('baby-island-auth-token');
+    } catch (_) { /* noop */ }
+    if (!isFileProtocol()) {
       if (token) {
         document.cookie = 'session_token=' + encodeURIComponent(token)
           + '; path=/; SameSite=Lax; max-age=2592000';
@@ -144,7 +142,7 @@
   //   - Vite preview (端口 4173) 不带 /api 反代，fetch 返回 501 HTML
   //   - file:// 打开 index.html，fetch 跨协议失败
   //   - 后端未启动
-  // 只支持「测试说明」里的场景：任意 11 位手机号 + 验证码 1234（登录）
+  // 本地兜底：任意 11 位手机号 + 任意 4–6 位验证码即可登录（不依赖后端）
   // send-code：直接返回成功（不实际发送短信）
   // session：有 token 返回成功，否则 isLoggedIn=false
   // logout：返回成功
@@ -182,12 +180,12 @@
           error: makeError('手机号格式不正确', 'INVALID_PHONE', 400),
         };
       }
-      // 测试验证码：1234（与登录页文案一致）
-      // 真实生产由后端拒绝，本地 mock 在没有后端时启用，确保「任意 11 位手机号 + 验证码 1234」可用
-      if (String(code || '') !== '1234') {
+      // 本地任意验证码可进：只要填了 4–6 位数字（与登录表单校验对齐）
+      var codeStr = String(code || '').replace(/\D/g, '');
+      if (!/^\d{4,6}$/.test(codeStr)) {
         return {
           data: null,
-          error: makeError('验证码错误或已过期，请重试', 'INVALID_CODE', 400),
+          error: makeError('请输入验证码', 'INVALID_CODE', 400),
         };
       }
       return {
@@ -280,7 +278,9 @@
       }
       return data;
     }).catch(function (err) {
-      // 后端不可用 — 抛出明确错误，绝不本地生成验证码
+      // 保留业务错误（手机号非法等）；仅无 status 的网络失败才提示连接失败
+      // 注：apiRequest 内 tryLocalMock 成功时不会进 catch
+      if (err && err.status && err.status > 0) throw err;
       var error = new Error('登录服务未启动，连接失败');
       error.code = 'CONNECTION_FAILED';
       error.status = 0;

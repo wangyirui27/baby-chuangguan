@@ -1,17 +1,17 @@
 /**
- * 宝宝闯关 · 关卡单词音频生成器（豆包语音合成模型 2.0 + Natasha）
+ * 宝宝闯关 · 关卡单词音频生成器（豆包语音合成模型 2.0）
  *
  * 使用方式：cd backend && node src/generate-word-audio-v2.js
- * 生产化：所有关卡单词统一使用 en_female_natasha_uranus_bigtts 声线
+ * 生产化：海岛使用 Natasha，沙漠使用 Hayley 标点主版声线
  * 幂等：已存在且有效的 MP3 跳过；失败支持中断重跑；manifest 原子写入
  * 安全：所有凭据仅从 .env 读取，绝不输出或写入 manifest
  *
  * API: V3 HTTP Chunked 单向流 (POST /api/v3/tts/unidirectional)
  * 鉴权: X-Api-App-Id + X-Api-Access-Key + X-Api-Resource-Id: seed-tts-2.0
- * Speaker: en_female_natasha_uranus_bigtts (固定)
+ * Speakers: ocean=Natasha, desert=Hayley
  *
- * 数据源：与 script.js 的 200 关课程表保持一致，
- * 去重但保留 level_id 关联。manifest 覆盖当前所有关卡示例词。
+ * 数据源：与 script.js 的海岛/沙漠地图关卡表保持一致，
+ * 去重但保留地图与 level_id 关联。manifest 覆盖当前所有地图教学目标。
  */
 
 // ─── 共享 V3 实现 ──────────────────────────────────────
@@ -30,42 +30,59 @@ const path = require('node:path');
 const fs = require('node:fs');
 const crypto = require('node:crypto');
 const https = require('node:https');
-const { levels: COURSE_LEVELS } = require('../../script.js');
+const { levels: COURSE_LEVELS, desertLevels: DESERT_LEVELS } = require('../../script.js');
 
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
 // ═══════════════════════════════════════════════════════════
-//  课程数据 — 直接来自 script.js，避免音频 manifest 与关卡表漂移。
+//  地图目标 — 直接来自 script.js，避免音频 manifest 与关卡表漂移。
 // ═══════════════════════════════════════════════════════════
 
-const CURRICULUM_UNITS = COURSE_LEVELS.reduce((units, level) => {
-  const unitIndex = Math.floor((level.id - 1) / 10);
-  if (!units[unitIndex]) units[unitIndex] = { topic: level.topic, words: [] };
-  units[unitIndex].words.push([level.title.toLowerCase(), level.zhTitle]);
-  return units;
-}, []);
+function mapAudioWords(worldId, worldName, worldLevels) {
+  const audioKey = (value) => String(value || '').trim().replace(/[.!?]+$/g, '').toLowerCase();
+  return worldLevels.map((level) => [
+    audioKey(level.title),
+    String(level.title || '').trim(),
+    level.zhTitle || '',
+    level.id,
+    worldId,
+    worldName,
+    level.topic || '',
+  ]);
+}
+
+const CURRICULUM_UNITS = [
+  { topic: '魔法海岛', words: mapAudioWords('ocean', '魔法海岛', COURSE_LEVELS) },
+  { topic: '沙漠奇境', words: mapAudioWords('desert', '沙漠奇境', DESERT_LEVELS) },
+];
 
 // ═══════════════════════════════════════════════════════════
-//  提取唯一单词（去重，保留 level_id 映射）
+//  提取唯一教学目标（去重，保留地图与 level_id 映射）
 // ═══════════════════════════════════════════════════════════
 
 function extractWordEntries() {
   const wordMap = new Map(); // word -> { word, level_ids: [], zh, unit, unit_index }
 
   CURRICULUM_UNITS.forEach((unit, ui) => {
-    unit.words.forEach(([word, zh], wi) => {
-      const levelId = ui * 10 + wi + 1;
+    unit.words.forEach(([word, sourceTitle, zh, levelId, worldId, worldName, topic], wi) => {
+      if (!word) return;
       if (!wordMap.has(word)) {
         wordMap.set(word, {
           word,
+          tts_text: ttsTextForTarget(word, sourceTitle, worldId),
           level_ids: [],
+          level_refs: [],
+          world_ids: [],
           zh,
-          unit: unit.topic,
+          unit: topic || unit.topic,
           unit_index: ui,
           word_index: wi,
         });
       }
-      wordMap.get(word).level_ids.push(levelId);
+      const entry = wordMap.get(word);
+      entry.level_ids.push(levelId);
+      entry.level_refs.push({ world_id: worldId, world_name: worldName, level_id: levelId });
+      if (!entry.world_ids.includes(worldId)) entry.world_ids.push(worldId);
     });
   });
 
@@ -81,7 +98,9 @@ const ACCESS_KEY = process.env.DOUBAO_TOKEN;
 
 const API_URL = 'https://openspeech.bytedance.com/api/v3/tts/unidirectional';
 const RESOURCE_ID = 'seed-tts-2.0';
-const SPEAKER = 'en_female_natasha_uranus_bigtts'; // 本项目正式声线 Natasha
+const OCEAN_SPEAKER = 'en_female_natasha_uranus_bigtts';
+const DESERT_SPEAKER = 'en_female_hayley_uranus_bigtts';
+const SPEAKER = OCEAN_SPEAKER; // legacy export: ocean/default voice
 const MAX_RETRIES = 3;
 const RETRY_DELAYS_MS = [2000, 4000, 8000];
 const REQUEST_TIMEOUT_MS = 60000;
@@ -93,7 +112,6 @@ const MANIFEST_JS_PATH = path.join(WORDS_DIR, 'word-audio-manifest.js');
 
 // 缓存的 speaker/model 标识（manifest 缓存键，换声线会重新生成）
 const CACHE_KEY = {
-  speaker: SPEAKER,
   resource: RESOURCE_ID,
   format: 'mp3',
   sample_rate: 24000,
@@ -115,24 +133,91 @@ function safeFileName(word) {
   return word.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/^_|_$/g, '');
 }
 
+const DESERT_QUESTION_WORDS = new Set([
+  'can i pay',
+  'how are you',
+  'how much',
+  'what time',
+]);
+
+const DESERT_EXCLAIM_WORDS = new Set([
+  'goodbye',
+]);
+
+const DESERT_EXCLAIM_STARTERS = new Set([
+  'answer', 'ask', 'be', 'bite', 'blow', 'bounce', 'brush', 'build', 'buy',
+  'calm', 'catch', 'change', 'cheer', 'clap', 'close', 'collect', 'comb',
+  'come', 'count', 'cut', 'dance', 'do', 'don\'t', 'draw', 'drink', 'dry',
+  'eat', 'excuse', 'fasten', 'feed', 'flush', 'fly', 'get', 'go', 'good',
+  'goodbye', 'hands', 'have', 'hear', 'help', 'hide', 'hug', 'i\'m', 'i',
+  'jump', 'keep', 'kick', 'kiss', 'laugh', 'learn', 'line', 'listen', 'look',
+  'make', 'milk', 'mix', 'more', 'my', 'open', 'paint', 'peel', 'pet', 'play',
+  'please', 'plus', 'quiet', 'raise', 'read', 'ride', 'run', 'save', 'score',
+  'see', 'sell', 'shake', 'share', 'shear', 'sing', 'sit', 'smile', 'speak',
+  'stamp', 'stand', 'study', 'swim', 'tag', 'take', 'taste', 'tell', 'thank',
+  'throw', 'today', 'tomorrow', 'touch', 'try', 'turn', 'use', 'wake', 'walk',
+  'wash', 'watch', 'win', 'wipe', 'work', 'write', 'you', 'you\'re', 'your',
+]);
+
+function hasTerminalPunctuation(text) {
+  return /[.!?]$/.test(text);
+}
+
+function ttsTextForTarget(word, sourceTitle, worldId) {
+  const text = sourceTitle || word;
+  if (worldId !== 'desert' || hasTerminalPunctuation(text)) return text;
+  if (DESERT_QUESTION_WORDS.has(word)) return `${text}?`;
+  if (DESERT_EXCLAIM_WORDS.has(word)) return `${text}!`;
+  const firstWord = word.split(/\s+/)[0];
+  if (word.includes(' ') && DESERT_EXCLAIM_STARTERS.has(firstWord)) return `${text}!`;
+  return text;
+}
+
+function voiceProfileForEntry(entry) {
+  const isDesert = Array.isArray(entry.world_ids) && entry.world_ids.includes('desert');
+  return {
+    speaker: isDesert ? DESERT_SPEAKER : OCEAN_SPEAKER,
+    emotion: isDesert ? 'happy' : '',
+    speech_rate: 0,
+    loudness_rate: 0,
+  };
+}
+
 /**
  * 缓存键：word + speaker + resource + format + sample_rate
  * 确保换声线后会重新生成而不会误命中旧文件。
  */
-function cacheKey(word) {
-  return `${word}|${CACHE_KEY.speaker}|${CACHE_KEY.resource}|${CACHE_KEY.format}|${CACHE_KEY.sample_rate}`;
+function cacheKey(target) {
+  const entry = typeof target === 'string'
+    ? { word: target, tts_text: target, world_ids: [] }
+    : target;
+  const profile = voiceProfileForEntry(entry);
+  const emotion = profile.emotion || 'none';
+  return `${entry.word}|tts=${entry.tts_text || entry.word}|${profile.speaker}|${CACHE_KEY.resource}|${CACHE_KEY.format}|${CACHE_KEY.sample_rate}|rate=${profile.speech_rate}|emotion=${emotion}`;
+}
+
+function legacyCacheKey(word, speaker = OCEAN_SPEAKER) {
+  return `${word}|${speaker}|${CACHE_KEY.resource}|${CACHE_KEY.format}|${CACHE_KEY.sample_rate}`;
 }
 
 /**
  * 验证已有文件是否匹配当前缓存键。
  * 检查：文件存在、MP3 有效、manifest 中同词的 cache_key 一致。
  */
-function shouldRegenerate(word, existingEntries) {
+function shouldRegenerate(target, existingEntries) {
+  const entry = typeof target === 'string'
+    ? { word: target, tts_text: target, world_ids: [] }
+    : target;
+  const word = entry.word;
   if (!existingEntries || !Array.isArray(existingEntries)) return true;
   const existing = existingEntries.find((e) => e.word === word);
   if (!existing) return true;
   // 检查缓存键一致性（换声线则重新生成）
-  if (existing.cache_key && existing.cache_key !== cacheKey(word)) return true;
+  const currentKey = cacheKey(entry);
+  const profile = voiceProfileForEntry(entry);
+  const isLegacyOceanKey = profile.speaker === OCEAN_SPEAKER &&
+    existing.cache_key === legacyCacheKey(word, OCEAN_SPEAKER);
+  if (existing.cache_key && existing.cache_key !== currentKey && !isLegacyOceanKey) return true;
   // 检查 MP3 文件有效性
   const filePath = path.join(WORDS_DIR, `${safeFileName(word)}.mp3`);
   if (!fileValid(filePath)) return true;
@@ -152,8 +237,15 @@ function shouldRegenerate(word, existingEntries) {
 //  V3 API 调用 — HTTP Chunked Unidirectional
 // ═══════════════════════════════════════════════════════════
 
-function callV3Tts(text) {
+function callV3Tts(text, profile = voiceProfileForEntry({ world_ids: [] })) {
   const reqid = crypto.randomUUID();
+  const audioParams = {
+    format: 'mp3',
+    sample_rate: 24000,
+    speech_rate: profile.speech_rate,
+    loudness_rate: profile.loudness_rate,
+  };
+  if (profile.emotion) audioParams.emotion = profile.emotion;
 
   const body = JSON.stringify({
     user: {
@@ -161,13 +253,8 @@ function callV3Tts(text) {
     },
     req_params: {
       text,
-      speaker: SPEAKER,
-      audio_params: {
-        format: 'mp3',
-        sample_rate: 24000,
-        speech_rate: 0,
-        loudness_rate: 0,
-      },
+      speaker: profile.speaker,
+      audio_params: audioParams,
     },
   });
 
@@ -259,10 +346,12 @@ function callV3Tts(text) {
 //  合成单个单词（带重试）
 // ═══════════════════════════════════════════════════════════
 
-async function synthesizeWord(word, outputPath) {
+async function synthesizeWord(entry, outputPath) {
+  const profile = voiceProfileForEntry(entry);
+  const text = entry.tts_text || entry.word;
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const result = await callV3Tts(word);
+      const result = await callV3Tts(text, profile);
 
       if (result.code === 20000000 && result.hasAudio) {
         const audioBuf = Buffer.from(result.audioBase64, 'base64');
@@ -327,10 +416,17 @@ function generateJsManifestContent(m) {
     available: m.summary.available,
     levels: m.summary.levels,
     speaker: m.summary.speaker,
+    speakers: m.summary.speakers,
   };
   const safeEntries = m.entries.map((e) => ({
     word: e.word,
+    tts_text: e.tts_text,
+    speaker: e.speaker,
+    emotion: e.emotion,
+    speech_rate: e.speech_rate,
     level_ids: e.level_ids,
+    level_refs: e.level_refs,
+    world_ids: e.world_ids,
     level_count: e.level_count,
     zh: e.zh,
     unit: e.unit,
@@ -342,6 +438,7 @@ function generateJsManifestContent(m) {
     version: m.version,
     generated_at: m.generated_at,
     speaker: m.speaker,
+    speakers: m.speakers,
     voice_type: m.voice_type,
     audio_format: m.audio_format,
     sample_rate: m.sample_rate,
@@ -359,8 +456,8 @@ async function main() {
   // ── 横幅 ─────────────────────────────────────────────
   console.log('');
   console.log('═══════════════════════════════════════════════');
-  console.log('  关卡单词音频生成器 (V3 · Natasha)');
-  console.log('  豆包语音合成模型 2.0 · en_female_natasha_uranus_bigtts');
+  console.log('  关卡单词音频生成器 (V3 · ocean Natasha / desert Hayley)');
+  console.log('  豆包语音合成模型 2.0 · 海岛 Natasha / 沙漠 Hayley 标点主版');
   console.log('═══════════════════════════════════════════════');
   console.log('');
 
@@ -371,7 +468,8 @@ async function main() {
   console.log(`  关卡总数: ${totalLevels}`);
   console.log(`  唯一单词: ${wordEntries.length}`);
   console.log(`  输出目录: ${WORDS_DIR}`);
-  console.log(`  声线: ${SPEAKER}`);
+  console.log(`  海岛声线: ${OCEAN_SPEAKER}`);
+  console.log(`  沙漠声线: ${DESERT_SPEAKER}`);
   console.log(`  资源 ID: ${RESOURCE_ID}`);
   console.log('');
 
@@ -409,9 +507,13 @@ async function main() {
 
   // ── 探针策略 ─────────────────────────────────────────
   if (hasCreds) {
-    console.log('  🔍 探针测试: 合成 "hello" 验证 Natasha V3 可用');
+    console.log('  🔍 探针测试: 合成 "Hello!" 验证 Hayley V3 可用');
     const probePath = path.join(WORDS_DIR, '_probe_test.mp3');
-    const probeResult = await synthesizeWord('hello', probePath);
+    const probeResult = await synthesizeWord({
+      word: 'hello',
+      tts_text: 'Hello!',
+      world_ids: ['desert'],
+    }, probePath);
 
     if (probeResult.status === 'generated') {
       console.log(`  ✅ 探针成功 (${probeResult.size_bytes} bytes) — 继续全量生成`);
@@ -437,7 +539,11 @@ async function main() {
     failed: 0,
     not_attempted: 0,
     levels: totalLevels,
-    speaker: SPEAKER,
+    speaker: 'mixed',
+    speakers: {
+      ocean: OCEAN_SPEAKER,
+      desert: DESERT_SPEAKER,
+    },
     resource_id: RESOURCE_ID,
     audio_format: 'mp3',
     sample_rate: 24000,
@@ -453,17 +559,24 @@ async function main() {
     const levelIdsStr = levelIds.join(',');
     const levelCount = levelIds.length;
 
+    const profile = voiceProfileForEntry(we);
     console.log(`[${levelIdsStr}] ${we.word}${' '.repeat(Math.max(0, 14 - we.word.length))}→ ${relativeUrl}`);
 
     // 幂等检查：缓存键一致性 + 文件有效 + hash 匹配
-    if (!shouldRegenerate(we.word, existingEntries)) {
+    if (!shouldRegenerate(we, existingEntries)) {
       const stat = fs.statSync(filePath);
       const buf = fs.readFileSync(filePath);
-      const ck = cacheKey(we.word);
+      const ck = cacheKey(we);
       console.log(`  ✅ 有效 (${stat.size} bytes) — 跳过`);
       entries.push({
         word: we.word,
+        tts_text: we.tts_text,
+        speaker: profile.speaker,
+        emotion: profile.emotion || undefined,
+        speech_rate: profile.speech_rate,
         level_ids: levelIds,
+        level_refs: we.level_refs,
+        world_ids: we.world_ids,
         level_count: levelCount,
         zh: we.zh,
         unit: we.unit,
@@ -483,7 +596,13 @@ async function main() {
       console.log(`  ⏸ 全局阻断 — 未尝试`);
       entries.push({
         word: we.word,
+        tts_text: we.tts_text,
+        speaker: profile.speaker,
+        emotion: profile.emotion || undefined,
+        speech_rate: profile.speech_rate,
         level_ids: levelIds,
+        level_refs: we.level_refs,
+        world_ids: we.world_ids,
         level_count: levelCount,
         zh: we.zh,
         unit: we.unit,
@@ -492,7 +611,7 @@ async function main() {
         status: 'not_attempted',
         size_bytes: 0,
         sha256: '',
-        cache_key: cacheKey(we.word),
+        cache_key: cacheKey(we),
       });
       summary.not_attempted += 1;
       continue;
@@ -502,7 +621,13 @@ async function main() {
       console.log(`  ⏸ 占位（凭据未配置）`);
       entries.push({
         word: we.word,
+        tts_text: we.tts_text,
+        speaker: profile.speaker,
+        emotion: profile.emotion || undefined,
+        speech_rate: profile.speech_rate,
         level_ids: levelIds,
+        level_refs: we.level_refs,
+        world_ids: we.world_ids,
         level_count: levelCount,
         zh: we.zh,
         unit: we.unit,
@@ -512,14 +637,14 @@ async function main() {
         size_bytes: 0,
         sha256: '',
         error: 'Credentials not configured',
-        cache_key: cacheKey(we.word),
+        cache_key: cacheKey(we),
       });
       summary.not_attempted += 1;
       continue;
     }
 
     // 调用 API
-    const result = await synthesizeWord(we.word, filePath);
+    const result = await synthesizeWord(we, filePath);
 
     if (result.status === 'generated') {
       const stat = fs.statSync(filePath);
@@ -527,7 +652,13 @@ async function main() {
       summary.generated += 1;
       entries.push({
         word: we.word,
+        tts_text: we.tts_text,
+        speaker: profile.speaker,
+        emotion: profile.emotion || undefined,
+        speech_rate: profile.speech_rate,
         level_ids: levelIds,
+        level_refs: we.level_refs,
+        world_ids: we.world_ids,
         level_count: levelCount,
         zh: we.zh,
         unit: we.unit,
@@ -536,14 +667,20 @@ async function main() {
         status: 'generated',
         size_bytes: stat.size,
         sha256: result.sha256,
-        cache_key: cacheKey(we.word),
+        cache_key: cacheKey(we),
       });
     } else if (result.status === 'not_attempted_global_blocker') {
       console.log(`  ⏸ 全局阻断`);
       summary.not_attempted += 1;
       entries.push({
         word: we.word,
+        tts_text: we.tts_text,
+        speaker: profile.speaker,
+        emotion: profile.emotion || undefined,
+        speech_rate: profile.speech_rate,
         level_ids: levelIds,
+        level_refs: we.level_refs,
+        world_ids: we.world_ids,
         level_count: levelCount,
         zh: we.zh,
         unit: we.unit,
@@ -553,7 +690,7 @@ async function main() {
         size_bytes: 0,
         sha256: '',
         error_sanitized: result.error_sanitized,
-        cache_key: cacheKey(we.word),
+        cache_key: cacheKey(we),
       });
     } else {
       console.log(`  ❌ 失败: ${result.error_sanitized}`);
@@ -561,7 +698,13 @@ async function main() {
       try { fs.unlinkSync(filePath); } catch (_) {}
       entries.push({
         word: we.word,
+        tts_text: we.tts_text,
+        speaker: profile.speaker,
+        emotion: profile.emotion || undefined,
+        speech_rate: profile.speech_rate,
         level_ids: levelIds,
+        level_refs: we.level_refs,
+        world_ids: we.world_ids,
         level_count: levelCount,
         zh: we.zh,
         unit: we.unit,
@@ -571,7 +714,7 @@ async function main() {
         size_bytes: 0,
         sha256: '',
         error_sanitized: result.error_sanitized,
-        cache_key: cacheKey(we.word),
+        cache_key: cacheKey(we),
       });
     }
   }
@@ -583,12 +726,16 @@ async function main() {
     version: '2.0',
     model: '豆包语音合成模型2.0',
     resource_id: RESOURCE_ID,
-    speaker: SPEAKER,
+    speaker: 'mixed',
+    speakers: {
+      ocean: OCEAN_SPEAKER,
+      desert: DESERT_SPEAKER,
+    },
     generated_at: new Date().toISOString(),
     audio_format: 'mp3',
     sample_rate: 24000,
     // 前台兼容字段
-    voice_type: SPEAKER,
+    voice_type: 'mixed',
     entries,
     summary,
   };
@@ -615,7 +762,8 @@ async function main() {
   console.log('');
   console.log(`  JSON → ${MANIFEST_PATH}`);
   console.log(`  JS   → ${MANIFEST_JS_PATH}`);
-  console.log(`  声线: ${SPEAKER}`);
+  console.log(`  海岛声线: ${OCEAN_SPEAKER}`);
+  console.log(`  沙漠声线: ${DESERT_SPEAKER}`);
   console.log('');
   console.log(`  关卡总数   ${totalLevels}`);
   console.log(`  唯一单词   ${wordEntries.length}`);
@@ -641,10 +789,15 @@ if (typeof module !== 'undefined' && module.exports) {
     extractWordEntries,
     safeFileName,
     cacheKey,
+    legacyCacheKey,
+    ttsTextForTarget,
+    voiceProfileForEntry,
     shouldRegenerate,
     generateJsManifestContent,
     CURRICULUM_UNITS,
     SPEAKER,
+    OCEAN_SPEAKER,
+    DESERT_SPEAKER,
     RESOURCE_ID,
   };
 }

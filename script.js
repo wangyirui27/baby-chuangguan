@@ -25,34 +25,173 @@ const additionalLevelUnits = [
 ];
 
 const desertPhraseUnits = [
-  { topic: '日常问候', words: [['Good morning', '早上好'], ['How are you', '你好吗'], ['See you later', '待会儿见'], ['Good night', '晚安'], ['Have fun', '玩得开心'], ['Goodbye', '再见'], ['Thank you', '谢谢你'], ["You're welcome", '不用谢'], ['Excuse me', '打扰一下'], ["I'm sorry", '对不起']] },
-  { topic: '课堂规则', words: [['Listen up', '注意听'], ['Hands up', '举手'], ['Line up', '排队'], ['Sit down', '坐下'], ['Stand up', '站起来'], ['Look here', '看这里'], ['Quiet please', '请安静'], ['Raise your hand', '请举手'], ['Answer me', '回答我'], ['Work in pairs', '两人合作']] },
-  { topic: '一日三餐', words: [['Have breakfast', '吃早餐'], ['Have lunch', '吃午餐'], ['Have dinner', '吃晚餐'], ['Drink milk', '喝牛奶'], ['Wash hands', '洗手'], ['Wipe mouth', '擦嘴'], ['Use chopsticks', '用筷子'], ['Taste it', '尝一尝'], ['Full up', '吃饱了'], ['More rice', '再来点饭']] },
-  { topic: '零食水果', words: [['Cut apple', '切苹果'], ['Peel banana', '剥香蕉'], ['Open snack', '打开零食'], ['Share cookie', '分享饼干'], ['Sweet candy', '甜甜的糖果'], ['Sour lemon', '酸酸的柠檬'], ['Eat slowly', '慢慢吃'], ['No sugar', '不要糖'], ['Yummy taste', '好吃的味道'], ['Bite it', '咬一口']] },
-  { topic: '洗漱卫生', words: [['Brush teeth', '刷牙'], ['Wash face', '洗脸'], ['Comb hair', '梳头发'], ['Take a bath', '洗澡'], ['Flush toilet', '冲马桶'], ['Use soap', '用肥皂'], ['Dry hands', '擦干手'], ['Change clothes', '换衣服'], ['Cut nails', '剪指甲'], ['Blow nose', '擤鼻子']] },
-  { topic: '身体动作', words: [['Run fast', '跑得快'], ['Jump high', '跳得高'], ['Clap hands', '拍手'], ['Stamp feet', '跺脚'], ['Touch nose', '摸鼻子'], ['Close eyes', '闭眼睛'], ['Open mouth', '张开嘴'], ['Shake head', '摇头'], ['Turn around', '转一圈'], ['Sit still', '坐好不动']] },
-  { topic: '情绪表达', words: [["I'm happy", '我很开心'], ["I'm sad", '我很难过'], ["I'm angry", '我生气了'], ["I'm scared", '我害怕了'], ['Be brave', '勇敢一点'], ['Calm down', '冷静下来'], ["Don't cry", '不要哭'], ['Cheer up', '打起精神'], ['Smile big', '大大地笑'], ['Laugh loud', '大声笑']] },
-  { topic: '家庭互动', words: [['Help mom', '帮妈妈'], ['Hug dad', '抱抱爸爸'], ['Kiss baby', '亲亲宝宝'], ['Play with me', '和我玩'], ['Read to me', '读给我听'], ['Tell a story', '讲故事'], ['Go to bed', '上床睡觉'], ['Wake up', '醒一醒'], ['Get dressed', '穿好衣服'], ['Come here', '过来这里']] },
-  { topic: '玩具游戏', words: [['Play ball', '玩球'], ['Ride bike', '骑自行车'], ['Fly kite', '放风筝'], ['Build blocks', '搭积木'], ['Hide and seek', '捉迷藏'], ["Tag you're it", '抓到你了'], ['My turn', '轮到我'], ['Your turn', '轮到你'], ['I win', '我赢了'], ['You lose', '你输了']] },
-  { topic: '颜色形状', words: [['Red and blue', '红色和蓝色'], ['Yellow sun', '黄色的太阳'], ['Green grass', '绿色的草地'], ['Black night', '黑色的夜晚'], ['White snow', '白色的雪'], ['Round circle', '圆形'], ['Square box', '方盒子'], ['Triangle roof', '三角形屋顶'], ['Star shape', '星星形状'], ['Mix colors', '混合颜色']] },
-  { topic: '数字时间', words: [['One to ten', '一到十'], ['Count to twenty', '数到二十'], ['Plus one', '加一'], ['Minus one', '减一'], ['What time', '几点了'], ['Morning time', '早晨时间'], ['Night time', '夜晚时间'], ['One hour', '一小时'], ['Today is', '今天是'], ['Tomorrow is', '明天是']] },
-  { topic: '天气季节', words: [['Sunny day', '晴天'], ['Rainy day', '雨天'], ['Windy day', '刮风天'], ['Cloudy day', '多云天'], ['Hot summer', '炎热的夏天'], ['Cold winter', '寒冷的冬天'], ['Warm spring', '温暖的春天'], ['Cool autumn', '凉爽的秋天'], ["It's raining", '下雨了'], ['Snow is falling', '下雪了']] },
-  { topic: '动物宠物', words: [['Feed dog', '喂狗'], ['Walk dog', '遛狗'], ['Pet cat', '摸摸猫'], ['Watch fish', '看鱼'], ['Chase bird', '追小鸟'], ['Catch butterfly', '捉蝴蝶'], ['Ride horse', '骑马'], ['Milk cow', '挤牛奶'], ['Shear sheep', '给羊剪毛'], ['Collect eggs', '收鸡蛋']] },
-  { topic: '动物园', words: [['See panda', '看熊猫'], ['Watch monkey', '看猴子'], ['Feed giraffe', '喂长颈鹿'], ['Touch turtle', '摸乌龟'], ['Hear lion', '听狮子叫'], ['See tiger', '看老虎'], ['Big elephant', '大象'], ['Small mouse', '小老鼠'], ['Long snake', '长蛇'], ['Tall camel', '高高的骆驼']] },
-  { topic: '出行交通', words: [['By bus', '坐公交车'], ['By car', '坐小汽车'], ['By bike', '骑自行车'], ['By train', '坐火车'], ['Get on', '上车'], ['Get off', '下车'], ['Fasten seatbelt', '系安全带'], ['Traffic light', '红绿灯'], ['Go straight', '直走'], ['Turn left', '向左转']] },
-  { topic: '购物消费', words: [['How much', '多少钱'], ['Too expensive', '太贵了'], ['Can I pay', '我可以付款吗'], ['Buy this', '买这个'], ['Sell that', '卖那个'], ['Keep change', '不用找零'], ['Save money', '存钱'], ['Count money', '数钱'], ['Cheap price', '便宜价格'], ['High price', '高价格']] },
-  { topic: '学校学习', words: [['Read book', '读书'], ['Write word', '写单词'], ['Draw picture', '画画'], ['Do homework', '做作业'], ['Ask question', '问问题'], ['Answer question', '回答问题'], ['Learn English', '学英语'], ['Speak English', '说英语'], ['Study hard', '努力学习'], ['Try again', '再试一次']] },
-  { topic: '音乐艺术', words: [['Sing song', '唱歌'], ['Play piano', '弹钢琴'], ['Play drum', '打鼓'], ['Dance well', '跳得好'], ['Draw line', '画线'], ['Paint red', '涂成红色'], ['Make music', '做音乐'], ['Clap rhythm', '拍节奏'], ['Loud sound', '大声'], ['Soft sound', '轻轻的声音']] },
-  { topic: '运动比赛', words: [['Kick ball', '踢球'], ['Throw ball', '扔球'], ['Catch ball', '接球'], ['Bounce ball', '拍球'], ['Run race', '赛跑'], ['Swim fast', '游得快'], ['Jump rope', '跳绳'], ['Play soccer', '踢足球'], ['Score goal', '进球'], ['Win game', '赢得比赛']] },
-  { topic: '职业梦想', words: [['I want to be', '我想成为'], ['Be a doctor', '当医生'], ['Be a teacher', '当老师'], ['Be a cook', '当厨师'], ['Be a driver', '当司机'], ['Be a singer', '当歌手'], ['Be a player', '当运动员'], ['Be a scientist', '当科学家'], ['Be an artist', '当艺术家'], ['Be a writer', '当作家']] },
+  { topic: '日常问候', words: [['Good morning!', '早上好'], ['How are you?', '你好吗'], ['See you later!', '待会儿见'], ['Good night!', '晚安'], ['Have fun!', '玩得开心'], ['Goodbye!', '再见'], ['Thank you!', '谢谢你'], ["You're welcome!", '不用谢'], ['Excuse me.', '打扰一下'], ["I'm sorry.", '对不起']] },
+  { topic: '课堂规则', words: [['Listen, please.', '请注意听'], ['Raise your hand.', '请举手'], ["Let's line up.", '我们排队吧'], ['Sit down, please.', '请坐下'], ['Stand up, please.', '请站起来'], ['Look over here.', '看这边'], ['Quiet, please.', '请安静'], ['Can you answer?', '你能回答吗'], ["Let's work together.", '我们一起合作吧'], ['Try it with me.', '和我一起试试']] },
+  { topic: '一日三餐', words: [["Let's have breakfast.", '我们吃早餐吧'], ["Let's have lunch.", '我们吃午餐吧'], ["Let's have dinner.", '我们吃晚餐吧'], ['Drink some milk.', '喝点牛奶'], ['Wash your hands.', '洗洗手'], ['Wipe your mouth.', '擦擦嘴'], ['Use your chopsticks.', '用你的筷子'], ['Taste it.', '尝一尝'], ["I'm full.", '我吃饱了'], ['More rice, please.', '请再来点饭']] },
+  { topic: '零食水果', words: [['Cut the apple.', '切这个苹果'], ['Peel the banana.', '剥这个香蕉'], ['Open the snack bag.', '打开零食袋'], ["Let's share this cookie.", '我们分享这块饼干吧'], ['The candy is sweet.', '糖果是甜的'], ['The lemon is sour.', '柠檬是酸的'], ['Eat slowly.', '慢慢吃'], ['No sugar, please.', '请不要糖'], ['It tastes yummy.', '它尝起来很好吃'], ['Take a bite.', '咬一口']] },
+  { topic: '洗漱卫生', words: [['Brush your teeth.', '刷刷牙'], ['Wash your face.', '洗洗脸'], ['Comb your hair.', '梳梳头发'], ['Take a bath.', '洗个澡'], ['Flush the toilet.', '冲马桶'], ['Use soap.', '用肥皂'], ['Dry your hands.', '擦干手'], ['Change your clothes.', '换衣服'], ['Cut your nails.', '剪指甲'], ['Blow your nose.', '擤鼻子']] },
+  { topic: '身体动作', words: [['Run fast!', '跑快点'], ['Jump high!', '跳高点'], ['Clap your hands.', '拍拍手'], ['Stamp your feet.', '跺跺脚'], ['Touch your nose.', '摸摸鼻子'], ['Close your eyes.', '闭上眼睛'], ['Open your mouth.', '张开嘴巴'], ['Shake your head.', '摇摇头'], ['Turn around.', '转一圈'], ['Sit still, please.', '请坐好不动']] },
+  { topic: '情绪表达', words: [["I'm happy.", '我很开心'], ["I'm sad.", '我很难过'], ["I'm angry.", '我生气了'], ["I'm scared.", '我害怕了'], ['Be brave.', '勇敢一点'], ['Calm down.', '冷静下来'], ["Don't cry.", '别哭'], ['Cheer up!', '打起精神'], ['Give me a big smile.', '给我一个大大的笑容'], ["Let's laugh together.", '我们一起笑吧']] },
+  { topic: '家庭互动', words: [['I can help Mom.', '我可以帮妈妈'], ['Give Dad a hug.', '给爸爸一个拥抱'], ['Give the baby a kiss.', '亲亲宝宝'], ['Play with me.', '和我一起玩'], ['Can you read to me?', '你能读给我听吗'], ['Can you tell me a story?', '你能给我讲个故事吗'], ["Let's go to bed.", '我们上床睡觉吧'], ['Wake up, please.', '请醒一醒'], ['Get dressed, please.', '请穿好衣服'], ['Come here, please.', '请过来']] },
+  { topic: '玩具游戏', words: [["Let's play ball.", '我们玩球吧'], ['Ride your bike.', '骑你的自行车'], ['Fly the kite.', '放风筝'], ['Build the blocks.', '搭积木'], ["Let's play hide-and-seek.", '我们玩捉迷藏吧'], ["Tag, you're it!", '抓到你了，轮到你'], ["It's my turn.", '轮到我了'], ["It's your turn.", '轮到你了'], ['I won!', '我赢了'], ['Good game!', '玩得真好']] },
+  { topic: '颜色形状', words: [['I see red and blue.', '我看见红色和蓝色'], ['The sun is yellow.', '太阳是黄色的'], ['The grass is green.', '草地是绿色的'], ['The night is dark.', '夜晚是黑的'], ['The snow is white.', '雪是白色的'], ['It is a circle.', '它是圆形'], ['It is a square.', '它是正方形'], ['It is a triangle.', '它是三角形'], ['It is a star.', '它是星星形状'], ["Let's mix the colors.", '我们混合颜色吧']] },
+  { topic: '数字时间', words: [['Count from one to ten.', '从一数到十'], ['Count to twenty.', '数到二十'], ['Add one more.', '再加一个'], ['Take one away.', '拿走一个'], ['What time is it?', '现在几点了'], ["It's morning time.", '现在是早晨时间'], ["It's night time.", '现在是夜晚时间'], ['It takes one hour.', '这需要一小时'], ['Today is Monday.', '今天是星期一'], ['Tomorrow is Tuesday.', '明天是星期二']] },
+  { topic: '天气季节', words: [["It's sunny today.", '今天是晴天'], ["It's rainy today.", '今天是雨天'], ["It's windy today.", '今天刮风'], ["It's cloudy today.", '今天多云'], ['Summer is hot.', '夏天很热'], ['Winter is cold.', '冬天很冷'], ['Spring is warm.', '春天很暖和'], ['Autumn is cool.', '秋天很凉爽'], ["It's raining.", '下雨了'], ['Snow is falling.', '下雪了']] },
+  { topic: '动物宠物', words: [['Feed the dog.', '喂小狗'], ['Walk the dog.', '遛小狗'], ['Pet the cat.', '摸摸小猫'], ['Watch the fish.', '看小鱼'], ["Don't chase the bird.", '不要追小鸟'], ['Let the butterfly fly.', '让蝴蝶飞走'], ['Ride the horse.', '骑马'], ['Milk the cow.', '挤牛奶'], ['Brush the sheep.', '给绵羊刷毛'], ['Collect the eggs.', '收鸡蛋']] },
+  { topic: '动物园', words: [['I see a panda.', '我看见一只熊猫'], ['Watch the monkey.', '看这只猴子'], ['The giraffe eats leaves.', '长颈鹿吃树叶'], ['Look at the turtle.', '看这只乌龟'], ['Hear the lion roar.', '听狮子吼叫'], ['I see a tiger.', '我看见一只老虎'], ['The elephant is big.', '大象很大'], ['The mouse is small.', '小老鼠很小'], ['The snake is long.', '蛇很长'], ['The camel is tall.', '骆驼很高']] },
+  { topic: '出行交通', words: [["Let's take the bus.", '我们坐公交车吧'], ["Let's go by car.", '我们坐小汽车去吧'], ["Let's go by bike.", '我们骑自行车去吧'], ["Let's take the train.", '我们坐火车吧'], ['Get on the bus.', '上公交车'], ['Get off the bus.', '下公交车'], ['Fasten your seatbelt.', '系好安全带'], ['Stop at the light.', '在灯前停下'], ['Go straight.', '直走'], ['Turn left.', '向左转']] },
+  { topic: '购物消费', words: [['How much is it?', '它多少钱'], ["That's too expensive.", '那太贵了'], ['Can I pay now?', '我现在可以付款吗'], ["I'll buy this.", '我要买这个'], ['I want this, please.', '请给我这个'], ['Here is your change.', '这是找你的零钱'], ['Save your money.', '把钱存起来'], ['Count the money.', '数一数钱'], ['This is cheap.', '这个便宜'], ['This one is expensive.', '这个很贵']] },
+  { topic: '学校学习', words: [['Read the book.', '读这本书'], ['Write the word.', '写这个单词'], ['Draw a picture.', '画一幅画'], ['Do your homework.', '做你的作业'], ['Ask a question.', '问一个问题'], ['Answer the question.', '回答这个问题'], ["Let's learn English.", '我们学英语吧'], ['Speak English, please.', '请说英语'], ['Try your best.', '尽力试试'], ['Try again.', '再试一次']] },
+  { topic: '音乐艺术', words: [['Sing a song.', '唱一首歌'], ['Play the piano.', '弹钢琴'], ['Play the drum.', '打鼓'], ['You dance well.', '你跳得很好'], ['Draw a line.', '画一条线'], ['Paint it red.', '把它涂成红色'], ["Let's make music.", '我们做音乐吧'], ['Clap the rhythm.', '拍节奏'], ['The sound is loud.', '声音很大'], ['The sound is soft.', '声音很轻']] },
+  { topic: '运动比赛', words: [['Kick the ball.', '踢这个球'], ['Throw the ball.', '扔这个球'], ['Catch the ball.', '接住这个球'], ['Bounce the ball.', '拍这个球'], ["Let's run a race.", '我们赛跑吧'], ['Swim fast!', '游快点'], ['Jump rope.', '跳绳'], ['Play soccer.', '踢足球'], ['You scored a goal!', '你进球了'], ['We won the game!', '我们赢了比赛']] },
+  { topic: '职业梦想', words: [['I want to be a doctor.', '我想当医生'], ['I want to be a teacher.', '我想当老师'], ['I want to be a cook.', '我想当厨师'], ['I want to be a driver.', '我想当司机'], ['I want to be a singer.', '我想当歌手'], ['I want to be a player.', '我想当运动员'], ['I want to be a scientist.', '我想当科学家'], ['I want to be an artist.', '我想当艺术家'], ['I want to be a writer.', '我想当作家'], ['What do you want to be?', '你想当什么']] },
 ];
+
+const CURRICULUM_STANDARD_6_8 = '义务教育英语课程标准2022 预备级-一级';
+const CURRICULUM_CLAIM = '参考人教PEP主题，做6-8岁场景化先修与拓展';
+
+function curriculum(theme, pepUnits, alignment = 'core') {
+  return {
+    standard: CURRICULUM_STANDARD_6_8,
+    claim: CURRICULUM_CLAIM,
+    theme,
+    pepUnits,
+    alignment,
+  };
+}
+
+const CURRICULUM_ALIGNMENT_BY_TOPIC = {
+  'Free Starter · 免费体验': curriculum('家庭、身体、日常物品与动物启蒙', ['PEP三上 U2 Different families', 'PEP三上 U1 Making friends']),
+  '水果先遣队': curriculum('饮食与水果', ['PEP生活饮食主题拓展'], 'bridge'),
+  '零食甜点': curriculum('饮食与喜好表达', ['PEP生活饮食主题拓展'], 'bridge'),
+  '吃饭喝喝': curriculum('一日饮食与生活自理', ['PEP生活饮食主题拓展'], 'core'),
+  '蔬菜大餐': curriculum('食物分类与健康饮食', ['PEP生活饮食主题拓展'], 'bridge'),
+  '萌宠动物': curriculum('身边动物', ['PEP三上 U3 Amazing animals']),
+  '大动物': curriculum('动物园与动物特征', ['PEP三上 U3 Amazing animals']),
+  '小小动物': curriculum('自然观察与动物', ['PEP三上 U3 Amazing animals', 'PEP三上 U4 Plants around us']),
+  '我的身体': curriculum('身体部位与自我认知', ['PEP自我认知主题拓展']),
+  '穿衣出门': curriculum('衣物与日常生活', ['PEP日常生活主题拓展'], 'bridge'),
+  '玩具游戏': curriculum('玩具、游戏与同伴互动', ['PEP三上 U1 Making friends'], 'bridge'),
+  '身边的人': curriculum('家庭、朋友与老师', ['PEP三上 U2 Different families', 'PEP三上 U1 Making friends']),
+  '客厅卧室': curriculum('家庭空间与物品', ['PEP三上 U2 Different families'], 'bridge'),
+  '厨房餐桌': curriculum('餐桌物品与生活自理', ['PEP生活饮食主题拓展'], 'bridge'),
+  '洗漱浴室': curriculum('卫生习惯与生活自理', ['PEP日常生活主题拓展'], 'bridge'),
+  '天气天空': curriculum('天气与自然', ['PEP三上 U4 Plants around us'], 'bridge'),
+  '大自然': curriculum('植物、自然与地点', ['PEP三上 U4 Plants around us']),
+  '交通工具': curriculum('出行方式与社区生活', ['PEP社区生活主题拓展'], 'extension'),
+  '常去的场所': curriculum('家庭、学校与社区地点', ['PEP三上 U1 Making friends', 'PEP社区生活主题拓展'], 'bridge'),
+  '动作游戏': curriculum('动作指令与活动表达', ['PEP三上 U1 Making friends'], 'core'),
+  '日常问候': curriculum('问候、告别与礼貌表达', ['PEP三上 U1 Making friends']),
+  '课堂规则': curriculum('课堂指令与学习习惯', ['PEP三上 U1 Making friends']),
+  '一日三餐': curriculum('饮食与生活自理短语', ['PEP生活饮食主题拓展'], 'core'),
+  '零食水果': curriculum('食物处理与分享', ['PEP生活饮食主题拓展'], 'bridge'),
+  '洗漱卫生': curriculum('卫生习惯与生活自理短语', ['PEP日常生活主题拓展'], 'bridge'),
+  '身体动作': curriculum('身体部位与动作指令', ['PEP自我认知主题拓展']),
+  '情绪表达': curriculum('情绪、鼓励与同伴沟通', ['PEP三上 U1 Making friends'], 'bridge'),
+  '家庭互动': curriculum('家庭互动与日常请求', ['PEP三上 U2 Different families']),
+  '颜色形状': curriculum('颜色、形状与描述', ['PEP三上 U5 The colourful world']),
+  '数字时间': curriculum('数字、时间与顺序', ['PEP三上 U6 Useful numbers']),
+  '天气季节': curriculum('天气、季节与自然现象', ['PEP三上 U4 Plants around us'], 'bridge'),
+  '动物宠物': curriculum('动物照料与农场动物', ['PEP三上 U3 Amazing animals']),
+  '动物园': curriculum('动物园动物与特征描述', ['PEP三上 U3 Amazing animals']),
+  '出行交通': curriculum('出行指令与交通安全', ['PEP社区生活主题拓展'], 'extension'),
+  '购物消费': curriculum('购物问价与数字应用', ['PEP三上 U6 Useful numbers'], 'extension'),
+  '学校学习': curriculum('学校活动与学习行为', ['PEP三上 U1 Making friends'], 'bridge'),
+  '音乐艺术': curriculum('艺术活动与感官表达', ['PEP跨学科活动主题拓展'], 'extension'),
+  '运动比赛': curriculum('运动活动与规则表达', ['PEP同伴活动主题拓展'], 'extension'),
+  '职业梦想': curriculum('职业认知与理想表达', ['PEP社会角色主题拓展'], 'extension'),
+};
+
+function curriculumAlignmentForTopic(topic) {
+  const alignment = CURRICULUM_ALIGNMENT_BY_TOPIC[topic] || curriculum('日常英语场景', ['PEP主题拓展'], 'extension');
+  return { ...alignment, pepUnits: alignment.pepUnits.slice() };
+}
 
 const FREE_LEVEL_COUNT = 10;
 const DISPLAY_LEVEL_COUNT = 200;
 const APP_RELEASE_VERSION = '1.0.0';
 const APP_RELEASE_UPDATE_URL = 'app-release.json';
+
+// ===== 启动页控制 (Animal-Island #7DC395 + home_bg + logo + 5秒 + 奶油3D跳过) =====
+(function initAppSplash() {
+  // Node 测试 require(script.js) 时无 DOM
+  if (typeof document === 'undefined') return;
+  try { document.body.classList.add('splash-lock'); } catch (_) {}
+  const splash = document.getElementById('app-splash');
+  const voice = document.getElementById('splash-voice'); // Peiqi 佩奇声优 VO
+
+  // 清理历史版本残留：落在 splash 外的跳过按钮
+  document.querySelectorAll('.splash-skip, #splash-skip-btn').forEach((el) => {
+    if (!splash || !splash.contains(el)) el.remove();
+  });
+
+  if (!splash) {
+    try { document.body.classList.remove('splash-lock'); } catch (_) {}
+    try {
+      window.dispatchEvent(new CustomEvent('app-splash-finished', { detail: { source: 'no-splash' } }));
+    } catch (_) {}
+    return;
+  }
+
+  const skipBtn = splash.querySelector('#splash-skip-btn, .splash-skip');
+  let dismissed = false;
+
+  function playVoice() {
+    if (!voice) return;
+    try {
+      voice.currentTime = 0;
+      const p = voice.play();
+      if (p && typeof p.catch === 'function') {
+        p.catch(() => {
+          // 浏览器自动播放限制时静默；用户点跳过或5s后进入
+        });
+      }
+    } catch (e) {}
+  }
+
+  function stopVoice() {
+    if (!voice) return;
+    try {
+      voice.pause();
+      voice.currentTime = 0;
+    } catch (e) {}
+  }
+
+  function removeSplashNodes() {
+    // 整块启动层 + 任何漏网跳过按钮一并摘掉
+    document.querySelectorAll('#app-splash, .splash-skip, #splash-skip-btn').forEach((el) => {
+      if (el && el.parentNode) el.parentNode.removeChild(el);
+    });
+  }
+
+  function hideSplash() {
+    if (dismissed) return;
+    dismissed = true;
+    stopVoice();
+
+    splash.classList.add('is-leaving');
+    // 动画结束后彻底移除；超时兜底防止残留
+    window.setTimeout(() => {
+      splash.classList.add('is-gone');
+      removeSplashNodes();
+      try { document.body.classList.remove('splash-lock'); } catch (_) {}
+      try {
+        window.dispatchEvent(new CustomEvent('app-splash-finished', { detail: { source: 'splash' } }));
+      } catch (_) {}
+    }, 280);
+  }
+
+  if (skipBtn) {
+    skipBtn.addEventListener('click', hideSplash, { once: true });
+  }
+
+  // 强制停留 5 秒（仍可随时点跳过）
+  window.setTimeout(hideSplash, 5000);
+  playVoice();
+})();
+
 const FREE_LEVEL_VIDEO_VERSION = '20260720-map-switch-cards-v13';
-const WORD_AUDIO_MANIFEST_VERSION = '20260720-word-manifest-200-v1';
+const WORD_AUDIO_MANIFEST_VERSION = '20260801-desert-natural-dialogue-v1';
 const VIP_PRODUCT_ID = 'baby_island_map_vip_001';
 const paidAccessMessage = `第 ${FREE_LEVEL_COUNT + 1} 关起是会员关卡，后续课程内容会随更新开放。`;
 
@@ -179,6 +318,7 @@ function buildLevelsFromUnits(units, overrides = {}, titleFor = (word) => word.r
       title: titleFor(word),
       zhTitle,
       topic: unit.topic,
+      curriculum: curriculumAlignmentForTopic(unit.topic),
       duration: id % 10 === 0 ? '4 分钟' : '3 分钟',
       guidance: `看一看画面，听清并跟读 ${word}。`,
       question: `Which word means ${zhTitle}?`,
@@ -190,36 +330,140 @@ function buildLevelsFromUnits(units, overrides = {}, titleFor = (word) => word.r
   }));
 }
 
-const levels = buildLevelsFromUnits(courseUnits, lessonOverrides);
-const desertLevels = buildLevelsFromUnits(desertPhraseUnits, {}, (phrase) => phrase);
+const levels = buildLevelsFromUnits(courseUnits, lessonOverrides)
+  .map((level) => ({ ...level, worldId: 'ocean', itemType: 'word' }));
+const desertLevels = buildLevelsFromUnits(desertPhraseUnits, {}, (phrase) => phrase)
+  .map((level) => ({
+    ...level,
+    worldId: 'desert',
+    itemType: 'expression',
+    question: `Which English line means ${level.zhTitle}?`,
+  }));
 
 const lessonUnavailableMessage = '这关视频还在准备中，请先复习前 10 关。';
 const DESERT_LANDMARK_IMAGES = [
-  '01-great-pyramid-complex.png',
-  '02-large-sphinx-monument.png',
-  '03-pharaoh-palace-facade.png',
-  '04-grand-egyptian-temple.png',
-  '05-abu-simbel-rock-temple.png',
-  '06-step-pyramid-monument.png',
-  '07-obelisk-plaza.png',
-  '08-desert-royal-palace.png',
-  '09-valley-kings-tomb-facade.png',
-  '10-monumental-city-gate.png',
+  '01-great-pyramid-complex.webp',
+  '02-large-sphinx-monument.webp',
+  '03-pharaoh-palace-facade.webp',
+  '04-grand-egyptian-temple.webp',
+  '05-abu-simbel-rock-temple.webp',
+  '06-step-pyramid-monument.webp',
+  '07-obelisk-plaza.webp',
+  '08-desert-royal-palace.webp',
+  '09-valley-kings-tomb-facade.webp',
+  '10-monumental-city-gate.webp',
+];
+// 只上线 contact-sand 无白描边/无奶油浮岛的道具；其余 raw 保留备 regen
+// v9：8 种可辨识仙人掌风格池（植株槽稳定伪随机替换）
+const DESERT_DECOR_CACTUS_STYLES = [
+  '25-cactus-saguaro-y.webp',      // 经典双臂 Y
+  '26-cactus-single-arm.webp',     // 单臂
+  '27-cactus-candelabra.webp',     // 多臂烛台
+  '28-cactus-short-plump.webp',    // 矮胖双臂
+  '29-cactus-tall-thin.webp',      // 细高小臂
+  '30-cactus-prickly-pear.webp',   // 仙人掌掌片
+  '31-cactus-curved-arm.webp',     // 风弯臂
+  '32-cactus-seedling.webp',       // 幼苗单柱
+];
+// v13 地面足迹：小小脚印行走链（一左一右、前后交替）
+const DESERT_DECOR_FOOTPRINTS = [
+  '43-foot-trail-lr.webp',
+  '43b-foot-trail-lr.webp',
+];
+// v10 埃及沙漠微物（儿童向、低密度）
+const DESERT_DECOR_MICRO = [
+  '36-pottery-sherd.webp',   // 陶片
+  '37-linen-scrap.webp',     // 亚麻布条+绳结
+  '38-tumbleweed.webp',      // 干草/荆棘球
+  '39-scarab-stone.webp',    // 圣甲虫石饰
 ];
 const DESERT_DECOR_ASSETS = [
+  // legacy aliases (01=经典Y / 18=单臂) kept for SW + tests
   '01-cactus-cluster.webp',
-  '02-dry-grass-clump.webp',
-  '03-rock-pile.webp',
-  '04-terracotta-jar.webp',
-  '05-column-fragment.webp',
-  '06-obelisk-fragment.webp',
-  '07-ruined-wall.webp',
-  '08-sandstone-archway.webp',
-  '09-dry-bush.webp',
-  '10-reed-grass.webp',
-  '11-stone-tablet.webp',
-  '12-wooden-crate.webp',
+  '03-sandstone-rocks.webp',
+  '05-date-palm-sapling.webp',
+  '06-dry-scrub-bush.webp',
+  '08-boulder-slab.webp',
+  '09-reed-clump.webp',
+  '12-column-stub.webp',
+  '13-acacia-sapling.webp',
+  '15-dune-thistle.webp',
+  '17-broken-clay-pot.webp',
+  '18-barrel-cactus.webp',
+  '19-pebble-cluster.webp',
+  '20-small-stone-block.webp',
+  '21-cracked-amphora-shard.webp',
+  '22-tiny-gravel-scatter.webp',
+  '23-small-stone-cairn.webp',
+  '24-gravel-dust-foot.webp',
+  ...DESERT_DECOR_CACTUS_STYLES,
+  ...DESERT_DECOR_FOOTPRINTS,
+  ...DESERT_DECOR_MICRO,
 ];
+// 种类池：构图模板按需取用，禁止每关强制齐套四类
+const DESERT_DECOR_BY_KIND = {
+  // 植株主池 = 8 风格仙人掌；灌木/蓟仅 scrub 角偶发
+  plant: [...DESERT_DECOR_CACTUS_STYLES],
+  scrub: [
+    '15-dune-thistle.webp',
+    '06-dry-scrub-bush.webp',
+    '09-reed-clump.webp',
+  ],
+  pot: [
+    '17-broken-clay-pot.webp',
+    '21-cracked-amphora-shard.webp',
+  ],
+  pebble: [
+    '19-pebble-cluster.webp',
+    '22-tiny-gravel-scatter.webp',
+    '24-gravel-dust-foot.webp',
+    '03-sandstone-rocks.webp',
+  ],
+  stone: [
+    '20-small-stone-block.webp',
+    '23-small-stone-cairn.webp',
+    '08-boulder-slab.webp',
+    '12-column-stub.webp',
+    '03-sandstone-rocks.webp',
+  ],
+  footprint: [...DESERT_DECOR_FOOTPRINTS],
+  micro: [...DESERT_DECOR_MICRO],
+};
+// 真实体量：碎石粉尘 << 小石堆 << 半埋罐/桶仙人掌 << 仙人掌簇/棕榈/巨石
+const DESERT_DECOR_NATURAL_SIZE = {
+  '01-cactus-cluster.webp': 1.22,
+  '03-sandstone-rocks.webp': 0.92,
+  '05-date-palm-sapling.webp': 1.38,
+  '06-dry-scrub-bush.webp': 0.68,
+  '08-boulder-slab.webp': 1.18,
+  '09-reed-clump.webp': 0.98,
+  '12-column-stub.webp': 1.05,
+  '13-acacia-sapling.webp': 1.16,
+  '15-dune-thistle.webp': 0.48,
+  '17-broken-clay-pot.webp': 0.86,
+  '18-barrel-cactus.webp': 0.98,
+  '19-pebble-cluster.webp': 0.48,
+  '20-small-stone-block.webp': 0.52,
+  '21-cracked-amphora-shard.webp': 0.62,
+  '22-tiny-gravel-scatter.webp': 0.40,
+  '23-small-stone-cairn.webp': 0.64,
+  '24-gravel-dust-foot.webp': 0.36,
+  '25-cactus-saguaro-y.webp': 1.22,
+  '26-cactus-single-arm.webp': 0.98,
+  '27-cactus-candelabra.webp': 1.26,
+  '28-cactus-short-plump.webp': 0.74,
+  '29-cactus-tall-thin.webp': 1.16,
+  '30-cactus-prickly-pear.webp': 0.80,
+  '31-cactus-curved-arm.webp': 1.06,
+  '32-cactus-seedling.webp': 0.54,
+  '43-foot-trail-lr.webp': 4.4,
+  '43b-foot-trail-lr.webp': 4.1,
+  '36-pottery-sherd.webp': 0.62,
+  '37-linen-scrap.webp': 0.66,
+  '38-tumbleweed.webp': 0.72,
+  '39-scarab-stone.webp': 0.52,
+};
+const DESERT_DECOR_VERSION = '20260801-desert-decor-v13c';
 const MAP_VEHICLES = {
   ocean: {
     idle: 'assets/ocean/rowing-kids-boat-idle.webp?v=20260720-libtv-original-v3',
@@ -229,8 +473,8 @@ const MAP_VEHICLES = {
     idle: 'assets/egypt-map/cutouts/characters/runtime/camel-walk-frame96-idle-v6.png?v=20260720-camel-idle-walkmatch-v6',
     sailing: 'assets/egypt-map/cutouts/characters/runtime/camel-walk-frame96-idle-v6.png?v=20260720-camel-idle-walkmatch-v6',
     idleVideo: {
-      hevc: 'assets/egypt-map/cutouts/characters/libtv/camel-idle-alpha-v6.mov?v=20260720-camel-idle-walkmatch-v6',
-      webm: 'assets/egypt-map/cutouts/characters/libtv/camel-idle-alpha-v6.webm?v=20260720-camel-idle-walkmatch-v6',
+      hevc: 'assets/egypt-map/cutouts/characters/libtv/camel-idle-expressive-v6.mov?v=20260801-camel-idle-expressive-v6',
+      webm: 'assets/egypt-map/cutouts/characters/libtv/camel-idle-expressive-v6.webm?v=20260801-camel-idle-expressive-v6',
     },
     sailingVideo: {
       hevc: 'assets/egypt-map/cutouts/characters/libtv/camel-walk-alpha-v2.mov?v=20260720-libtv-camel-v2',
@@ -556,23 +800,279 @@ function levelsForMapWorld(worldId, allLevels = levels) {
 function desertLandmarkImage(levelId) {
   if (!Number.isInteger(levelId) || levelId < 1 || levelId > DISPLAY_LEVEL_COUNT) return '';
   const index = (levelId - 1) % DESERT_LANDMARK_IMAGES.length;
-  return `assets/egypt-map/cutouts/buildings/v6-sand-blend/${DESERT_LANDMARK_IMAGES[index]}?v=20260720-desert-landmarks-v6`;
+  return `assets/egypt-map/cutouts/buildings/v6-sand-blend/${DESERT_LANDMARK_IMAGES[index]}?v=20260731-desert-landmarks-v30`;
 }
+
+function desertDecorRng(seed) {
+  let s = (seed >>> 0) || 1;
+  return () => {
+    s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
+}
+
+function desertDecorPick(pool, rnd, salt = 0) {
+  if (!pool.length) return DESERT_DECOR_ASSETS[0];
+  const idx = Math.floor((rnd() * 0.999 + salt * 0.17) * pool.length) % pool.length;
+  return pool[(idx + pool.length) % pool.length];
+}
+
+// 每关构图模板：侧重点不同；道具只贴建筑侧翼/脚，禁止正前空地堆货
+const DESERT_DECOR_TEMPLATES = [
+  'lone_flank',     // 单侧一株叉形仙人掌贴墙
+  'pot_foot',       // 建筑脚一角半埋罐 + 一粒砾
+  'side_rocks',     // 一侧石/砾贴脚
+  'left_hug',       // 全贴左翼
+  'right_hug',      // 全贴右翼
+  'cactus_pair',    // 左右各一株贴侧，中空
+  'one_grit',       // 极简：脚边一缕 grit
+  'scrub_corner',   // 墙角 scrub + 小砾
+  'boulder_side',   // 一侧贴巨石
+  'almost_clean',   // 几乎空
+  'pot_and_fork',   // 一侧叉仙人掌 + 对侧脚罐
+  'column_corner',  // 一角柱墩/陶片
+];
 
 function desertDecorMarkup(levelId, theme) {
   if (theme !== 'desert' || levelId >= DISPLAY_LEVEL_COUNT) return '';
-  const asset = DESERT_DECOR_ASSETS[(levelId - 1) % DESERT_DECOR_ASSETS.length];
-  const x = 70 + ((levelId * 17) % 24);
-  const y = 72 + ((levelId * 5) % 8);
-  const scale = (0.86 + ((levelId % 4) * 0.08)).toFixed(2);
-  const image = `assets/egypt-map/cutouts/decor/runtime-v1/${asset}?v=20260720-desert-decor-v1`;
-  return `<span class="desert-decor" data-desert-decor aria-hidden="true" style="--decor-x:${x}%;--decor-y:${y}%;--decor-scale:${scale};--decor-image:url('${image}')"></span>`;
+  // v10：贴侧/脚 + 8 风格仙人掌 + 低密度脚印 + 埃及微物
+  const rnd = desertDecorRng(levelId * 9973 + 419);
+  const scrubPool = DESERT_DECOR_BY_KIND.scrub || [];
+  const potPool = DESERT_DECOR_BY_KIND.pot;
+  const pebblePool = DESERT_DECOR_BY_KIND.pebble;
+  const stonePool = DESERT_DECOR_BY_KIND.stone;
+  const gritPool = ['22-tiny-gravel-scatter.webp', '24-gravel-dust-foot.webp'];
+  const natural = (asset) => DESERT_DECOR_NATURAL_SIZE[asset] || 0.8;
+  const jitter = (span) => (rnd() - 0.5) * span;
+  const template = DESERT_DECOR_TEMPLATES[(levelId - 1) % DESERT_DECOR_TEMPLATES.length];
+  const slots = [];
+
+  /*
+   * 建筑 silhouette（island-art）：中心约 50%，宽约 48% → 左缘~26% 右缘~74%
+   * 底脚 y ≈ 70–76%。正前空地（x 38–62, y 82–92）禁止堆道具。
+   * 合法锚区：左翼 / 右翼 / 左脚 / 右脚 / 后侧。
+   */
+  const ZONE = {
+    left_flank:  { x0: 16, x1: 28, y0: 64, y1: 74 },
+    right_flank: { x0: 72, x1: 86, y0: 64, y1: 74 },
+    left_foot:   { x0: 26, x1: 40, y0: 72, y1: 78 },
+    right_foot:  { x0: 60, x1: 74, y0: 72, y1: 78 },
+    left_back:   { x0: 20, x1: 34, y0: 58, y1: 66 },
+    right_back:  { x0: 66, x1: 80, y0: 58, y1: 66 },
+  };
+  const inZone = (z) => ({
+    x: z.x0 + rnd() * (z.x1 - z.x0),
+    y: z.y0 + rnd() * (z.y1 - z.y0),
+  });
+
+  const push = (kind, asset, x, y, sizeMul, layer = 'front', flipChance = 0.45) => {
+    if (!asset) return;
+    const tall = /palm|acacia|reed|boulder|column|cactus|saguaro|prickly/.test(asset);
+    // 硬夹：不允许漂到正前空地远处
+    const cx = Math.max(12, Math.min(88, x));
+    const cy = Math.max(56, Math.min(79, y));
+    slots.push({
+      asset,
+      kind,
+      x: cx,
+      y: cy,
+      size: natural(asset) * sizeMul,
+      scale: 0.9 + jitter(0.12),
+      layer: tall && layer === 'back' ? 'front' : layer,
+      flip: rnd() < flipChance,
+    });
+  };
+
+  // 8 风格仙人掌：同关稳定；槽位步进，避免同关双株撞脸
+  let cactusSlot = 0;
+  const pickCactus = () => {
+    const styles = DESERT_DECOR_CACTUS_STYLES;
+    if (!styles.length) return '25-cactus-saguaro-y.webp';
+    const start = Math.floor(rnd() * styles.length);
+    const asset = styles[(start + cactusSlot) % styles.length];
+    cactusSlot += 1 + Math.floor(rnd() * 2);
+    return asset;
+  };
+  const pickPlant = () => pickCactus();
+  const pickScrub = () => desertDecorPick(scrubPool.length ? scrubPool : ['06-dry-scrub-bush.webp'], rnd, levelId + 11);
+  const pickStone = (exclude = []) => {
+    const pool = stonePool.filter((a) => !exclude.includes(a));
+    return desertDecorPick(pool.length ? pool : stonePool, rnd, levelId + 3);
+  };
+  const pickPebble = () => desertDecorPick(pebblePool, rnd, levelId + 7);
+  const pickGrit = () => gritPool[(levelId + Math.floor(rnd() * 3)) % gritPool.length];
+  const pickPot = () => potPool[levelId % potPool.length];
+
+  if (template === 'lone_flank') {
+    const left = levelId % 2 === 0;
+    const z = left ? ZONE.left_flank : ZONE.right_flank;
+    const p = inZone(z);
+    push('plant', pickCactus(), p.x, p.y - 2, 1.05 + rnd() * 0.3, 'front', left ? 0.2 : 0.55);
+    const f = inZone(left ? ZONE.left_foot : ZONE.right_foot);
+    push('pebble', pickGrit(), f.x, f.y, 0.85 + rnd() * 0.25, 'front', 0);
+  } else if (template === 'pot_foot') {
+    const left = levelId % 3 !== 0;
+    const f = inZone(left ? ZONE.left_foot : ZONE.right_foot);
+    push('pot', pickPot(), f.x, f.y, 0.95 + rnd() * 0.2, 'front', 0.5);
+    push('pebble', pickGrit(), f.x + (left ? 6 : -6), f.y + 1, 0.8 + rnd() * 0.2, 'front', 0);
+  } else if (template === 'side_rocks') {
+    const left = levelId % 2 === 0;
+    const flank = inZone(left ? ZONE.left_flank : ZONE.right_flank);
+    const foot = inZone(left ? ZONE.left_foot : ZONE.right_foot);
+    push('stone', pickStone(), flank.x, flank.y + 4, 0.75 + rnd() * 0.3, 'front', 0.4);
+    push('pebble', '19-pebble-cluster.webp', foot.x, foot.y, 0.9 + rnd() * 0.25, 'front', 0);
+    if (rnd() > 0.45) {
+      push('pebble', pickGrit(), foot.x + (left ? 5 : -5), foot.y, 0.75 + rnd() * 0.2, 'front', 0);
+    }
+  } else if (template === 'left_hug') {
+    const a = inZone(ZONE.left_flank);
+    const b = inZone(ZONE.left_foot);
+    push('plant', pickCactus(), a.x, a.y - 1, 0.95 + rnd() * 0.25, 'front', 0.2);
+    push('stone', '23-small-stone-cairn.webp', b.x, b.y, 0.6 + rnd() * 0.2, 'front', 0.3);
+    push('pebble', pickGrit(), b.x + 5, b.y + 1, 0.8 + rnd() * 0.2, 'front', 0);
+  } else if (template === 'right_hug') {
+    const a = inZone(ZONE.right_flank);
+    const b = inZone(ZONE.right_foot);
+    push('plant', pickCactus(), a.x, a.y - 1, 0.95 + rnd() * 0.25, 'front', 0.55);
+    push('stone', pickStone(), b.x, b.y - 1, 0.6 + rnd() * 0.25, 'front', 0.4);
+    push('pebble', pickGrit(), b.x - 5, b.y + 1, 0.8 + rnd() * 0.2, 'front', 0);
+  } else if (template === 'cactus_pair') {
+    const L = inZone(ZONE.left_flank);
+    const R = inZone(ZONE.right_flank);
+    push('plant', pickCactus(), L.x, L.y - 2, 1.05 + rnd() * 0.25, 'front', 0.2);
+    push('plant', pickCactus(), R.x, R.y, 0.75 + rnd() * 0.2, 'front', 0.55);
+  } else if (template === 'one_grit') {
+    const left = levelId % 2 === 0;
+    const f = inZone(left ? ZONE.left_foot : ZONE.right_foot);
+    push('pebble', pickGrit(), f.x, f.y, 0.75 + rnd() * 0.25, 'front', 0);
+  } else if (template === 'scrub_corner') {
+    const left = levelId % 2 === 0;
+    const flank = inZone(left ? ZONE.left_flank : ZONE.right_flank);
+    const foot = inZone(left ? ZONE.left_foot : ZONE.right_foot);
+    push('plant', pickScrub(), flank.x, flank.y + 3, 0.55 + rnd() * 0.2, 'front', 0.4);
+    push('pebble', pickPebble(), foot.x, foot.y, 0.85 + rnd() * 0.25, 'front', 0);
+  } else if (template === 'boulder_side') {
+    const left = levelId % 2 === 0;
+    const flank = inZone(left ? ZONE.left_flank : ZONE.right_flank);
+    const foot = inZone(left ? ZONE.left_foot : ZONE.right_foot);
+    push('stone', '08-boulder-slab.webp', flank.x, flank.y, 1.0 + rnd() * 0.25, 'front', 0.35);
+    push('pebble', pickGrit(), foot.x, foot.y, 0.8 + rnd() * 0.2, 'front', 0);
+  } else if (template === 'almost_clean') {
+    // intentionally empty — desert landmarks aren't always cluttered
+  } else if (template === 'pot_and_fork') {
+    const plantLeft = levelId % 2 === 0;
+    const pZ = inZone(plantLeft ? ZONE.left_flank : ZONE.right_flank);
+    const fZ = inZone(plantLeft ? ZONE.right_foot : ZONE.left_foot);
+    push('plant', pickCactus(), pZ.x, pZ.y - 2, 1.05 + rnd() * 0.25, 'front', plantLeft ? 0.2 : 0.55);
+    push('pot', pickPot(), fZ.x, fZ.y, 0.9 + rnd() * 0.2, 'front', 0.5);
+  } else {
+    // column_corner
+    const left = levelId % 2 === 0;
+    const flank = inZone(left ? ZONE.left_flank : ZONE.right_flank);
+    const foot = inZone(left ? ZONE.left_foot : ZONE.right_foot);
+    push('stone', '12-column-stub.webp', flank.x, flank.y + 2, 0.75 + rnd() * 0.25, 'front', 0.35);
+    push('pot', '21-cracked-amphora-shard.webp', foot.x, foot.y, 0.8 + rnd() * 0.2, 'front', 0.5);
+    if (rnd() > 0.5) {
+      push('pebble', pickGrit(), foot.x + (left ? 5 : -5), foot.y, 0.75 + rnd() * 0.2, 'front', 0);
+    }
+  }
+
+  // ── v13c 足迹（L-R 小脚印链，变淡）+ 埃及微物（疏）───────────────
+  // 硬约束：每关/每时光最多 1 串脚印（绝不双串）；门脸正中永不放
+  // 微物：~8–38% 按密度 1 件（陶片/亚麻/干草球/圣甲虫）
+  const footprintPool = DESERT_DECOR_BY_KIND.footprint || [];
+  const microPool = DESERT_DECOR_BY_KIND.micro || [];
+  // 单印槽：偏左/偏右前沙坡
+  const PATH_ZONES = [
+    { x0: 22, x1: 34, y0: 78, y1: 85 },
+    { x0: 66, x1: 78, y0: 78, y1: 85 },
+    { x0: 18, x1: 30, y0: 74, y1: 82 },
+    { x0: 70, x1: 82, y0: 74, y1: 82 },
+  ];
+  const MICRO_ZONES = [
+    ZONE.left_foot,
+    ZONE.right_foot,
+    ZONE.left_flank,
+    ZONE.right_flank,
+    { x0: 18, x1: 32, y0: 78, y1: 84 },
+    { x0: 68, x1: 82, y0: 78, y1: 84 },
+  ];
+  const densityTag = template === 'almost_clean' || template === 'one_grit'
+    ? 'almost_clean'
+    : (template === 'cactus_pair' || template === 'pot_and_fork' || template === 'column_corner')
+      ? 'busy'
+      : (template === 'lone_flank' || template === 'scrub_corner')
+        ? 'sparse'
+        : 'normal';
+
+  const pushGround = (kind, asset, x, y, sizeMul = 1, flipChance = 0.5, rotDeg = 0) => {
+    let cx = Math.max(11, Math.min(89, x));
+    let cy = Math.max(70, Math.min(86, y));
+    // 门脸正中禁区 → 偏侧
+    if (cy >= 78 && cx > 38 && cx < 62) {
+      cx = cx < 50 ? Math.max(12, cx - 14) : Math.min(88, cx + 14);
+    }
+    if (slots.some((s) => Math.hypot(s.x - cx, s.y - cy) < 7.5)) return false;
+    slots.push({
+      asset,
+      kind,
+      x: cx,
+      y: cy,
+      size: natural(asset) * sizeMul,
+      scale: 0.92 + jitter(0.08),
+      layer: 'front',
+      flip: rnd() < flipChance,
+      rot: rotDeg || 0,
+    });
+    return true;
+  };
+
+  // 每时光/关最多 1 串：只 push 一次；用 levelId 稀疏取样，避免全图脚印刷屏
+  // almost_clean 更稀；其它关约每 7 关 1 串
+  const alreadyHasFp = slots.some((s) => s.kind === 'footprint');
+  const wantFp = !alreadyHasFp && footprintPool.length > 0 && (
+    densityTag === 'almost_clean'
+      ? (levelId % 13 === 5)
+      : (levelId % 7 === 3)
+  );
+  if (wantFp) {
+    const path = PATH_ZONES[Math.floor(rnd() * PATH_ZONES.length)];
+    const baseX = path.x0 + rnd() * (path.x1 - path.x0);
+    const baseY = path.y0 + rnd() * (path.y1 - path.y0);
+    const asset = footprintPool[Math.floor(rnd() * footprintPool.length)];
+    // v13c 行走链：倾斜 + 单次放置
+    const rot = -34 + rnd() * 16; // ≈ -34° ~ -18°
+    pushGround('footprint', asset, baseX, baseY, 0.88 + rnd() * 0.16, 0, rot);
+  }
+
+  const microChance = densityTag === 'almost_clean' ? 0.08
+    : densityTag === 'sparse' ? 0.22
+      : densityTag === 'busy' ? 0.38
+        : 0.3;
+  if (rnd() < microChance && microPool.length) {
+    const z = MICRO_ZONES[Math.floor(rnd() * MICRO_ZONES.length)];
+    const asset = microPool[Math.floor(rnd() * microPool.length)];
+    const mx = z.x0 + rnd() * (z.x1 - z.x0);
+    const my = z.y0 + rnd() * (z.y1 - z.y0);
+    pushGround('micro', asset, mx, my, 0.9 + rnd() * 0.22, 0.55, (rnd() - 0.5) * 24);
+  }
+
+  // 全量输出模板结果（1–3 件贴侧/贴脚 + 可选脚印/微物；almost_clean 可为 0）
+  return slots.map((slot) => {
+    const image = `assets/egypt-map/cutouts/decor/runtime-v2/${slot.asset}?v=${DESERT_DECOR_VERSION}`;
+    const flipClass = slot.flip ? ' is-flip' : '';
+    const size = Math.max(0.2, Math.min(1.75, slot.size));
+    const scale = Math.max(0.7, Math.min(1.2, slot.scale));
+    const rot = Number(slot.rot) || 0;
+    const rotStyle = rot ? `--decor-rot:${rot.toFixed(1)}deg;` : '';
+    return `<span class="desert-decor is-${slot.layer}${flipClass}" data-desert-decor data-decor-kind="${slot.kind}" data-decor-asset="${slot.asset.replace(/\.webp$/, '')}" data-decor-template="${template}" aria-hidden="true" style="--decor-x:${slot.x.toFixed(1)}%;--decor-y:${slot.y.toFixed(1)}%;--decor-size:${size.toFixed(2)};--decor-scale:${scale.toFixed(2)};--decor-image:url('${image}');${rotStyle}"></span>`;
+  }).join('');
 }
 
 /** 判断单词发音按钮是否应禁用（纯函数，供测试使用） */
 function wordButtonDisabled(word, pronunciationAvailable, localAudioUrls) {
   if (!word || typeof word !== 'string') return true;
-  return !localAudioUrls[word.toLowerCase()];
+  return !(localAudioUrls || {})[word.toLowerCase()];
 }
 
 function validateSupportMessage(message) {
@@ -707,6 +1207,9 @@ function parseRouteHash(hashValue) {
 }
 
 function questionPromptText(level) {
+  if (level?.worldId === 'desert' || level?.itemType === 'expression') {
+    return `小朋友，视频里的英语，哪一句是在说「${level.zhTitle}」？`;
+  }
   return `小朋友，视频里学到的单词，哪一个是${level.zhTitle}的意思？`;
 }
 
@@ -744,8 +1247,51 @@ function activateVipPreferences(preferences = {}) {
   return { ...preferences, vipActive: true };
 }
 
+
+const MAP_JUMP_SEGMENT_SIZE = 20;
+const MAP_JUMP_COPY = {
+  title: '要去哪里',
+  eyebrow: '路线导航',
+  segmentsLabel: '路线段',
+  levelsHint: '共 200 关 · 左边选段，右边点关，再出发',
+  depart: '出发前往',
+  arrived: '已到达',
+  back: '返回路线段',
+  current: '当前',
+  totalLevels: DISPLAY_LEVEL_COUNT,
+};
+
+/** 每 20 关一段：[{ start, end, label, id }] */
+function buildMapJumpSegments(totalLevels = DISPLAY_LEVEL_COUNT, segmentSize = MAP_JUMP_SEGMENT_SIZE) {
+  const size = Math.max(1, Number(segmentSize) || 20);
+  const total = Math.max(1, Number(totalLevels) || 1);
+  const segs = [];
+  for (let start = 1; start <= total; start += size) {
+    const end = Math.min(total, start + size - 1);
+    segs.push({
+      id: `seg-${start}-${end}`,
+      start,
+      end,
+      label: `${start}–${end} 关`,
+      count: end - start + 1,
+    });
+  }
+  return segs;
+}
+
+function segmentContainingLevel(levelId, segments) {
+  const id = Number(levelId);
+  if (!Array.isArray(segments) || !segments.length) return null;
+  return segments.find((seg) => id >= seg.start && id <= seg.end) || segments[0];
+}
+
+function levelsInJumpSegment(levelsList, segment) {
+  if (!segment || !Array.isArray(levelsList)) return [];
+  return levelsList.filter((lv) => lv.id >= segment.start && lv.id <= segment.end);
+}
+
 if (typeof module !== 'undefined') {
-  module.exports = { MAP_WORLDS, activateVipPreferences, addLearningActivityDay, applyQuizAnswer, buildLearningDataExport, buildLocalRankings, calendarDays, canForceReleaseUpdate, canRegisterServiceWorker, compareAppVersions, completedLearningMinutes, completionUnlockText, desertLandmarkImage, desertLevels, formatActivityDate, getLevelAccess, islandStyleId, learningDays, learningReport, learningStreak, levels, levelsForMapWorld, membershipSummary, networkStatusText, normalizeMapWorldId, normalizeWorldProgress, notificationStatusText, normalizeChildProfile, normalizeLearningActivity, normalizeMistakeBook, normalizeProgress, parseRouteHash, profileAvatarText, questionPromptText, rankingScore, recordMistake, releaseUpdateInfo, requestReleaseUpdate, requestVipPurchase, requestVipRestore, resolveMistake, routePoint, supportFeedbackText, validateSupportMessage, wordButtonDisabled };
+  module.exports = { MAP_WORLDS, MAP_JUMP_COPY, MAP_JUMP_SEGMENT_SIZE, CURRICULUM_ALIGNMENT_BY_TOPIC, buildMapJumpSegments, curriculumAlignmentForTopic, segmentContainingLevel, levelsInJumpSegment, activateVipPreferences, addLearningActivityDay, applyQuizAnswer, buildLearningDataExport, buildLocalRankings, calendarDays, canForceReleaseUpdate, canRegisterServiceWorker, compareAppVersions, completedLearningMinutes, completionUnlockText, desertLandmarkImage, desertLevels, formatActivityDate, getLevelAccess, islandStyleId, learningDays, learningReport, learningStreak, levels, levelsForMapWorld, membershipSummary, networkStatusText, normalizeMapWorldId, normalizeWorldProgress, notificationStatusText, normalizeChildProfile, normalizeLearningActivity, normalizeMistakeBook, normalizeProgress, parseRouteHash, profileAvatarText, questionPromptText, rankingScore, recordMistake, releaseUpdateInfo, requestReleaseUpdate, requestVipPurchase, requestVipRestore, resolveMistake, routePoint, supportFeedbackText, validateSupportMessage, wordButtonDisabled };
 }
 
 if (typeof document !== 'undefined') {
@@ -799,7 +1345,7 @@ if (typeof document !== 'undefined') {
   };
   const preferenceLabels = {
     mapMusic: '背景音乐',
-    autoPronunciation: '自动读单词',
+    autoPronunciation: '自动读英文',
     showChineseHints: '中文辅助',
   };
   const appInfoPages = {
@@ -1019,6 +1565,7 @@ if (typeof document !== 'undefined') {
     locked: '<svg class="node-icon" aria-hidden="true" viewBox="0 0 24 24"><rect x="6" y="10" width="12" height="9" rx="2"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/></svg>',
     islandLock: '<span class="island-lock" aria-hidden="true"><svg viewBox="0 0 64 72"><path class="island-lock-shackle" d="M18 30v-8C18 12 24 7 32 7s14 5 14 15v8"/><rect class="island-lock-body" x="7" y="27" width="50" height="37" rx="12"/><path class="island-lock-highlight" d="M17 36h20"/><circle class="island-lock-keyhole" cx="32" cy="46" r="5"/><path class="island-lock-keyhole-stem" d="M32 50v7"/></svg></span>',
     locate: '<svg class="locate-progress-icon" aria-hidden="true" viewBox="0 0 48 48"><path d="M18 7h-5a6 6 0 0 0-6 6v5M30 7h5a6 6 0 0 1 6 6v5M18 41h-5a6 6 0 0 1-6-6v-5M30 41h5a6 6 0 0 0 6-6v-5"/><circle cx="24" cy="24" r="11"/></svg>',
+    jump: '<svg class="map-jump-icon" aria-hidden="true" viewBox="0 0 48 48"><path d="M14 13m-4 0a4 4 0 1 0 8 0a4 4 0 1 0-8 0"/><path d="M18 13h8c5.5 0 9 3.2 9 7.5S31.5 28 26 28h-6c-4.4 0-7 2.6-7 6s2.6 6 7 6h14"/><path d="m31 34 6 6-6 6"/></svg>',
     mapSwitch: '<svg class="map-switch-icon" aria-hidden="true" viewBox="0 0 1024 1024"><path d="M883.875 684.806c41.592-90.131 47.607-188.11 23.715-277.077-27.468-102.682-95.063-194.238-193.08-249.865l43.48-93.961-247.21 64.819 110.564 230.424 45.491-98.308c66.606 40.672 112.204 104.396 131.498 176.146 17.257 64.639 13.024 134.926-17.145 200.514-38.445 83.352-110.309 140.105-192.603 162.245a296.78 296.78 0 0 1-36.221 7.297l51.033 105.49c4.853-1.129 9.665-2.263 14.447-3.572 113.302-30.203 213.143-109.249 266.031-224.152z m-524.696 82.476c-67.595-40.598-113.886-104.87-133.367-177.273-17.252-64.64-12.985-134.967 17.145-200.48 38.447-83.386 110.31-140.141 192.605-162.28 13.646-3.651 27.541-6.275 41.587-7.957l-50.886-106.037c-6.676 1.426-13.353 2.956-19.957 4.744-113.266 30.272-213.141 109.317-266.07 224.221-41.511 90.097-47.533 188.11-23.639 277.038l0.073 0.293c27.686 103.375 96.083 195.406 195.196 250.886l-41.111 89.661 246.955-65.694-111.329-230.022-47.202 102.9z m0 0"/></svg>',
     wordAudio: '<svg class="word-audio-icon" aria-hidden="true" viewBox="0 0 48 48"><path d="M9 19h8l10-8v26l-10-8H9z"/><path d="M33 18c3 3 3 9 0 12M38 13c7 6 7 16 0 22"/></svg>',
     stateCompleted: '<svg class="level-state-icon state-completed" aria-hidden="true" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20"/><path d="m15 24 6 6 13-14"/></svg>',
@@ -1053,11 +1600,16 @@ if (typeof document !== 'undefined') {
 
   function wordAudioSrcFor(word) {
     const key = String(word || '').toLowerCase();
-    return wordAudioMap[key] || EXTRA_WORD_AUDIO[key] || '';
+    const bareKey = key.replace(/[.!?]+$/g, '');
+    return wordAudioMap[key] || wordAudioMap[bareKey] || EXTRA_WORD_AUDIO[key] || EXTRA_WORD_AUDIO[bareKey] || '';
   }
 
   function wordHasLocalAudio(word) {
     return !!wordAudioSrcFor(word);
+  }
+
+  function wordCanPronounce(word) {
+    return !!String(word || '').trim() && wordHasLocalAudio(word);
   }
 
   function questionAudioSrcFor(level) {
@@ -1102,7 +1654,7 @@ if (typeof document !== 'undefined') {
   function updateWordAudioButtons() {
     document.querySelectorAll('[data-speak-word]').forEach((button) => {
       const w = button.dataset.speakWord;
-      button.disabled = !wordHasLocalAudio(w);
+      button.disabled = !wordCanPronounce(w);
     });
   }
 
@@ -1235,6 +1787,7 @@ if (typeof document !== 'undefined') {
     history.pushState(historyState, '', `#${route}`);
     render();
     window.scrollTo(0, 0);
+    rememberLastStay();
   }
 
   function syncMapMusic(route = routeFromHash()) {
@@ -1315,13 +1868,427 @@ if (typeof document !== 'undefined') {
     try { localStorage.setItem(SUPPORT_DRAFT_KEY, message); } catch {}
   }
 
-  function showToast(message) {
-    if (!appToast || !message) return;
-    clearTimeout(toastTimer);
-    appToast.textContent = message;
-    appToast.hidden = false;
-    toastTimer = setTimeout(() => { appToast.hidden = true; }, 1800);
+  function resolveToastHostDialog(preferred) {
+    if (preferred && preferred.tagName === 'DIALOG' && preferred.open) return preferred;
+    // 强制登录优先（常与版本更新 dialog 并存，挂错层会看不见）
+    return document.querySelector('dialog.login-dialog[open]')
+      || document.querySelector('dialog[open]:last-of-type')
+      || document.querySelector('dialog[open]');
   }
+
+  function showToast(message, preferredHost) {
+    if (!message) return;
+    clearTimeout(toastTimer);
+
+    // modal dialog 在 top layer，body 上的 toast 会被挡住；有打开的 dialog 时把提示挂进 dialog
+    const openDialog = resolveToastHostDialog(preferredHost);
+    let toastEl = appToast;
+    if (openDialog) {
+      let dialogToast = openDialog.querySelector('[data-dialog-toast]');
+      if (!dialogToast) {
+        dialogToast = document.createElement('div');
+        dialogToast.className = 'app-toast app-toast-in-dialog';
+        dialogToast.setAttribute('data-dialog-toast', '1');
+        dialogToast.setAttribute('role', 'status');
+        dialogToast.setAttribute('aria-live', 'polite');
+        openDialog.appendChild(dialogToast);
+      }
+      toastEl = dialogToast;
+      if (appToast) appToast.hidden = true;
+    }
+    if (!toastEl) return;
+
+    toastEl.textContent = message;
+    toastEl.hidden = false;
+    // 重触发动画
+    try {
+      toastEl.classList.remove('is-pop');
+      // force reflow
+      void toastEl.offsetWidth;
+      toastEl.classList.add('is-pop');
+    } catch (_) {}
+    toastTimer = setTimeout(() => {
+      toastEl.hidden = true;
+      try { toastEl.classList.remove('is-pop'); } catch (_) {}
+    }, 2200);
+  }
+
+  function nudgeMustLogin(dialog) {
+    const host = dialog || loginDialogEl;
+    showToast('请先登录后继续探险', host);
+    const card = host && host.querySelector('.login-card');
+    if (!card) return;
+    card.classList.remove('is-nudge');
+    try { void card.offsetWidth; } catch (_) {}
+    card.classList.add('is-nudge');
+    window.setTimeout(() => {
+      try { card.classList.remove('is-nudge'); } catch (_) {}
+    }, 520);
+  }
+
+  // ─── 强制登录门禁（登录即注册）Animal-Island-UI ─────────────────
+  const LAST_STAY_KEY = 'baby-island-last-stay';
+  let loginDialogEl = null;
+  let loginDialogResolver = null;
+  let loginCodeTimer = null;
+  let loginCodeRemain = 0;
+  let authBootStarted = false;
+  let authGatePassed = false;
+
+  function authApi() {
+    return (typeof window !== 'undefined' && window.babyIslandApi) || null;
+  }
+
+  function rememberLastStay(route = routeFromHash()) {
+    try {
+      const payload = {
+        hash: location.hash || '#map',
+        routeType: route && route.type ? route.type : 'map',
+        mapWorld: state.preferences.mapWorld,
+        unlockedThrough: state.progress.unlockedThrough,
+        at: Date.now(),
+      };
+      localStorage.setItem(LAST_STAY_KEY, JSON.stringify(payload));
+    } catch (_) { /* private mode */ }
+  }
+
+  function resumeLastStay() {
+    try {
+      const raw = localStorage.getItem(LAST_STAY_KEY);
+      if (!raw) return false;
+      const data = JSON.parse(raw);
+      if (!data || typeof data !== 'object') return false;
+      if (data.mapWorld) {
+        const nextWorld = normalizeMapWorldId(data.mapWorld);
+        if (nextWorld && nextWorld !== state.preferences.mapWorld) {
+          state.preferences.mapWorld = nextWorld;
+          try {
+            localStorage.setItem(APP_PREFERENCES_KEY, JSON.stringify(state.preferences));
+          } catch (_) {}
+        }
+      }
+      if (data.hash && typeof data.hash === 'string' && data.hash.startsWith('#') && data.hash !== location.hash) {
+        history.replaceState(null, '', data.hash);
+        render();
+        return true;
+      }
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function setAuthLock(on) {
+    try {
+      document.body.classList.toggle('auth-lock', !!on);
+      document.body.classList.toggle('auth-required', !!on);
+    } catch (_) {}
+  }
+
+  function whenSplashDone() {
+    return new Promise((resolve) => {
+      if (typeof document === 'undefined') return resolve();
+      if (!document.getElementById('app-splash')) return resolve();
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        window.removeEventListener('app-splash-finished', finish);
+        resolve();
+      };
+      window.addEventListener('app-splash-finished', finish, { once: true });
+      // 硬超时：防止 splash 卡死挡住登录
+      window.setTimeout(finish, 8200);
+    });
+  }
+
+  function normalizePhoneInput(value) {
+    return String(value || '').replace(/\D/g, '').slice(0, 11);
+  }
+
+  function setLoginError(msg) {
+    const err = loginDialogEl && loginDialogEl.querySelector('[data-login-error]');
+    if (!err) return;
+    if (msg) {
+      err.textContent = msg;
+      err.hidden = false;
+    } else {
+      err.textContent = '';
+      err.hidden = true;
+    }
+  }
+
+  function setLoginBusy(busy) {
+    if (!loginDialogEl) return;
+    loginDialogEl.classList.toggle('is-busy', !!busy);
+    loginDialogEl.querySelectorAll('input, button').forEach((el) => {
+      if (el.matches('[data-login-send-code]') && loginCodeRemain > 0) return;
+      el.disabled = !!busy;
+    });
+  }
+
+  function updateSendCodeButton() {
+    const btn = loginDialogEl && loginDialogEl.querySelector('[data-login-send-code]');
+    if (!btn) return;
+    if (loginCodeRemain > 0) {
+      btn.disabled = true;
+      btn.textContent = `${loginCodeRemain}s 后重发`;
+      btn.setAttribute('aria-disabled', 'true');
+    } else {
+      btn.disabled = false;
+      btn.textContent = '获取验证码';
+      btn.removeAttribute('aria-disabled');
+    }
+  }
+
+  function startSendCodeCountdown(seconds) {
+    clearInterval(loginCodeTimer);
+    loginCodeRemain = seconds;
+    updateSendCodeButton();
+    loginCodeTimer = setInterval(() => {
+      loginCodeRemain -= 1;
+      if (loginCodeRemain <= 0) {
+        clearInterval(loginCodeTimer);
+        loginCodeTimer = null;
+        loginCodeRemain = 0;
+      }
+      updateSendCodeButton();
+    }, 1000);
+  }
+
+  function closeLoginDialog(result) {
+    clearInterval(loginCodeTimer);
+    loginCodeTimer = null;
+    loginCodeRemain = 0;
+    if (loginDialogEl) {
+      try { loginDialogEl.close(); } catch (_) {}
+      loginDialogEl.remove();
+      loginDialogEl = null;
+    }
+    setAuthLock(false);
+    const resolver = loginDialogResolver;
+    loginDialogResolver = null;
+    if (resolver) resolver(result || { ok: true });
+  }
+
+  function openLoginDialog(options = {}) {
+    const required = options.required !== false; // 默认强制
+    const api = authApi();
+
+    // 已登录则直接过
+    if (api?.getToken && api.getToken()) {
+      return api.checkSession().then((session) => {
+        if (session?.isLoggedIn) {
+          authGatePassed = true;
+          return { ok: true, already: true, user: session.user };
+        }
+        return openLoginDialogForce(required);
+      }).catch(() => openLoginDialogForce(required));
+    }
+    return openLoginDialogForce(required);
+  }
+
+  function openLoginDialogForce(required) {
+    if (loginDialogEl && loginDialogResolver) {
+      return new Promise((resolve) => {
+        const prev = loginDialogResolver;
+        loginDialogResolver = (result) => {
+          prev(result);
+          resolve(result);
+        };
+      });
+    }
+
+    setAuthLock(true);
+    // 复用已有 dialog
+    document.querySelectorAll('dialog.login-dialog').forEach((el) => el.remove());
+
+    const dialog = document.createElement('dialog');
+    dialog.className = 'login-dialog' + (required ? ' is-required' : '');
+    dialog.setAttribute('aria-labelledby', 'login-dialog-title');
+    dialog.setAttribute('aria-modal', 'true');
+    dialog.innerHTML = [
+      '<div class="login-card">',
+      '  <div class="login-hero" aria-hidden="true">',
+      '    <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="28" fill="rgba(25,200,185,0.18)"/><path d="M22 36c2.8 4.5 8 7 10 7s7.2-2.5 10-7" stroke="#19c8b9" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="28" r="2.6" fill="#794f27"/><circle cx="40" cy="28" r="2.6" fill="#794f27"/></svg>',
+      '  </div>',
+      '  <p class="login-eyebrow">嗨洛塔少儿启蒙</p>',
+      '  <h2 id="login-dialog-title">登录 / 注册</h2>',
+      '  <p class="login-sub">手机号验证码一键登录，新号码自动注册</p>',
+      '  <form class="login-form" data-login-form novalidate>',
+      '    <label class="login-field">',
+      '      <span class="login-label">手机号</span>',
+      '      <input class="login-input" type="tel" name="phone" inputmode="numeric" autocomplete="tel" maxlength="11" placeholder="请输入 11 位手机号" data-login-phone required />',
+      '    </label>',
+      '    <div class="login-code-row">',
+      '      <label class="login-field login-field-code">',
+      '        <span class="login-label">验证码</span>',
+      '        <input class="login-input" type="text" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6 位验证码" data-login-code required />',
+      '      </label>',
+      '      <button class="login-send-code" type="button" data-login-send-code>获取验证码</button>',
+      '    </div>',
+      '    <p class="login-error" data-login-error role="alert" hidden></p>',
+      '    <p class="login-hint">未注册的手机号验证后将自动注册。本地可填任意 11 位手机号 + 任意 4–6 位验证码</p>',
+      '    <button class="login-submit" type="submit" data-login-submit>开始探险</button>',
+      '  </form>',
+      '</div>',
+    ].join('');
+
+    document.body.appendChild(dialog);
+    loginDialogEl = dialog;
+
+    const phoneInput = dialog.querySelector('[data-login-phone]');
+    const codeInput = dialog.querySelector('[data-login-code]');
+    const form = dialog.querySelector('[data-login-form]');
+    const sendBtn = dialog.querySelector('[data-login-send-code]');
+
+    phoneInput.addEventListener('input', () => {
+      const next = normalizePhoneInput(phoneInput.value);
+      if (phoneInput.value !== next) phoneInput.value = next;
+      setLoginError('');
+    });
+    codeInput.addEventListener('input', () => {
+      codeInput.value = String(codeInput.value || '').replace(/\D/g, '').slice(0, 6);
+      setLoginError('');
+    });
+
+    sendBtn.addEventListener('click', async () => {
+      const phone = normalizePhoneInput(phoneInput.value);
+      if (!/^\d{11}$/.test(phone)) {
+        setLoginError('请输入 11 位手机号');
+        phoneInput.focus();
+        return;
+      }
+      const api = authApi();
+      if (!api?.sendVerificationCode) {
+        setLoginError('登录服务未就绪，请刷新重试');
+        return;
+      }
+      setLoginBusy(true);
+      setLoginError('');
+      try {
+        const data = await api.sendVerificationCode(phone);
+        startSendCodeCountdown(60);
+        const devCode = api.getLastDevCode && api.getLastDevCode();
+        if (devCode) {
+          codeInput.value = String(devCode);
+          setLoginError('');
+          showToast(`开发验证码：${devCode}`);
+        } else {
+          showToast('验证码已发送');
+        }
+        codeInput.focus();
+        if (data && data.debugCode && !codeInput.value) {
+          codeInput.value = String(data.debugCode);
+        }
+      } catch (err) {
+        setLoginError((err && err.message) || '验证码发送失败，请稍后重试');
+      } finally {
+        setLoginBusy(false);
+        updateSendCodeButton();
+      }
+    });
+
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const phone = normalizePhoneInput(phoneInput.value);
+      const code = String(codeInput.value || '').replace(/\D/g, '');
+      if (!/^\d{11}$/.test(phone)) {
+        setLoginError('请输入 11 位手机号');
+        phoneInput.focus();
+        return;
+      }
+      if (!code || code.length < 4) {
+        setLoginError('请输入验证码');
+        codeInput.focus();
+        return;
+      }
+      const api = authApi();
+      if (!api?.verifyCode) {
+        setLoginError('登录服务未就绪，请刷新重试');
+        return;
+      }
+      setLoginBusy(true);
+      setLoginError('');
+      try {
+        const data = await api.verifyCode(phone, code);
+        authGatePassed = true;
+        showToast('登录成功');
+        closeLoginDialog({ ok: true, user: data && data.user });
+      } catch (err) {
+        setLoginError((err && err.message) || '验证码错误或已过期，请重试');
+        setLoginBusy(false);
+        codeInput.focus();
+      }
+    });
+
+    // 强制：拦截 Esc / 点遮罩关闭
+    dialog.addEventListener('cancel', (ev) => {
+      if (required) {
+        ev.preventDefault();
+        nudgeMustLogin(dialog);
+      }
+    });
+    // 点登录框外（遮罩 / 空白区）：强制提示必须先登录，不关闭
+    dialog.addEventListener('click', (ev) => {
+      if (!required) return;
+      const card = dialog.querySelector('.login-card');
+      // 全屏透明 dialog：点在 card 外；或点到 dialog 本体 / 挂在 dialog 上的 toast
+      const clickedOutsideCard = !card || !card.contains(ev.target);
+      if (clickedOutsideCard) {
+        // 点 toast 本身不重复 nudge 动画过猛，但仍刷新文案
+        ev.preventDefault();
+        nudgeMustLogin(dialog);
+      }
+    });
+
+    try {
+      if (typeof dialog.showModal === 'function') dialog.showModal();
+      else dialog.setAttribute('open', '');
+    } catch (_) {
+      dialog.setAttribute('open', '');
+    }
+    window.setTimeout(() => phoneInput && phoneInput.focus(), 60);
+
+    return new Promise((resolve) => {
+      loginDialogResolver = resolve;
+    });
+  }
+
+  async function runAuthBootGate() {
+    if (authBootStarted) return;
+    authBootStarted = true;
+    try { document.body.classList.add('auth-checking'); } catch (_) {}
+    await whenSplashDone();
+    const api = authApi();
+    if (!(api && api.getToken && api.getToken())) setAuthLock(true);
+    try {
+      if (api?.checkSession) {
+        const session = await api.checkSession();
+        if (session?.isLoggedIn) {
+          authGatePassed = true;
+          try { document.body.classList.remove('auth-checking'); } catch (_) {}
+          setAuthLock(false);
+          await hydrateLearningStateFromBackend();
+          resumeLastStay();
+          rememberLastStay();
+          return;
+        }
+      }
+    } catch (_) { /* fall through to login */ }
+
+    try { document.body.classList.remove('auth-checking'); } catch (_) {}
+    setAuthLock(true);
+    await openLoginDialog({ required: true });
+    await hydrateLearningStateFromBackend();
+    resumeLastStay();
+    rememberLastStay();
+  }
+
+  // 暴露给控制台/测试
+  window.openLoginDialog = openLoginDialog;
+  window.runAuthBootGate = runAuthBootGate;
+
 
   function updateNetworkStatus(restored = false) {
     if (!networkStatus) return;
@@ -1393,7 +2360,7 @@ if (typeof document !== 'undefined') {
   function registerServiceWorker() {
     if (!('serviceWorker' in navigator) || !canRegisterServiceWorker(location.protocol)) return;
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=46').then((registration) => {
+      navigator.serviceWorker.register('./sw.js?v=58').then((registration) => {
         serviceWorkerRegistration = registration;
         // 每次打开应用都主动检查一次热更新（浏览器原生检查有 24h 间隔，不够用）
         registration.update().catch(() => {});
@@ -1457,7 +2424,8 @@ if (typeof document !== 'undefined') {
     const activeWorldId = normalizeMapWorldId(state.preferences.mapWorld);
     const worldArt = {
       ocean: 'assets/islands-v1/runtime/island-001.webp',
-      desert: `assets/egypt-map/cutouts/buildings/v6-sand-blend/${DESERT_LANDMARK_IMAGES[0]}`,
+      // 专用 4:3 沙漠世界卡面（与海岛缩略图同级软插画），勿用地标抠图顶替
+      desert: 'assets/egypt-map/covers/desert-world-cover-v1.webp',
     };
     // 每个世界的适龄段与一句话卖点：帮家长 1 秒判断该选哪张图
     const worldMeta = {
@@ -1558,6 +2526,11 @@ if (typeof document !== 'undefined') {
 
   function openReleaseUpdateDialog(updateInfo) {
     if (!updateInfo) return;
+    // 启动页未结束时绝不盖在 splash 上（含动画离场）
+    if (document.getElementById('app-splash') || document.body.classList.contains('splash-lock')) {
+      whenSplashDone().then(() => openReleaseUpdateDialog(updateInfo));
+      return;
+    }
     if (document.querySelector('dialog[open]')) {
       setTimeout(() => openReleaseUpdateDialog(updateInfo), 1200);
       return;
@@ -1655,71 +2628,7 @@ if (typeof document !== 'undefined') {
     return { completed: '已完成', current: '学习中', locked: '待解锁', premium: '会员' }[status];
   }
 
-  /** 航程胶囊 HUD：关卡徽章 + 珍珠航线 + 航程数字（与 resource-chip 同族） */
-  function renderCompactJourney(completedCount, unlockedThrough, totalLevels) {
-    var currentLevel = Math.min(Math.max(unlockedThrough, 1), totalLevels);
-    var allCompleted = completedCount >= totalLevels;
-    var pct = Math.min(completedCount / totalLevels, 1);
-    var pctPct = Math.round(pct * 100);
-
-    var nextMilestone = 0;
-    var msCheck = [1, 2, 3, 4, 5].map(function (step) {
-      return Math.round((totalLevels / 5) * step);
-    });
-    for (var mi = 0; mi < msCheck.length; mi++) {
-      if (completedCount < msCheck[mi]) { nextMilestone = msCheck[mi]; break; }
-    }
-
-    var badgeLabel = allCompleted ? '✓' : String(currentLevel);
-    var badgeClass = allCompleted ? 'j-badge j-badge--done' : 'j-badge';
-
-    var pearlsHtml = '';
-    for (var mj = 0; mj < msCheck.length; mj++) {
-      var mVal = msCheck[mj];
-      var state = 'pending';
-      if (allCompleted || completedCount >= mVal) state = 'done';
-      else if (nextMilestone === mVal) state = 'active';
-      pearlsHtml += '<span class="j-pearl j-pearl--' + state + ' j-pearl--' + mVal + '" style="left:' + ((mVal / totalLevels) * 100) + '%" data-stage="' + mVal + '">'
-        + '<span class="j-pearl-dot" aria-hidden="true"></span>'
-        + '<span class="j-pearl-label">' + mVal + '</span>'
-        + '</span>';
-    }
-
-    var nextHtml;
-    if (allCompleted) {
-      nextHtml = '<span class="j-next j-next--done">'
-        + '<svg class="j-next-star" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.5l2.7 5.5 6.1.9-4.4 4.3 1 6.1L12 16.4 6.6 19.3l1-6.1L3.2 8.9l6.1-.9L12 2.5z"/></svg>'
-        + '群岛通关</span>';
-    } else {
-      nextHtml = '<span class="j-next">下一阶段 · 第' + nextMilestone + '关</span>';
-    }
-
-    var ariaLabel = allCompleted
-      ? '已完成' + totalLevels + '/' + totalLevels + '，群岛通关'
-      : '已完成' + completedCount + '/' + totalLevels + '，当前第' + currentLevel + '关，下一阶段第' + nextMilestone + '关';
-
-    return '<div class="journey-compact" role="group" aria-label="' + ariaLabel + '">'
-      + '<div class="j-capsule">'
-      +   '<div class="' + badgeClass + '" style="--j-pct:' + pctPct + '" aria-hidden="true">'
-      +     '<span class="j-badge-ring"></span>'
-      +     '<span class="j-badge-core"><span class="j-badge-num">' + badgeLabel + '</span></span>'
-      +   '</div>'
-      +   '<div class="j-main">'
-      +     '<div class="j-top">'
-      +       '<span class="j-label">航程</span>'
-      +       '<span class="j-count"><strong>' + completedCount + '</strong><span class="j-slash">/' + totalLevels + '</span></span>'
-      +       '<span class="j-dot-sep" aria-hidden="true"></span>'
-      +       nextHtml
-      +     '</div>'
-      +     '<div class="j-pearls" role="progressbar" aria-valuenow="' + completedCount + '" aria-valuemin="0" aria-valuemax="' + totalLevels + '">'
-      +       '<span class="j-pearls-rail" aria-hidden="true"></span>'
-      +       '<span class="j-pearls-fill" style="width:' + pctPct + '%" aria-hidden="true"></span>'
-      +       pearlsHtml
-      +     '</div>'
-      +   '</div>'
-      + '</div>'
-      + '</div>';
-  }
+  /** 航程胶囊 HUD 已下线（产品确认顶栏不再展示） */
 
   function activeWorldLevels() {
     return levelsForMapWorld(state.preferences.mapWorld);
@@ -1861,6 +2770,270 @@ if (typeof document !== 'undefined') {
     return new URL(path, document.baseURI).href;
   }
 
+
+  let mapJumpDialog = null;
+
+  function closeMapJumpDialog() {
+    if (mapJumpDialog && mapJumpDialog.open) {
+      try { mapJumpDialog.close(); } catch (_) {}
+    }
+  }
+
+  /**
+     * 跳关：左右布局 — 左路线段(10段/200关) · 右关卡网格
+     * 仅移动地图/定位，不写通关进度。无数字输入跳关。
+     * options: { levels, currentLevelId, unlockedThrough, onDepart, trigger }
+     */
+    function openMapJumpDialog(options = {}) {
+      const worldLevels = Array.isArray(options.levels) && options.levels.length
+        ? options.levels
+        : (typeof levels !== 'undefined' ? levels : []);
+      // 以 DISPLAY_LEVEL_COUNT(200) 为下限：即使当前关卡数据更少，也保证 200 段可选
+      const dataMax = worldLevels.length
+        ? Math.max(...worldLevels.map((l) => Number(l.id) || 0))
+        : 0;
+      const total = Math.max(DISPLAY_LEVEL_COUNT, dataMax, 1);
+      const currentLevelId = Number(options.currentLevelId) || 1;
+      const unlockedThrough = Number(options.unlockedThrough) || 0;
+      const onDepart = typeof options.onDepart === 'function' ? options.onDepart : null;
+      const trigger = options.trigger || null;
+
+      if (mapJumpDialog && mapJumpDialog.open) {
+        mapJumpDialog.close();
+      }
+
+      const segments = buildMapJumpSegments(total, MAP_JUMP_SEGMENT_SIZE);
+      let activeSegment = segmentContainingLevel(currentLevelId, segments) || segments[0];
+      let selectedLevelId = currentLevelId;
+
+      // 保证每段都能点到号：缺数据时用占位关补齐 id
+      const levelsById = new Map(worldLevels.map((lv) => [Number(lv.id), lv]));
+      function levelsForSegment(seg) {
+        const out = [];
+        for (let id = seg.start; id <= seg.end; id += 1) {
+          const existing = levelsById.get(id);
+          out.push(existing || { id, title: '', word: '' });
+        }
+        return out;
+      }
+
+      const dialog = document.createElement('dialog');
+      dialog.className = 'map-switch-dialog jump-dialog';
+      dialog.setAttribute('aria-labelledby', 'jump-dialog-title');
+      dialog.innerHTML = `
+        <form method="dialog" class="map-switch-card jump-card access-card cream-panel" data-jump-card>
+          <button class="access-dialog-close" type="submit" value="cancel" aria-label="关闭" data-jump-close>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+          <header class="jump-header">
+            <p class="paywall-eyebrow">${MAP_JUMP_COPY.eyebrow}</p>
+            <h2 id="jump-dialog-title">${MAP_JUMP_COPY.title}</h2>
+            <p class="jump-sub" data-jump-sub>共 ${total} 关 · 左边选段，右边点关，再出发</p>
+            <p class="jump-current" data-jump-current></p>
+          </header>
+
+          <div class="jump-body" data-jump-body>
+            <aside class="jump-rail" data-jump-rail aria-label="路线段">
+              <p class="jump-section-label">${MAP_JUMP_COPY.segmentsLabel}</p>
+              <div class="jump-segments" data-jump-segments role="listbox" aria-label="路线段列表"></div>
+            </aside>
+
+            <section class="jump-main" data-jump-main>
+              <p class="jump-section-label" data-jump-levels-label></p>
+              <div class="jump-levels" data-jump-levels role="listbox" aria-label="关卡列表"></div>
+            </section>
+          </div>
+
+          <div class="jump-cta-row">
+            <button type="button" class="access-primary-button jump-depart-btn" data-jump-depart disabled>
+              ${MAP_JUMP_COPY.depart}
+            </button>
+          </div>
+        </form>
+      `;
+
+      document.body.appendChild(dialog);
+      mapJumpDialog = dialog;
+
+      const segmentsEl = dialog.querySelector('[data-jump-segments]');
+      const levelsEl = dialog.querySelector('[data-jump-levels]');
+      const levelsLabelEl = dialog.querySelector('[data-jump-levels-label]');
+      const currentEl = dialog.querySelector('[data-jump-current]');
+      const departBtn = dialog.querySelector('[data-jump-depart]');
+      const subEl = dialog.querySelector('[data-jump-sub]');
+
+      function statusText(st) {
+        if (st === 'completed') return '已通关';
+        if (st === 'available' || st === 'current') return '可前往';
+        if (st === 'premium') return '会员';
+        return '待解锁';
+      }
+
+      function renderCurrentPill() {
+        const lv = levelsById.get(currentLevelId);
+        const title = lv && lv.title ? ` · ${lv.title}` : '';
+        if (currentEl) currentEl.textContent = `当前：第 ${currentLevelId} 关${title}`;
+      }
+
+      function updateDepartCta() {
+        if (!departBtn) return;
+        const id = Number(selectedLevelId) || 0;
+        departBtn.disabled = !id;
+        if (!id) {
+          departBtn.textContent = MAP_JUMP_COPY.depart;
+          return;
+        }
+        departBtn.textContent = id === currentLevelId
+          ? MAP_JUMP_COPY.arrived
+          : `${MAP_JUMP_COPY.depart} ${id}`;
+      }
+
+      function renderSegments() {
+        if (!segmentsEl) return;
+        segmentsEl.innerHTML = segments.map((seg) => {
+          const isActive = activeSegment && seg.id === activeSegment.id;
+          const containsCurrent = currentLevelId >= seg.start && currentLevelId <= seg.end;
+          // 右侧文案：当前进度所在段标「进度」，避免与 is-active 双高亮混淆
+          const sideLabel = containsCurrent ? MAP_JUMP_COPY.current : `${seg.end - seg.start + 1} 关`;
+          return `
+            <button
+              type="button"
+              class="jump-segment-btn${isActive ? ' is-active' : ''}${containsCurrent ? ' is-current-seg' : ''}"
+              data-jump-segment="${seg.id}"
+              role="option"
+              aria-selected="${isActive ? 'true' : 'false'}"
+              aria-current="${containsCurrent ? 'true' : 'false'}"
+            >
+              <strong>${seg.start}–${seg.end}</strong>
+              <small>${sideLabel}</small>
+            </button>
+          `;
+        }).join('');
+        const activeBtn = segmentsEl.querySelector('.jump-segment-btn.is-active');
+        if (activeBtn && typeof activeBtn.scrollIntoView === 'function') {
+          try { activeBtn.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' }); } catch (_) {}
+        }
+      }
+
+
+      function jumpStatus(id) {
+        // 跳关展示用：跟 levelStatus 一致；无则按 unlockedThrough 退化
+        if (typeof levelStatus === 'function') return levelStatus(id);
+        if (id === currentLevelId) return 'current';
+        if (typeof FREE_LEVEL_COUNT === 'number' && id > FREE_LEVEL_COUNT) return 'premium';
+        if (id <= unlockedThrough) return 'current';
+        return 'locked';
+      }
+
+      function renderLevels(seg) {
+        if (!levelsEl || !seg) return;
+        if (levelsLabelEl) {
+          levelsLabelEl.textContent = `${seg.start}–${seg.end} 关`;
+        }
+        const list = levelsForSegment(seg);
+        levelsEl.innerHTML = list.map((lv) => {
+          const st = jumpStatus(lv.id);
+          const isSel = Number(selectedLevelId) === Number(lv.id);
+          const isCur = Number(lv.id) === currentLevelId;
+          return `
+            <button
+              type="button"
+              class="jump-level-btn status-${st}${isSel ? ' is-selected' : ''}${isCur ? ' is-current' : ''}"
+              data-jump-level="${lv.id}"
+              role="option"
+              aria-selected="${isSel ? 'true' : 'false'}"
+            >
+              <span class="jump-level-num">${lv.id}</span>
+              <span class="jump-level-title">${lv.title || ''}</span>
+              <span class="jump-level-meta">${isCur ? MAP_JUMP_COPY.current : statusText(st)}</span>
+            </button>
+          `;
+        }).join('');
+        const selectedBtn = levelsEl.querySelector('.jump-level-btn.is-selected');
+        if (selectedBtn && typeof selectedBtn.scrollIntoView === 'function') {
+          try { selectedBtn.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (_) {}
+        }
+      }
+
+      function selectLevel(id) {
+        const n = Number(id);
+        if (!Number.isFinite(n) || n < 1 || n > total) return false;
+        selectedLevelId = n;
+        const seg = segmentContainingLevel(n, segments);
+        if (seg) activeSegment = seg;
+        renderSegments();
+        renderLevels(activeSegment);
+        updateDepartCta();
+        return true;
+      }
+
+      function departSelected() {
+        const id = Number(selectedLevelId);
+        if (!id) return;
+        closeMapJumpDialog();
+        if (onDepart) onDepart(id);
+        else showToast(`已定位到第 ${id} 关`);
+      }
+
+      renderCurrentPill();
+      selectLevel(currentLevelId);
+      if (subEl) subEl.textContent = `共 ${total} 关 · 左边选段，右边点关，再出发`;
+
+      dialog.addEventListener('click', (ev) => {
+        const closeBtn = ev.target.closest('[data-jump-close]');
+        if (closeBtn) {
+          closeMapJumpDialog();
+          return;
+        }
+        const segBtn = ev.target.closest('[data-jump-segment]');
+        if (segBtn) {
+          const seg = segments.find((item) => item.id === segBtn.dataset.jumpSegment);
+          if (seg) {
+            activeSegment = seg;
+            // 切段时默认选中该段第一关（若当前选中已在该段则保留）
+            if (selectedLevelId < seg.start || selectedLevelId > seg.end) {
+              selectedLevelId = seg.start;
+            }
+            renderSegments();
+            renderLevels(activeSegment);
+            updateDepartCta();
+          }
+          return;
+        }
+        const levelBtn = ev.target.closest('[data-jump-level]');
+        if (levelBtn) {
+          selectLevel(Number(levelBtn.dataset.jumpLevel));
+          return;
+        }
+        if (ev.target.closest('[data-jump-depart]')) {
+          departSelected();
+        }
+      });
+
+      dialog.addEventListener('cancel', () => {
+        // 允许 Esc 关闭（跳关非强制）
+      });
+
+      dialog.addEventListener('close', () => {
+        const returnTarget = dialog.__returnFocus;
+        if (returnTarget && returnTarget.isConnected) {
+          try { returnTarget.focus(); } catch (_) {}
+        }
+        if (dialog.parentNode) dialog.parentNode.removeChild(dialog);
+        if (mapJumpDialog === dialog) mapJumpDialog = null;
+      });
+
+      dialog.__returnFocus = trigger && trigger.focus ? trigger : document.activeElement;
+      dialog.showModal();
+      requestAnimationFrame(() => {
+        const focusEl = dialog.querySelector('.jump-level-btn.is-selected')
+          || dialog.querySelector('.jump-segment-btn.is-active')
+          || dialog.querySelector('[data-jump-depart]')
+          || dialog.querySelector('[data-jump-close]');
+        if (focusEl) focusEl.focus();
+      });
+    }
+
   function renderMap(initialMessage = '') {
     const completed = state.progress.completed.length;
     const activeWorldId = normalizeMapWorldId(state.preferences.mapWorld);
@@ -1894,7 +3067,7 @@ if (typeof document !== 'undefined') {
           </button>
           <span class="level-name">
             <span class="level-name-copy"><strong>${level.title}</strong><small>${level.zhTitle}</small></span>
-            <button class="word-audio-button" type="button" data-speak-word="${level.title}" aria-label="播放 ${level.title} 发音"${wordHasLocalAudio(level.title) ? '' : ' disabled'}>${icons.wordAudio}</button>
+            <button class="word-audio-button" type="button" data-speak-word="${level.title}" aria-label="播放 ${level.title} 发音"${wordCanPronounce(level.title) ? '' : ' disabled'}>${icons.wordAudio}</button>
           </span>
           <span class="level-state-text ${status}" aria-label="${statusText(status)}">
             ${status === 'completed' ? icons.stateCompleted : status === 'current' ? icons.stateCurrent : icons.stateLocked}
@@ -1932,8 +3105,6 @@ if (typeof document !== 'undefined') {
             </div>
           </div>
 
-          ${renderCompactJourney(completed, state.progress.unlockedThrough, DISPLAY_LEVEL_COUNT)}
-
           <div class="resource-strip" aria-label="冒险资源">
             <div class="resource-chip">
               <span class="resource-icon star" aria-hidden="true"><img class="resource-glyph" src="assets/icons/resource-star.webp?v=20260714-v1" alt="" draggable="false"></span>
@@ -1960,9 +3131,14 @@ if (typeof document !== 'undefined') {
               <img src="assets/ocean/seagull-fly.webp?v=20260720-libtv-flap-v1" alt="" draggable="false">
               <img src="assets/ocean/seagull-fly.webp?v=20260720-libtv-flap-v1" alt="" draggable="false">
             </div>
-            <button class="map-locate-btn" type="button" data-locate-progress data-current-level="${currentLevel.id}" aria-label="定位到第 ${currentLevel.id} 关" title="定位到当前关卡">
-              ${icons.locate}
-            </button>
+            <div class="map-fab-cluster" role="group" aria-label="地图定位与跳关">
+              <button class="map-jump-btn" type="button" data-map-jump aria-label="跳关，仅移动地图到某一关" title="跳关（仅移动地图）">
+                ${icons.jump}
+              </button>
+              <button class="map-locate-btn" type="button" data-locate-progress data-current-level="${currentLevel.id}" aria-label="回到第 ${currentLevel.id} 关最新进度" title="回到当前最新进度">
+                ${icons.locate}
+              </button>
+            </div>
             <div class="route-scroll" data-route-scroll tabindex="0" aria-label="${activeWorld.routeLabel}，左右滑动浏览">
               <div class="route-canvas">
                 <div class="boat-dock" aria-hidden="true">
@@ -2081,12 +3257,43 @@ if (typeof document !== 'undefined') {
     let camelFacing = 1;
     let camelTurnTimer = 0;
     let feedbackTimer;
-    const locateProgress = (behavior = 'smooth') => {
-      const left = Math.max(0, currentStop.offsetLeft - (routeScroll.clientWidth - currentStop.offsetWidth) / 2);
+    const locateToStop = (stop, behavior = 'smooth') => {
+      if (!stop || !routeScroll) return false;
+      const left = Math.max(0, stop.offsetLeft - (routeScroll.clientWidth - stop.offsetWidth) / 2);
       const previousScrollBehavior = routeScroll.style.scrollBehavior;
       if (behavior === 'auto') routeScroll.style.scrollBehavior = 'auto';
       routeScroll.scrollTo({ left, behavior });
       if (behavior === 'auto') routeScroll.style.scrollBehavior = previousScrollBehavior;
+      return true;
+    };
+    const locateProgress = (behavior = 'smooth') => locateToStop(currentStop, behavior);
+
+    /** 跳关：直接吸附到目标关，不跨岛连飞（禁跨段飞） */
+    const locateToLevelId = (levelId, behavior = 'auto') => {
+      const stop = main.querySelector(`[data-stop="${Number(levelId)}"]`);
+      if (!stop) {
+        showToast(`找不到第 ${levelId} 关`);
+        return false;
+      }
+      // 打断进行中的航行，直接落点
+      if (typeof interruptBoatSail === 'function') {
+        try { interruptBoatSail(); } catch (_) {}
+      }
+      boatHomeStop = stop;
+      centeredStop = stop;
+      lastFeedbackStop = stop;
+      stops.forEach((node) => node.classList.toggle('is-centered', node === stop));
+      locateToStop(stop, behavior);
+      setBoatX(0);
+      setBoatSailing(false);
+      if (typeof snapBoatToHome === 'function') {
+        try { snapBoatToHome(); } catch (_) {}
+      }
+      const word = stop.dataset.word || '';
+      showMapMessage(Number(levelId) === currentLevel.id
+        ? `已回到第 ${levelId} 关${word ? ' · ' + word : ''}`
+        : `已到达第 ${levelId} 关${word ? ' · ' + word : ''}`);
+      return true;
     };
 
     const armIslandFeedback = () => {
@@ -2263,25 +3470,32 @@ if (typeof document !== 'undefined') {
       return stops[departIndex] || boatHomeStop;
     };
 
-    const freezeBoatHomeAtCurrentX = () => {
-      const homeWidth = lastFeedbackStop?.offsetWidth || centeredStop?.offsetWidth || 1;
-      boatHomeStop = {
-        offsetLeft: routeScroll.scrollLeft + routeScroll.clientWidth / 2 + boatX - homeWidth / 2,
-        offsetWidth: homeWidth,
-      };
-      boatHomeFrozen = true;
+    // 禁止把船“冻”在两关中间的假 home：任何中断都只能落回真实关卡节点。
+    const hardCancelBoatMotion = () => {
+      clearTimeout(boatHoldTimer);
+      boatHoldTimer = 0;
+      stopPaddleSfx();
+      if (boatSailFrame) {
+        cancelAnimationFrame(boatSailFrame);
+        boatSailFrame = 0;
+      }
+      boatPhase = 'idle';
+      boatHomeFrozen = false;
+      setBoatSailing(false);
     };
 
+    /** 跳关/定位：立刻停航，由调用方把船吸附到真实关卡，绝不半路停 */
     const interruptBoatSail = () => {
       if (boatPhase === 'idle') return;
-      freezeBoatHomeAtCurrentX();
-      cancelBoatSail();
+      hardCancelBoatMotion();
     };
 
     const finishBoatAtCenter = () => {
       boatPhase = 'idle';
       boatHomeFrozen = false;
-      boatHomeStop = lastFeedbackStop;
+      // 终点硬锁：永远停在当前停留关（居中关）前面，而不是半路坐标
+      boatHomeStop = centeredStop || lastFeedbackStop;
+      lastFeedbackStop = boatHomeStop;
       setBoatX(0);
       // Snap to idle pose immediately; pause the sailing webp at its first
       // frame so no rowing stroke is held in place after docking.
@@ -2302,8 +3516,9 @@ if (typeof document !== 'undefined') {
       startPaddleSfx();
 
       const startedAt = performance.now();
+      const sailMs = BOAT_SAIL_MS;
       const tick = (now) => {
-        const t = Math.min(1, (now - startedAt) / BOAT_SAIL_MS);
+        const t = Math.min(1, (now - startedAt) / sailMs);
         // Keep docking and the rowing pose in sync; ease-out made the boat look
         // parked under the island while the kids kept rowing.
         const eased = t;
@@ -2320,14 +3535,23 @@ if (typeof document !== 'undefined') {
 
     // Island switches first; after skipped stops, the boat only rows the
     // adjacent segment into the new center.
-    const scheduleBoatCrossing = (direction) => {
-      cancelBoatSail();
+    // fromCurrent=true：滑动改终点时从当前像素位续航，禁止 snap 到假 home（会卡两关中间）
+    const scheduleBoatCrossing = (direction, { fromCurrent = false } = {}) => {
+      clearTimeout(boatHoldTimer);
+      boatHoldTimer = 0;
+      stopPaddleSfx();
+      if (boatSailFrame) {
+        cancelAnimationFrame(boatSailFrame);
+        boatSailFrame = 0;
+      }
       boatPhase = 'holding';
-      setBoatSailing(false);
-      snapBoatToHome();
       boatHomeFrozen = false;
+      if (!fromCurrent) {
+        setBoatSailing(false);
+        snapBoatToHome();
+      }
       setCamelFacing(direction);
-      boatHoldTimer = setTimeout(startBoatSailToCenter, BOAT_HOLD_MS);
+      boatHoldTimer = setTimeout(startBoatSailToCenter, fromCurrent ? 0 : BOAT_HOLD_MS);
     };
 
     const updateCenteredStop = () => {
@@ -2342,7 +3566,8 @@ if (typeof document !== 'undefined') {
       centeredStop.classList.remove('is-centered');
       nextStop.classList.add('is-centered');
       centeredStop = nextStop;
-      if (boatPhase !== 'sailing') {
+      // 航行中不改 home（由 confirm 续航重定向）；idle/holding 才预挂邻关出发位
+      if (boatPhase === 'idle') {
         boatHomeStop = getBoatDepartureStop(centeredStop, travelDirection);
         boatHomeFrozen = false;
       }
@@ -2352,27 +3577,37 @@ if (typeof document !== 'undefined') {
       if (!feedbackArmed) return;
       feedbackArmed = false;
       if (centeredStop === lastFeedbackStop) {
-        if (boatPhase === 'idle' && boatHomeStop === lastFeedbackStop) snapBoatToHome();
+        // 仍在原关：若误处半路，立刻回正到关前（永不卡中间）
+        if (boatPhase === 'idle') {
+          boatHomeStop = lastFeedbackStop;
+          boatHomeFrozen = false;
+          snapBoatToHome();
+          if (Math.abs(boatX) > 2) setBoatX(0);
+        } else if (boatPhase === 'sailing' || boatPhase === 'holding') {
+          // 继续驶向当前居中关，不中断
+          if (boatPhase === 'holding' && Math.abs(boatX) < 1) finishBoatAtCenter();
+        }
         return;
       }
 
-      // Stay at previous island (or freeze mid-crossing position) until the fixed hold ends.
-      if (boatPhase === 'sailing' || boatPhase === 'holding') {
-        freezeBoatHomeAtCurrentX();
-      } else if (!boatHomeFrozen) {
-        boatHomeStop = lastFeedbackStop;
-      }
-
       const travelDirection = centeredStop.offsetLeft < lastFeedbackStop.offsetLeft ? -1 : 1;
-      boatHomeStop = getBoatDepartureStop(centeredStop, travelDirection);
-      boatHomeFrozen = false;
+      const wasInTransit = boatPhase === 'sailing' || boatPhase === 'holding';
       lastFeedbackStop = centeredStop;
+      boatHomeFrozen = false;
       navigator.vibrate?.(30);
       playIslandSound();
-      scheduleBoatCrossing(travelDirection);
+
+      if (wasInTransit) {
+        // 滑动改终点：从当前位置直接驶向新居中关，绝不冻在半路
+        scheduleBoatCrossing(travelDirection, { fromCurrent: true });
+      } else {
+        // 静止起步：只邻关一程（从邻岛出发驶入中心）
+        boatHomeStop = getBoatDepartureStop(centeredStop, travelDirection);
+        scheduleBoatCrossing(travelDirection, { fromCurrent: false });
+      }
 
       if (!state.preferences.autoPronunciation) return;
-      if (!wordHasLocalAudio(centeredStop.dataset.word)) return;
+      if (!wordCanPronounce(centeredStop.dataset.word)) return;
       pronunciationTimer = setTimeout(() => {
         playWordPronunciation(
           centeredStop.dataset.word,
@@ -2381,12 +3616,41 @@ if (typeof document !== 'undefined') {
       }, 140);
     };
 
+    // 轻点：只武装反馈，不打断航行（点屏不得把船卡在两关中间）
+    // 真正改终点：靠 scroll 落定后的 confirmIslandSwitch
     const handleRouteIntent = () => {
       armIslandFeedback();
-      interruptBoatSail();
     };
-    routeScroll.addEventListener('pointerdown', handleRouteIntent, { passive: true });
-    routeScroll.addEventListener('touchstart', handleRouteIntent, { passive: true });
+    // 拖动阈值：≥10px 才视为“要改道”的意图（与记忆一致）；轻点完全不碰船
+    const BOAT_DRAG_INTERRUPT_PX = 10;
+    let routePointerStart = null;
+    const onRoutePointerDown = (event) => {
+      armIslandFeedback();
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      routePointerStart = {
+        x: event.clientX,
+        y: event.clientY,
+        id: event.pointerId,
+      };
+    };
+    const onRoutePointerMove = (event) => {
+      if (!routePointerStart || event.pointerId !== routePointerStart.id) return;
+      const dx = event.clientX - routePointerStart.x;
+      const dy = event.clientY - routePointerStart.y;
+      if (Math.hypot(dx, dy) < BOAT_DRAG_INTERRUPT_PX) return;
+      // 达到拖动阈值：只武装反馈，仍不冻船；等 scroll 落定重定向
+      routePointerStart = null;
+      armIslandFeedback();
+    };
+    const onRoutePointerEnd = (event) => {
+      if (routePointerStart && event.pointerId === routePointerStart.id) {
+        routePointerStart = null;
+      }
+    };
+    routeScroll.addEventListener('pointerdown', onRoutePointerDown, { passive: true });
+    routeScroll.addEventListener('pointermove', onRoutePointerMove, { passive: true });
+    routeScroll.addEventListener('pointerup', onRoutePointerEnd, { passive: true });
+    routeScroll.addEventListener('pointercancel', onRoutePointerEnd, { passive: true });
     routeScroll.addEventListener('wheel', handleRouteIntent, { passive: true });
     routeScroll.addEventListener('keydown', handleRouteIntent);
     routeScroll.addEventListener('scroll', () => {
@@ -2395,16 +3659,34 @@ if (typeof document !== 'undefined') {
           scrollFrame = 0;
           updateCenteredStop();
           // Stick to previous island while scrolling / holding; sail uses its own rAF.
-          if (boatPhase !== 'sailing') snapBoatToHome();
+          // 航行中绝不 snap 到假 home（那是卡中间的根因之一）
+          if (boatPhase === 'idle') snapBoatToHome();
         });
       }
       clearTimeout(feedbackTimer);
-      feedbackTimer = setTimeout(confirmIslandSwitch, 120);
+      // 滑动中保持 armed，落定后再确认终点关
+      feedbackArmed = true;
+      feedbackTimer = setTimeout(confirmIslandSwitch, 140);
     }, { passive: true });
 
-    main.querySelector('[data-locate-progress]').addEventListener('click', () => {
-      handleRouteIntent();
-      locateProgress();
+    const locateBtn = main.querySelector('[data-locate-progress]');
+    const jumpBtn = main.querySelector('[data-map-jump]');
+    // 定位钮：硬吸附当前进度关前（可打断航行，但终点必是关卡）
+    locateBtn?.addEventListener('click', () => {
+      locateToLevelId(currentLevel.id, 'smooth');
+    });
+    // 跳关钮：两级选关（每 20 关一段，覆盖 200 关）；仅移动地图，不写通关进度
+    jumpBtn?.addEventListener('click', () => {
+      armIslandFeedback();
+      openMapJumpDialog({
+        levels: worldLevels,
+        currentLevelId: currentLevel.id,
+        unlockedThrough: state.progress.unlockedThrough,
+        trigger: jumpBtn,
+        onDepart: (levelId) => {
+          locateToLevelId(levelId, 'auto');
+        },
+      });
     });
     requestAnimationFrame(() => {
       locateProgress('auto');
@@ -2436,7 +3718,9 @@ if (typeof document !== 'undefined') {
     const lessonOptions = [correctWord, distractors[0] || correctWord];
     const questionSpoken = questionPromptText(level);
     const questionAudioSrc = questionAudioSrcFor(level);
-    const questionHtml = `小朋友，视频里学到的单词，<br>哪一个是 <strong>「${level.zhTitle}」</strong> 的意思？`;
+    const questionHtml = level.worldId === 'desert' || level.itemType === 'expression'
+      ? `小朋友，视频里的英语，<br>哪一句是在说 <strong>「${level.zhTitle}」</strong>？`
+      : `小朋友，视频里学到的单词，<br>哪一个是 <strong>「${level.zhTitle}」</strong> 的意思？`;
     const topicShort = String(level.topic || '').split('·')[0].trim();
 
     const wordAudioSrc = (word) => {
@@ -3233,7 +4517,7 @@ if (typeof document !== 'undefined') {
                 </label>
               </li>
               ${preferenceSwitch('mapMusic', '背景音乐', '小岛地图播放音乐', '已关闭地图音乐')}
-              ${preferenceSwitch('autoPronunciation', '自动读单词', '切换小岛时自动播放', '只在点击喇叭时播放')}
+              ${preferenceSwitch('autoPronunciation', '自动读英文', '切换关卡时自动播放', '只在点击喇叭时播放')}
               ${preferenceSwitch('showChineseHints', '中文辅助', '显示中文提示', '隐藏小岛中文提示')}
             </ul>
 
@@ -3463,11 +4747,16 @@ if (typeof document !== 'undefined') {
   window.addEventListener('online', () => {
     updateNetworkStatus(true);
     checkReleaseUpdate();
-    hydrateLearningStateFromBackend();
+    if (authGatePassed) hydrateLearningStateFromBackend();
   });
   window.addEventListener('baby-island-auth-change', (event) => {
-    if (event.detail?.isLoggedIn) hydrateLearningStateFromBackend();
-    else learningSyncReady = false;
+    if (event.detail?.isLoggedIn) {
+      authGatePassed = true;
+      hydrateLearningStateFromBackend();
+    } else {
+      learningSyncReady = false;
+      authGatePassed = false;
+    }
   });
   window.addEventListener('popstate', render);
   networkStatus?.addEventListener('click', (event) => {
@@ -3479,7 +4768,8 @@ if (typeof document !== 'undefined') {
   updateNetworkStatus(false);
   render();
   checkReleaseUpdate();
-  hydrateLearningStateFromBackend();
+  // 启动页结束后强制鉴权：未登录弹登录框（登录即注册）；已登录再拉云端进度
+  runAuthBootGate();
 
   main.addEventListener('click', function (ev) {
     var prefBtn = ev.target.closest('[data-preference]');
@@ -3524,7 +4814,19 @@ if (typeof document !== 'undefined') {
     var signOutBtn = ev.target.closest('[data-sign-out]');
     if (signOutBtn) {
       ev.preventDefault();
-      showToast('退出登录功能即将上线');
+      var api = authApi();
+      if (!api?.logout) {
+        showToast('退出登录功能暂不可用');
+        return;
+      }
+      api.logout().finally(function () {
+        learningSyncReady = false;
+        authGatePassed = false;
+        showToast('已退出登录');
+        openLoginDialog({ required: true }).then(function () {
+          hydrateLearningStateFromBackend();
+        });
+      });
       return;
     }
     var deleteAccountBtn = ev.target.closest('[data-delete-account]');

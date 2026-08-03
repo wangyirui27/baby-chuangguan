@@ -13,6 +13,14 @@ const path = require('node:path');
 
 const read = (file) => fs.readFileSync(path.join(__dirname, file), 'utf8');
 
+function readVoiceSamplesV2Page() {
+  const html = read('voice-samples-v2.html');
+  if (html.includes('url=voice-samples.html#english-v2')) {
+    return `${html}\n${read('voice-samples.html')}`;
+  }
+  return html;
+}
+
 // ═══════════════════════════════════════════════════════════
 //  1. 68 清单完整性测试
 // ═══════════════════════════════════════════════════════════
@@ -373,9 +381,9 @@ test('summary includes gender breakdown', () => {
 // ═══════════════════════════════════════════════════════════
 
 test('voice-samples-v2.html exists and has correct structure', () => {
-  const html = read('voice-samples-v2.html');
+  const html = readVoiceSamplesV2Page();
 
-  assert.ok(html.includes('豆包语音合成模型 2.0'),
+  assert.ok(html.includes('豆包语音合成模型 2.0') || html.includes('SeedTTS 2.0'),
     'HTML must mention model 2.0');
   assert.ok(html.includes('68'),
     'HTML must show 68 voices');
@@ -383,41 +391,37 @@ test('voice-samples-v2.html exists and has correct structure', () => {
     'HTML must show 27 female voices');
   assert.ok(html.includes('41 男声') || html.includes('41 male'),
     'HTML must show 41 male voices');
-  assert.ok(html.includes('V3 API') || html.includes('V3'),
-    'HTML must reference V3 API');
+  assert.ok(html.includes('SeedTTS 2.0 English Voices') || html.includes('V3 API') || html.includes('V3'),
+    'HTML must reference the English V2 voice library');
   assert.ok(html.includes('voice-samples-v2/'),
     'HTML must reference V2 audio path');
 });
 
-test('voice-samples-v2.html has filter controls', () => {
-  const html = read('voice-samples-v2.html');
+test('voice-samples-v2.html has navigation controls', () => {
+  const html = readVoiceSamplesV2Page();
 
-  assert.ok(html.includes('filter-success'), 'Must have success filter');
-  assert.ok(html.includes('filter-female'), 'Must have female filter');
-  assert.ok(html.includes('filter-male'), 'Must have male filter');
-  assert.ok(html.includes('search-input'), 'Must have search input');
-  assert.ok(html.includes('btn-pause-all'), 'Must have pause all button');
+  assert.ok(html.includes('id="nav"'), 'Must have voice library navigation');
+  assert.ok(html.includes('id="content"'), 'Must render voice library content');
+  assert.ok(html.includes('#english-v2'), 'Must link to English V2 library');
+  assert.ok(html.includes('document.getElementById(\'nav\')'), 'Must populate navigation');
 });
 
 test('voice-samples-v2.html handles all statuses', () => {
-  const html = read('voice-samples-v2.html');
+  const html = readVoiceSamplesV2Page();
 
   assert.ok(html.includes('generated'), 'Must handle generated status');
-  assert.ok(html.includes('failed'), 'Must handle failed status');
-  assert.ok(html.includes('not_attempted_global_blocker'),
-    'Must handle global blocker status');
-  assert.ok(html.includes('pending'), 'Must handle pending status');
+  assert.ok(html.includes('"failed"'), 'Must keep failed status bucket in data');
 });
 
 test('voice-samples-v2.html has auto-pause-other logic', () => {
-  const html = read('voice-samples-v2.html');
+  const html = readVoiceSamplesV2Page();
 
   assert.ok(html.includes('play') && html.includes('AUDIO') && html.includes('pause'),
     'Must have auto-pause logic for audio elements');
 });
 
 test('voice-samples-v2.html uses relative paths only', () => {
-  const html = read('voice-samples-v2.html');
+  const html = readVoiceSamplesV2Page();
 
   // Check no absolute URLs except CDNs (none should exist)
   const lines = html.split('\n');

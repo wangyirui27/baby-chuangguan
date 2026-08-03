@@ -19,7 +19,7 @@ const {
   SESSION_EXPIRED,
   USER_NOT_FOUND,
 } = require('../errors');
-const { isVirtualLoginCode, getVirtualLoginCode } = require('../virtual-login');
+const { isVirtualLoginCode } = require('../virtual-login');
 
 // ─── Rate-limit constants (match frozen contract) ───────────────
 const PHONE_COOLDOWN_MS = 60_000;   // 60 s — cooldown fixture: 42s wait after 18s elapsed
@@ -193,7 +193,7 @@ class AuthService {
 
     // ── Virtual login: any valid phone + fixed code (default 1234) ──
     if (isVirtualLoginCode(code)) {
-      console.log(`[auth] virtual login phone=*** code=${getVirtualLoginCode()}`);
+      console.log('[auth] virtual login phone=***');
       return this._issueSessionForPhone(normalized, phoneHash);
     }
 

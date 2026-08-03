@@ -147,6 +147,33 @@ input:focus-visible + .option-copy {
   transform: translateY(0);
   backdrop-filter: blur(0.65rem);
   animation: toast-pop 0.22s ease-out both;
+  pointer-events: none;
+}
+
+/* 挂在 modal dialog 内：进入 top layer，不被遮罩挡住
+   居中不用 translateX(-50%)——会被 toast-pop 的 transform 动画冲掉导致偏右 */
+.app-toast.app-toast-in-dialog {
+  position: fixed;
+  z-index: 10001;
+  left: 0;
+  right: 0;
+  bottom: max(1.4rem, env(safe-area-inset-bottom));
+  top: auto;
+  width: max-content;
+  max-width: min(22rem, calc(100vw - 2rem));
+  margin-inline: auto;
+  transform: none;
+  text-align: center;
+  border-color: rgba(121, 79, 39, 0.45);
+  background: rgba(255, 252, 243, 0.98);
+  box-shadow:
+    0 0.28rem 0 rgba(121, 79, 39, 0.18),
+    0 0.8rem 1.6rem rgba(29, 69, 68, 0.28);
+  animation: toast-pop-center 0.22s ease-out both;
+}
+
+.app-toast.app-toast-in-dialog.is-pop {
+  animation: toast-pop-center 0.22s ease-out both;
 }
 
 .app-toast[hidden] {
@@ -154,6 +181,19 @@ input:focus-visible + .option-copy {
 }
 
 @keyframes toast-pop {
+  from {
+    opacity: 0;
+    transform: translateY(0.45rem) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 居中 toast：只动纵向 + 透明度，不动水平定位 */
+@keyframes toast-pop-center {
   from {
     opacity: 0;
     transform: translateY(0.45rem) scale(0.98);
@@ -346,16 +386,21 @@ h2 {
 
 .map-topbar {
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  grid-template-areas: "brand journey resource";
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "brand resource";
   align-items: center;
   gap: clamp(0.5rem, 1.5vw, 1rem);
   padding: clamp(0.35rem, 0.6vw, 0.6rem) clamp(0.6rem, 1.4vw, 1rem);
 }
 
 .map-topbar .map-brand { grid-area: brand; }
-.map-topbar .journey-compact { grid-area: journey; }
 .map-topbar .resource-strip { grid-area: resource; }
+
+/* 航程胶囊已下线：残留 DOM 不渲染，样式保留空规则避免旧缓存闪一下 */
+.map-topbar .journey-compact,
+.journey-compact {
+  display: none !important;
+}
 
 .map-brand {
   display: flex;
@@ -370,10 +415,9 @@ h2 {
 
 /* 品牌胶囊：标题锁-up + 当前关卡芯片，一格收纳全部头部信息 */
 /* ─── 顶栏胶囊统一语言 ─────────────────────────────
-   品牌卡 / 航程胶囊 / 资源芯片：同高、同圆角、同描边、同材质、同投影。
+   品牌卡 / 资源芯片：同高、同圆角、同描边、同材质、同投影。
    各组件自身只保留布局（display/padding/gap），视觉一律走这里。 */
 .map-brand-card,
-.j-capsule,
 .resource-chip {
   min-height: 3.75rem;
   border: 2px solid rgba(196, 184, 158, 0.55);
@@ -889,13 +933,29 @@ h2 {
   gap: 0.8rem;
 }
 
-.map-locate-btn {
+/* 右下 FAB 组：跳关 | 回最新进度（横排，gap≥1rem） */
+.map-fab-cluster {
   position: absolute;
   z-index: 5;
   top: auto;
   right: clamp(1.25rem, 3vw, 2rem);
   bottom: clamp(1.25rem, 3vw, 2rem);
   left: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  pointer-events: none;
+}
+
+.map-fab-cluster > button {
+  pointer-events: auto;
+}
+
+.map-locate-btn,
+.map-jump-btn {
+  position: relative;
+  z-index: 5;
   display: grid;
   place-items: center;
   width: 3rem;
@@ -910,6 +970,12 @@ h2 {
   box-shadow: 0 0.2rem 0 #dba90e, 0 4px 12px rgba(121, 79, 39, 0.22);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.map-jump-btn {
+  border-color: #5a9e7a;
+  background: #e8f7ef;
+  box-shadow: 0 0.2rem 0 #5a9e7a, 0 4px 12px rgba(121, 79, 39, 0.18);
 }
 
 .map-locate-btn::after {
@@ -929,11 +995,15 @@ h2 {
   pointer-events: none;
 }
 
-.map-locate-btn:hover { transform: translateY(-2px); }
+.map-locate-btn:hover,
+.map-jump-btn:hover { transform: translateY(-2px); }
 .map-locate-btn:active { transform: translateY(2px); box-shadow: 0 0.08rem 0 #dba90e; }
-.map-locate-btn:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
+.map-jump-btn:active { transform: translateY(2px); box-shadow: 0 0.08rem 0 #5a9e7a; }
+.map-locate-btn:focus-visible,
+.map-jump-btn:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
 
-.map-locate-btn svg {
+.map-locate-btn svg,
+.map-jump-btn svg {
   width: 1.65rem;
   height: 1.65rem;
   overflow: visible;
@@ -951,6 +1021,14 @@ h2 {
   fill: var(--focus);
   stroke: #dba90e;
   stroke-width: 2.2;
+}
+
+.map-jump-btn svg path {
+  fill: none;
+  stroke: #3d7a5c;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 /* ─── 通用居中弹窗底座（VIP / 发版更新） ───────────── */
@@ -1127,13 +1205,12 @@ h2 {
 }
 
 .map-world-option--desert .map-world-art img {
-  /* 沙漠地标是透明抠图，垫一层沙漠渐晕让金字塔不飘 */
-  object-fit: contain;
-  padding: 0.4rem;
-  background: radial-gradient(circle at 50% 78%, rgba(244, 190, 92, 0.5) 0%, rgba(244, 190, 92, 0) 62%);
+  /* 与海岛一致：完整 4:3 世界卡面 cover 铺满，不再用透明地标 + 假底 */
+  object-fit: cover;
+  object-position: center 42%;
+  padding: 0;
+  background: linear-gradient(180deg, #fff1d2 0%, #f0d29a 100%);
 }
-
-/* 「玩」角标：正在游玩的世界，缩略图左下角贴一枚小旗 */
 .map-world-playing {
   position: absolute;
   left: 0.35rem;
@@ -1914,16 +1991,137 @@ body:has(.map-switch-dialog[open]) {
 .desert-decor {
   position: absolute;
   z-index: 2;
-  left: var(--decor-x, 82%);
+  left: var(--decor-x, 50%);
   top: var(--decor-y, 74%);
-  width: clamp(3rem, 5.8cqw, 6.5rem);
+  /*
+   * 体量由 --decor-size 主导（石子≈0.25、罐≈0.7、仙人掌簇/棕榈≈1.3–1.7）
+   * 基底故意偏小，再靠 size 拉开 3–4 倍差；旧固定 clamp 导致千篇一律
+   */
+  width: clamp(
+    0.9rem,
+    calc(var(--decor-size, 1) * 9.2%),
+    12rem
+  );
   aspect-ratio: 1;
   pointer-events: none;
-  opacity: 0.9;
+  opacity: 0.96;
   background: var(--decor-image) center bottom / contain no-repeat;
-  transform: translate(-50%, -100%) scale(var(--decor-scale, 0.92));
+  transform: translate(-50%, -100%) scale(var(--decor-scale, 1)) rotate(var(--decor-rot, 0deg));
   transform-origin: 50% 100%;
-  filter: saturate(0.92) contrast(0.96) brightness(1.03) drop-shadow(0 0.42rem 0.28rem rgba(111, 66, 26, 0.18));
+  /* 暖沙投影，避免白光晕贴纸感 */
+  filter:
+    sepia(0.12) saturate(0.86) contrast(1.01) brightness(0.97)
+    drop-shadow(0 0.18rem 0.1rem rgba(120, 78, 32, 0.2));
+}
+
+/* 建筑身后的小道具，略虚略小，压在 island-art 下面 */
+.desert-decor.is-back {
+  z-index: 0;
+  opacity: 0.84;
+  filter:
+    sepia(0.14) saturate(0.8) contrast(0.98) brightness(0.96)
+    drop-shadow(0 0.16rem 0.1rem rgba(111, 66, 26, 0.14));
+}
+
+.desert-decor.is-front {
+  z-index: 2;
+}
+
+/* kind 只做微调，不强制同宽 */
+.desert-decor[data-decor-kind="pebble"] {
+  opacity: 0.93;
+}
+
+.desert-decor[data-decor-kind="plant"] {
+  /* 植物允许更高竖向体量感（背景 contain 已按底对齐） */
+  width: clamp(
+    1.1rem,
+    calc(var(--decor-size, 1) * 10.4%),
+    13rem
+  );
+}
+
+.desert-decor[data-decor-kind="pot"] {
+  width: clamp(
+    1rem,
+    calc(var(--decor-size, 1) * 8.6%),
+    8.5rem
+  );
+}
+
+.desert-decor[data-decor-kind="stone"] {
+  width: clamp(
+    0.95rem,
+    calc(var(--decor-size, 1) * 9%),
+    11rem
+  );
+}
+
+/* v13c：小小脚印 L-R 行走链 + 倾斜 + 变淡（沙上浅痕） */
+.desert-decor[data-decor-kind="footprint"] {
+  width: clamp(
+    3.2rem,
+    calc(var(--decor-size, 1) * 22%),
+    11rem
+  );
+  opacity: 0.42;
+  mix-blend-mode: multiply;
+  filter: saturate(0.88) brightness(1.18) contrast(0.92);
+  transform:
+    translate(-50%, -40%)
+    perspective(480px)
+    rotateX(40deg)
+    rotate(var(--decor-rot, -24deg))
+    scale(var(--decor-scale, 1));
+  transform-origin: 50% 70%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.desert-decor[data-decor-kind="footprint"].is-flip {
+  /* 行走链已内置 L-R，不水平翻转 */
+  transform:
+    translate(-50%, -40%)
+    perspective(480px)
+    rotateX(40deg)
+    rotate(var(--decor-rot, -24deg))
+    scale(var(--decor-scale, 1));
+}
+
+.desert-decor[data-decor-kind="footprint"]::after {
+  display: none;
+}
+
+/* v10：埃及微物 — 小件贴沙，轻阴影 */
+.desert-decor[data-decor-kind="micro"] {
+  width: clamp(
+    0.95rem,
+    calc(var(--decor-size, 1) * 7.6%),
+    6.4rem
+  );
+  opacity: 0.95;
+  transform: translate(-50%, -88%) scale(var(--decor-scale, 1)) rotate(var(--decor-rot, 0deg));
+  z-index: 2;
+}
+
+.desert-decor[data-decor-kind="micro"].is-flip {
+  transform: translate(-50%, -88%) scale(calc(var(--decor-scale, 1) * -1), var(--decor-scale, 1)) rotate(var(--decor-rot, 0deg));
+}
+
+.desert-decor[data-decor-kind="micro"]::after {
+  right: 24%;
+  left: 24%;
+  height: 0.28rem;
+  bottom: 0.02rem;
+  opacity: 0.7;
+}
+
+.desert-decor.is-flip {
+  transform: translate(-50%, -100%) scale(calc(var(--decor-scale, 1) * -1), var(--decor-scale, 1)) rotate(var(--decor-rot, 0deg));
+}
+
+.level-stop[data-map-theme="desert"] .island-art {
+  z-index: 1;
 }
 
 .desert-decor::after {
@@ -1931,13 +2129,13 @@ body:has(.map-switch-dialog[open]) {
   position: absolute;
   display: block;
   z-index: -1;
-  right: 18%;
-  bottom: -0.08rem;
-  left: 18%;
-  height: 0.5rem;
+  right: 22%;
+  bottom: -0.06rem;
+  left: 22%;
+  height: 0.38rem;
   border-radius: 999px;
-  background: radial-gradient(ellipse at center, rgba(132, 82, 34, 0.22), rgba(210, 154, 79, 0.09) 56%, transparent 78%);
-  filter: blur(0.04rem);
+  background: radial-gradient(ellipse at center, rgba(132, 82, 34, 0.18), rgba(210, 154, 79, 0.07) 56%, transparent 78%);
+  filter: blur(0.05rem);
 }
 
 .island-art {
@@ -2128,22 +2326,29 @@ body:has(.map-switch-dialog[open]) {
   top: 54%;
   width: min(48cqw, 40rem);
   aspect-ratio: 1.35;
+  /* 底脚溶进沙地：更长羽化，压住沙垫椭圆贴纸感 */
   -webkit-mask-image: linear-gradient(
     to bottom,
-    #000 0 78%,
-    rgb(0 0 0 / 90%) 87%,
-    rgb(0 0 0 / 48%) 95%,
+    #000 0 62%,
+    rgb(0 0 0 / 94%) 74%,
+    rgb(0 0 0 / 72%) 84%,
+    rgb(0 0 0 / 38%) 92%,
+    rgb(0 0 0 / 12%) 97%,
     transparent 100%
   );
   mask-image: linear-gradient(
     to bottom,
-    #000 0 78%,
-    rgb(0 0 0 / 90%) 87%,
-    rgb(0 0 0 / 48%) 95%,
+    #000 0 62%,
+    rgb(0 0 0 / 94%) 74%,
+    rgb(0 0 0 / 72%) 84%,
+    rgb(0 0 0 / 38%) 92%,
+    rgb(0 0 0 / 12%) 97%,
     transparent 100%
   );
-  filter: sepia(0.08) saturate(0.84) contrast(0.88) brightness(1.06) drop-shadow(0 1.1rem 0.65rem rgba(130, 85, 38, 0.12));
-  opacity: 0.94;
+  /* 轻色温贴沙 + 贴地阴影；白边靠资产 desticker，不用 mix-blend（会把浅色建筑洗成鬼影） */
+  filter: sepia(0.12) saturate(0.86) contrast(1.03) brightness(0.97)
+    drop-shadow(0 0.35rem 0.18rem rgba(120, 78, 32, 0.16));
+  opacity: 1;
   transform: translate(-50%, -51%) scale(1);
 }
 
@@ -5215,8 +5420,8 @@ noscript {
     transform: translateX(-50%);
   }
 
-  /* FAB：dock 右侧空隙，不贴死屏幕右下角 */
-  .map-game-active .map-locate-btn {
+  /* FAB 组：dock 右侧空隙，不贴死屏幕右下角 */
+  .map-game-active .map-fab-cluster {
     z-index: 15;
     top: auto;
     right: max(2rem, calc(env(safe-area-inset-right) + 1.5rem));
@@ -5319,7 +5524,7 @@ noscript {
     );
   }
 
-  .map-game-active .map-locate-btn {
+  .map-game-active .map-fab-cluster {
     bottom: calc(var(--bottom-tabs-height) + max(0.75rem, env(safe-area-inset-bottom)));
   }
 
@@ -5463,7 +5668,6 @@ noscript {
     grid-template-areas: "brand";
   }
 
-  .map-game-active .journey-compact,
   .map-game-active .resource-strip {
     display: none;
   }
@@ -5525,12 +5729,14 @@ noscript {
     height: 1.75rem;
   }
 
-  .map-locate-btn {
+  .map-locate-btn,
+  .map-jump-btn {
     width: 2.75rem;
     height: 2.75rem;
   }
 
-  .map-locate-btn svg {
+  .map-locate-btn svg,
+  .map-jump-btn svg {
     width: 1.25rem;
     height: 1.25rem;
   }
@@ -6465,4 +6671,656 @@ body.level-quiz-active .view {
   .map-world-soon-note {
     font-size: 0.72rem;
   }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   强制登录弹窗 — Animal-Island-UI（奶油卡 / 薄荷辅 / 3D 主按钮）
+   ═══════════════════════════════════════════════════════════ */
+
+body.splash-lock .app-shell,
+body.splash-lock .bottom-tabs,
+body.auth-lock .app-shell,
+body.auth-lock .bottom-tabs {
+  pointer-events: none;
+  user-select: none;
+}
+
+body.auth-lock .bottom-tabs {
+  opacity: 0.55;
+  filter: grayscale(0.15);
+}
+
+/* 全屏透明壳：点 card 外 = 点 dialog，可靠触发「必须先登录」提示 */
+.login-dialog {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+  border: 0;
+  border-radius: 0;
+  color: var(--body);
+  background: transparent;
+  overflow: visible;
+  z-index: 9000;
+}
+
+/* 未打开时必须隐藏（覆盖 UA；打开时用 grid 居中卡） */
+.login-dialog:not([open]) {
+  display: none;
+}
+
+.login-dialog[open] {
+  display: grid;
+  place-items: center;
+}
+
+.login-dialog::backdrop {
+  background: rgba(28, 72, 77, 0.5);
+  backdrop-filter: blur(0.4rem);
+}
+
+.login-dialog.is-required::backdrop {
+  /* 强制门禁：遮罩更实，减少“点穿”错觉 */
+  background: rgba(22, 58, 62, 0.58);
+}
+
+.login-card {
+  position: relative;
+  width: min(100%, 26rem);
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+  display: grid;
+  justify-items: stretch;
+  gap: 0.55rem;
+  box-sizing: border-box;
+  padding: 1.55rem 1.55rem 1.7rem;
+  border: 0.22rem solid rgba(121, 79, 39, 0.62);
+  border-radius: 2rem;
+  background: var(--content); /* rgb(247,243,223) Animal-Island 奶油 */
+  box-shadow:
+    0 0.55rem 0 rgba(121, 79, 39, 0.24),
+    0 1.4rem 3.5rem rgba(29, 69, 68, 0.3);
+  text-align: center;
+  animation: access-dialog-in 0.24s ease-out both;
+}
+
+.login-card.is-nudge {
+  animation: login-card-nudge 0.48s ease-in-out;
+}
+
+@keyframes login-card-nudge {
+  0%, 100% { transform: translateX(0); }
+  18% { transform: translateX(-0.42rem) rotate(-0.4deg); }
+  36% { transform: translateX(0.42rem) rotate(0.4deg); }
+  54% { transform: translateX(-0.28rem); }
+  72% { transform: translateX(0.28rem); }
+}
+
+.login-hero {
+  display: grid;
+  place-items: center;
+  width: 4.25rem;
+  height: 4.25rem;
+  margin: 0 auto 0.15rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.7), transparent 55%),
+    rgba(25, 200, 185, 0.16);
+  box-shadow: inset 0 -0.18rem 0 rgba(121, 79, 39, 0.08);
+}
+
+.login-hero svg {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.login-eyebrow {
+  margin: 0;
+  color: var(--mint);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.login-card h2 {
+  margin: 0.15rem 0 0;
+  color: var(--earth);
+  font-size: clamp(1.55rem, 4vw, 1.9rem);
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.login-sub {
+  margin: 0.2rem 0 0.55rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.login-form {
+  display: grid;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.login-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.login-label {
+  color: var(--earth);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.login-input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.7rem 1rem;
+  border: 0.16rem solid rgba(121, 79, 39, 0.28);
+  border-radius: 999px;
+  color: var(--earth);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 0.1rem 0 rgba(255, 255, 255, 0.85);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.login-input::placeholder {
+  color: rgba(159, 146, 125, 0.85);
+  font-weight: 600;
+}
+
+.login-input:focus {
+  border-color: rgba(25, 200, 185, 0.75);
+  box-shadow:
+    inset 0 0.1rem 0 rgba(255, 255, 255, 0.9),
+    0 0 0 0.22rem rgba(25, 200, 185, 0.2);
+}
+
+.login-code-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.55rem;
+  align-items: end;
+}
+
+.login-send-code {
+  min-height: 3rem;
+  min-width: 7.2rem;
+  padding: 0 1rem;
+  border: 0.16rem solid rgba(17, 168, 155, 0.35);
+  border-radius: 999px;
+  color: #0f7f76;
+  background: linear-gradient(180deg, #e8fbf8 0%, #c9f3ec 100%);
+  box-shadow: 0 0.28rem 0 rgba(17, 168, 155, 0.28);
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+.login-send-code:hover:not(:disabled) {
+  filter: brightness(1.03);
+}
+
+.login-send-code:active:not(:disabled) {
+  transform: translateY(0.12rem);
+  box-shadow: 0 0.14rem 0 rgba(17, 168, 155, 0.28);
+}
+
+.login-send-code:disabled {
+  opacity: 0.62;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.login-error {
+  margin: 0;
+  padding: 0.55rem 0.85rem;
+  border-radius: 0.9rem;
+  color: #a33a3a;
+  background: rgba(224, 90, 90, 0.12);
+  border: 0.12rem solid rgba(224, 90, 90, 0.28);
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.login-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.login-hint strong {
+  color: var(--earth);
+  font-weight: 800;
+}
+
+/* Animal-Island Primary 3D 主按钮：奶油面 + 大地字 + 暖灰底托 */
+.login-submit {
+  min-height: 3.25rem;
+  margin-top: 0.15rem;
+  padding: 0.75rem 1.25rem;
+  border: 0.18rem solid rgba(121, 79, 39, 0.45);
+  border-radius: 999px;
+  color: var(--earth);
+  background: linear-gradient(180deg, #fffcf3 0%, var(--cream) 100%);
+  box-shadow: 0 0.34rem 0 0 var(--button-shadow);
+  font-size: 1.08rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+.login-submit:hover:not(:disabled) {
+  filter: brightness(1.02);
+}
+
+.login-submit:active:not(:disabled) {
+  transform: translateY(0.16rem);
+  box-shadow: 0 0.14rem 0 0 var(--button-shadow);
+}
+
+.login-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.login-dialog.is-busy .login-card {
+  opacity: 0.92;
+}
+
+@media (max-width: 420px) {
+  .login-card {
+    padding: 1.25rem 1.1rem 1.4rem;
+  }
+
+  .login-code-row {
+    grid-template-columns: 1fr;
+  }
+
+  .login-send-code {
+    width: 100%;
+  }
+}
+
+/* ===== 跳关弹窗：左右布局（左 10 段 / 右关卡，共 200 关）===== */
+.jump-dialog {
+  width: min(calc(100% - 1.5rem), 52rem);
+  max-width: 52rem;
+  max-height: calc(100dvh - 1.5rem);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.jump-dialog::backdrop {
+  background: rgba(45, 36, 24, 0.42);
+  backdrop-filter: blur(4px);
+}
+
+.jump-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  width: 100%;
+  max-height: min(86vh, 36rem);
+  padding: 1.2rem 1.25rem 1.05rem;
+  overflow: hidden;
+  text-align: left;
+  justify-items: stretch;
+}
+
+.jump-card > .access-dialog-close {
+  z-index: 3;
+  flex: 0 0 auto;
+}
+
+.jump-header {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-right: 3.2rem; /* 不裁 X */
+  margin: 0;
+}
+
+.jump-header .paywall-eyebrow,
+.jump-header h2,
+.jump-header .jump-sub,
+.jump-header .jump-current {
+  margin: 0;
+}
+
+.jump-card > h2,
+.jump-header h2 {
+  color: var(--earth, #794f27);
+  font-size: clamp(1.45rem, 3.2vw, 1.85rem);
+  line-height: 1.15;
+}
+
+.jump-sub {
+  color: var(--body, #5c4a36);
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.jump-current {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-top: 0.05rem;
+  padding: 0.32rem 0.72rem;
+  border-radius: 999px;
+  border: 0.14rem solid rgba(12, 139, 130, 0.28);
+  background: rgba(197, 232, 210, 0.45);
+  color: #0b6b60;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+/* 左右主体 */
+.jump-body {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0.85rem;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.jump-rail {
+  flex: 0 0 8.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.jump-main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.jump-section-label {
+  flex: 0 0 auto;
+  margin: 0;
+  color: var(--earth, #794f27);
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+/* 左栏：路线段竖向列表，文字完整可见 */
+.jump-segments {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  gap: 0.45rem;
+  align-items: stretch;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0.1rem 0.15rem 0.35rem 0.05rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scroll-snap-type: none;
+}
+
+.jump-segment-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+  min-height: 2.85rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 0.95rem;
+  border: 0.16rem solid rgba(121, 79, 39, 0.22);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--earth, #794f27);
+  box-shadow: 0 0.18rem 0 rgba(189, 174, 160, 0.5);
+  cursor: pointer;
+  text-align: left;
+}
+
+.jump-segment-btn strong {
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.jump-segment-btn small {
+  color: var(--muted, #8a735a);
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.jump-segment-btn.is-active {
+  border-color: rgba(12, 139, 130, 0.72);
+  background: linear-gradient(180deg, #e8f8f1 0%, #d4efe3 100%);
+  box-shadow:
+    0 0.18rem 0 rgba(12, 139, 130, 0.28),
+    0 0 0 0.16rem rgba(43, 196, 174, 0.18);
+}
+
+/* 当前进度所在段：仅轻标记，绝不同时再套一层「选中」高亮 */
+.jump-segment-btn.is-current-seg:not(.is-active) {
+  border-color: rgba(121, 79, 39, 0.22);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    inset 0.22rem 0 0 #2bc4ae,
+    0 0.18rem 0 rgba(189, 174, 160, 0.5);
+}
+
+.jump-segment-btn.is-current-seg:not(.is-active) small {
+  color: #0b6b60;
+  font-weight: 900;
+}
+
+.jump-segment-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 0.06rem 0 rgba(189, 174, 160, 0.55);
+}
+
+/* 右栏：关卡网格 */
+.jump-levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.5rem;
+  align-content: flex-start;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow: auto;
+  padding: 0.1rem 0.15rem 0.45rem 0.05rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+
+.jump-level-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.06rem;
+  width: calc(25% - 0.45rem);
+  min-width: 5rem;
+  min-height: 3.25rem;
+  padding: 0.38rem 0.5rem;
+  border-radius: 0.95rem;
+  border: 0.15rem solid rgba(121, 79, 39, 0.2);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--earth, #794f27);
+  box-shadow: 0 0.18rem 0 rgba(189, 174, 160, 0.45);
+  cursor: pointer;
+  text-align: left;
+}
+
+.jump-level-num {
+  font-size: 1.02rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.jump-level-title {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--body, #5c4a36);
+}
+
+.jump-level-meta {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--muted, #8a735a);
+}
+
+.jump-level-btn.is-selected {
+  border-color: rgba(12, 139, 130, 0.85);
+  background: linear-gradient(180deg, #f8f8f0 0%, #e5f6ee 100%);
+  box-shadow:
+    0 0.2rem 0 rgba(12, 139, 130, 0.3),
+    0 0 0 0.16rem rgba(43, 196, 174, 0.22);
+}
+
+.jump-level-btn.is-current .jump-level-meta {
+  color: #0b6b60;
+  font-weight: 900;
+}
+
+.jump-level-btn.status-locked,
+.jump-level-btn.status-premium {
+  opacity: 0.78;
+}
+
+.jump-level-btn.status-available,
+.jump-level-btn.status-current {
+  border-color: rgba(43, 196, 174, 0.42);
+}
+
+.jump-level-btn.status-completed .jump-level-num {
+  color: #0b6b60;
+}
+
+.jump-level-btn:active {
+  transform: translateY(2px);
+}
+
+.jump-cta-row {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  padding-top: 0.35rem;
+  margin-top: 0.1rem;
+  border-top: 0.12rem dashed rgba(189, 174, 160, 0.55);
+}
+
+.jump-depart-btn {
+  min-width: min(100%, 16rem);
+  min-height: 3.35rem;
+  border: 0.18rem solid #794f27 !important;
+  color: #794f27 !important;
+  background: #f8f8f0 !important;
+  box-shadow: 0 5px 0 0 #bdaea0 !important;
+  border-radius: 1.15rem;
+  font-weight: 900;
+}
+
+.jump-depart-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: 0 2px 0 0 #bdaea0 !important;
+}
+
+.jump-depart-btn:not(:disabled):active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 0 #bdaea0 !important;
+}
+
+/* FAB 与底栏间距：跳关入口 */
+.locate-progress-button {
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: calc(5.25rem + env(safe-area-inset-bottom));
+  width: 3.75rem;
+  height: 3.75rem;
+}
+
+@media (max-width: 720px) {
+  .jump-rail {
+    flex-basis: 7.6rem;
+  }
+
+  .jump-level-btn {
+    width: calc(33.333% - 0.45rem);
+  }
+}
+
+@media (max-width: 560px) {
+  .jump-dialog {
+    width: min(calc(100% - 1rem), 52rem);
+  }
+
+  .jump-body {
+    flex-direction: column;
+  }
+
+  .jump-rail {
+    flex: 0 0 auto;
+    max-height: 8.5rem;
+  }
+
+  .jump-segments {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 0.4rem;
+  }
+
+  .jump-segment-btn {
+    width: auto;
+    min-width: 5.8rem;
+    flex: 0 0 auto;
+  }
+
+  .jump-level-btn {
+    width: calc(50% - 0.35rem);
+  }
+}
+
+body:has(.jump-dialog[open]) {
+  overflow: hidden;
 }

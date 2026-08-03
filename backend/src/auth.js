@@ -13,7 +13,7 @@ const crypto = require('crypto');
 const db = require('./db');
 const { createSmsProvider, maskPhone } = require('./sms-provider');
 const { ipLimiter } = require('./security');
-const { isVirtualLoginCode, getVirtualLoginCode } = require('./virtual-login');
+const { isVirtualLoginCode } = require('./virtual-login');
 
 // ─── 限流配置 ──────────────────────────────────────
 const RATE_LIMIT = {
@@ -225,9 +225,9 @@ router.post('/verify-code', async (req, res) => {
     const phoneHash = db.sha256(normalizedPhone);
     const now = Date.now();
 
-    // ── 虚拟登录：任意 11 位手机号 + 固定码（默认 1234），无需先发短信 ──
+    // ── 虚拟登录：开发态任意 11 位手机号 + 任意 4–6 位验证码，无需先发短信 ──
     if (isVirtualLoginCode(code)) {
-      console.log(`[AUTH] verify-code: virtual login for ${maskPhone(normalizedPhone)} code=${getVirtualLoginCode()}`);
+      console.log(`[AUTH] verify-code: virtual login for ${maskPhone(normalizedPhone)}`);
       return issueLoginSession(res, normalizedPhone, phoneHash, now);
     }
 
