@@ -930,21 +930,21 @@ function membershipSummary(preferences = {}) {
   return isVip ? {
     isVip,
     status: 'vip',
-    badge: 'VIP',
-    title: 'VIP 已开通',
-    note: `VIP 权益已生效；第 ${FREE_LEVEL_COUNT + 1}-${DISPLAY_LEVEL_COUNT} 关会随课程内容更新开放。`,
+    badge: '本地图',
+    title: '本地图已开通',
+    note: `本地图会员权益已生效；第 ${FREE_LEVEL_COUNT + 1}-${DISPLAY_LEVEL_COUNT} 关会随课程内容更新开放。新地图需单独购买。`,
     count: String(DISPLAY_LEVEL_COUNT),
     countLabel: '规划关卡',
-    action: 'VIP 权益已生效',
+    action: '',
   } : {
     isVip,
     status: 'free',
     badge: '体验版',
-    title: '非 VIP 体验中',
-    note: `前 ${FREE_LEVEL_COUNT} 关免费体验，第 ${FREE_LEVEL_COUNT + 1} 关起需要开通 VIP。`,
+    title: '免费体验中',
+    note: `前 ${FREE_LEVEL_COUNT} 关免费体验。后续关卡在地图内按本地图购买，不在「我的」统一开通。`,
     count: String(FREE_LEVEL_COUNT),
     countLabel: '免费关卡',
-    action: '开通 VIP',
+    action: '',
   };
 }
 
@@ -1011,6 +1011,55 @@ function learningReport(progress, activity, allLevels = levels) {
     nextLevelText: safeProgress.completed.length >= allLevels.length
       ? '全部关卡已完成'
       : `第 ${safeProgress.unlockedThrough} 关 · ${nextLevel?.title || '继续学习'}`,
+  };
+}
+
+/** 英语区（海岛+沙漠）家长总览：进度合计、词库并集、继续哪张图 */
+function englishZoneProgress(progressByWorld = {}, activity = null, allLevels = levels) {
+  const worldIds = ['ocean', 'desert'];
+  const maps = worldIds.map((worldId) => {
+    const worldLevels = levelsForMapWorld(worldId, allLevels);
+    const total = worldLevels.length || DISPLAY_LEVEL_COUNT;
+    const progress = normalizeProgress(progressByWorld?.[worldId], total);
+    const report = learningReport(progress, { dates: [] }, worldLevels);
+    const world = MAP_WORLDS[worldId];
+    return {
+      worldId,
+      title: world?.title || worldId,
+      completed: report.completed,
+      total,
+      unlockedThrough: progress.unlockedThrough,
+      learningMinutes: report.learningMinutes,
+      nextLevelText: report.nextLevelText,
+      learnedWords: report.learnedWords,
+    };
+  });
+  const completed = maps.reduce((sum, row) => sum + row.completed, 0);
+  const total = maps.reduce((sum, row) => sum + row.total, 0);
+  const learningMinutes = maps.reduce((sum, row) => sum + row.learningMinutes, 0);
+  const learnedWords = [...new Set(maps.flatMap((row) => row.learnedWords))];
+  const continueMap = maps.find((row) => row.completed > 0 && row.completed < row.total)
+    || maps.find((row) => row.completed < row.total)
+    || maps[0];
+  const fallbackProgress = normalizeProgress(progressByWorld?.[continueMap?.worldId || 'ocean'], continueMap?.total || DISPLAY_LEVEL_COUNT);
+  const activeDays = learningDays(activity, fallbackProgress);
+  let suggestion = '从魔法海岛第 1 关开始英语启蒙';
+  if (completed >= total && total > 0) {
+    suggestion = '英语地图已全部完成，可复习词库';
+  } else if (completed > 0 && continueMap) {
+    suggestion = `建议继续${continueMap.title} · ${continueMap.nextLevelText}`;
+  }
+  return {
+    completed,
+    total,
+    progressPercent: total ? Math.round((completed / total) * 100) : 0,
+    learningMinutes,
+    activeDays,
+    learnedWords,
+    maps,
+    continueWorldId: continueMap?.worldId || 'ocean',
+    continueLevelId: continueMap?.unlockedThrough || 1,
+    suggestion,
   };
 }
 
@@ -1824,7 +1873,7 @@ function levelsInJumpSegment(levelsList, segment) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { MAP_WORLDS, MAP_JUMP_COPY, MAP_JUMP_SEGMENT_SIZE, MATH_ATTEMPT_KEY, MATH_ATTEMPT_SCHEMA_VERSION, CURRICULUM_ALIGNMENT_BY_TOPIC, adaptMathLevel, appendMathAttempt, assetPackHasDownloadSource, assetPackLevelDownloadQueue, assetPackLevelVideoUrl, assetPackPlayableSummary, assetPackSummary, buildMapJumpSegments, buildMathParentReport, buildMathVariant, curriculumAlignmentForTopic, segmentContainingLevel, levelsInJumpSegment, activateVipPreferences, addLearningActivityDay, applyQuizAnswer, buildLearningDataExport, buildLocalRankings, calendarDays, canForceReleaseUpdate, canRegisterServiceWorker, compareAppVersions, completedLearningMinutes, completionUnlockText, desertLandmarkImage, desertLevels, formatActivityDate, generateMathVariant, getLevelAccess, islandStyleId, learningDays, learningReport, learningStreak, levelVideoDownloadLabel, levelVideoStateKey, levels, levelsForMapWorld, mathLevels, mathVoiceFeedback, membershipSummary, mergeMathAttempts, networkStatusText, nextMathPathRecommendation, normalizeAssetPackStates, normalizeLevelVideoStates, normalizeMapWorldId, normalizeMathAttempts, normalizeWorldProgress, notificationStatusText, normalizeChildProfile, normalizeLearningActivity, normalizeMistakeBook, normalizeProgress, parseRouteHash, profileAvatarText, questionPromptText, rankingScore, recordMistake, releaseUpdateInfo, requestReleaseUpdate, requestVipPurchase, requestVipRestore, resolveMathContinueLevel, resolveMistake, routePoint, summarizeMathSkill, supportFeedbackText, validateSupportMessage, wordButtonDisabled };
+  module.exports = { MAP_WORLDS, MAP_JUMP_COPY, MAP_JUMP_SEGMENT_SIZE, MATH_ATTEMPT_KEY, MATH_ATTEMPT_SCHEMA_VERSION, CURRICULUM_ALIGNMENT_BY_TOPIC, adaptMathLevel, appendMathAttempt, assetPackHasDownloadSource, assetPackLevelDownloadQueue, assetPackLevelVideoUrl, assetPackPlayableSummary, assetPackSummary, buildMapJumpSegments, buildMathParentReport, buildMathVariant, curriculumAlignmentForTopic, segmentContainingLevel, levelsInJumpSegment, activateVipPreferences, addLearningActivityDay, applyQuizAnswer, buildLearningDataExport, buildLocalRankings, calendarDays, canForceReleaseUpdate, canRegisterServiceWorker, compareAppVersions, completedLearningMinutes, completionUnlockText, desertLandmarkImage, desertLevels, englishZoneProgress, formatActivityDate, generateMathVariant, getLevelAccess, islandStyleId, learningDays, learningReport, learningStreak, levelVideoDownloadLabel, levelVideoStateKey, levels, levelsForMapWorld, mathLevels, mathVoiceFeedback, membershipSummary, mergeMathAttempts, networkStatusText, nextMathPathRecommendation, normalizeAssetPackStates, normalizeLevelVideoStates, normalizeMapWorldId, normalizeMathAttempts, normalizeWorldProgress, notificationStatusText, normalizeChildProfile, normalizeLearningActivity, normalizeMistakeBook, normalizeProgress, parseRouteHash, profileAvatarText, questionPromptText, rankingScore, recordMistake, releaseUpdateInfo, requestReleaseUpdate, requestVipPurchase, requestVipRestore, resolveMathContinueLevel, resolveMistake, routePoint, summarizeMathSkill, supportFeedbackText, validateSupportMessage, wordButtonDisabled };
 }
 
 if (typeof document !== 'undefined') {
@@ -1916,11 +1965,11 @@ if (typeof document !== 'undefined') {
     about: {
       eyebrow: 'ABOUT',
       title: '关于应用',
-      intro: '嗨洛塔少儿启蒙APP把启蒙内容、视频理解和海岛闯关组合成适合 iPad 横屏的学习体验。',
+      intro: '嗨洛塔少儿启蒙APP把英语地图、数学启蒙和视频闯关组合成适合 iPad 横屏的学习体验。',
       sections: [
         ['当前版本', `v${APP_RELEASE_VERSION}，适配 iPad 横屏与移动浏览器。`],
         ['适合人群', '主要面向 3-5 岁宝宝，由家长陪同使用体验更好。'],
-        ['核心功能', '海岛地图、视频答题、单词发音、学习统计和排行榜。'],
+        ['核心功能', '多地图闯关、英语视频答题、数学启蒙、单词发音、学习统计和排行榜。'],
       ],
     },
   };
@@ -2145,12 +2194,25 @@ if (typeof document !== 'undefined') {
   function openMathRecommendedLevel(levelId) {
     state.preferences.mapWorld = 'math';
     state.progress = state.progressByWorld.math;
-    state.mathMapLevelId = normalizeMathMapLevelId(levelId, state.progress.unlockedThrough);
+    try { localStorage.setItem(APP_PREFERENCES_KEY, JSON.stringify(state.preferences)); } catch {}
+    persistLearningStateLocal();
+    applyPreferences();
+    // 数学图真源 = 当前关卡胶囊 + 内联小桌；禁常驻 toast 顶掉胶囊（看起来像旧壳）
+    showInlineMathLevel(levelId);
+    setActiveTab('map');
+    window.scrollTo(0, 0);
+  }
+
+  function openEnglishMap(worldId) {
+    const nextWorldId = worldId === 'desert' ? 'desert' : 'ocean';
+    const world = MAP_WORLDS[nextWorldId];
+    state.preferences.mapWorld = nextWorldId;
+    state.progress = state.progressByWorld[nextWorldId];
     try { localStorage.setItem(APP_PREFERENCES_KEY, JSON.stringify(state.preferences)); } catch {}
     persistLearningStateLocal();
     applyPreferences();
     if (location.hash !== '#map') history.pushState(null, '', '#map');
-    renderMap(`已打开第 ${state.mathMapLevelId} 关`);
+    renderMap(`已打开${world?.title || '英语地图'}`);
     setActiveTab('map');
     window.scrollTo(0, 0);
   }
@@ -3968,7 +4030,9 @@ if (typeof document !== 'undefined') {
     if (routeFromHash().type !== 'map') {
       history.replaceState(null, '', '#map');
     }
-    renderMap(message);
+    // 消息走 showMapMessage 自动消失；勿塞进 renderMap 常驻，否则「当前关卡」被顶没
+    renderMap();
+    if (message) showMapMessage(message);
     rememberLastStay({ type: 'map' });
   }
 
@@ -4006,7 +4070,7 @@ if (typeof document !== 'undefined') {
       window?.BabyIslandIAP?.purchase
     );
     const initialPayNote = canOpenNativePurchase
-      ? '通过 App Store 安全支付 · 完成后会员权益立即生效'
+      ? '通过 App Store 安全支付 · 完成后本地图权益立即生效'
       : '正式 iPad 包会打开 App Store 支付，当前预览不会扣费';
 
     paywallDialog = document.createElement('dialog');
@@ -4024,15 +4088,15 @@ if (typeof document !== 'undefined') {
       icons.premiumHero,
       '</div>',
       '<div class="paywall-copy">',
-      '<p class="paywall-eyebrow">VIP 学习卡</p>',
-      `<h2 id="paywall-title">开通 VIP，获得会员关卡权益</h2>`,
-      `<p>前 ${FREE_LEVEL_COUNT} 关已免费体验，开通后获得本地图会员关卡权益；后续课程内容更新后自动开放。</p>`,
+      '<p class="paywall-eyebrow">本地图学习卡</p>',
+      `<h2 id="paywall-title">购买本地图，解锁本图会员关</h2>`,
+      `<p>前 ${FREE_LEVEL_COUNT} 关已免费体验，购买后获得本地图会员关卡权益；后续课程内容更新后自动开放。新地图需单独购买。</p>`,
       '</div>',
-      '<section class="vip-plan" aria-label="VIP 套餐">',
-      `<div><strong>${DISPLAY_LEVEL_COUNT} 座魔法岛 · 会员权益</strong><small>第 ${FREE_LEVEL_COUNT + 1}-${DISPLAY_LEVEL_COUNT} 关为会员关卡 · 后续新地图独立发售</small></div>`,
+      '<section class="vip-plan" aria-label="本地图套餐">',
+      `<div><strong>${DISPLAY_LEVEL_COUNT} 座魔法岛 · 本地图权益</strong><small>第 ${FREE_LEVEL_COUNT + 1}-${DISPLAY_LEVEL_COUNT} 关为会员关卡 · 后续新地图独立发售</small></div>`,
       '<span class="vip-price">¥99<small>买断本地图</small></span>',
       '</section>',
-      '<div class="vip-benefits" aria-label="VIP 权益">',
+      '<div class="vip-benefits" aria-label="本地图权益">',
       `<span class="vip-benefit"><svg class="vip-benefit-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 5c4-2.2 8 2.2 12 0v8.5c-4 2.2-8-2.2-12 0"/></svg>第 ${FREE_LEVEL_COUNT + 1}-${DISPLAY_LEVEL_COUNT} 关</span>`,
       '<span class="vip-benefit"><svg class="vip-benefit-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="m10 8.8 4.8 3.2-4.8 3.2z"/></svg>会员关卡权益</span>',
       '<span class="vip-benefit"><svg class="vip-benefit-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l4.5 3.8V6.2L7 10H4z"/><path d="M15.5 9.2c1.8 1.5 1.8 4.1 0 5.6"/></svg>单词发音练习</span>',
@@ -4402,6 +4466,12 @@ if (typeof document !== 'undefined') {
   }
 
   function renderMap(initialMessage = '') {
+    // 沉浸地图壳只在 render() 里 toggle；从「我的」/showInlineMathLevel 直调 renderMap 时
+    // 若不补挂 map-game-active，会落到奶油卡片壳（非图2全屏小桌）。
+    document.body.classList.add('map-game-active');
+    document.body.classList.remove('level-quiz-active');
+    appShell.classList.remove('detail-shell');
+    bottomTabs.hidden = false;
     clearMathAppleDropSounds();
     const completed = state.progress.completed.length;
     const activeWorldId = normalizeMapWorldId(state.preferences.mapWorld);
@@ -5136,6 +5206,14 @@ if (typeof document !== 'undefined') {
       setBoatX(0);
       setBoatSailing(false);
     });
+    // initialMessage 以前是常驻；数学图会顶掉「当前关卡」。统一 2.6s 后收起。
+    if (initialMessage) {
+      clearTimeout(state.messageTimer);
+      state.messageTimer = setTimeout(() => {
+        const el = main.querySelector('.map-message');
+        if (el) el.hidden = true;
+      }, 2600);
+    }
   }
 
   function showMapMessage(text) {
@@ -6118,13 +6196,9 @@ if (typeof document !== 'undefined') {
   }
 
   function renderMine() {
-    const report = learningReport(state.progress, state.learningActivity, levels);
-    const completed = report.completed;
-    const activeDays = report.activeDays;
-    const learningMinutes = report.learningMinutes;
-    const learnedWords = report.learnedWords;
-    // 词库卡片默认只露出最近 WORD_CHIP_PREVIEW 个（新→旧），其余收进 +N 展开按钮。
-    // 一关一词，本地图学完即 200 个词牌；后续新地图上线词量还会翻倍，无界渲染会顶穿页面
+    const english = englishZoneProgress(state.progressByWorld, state.learningActivity, levels);
+    const learnedWords = english.learnedWords;
+    // 词库默认只露出最近 WORD_CHIP_PREVIEW 个（新→旧），其余收进 +N；全英图词量会很多，无界会顶穿页面
     const WORD_CHIP_PREVIEW = 12;
     const hiddenWordCount = Math.max(0, learnedWords.length - WORD_CHIP_PREVIEW);
     const mistakeCount = state.mistakeBook.items.length;
@@ -6140,12 +6214,17 @@ if (typeof document !== 'undefined') {
           ? `建议再练第 ${mathRec.levelId} 关`
           : `建议挑战第 ${mathRec.levelId} 关`))
       : '完成 3 道数学题后生成建议';
-    const mathReportAction = mathReport.totalAttempts
-      ? `<button class="secondary-button" type="button" data-open-math-recommended data-level="${mathRec.levelId}">去数学地图</button>`
-      : '<button class="secondary-button" type="button" disabled>先玩数学</button>';
-    const membershipAction = membership.isVip
-      ? '<span class="membership-active-note">VIP 权益已生效</span>'
-      : '<button class="membership-upgrade-button" type="button" data-open-vip-paywall>开通 VIP</button>';
+    const mathMapProgress = normalizeProgress(state.progressByWorld.math, mathLevels.length || DISPLAY_LEVEL_COUNT);
+    const mathCompleted = mathMapProgress.completed.length;
+    const mathTotal = mathLevels.length || DISPLAY_LEVEL_COUNT;
+    const mathPercent = mathTotal ? Math.round((mathCompleted / mathTotal) * 100) : 0;
+    const englishMapLines = english.maps
+      .map((row) => `<li><span>${escapeHtml(row.title)}</span><strong>${row.completed}/${row.total}</strong></li>`)
+      .join('');
+    const englishAction = `<button class="primary-button subject-card-cta" type="button" data-open-english-map data-world="${english.continueWorldId}">去英语地图</button>`;
+    const mathAction = mathReport.totalAttempts
+      ? `<button class="primary-button subject-card-cta" type="button" data-open-math-recommended data-level="${mathRec.levelId}">去数学地图</button>`
+      : `<button class="primary-button subject-card-cta" type="button" data-open-math-recommended data-level="${mathRec.levelId || 1}">去数学地图</button>`;
     const ageOptions = ['3', '4', '5', '6']
       .map((age) => `<option value="${age}"${age === childProfile.childAge ? ' selected' : ''}>${age} 岁</option>`)
       .join('');
@@ -6163,14 +6242,15 @@ if (typeof document !== 'undefined') {
       <section class="view" aria-labelledby="mine-title">
         <div class="mine-layout">
           <section class="mine-overview" aria-labelledby="mine-title">
-            <p class="eyebrow">MY ENGLISH JOURNEY</p>
-            <h1 id="mine-title">我的英语岛</h1>
+            <p class="eyebrow">MY HIROTA</p>
+            <h1 id="mine-title">我的</h1>
+            <p class="page-intro mine-intro">家长总览：英语、数学，以及即将开放的语文。</p>
             <div class="profile-card">
               <div class="avatar" aria-hidden="true">${escapeHtml(profileAvatarText(childProfile.childName))}</div>
-              <div class="profile-copy"><h2>${escapeHtml(childProfile.childName)}同学</h2><p>Little explorer · ${childProfile.childAge} 岁英语小小探索家</p></div>
+              <div class="profile-copy"><h2>${escapeHtml(childProfile.childName)}同学</h2><p>${childProfile.childAge} 岁 · 嗨洛塔小小探索家</p></div>
             </div>
 
-            <section class="surface membership-card is-${membership.status}" data-membership-status="${membership.status}" aria-label="会员状态">
+            <section class="surface membership-card is-${membership.status}" data-membership-status="${membership.status}" aria-label="地图权益状态">
               <div class="membership-copy">
                 <span class="membership-badge">${membership.badge}</span>
                 <h2>${membership.title}</h2>
@@ -6180,45 +6260,82 @@ if (typeof document !== 'undefined') {
                 <strong>${membership.count}</strong>
                 <span>${membership.countLabel}</span>
               </div>
-              ${membershipAction}
             </section>
 
-            <div class="stats-grid" aria-label="英语学习统计">
+            <div class="stats-grid mine-week-stats" aria-label="学习总览">
+              <div class="stat-card"><span class="stat-value">${english.activeDays}</span><span class="stat-label">学习天数</span></div>
+              <div class="stat-card"><span class="stat-value">${english.learningMinutes}</span><span class="stat-label">英语分钟</span></div>
+              <div class="stat-card"><span class="stat-value">${english.completed}</span><span class="stat-label">英语关卡</span></div>
+              <div class="stat-card"><span class="stat-value">${mathReport.totalAttempts}</span><span class="stat-label">数学题数</span></div>
               <div class="stat-card"><span class="stat-value">${learnedWords.length}</span><span class="stat-label">已学单词</span></div>
-              <div class="stat-card"><span class="stat-value">${completed}</span><span class="stat-label">完成关卡</span></div>
               <div class="stat-card"><span class="stat-value">${mistakeCount}</span><span class="stat-label">待复习</span></div>
-              <div class="stat-card"><span class="stat-value">${activeDays}</span><span class="stat-label">学习天数</span></div>
-              <div class="stat-card"><span class="stat-value">${learningMinutes}</span><span class="stat-label">学习分钟</span></div>
             </div>
 
-            <section class="surface mine-progress" aria-labelledby="mine-progress-title">
-              <h2 id="mine-progress-title">Island progress <span>岛屿进度</span></h2>
-              <p>已经完成 ${completed} 个英语学习站点</p>
-              <div class="progress-row">
-                <div class="progress-track"><div class="progress-fill" style="width: ${progressPercent()}%"></div></div>
-                <span class="progress-number">${progressPercent()}%</span>
-              </div>
-            </section>
+            <h2 class="section-title mine-subjects-title">Learning zones <span>学科进度</span></h2>
+            <div class="subject-cards" aria-label="学科进度">
+              <article class="surface subject-card subject-card-english" data-subject="english" aria-labelledby="subject-english-title">
+                <div class="subject-card-head">
+                  <p class="eyebrow">ENGLISH</p>
+                  <h3 id="subject-english-title">英语区</h3>
+                </div>
+                <div class="subject-card-metrics" aria-label="英语关键数据">
+                  <div><span class="subject-metric-value">${english.completed}/${english.total}</span><span class="subject-metric-label">关卡</span></div>
+                  <div><span class="subject-metric-value">${english.progressPercent}%</span><span class="subject-metric-label">完成</span></div>
+                  <div><span class="subject-metric-value">${learnedWords.length}</span><span class="subject-metric-label">单词</span></div>
+                </div>
+                <div class="progress-row subject-progress-row">
+                  <div class="progress-track"><div class="progress-fill" style="width: ${english.progressPercent}%"></div></div>
+                  <span class="progress-number">${english.progressPercent}%</span>
+                </div>
+                <ul class="subject-map-list" aria-label="英语地图明细">${englishMapLines}</ul>
+                <p class="subject-card-suggest">${escapeHtml(english.suggestion)}</p>
+                ${englishAction}
+                <section class="subject-word-bank" aria-labelledby="word-bank-title">
+                  <h4 id="word-bank-title">学会的单词</h4>
+                  <div class="word-bank-words" data-word-chips>
+                    <div class="word-chips">${learnedWords.slice().reverse().map((word) => `<span>${escapeHtml(word)}</span>`).join('') || '<span class="word-chip-empty">还没有单词，去英语地图闯关吧</span>'}</div>
+                    ${hiddenWordCount > 0 ? `<button class="word-chips-more" type="button" data-words-expand data-hidden-count="${hiddenWordCount}" aria-expanded="false">+${hiddenWordCount} 词</button>` : ''}
+                  </div>
+                </section>
+              </article>
 
-            <section class="surface mine-progress" data-math-ai-report aria-labelledby="math-ai-report-title">
-              <h2 id="math-ai-report-title">Math coach <span>数学陪练简报</span></h2>
-              <p>已答 ${mathReport.totalAttempts} 题，正确率 ${mathAccuracyText}，状态：${escapeHtml(mathReport.mastery)}</p>
-              <p>${escapeHtml(mathRecText)}：${escapeHtml(mathRecLevel.title)}</p>
-              ${mathReportAction}
-            </section>
+              <article class="surface subject-card subject-card-math" data-subject="math" data-math-ai-report aria-labelledby="subject-math-title">
+                <div class="subject-card-head">
+                  <p class="eyebrow">MATH</p>
+                  <h3 id="subject-math-title">数学区</h3>
+                </div>
+                <div class="subject-card-metrics" aria-label="数学关键数据">
+                  <div><span class="subject-metric-value">${mathCompleted}/${mathTotal}</span><span class="subject-metric-label">地图关</span></div>
+                  <div><span class="subject-metric-value">${mathReport.totalAttempts}</span><span class="subject-metric-label">答题</span></div>
+                  <div><span class="subject-metric-value">${mathAccuracyText}</span><span class="subject-metric-label">正确率</span></div>
+                </div>
+                <div class="progress-row subject-progress-row">
+                  <div class="progress-track"><div class="progress-fill" style="width: ${mathPercent}%"></div></div>
+                  <span class="progress-number">${mathPercent}%</span>
+                </div>
+                <p class="subject-card-mastery">掌握：${escapeHtml(mathReport.mastery)}</p>
+                <p class="subject-card-suggest">${escapeHtml(mathRecText)}${mathRecLevel ? ` · ${escapeHtml(mathRecLevel.title)}` : ''}</p>
+                ${mathAction}
+              </article>
+
+              <article class="surface subject-card subject-card-chinese is-coming-soon" data-subject="chinese" aria-labelledby="subject-chinese-title">
+                <div class="subject-card-head">
+                  <p class="eyebrow">CHINESE</p>
+                  <h3 id="subject-chinese-title">语文区</h3>
+                  <span class="subject-soon-badge">即将开放</span>
+                </div>
+                <div class="subject-card-metrics" aria-label="语文关键数据">
+                  <div><span class="subject-metric-value">—</span><span class="subject-metric-label">进度</span></div>
+                  <div><span class="subject-metric-value">—</span><span class="subject-metric-label">练习</span></div>
+                  <div><span class="subject-metric-value">—</span><span class="subject-metric-label">复习</span></div>
+                </div>
+                <p class="subject-card-suggest">识字、朗读与表达会放在这里，上线后家长可在同一页查看。</p>
+                <button class="secondary-button subject-card-cta" type="button" disabled aria-disabled="true">敬请期待</button>
+              </article>
+            </div>
           </section>
 
           <aside class="mine-side">
-            <section class="surface word-bank" aria-labelledby="word-bank-title">
-              <p class="eyebrow">WORD BANK</p>
-              <h2 id="word-bank-title">学会的单词</h2>
-              <div class="word-bank-words" data-word-chips>
-                <div class="word-chips">${learnedWords.slice().reverse().map((word) => `<span>${word}</span>`).join('')}</div>
-                ${hiddenWordCount > 0 ? `<button class="word-chips-more" type="button" data-words-expand data-hidden-count="${hiddenWordCount}" aria-expanded="false">+${hiddenWordCount} 词</button>` : ''}
-              </div>
-              <p>继续闯关，把更多英文单词带回小岛。</p>
-            </section>
-
             <h2 class="section-title">Family settings <span>家长设置</span></h2>
             <ul class="settings-list" aria-label="设置预览">
               <li class="setting-row setting-row-control">
@@ -6233,9 +6350,9 @@ if (typeof document !== 'undefined') {
                   <select class="setting-profile-select" data-child-profile="childAge" aria-label="宝宝年龄">${ageOptions}</select>
                 </label>
               </li>
-              ${preferenceSwitch('mapMusic', '背景音乐', '小岛地图播放音乐', '已关闭地图音乐')}
+              ${preferenceSwitch('mapMusic', '背景音乐', '地图播放背景音乐', '已关闭地图音乐')}
               ${preferenceSwitch('autoPronunciation', '自动读英文', '切换关卡时自动播放', '只在点击喇叭时播放')}
-              ${preferenceSwitch('showChineseHints', '中文辅助', '显示中文提示', '隐藏小岛中文提示')}
+              ${preferenceSwitch('showChineseHints', '中文辅助', '显示中文提示', '隐藏中文提示')}
             </ul>
 
             <h2 class="section-title">App info <span>应用信息</span></h2>
@@ -6305,7 +6422,7 @@ if (typeof document !== 'undefined') {
             <section class="support-tip">
               <span aria-hidden="true">🧭</span>
               <h2>关卡顺序</h2>
-              <p>先完成当前关卡，下一座小岛会自动解锁。</p>
+              <p>先完成当前关卡，下一关会自动解锁。</p>
             </section>
             <section class="support-tip">
               <span aria-hidden="true">🌱</span>
@@ -6361,9 +6478,9 @@ if (typeof document !== 'undefined') {
               <path d="M63 18l10-9 2 14"/>
             </svg>
           </span>
-          <p class="eyebrow">LOST ISLAND</p>
+          <p class="eyebrow">PAGE NOT FOUND</p>
           <h1 id="not-found-title">页面走丢了</h1>
-          <p>这个小岛入口不存在。回到闯关地图，继续当前学习进度。</p>
+          <p>这个页面不存在。回到闯关地图，继续当前学习进度。</p>
           <button class="primary-button not-found-action" type="button" data-return-map>回到闯关地图</button>
         </div>
       </section>`;
@@ -6516,12 +6633,6 @@ if (typeof document !== 'undefined') {
       copySupportFeedback(supportCopyBtn.closest('[data-support-form]'));
       return;
     }
-    var vipButton = ev.target.closest('[data-open-vip-paywall]');
-    if (vipButton) {
-      ev.preventDefault();
-      openPaywallDialog(FREE_LEVEL_COUNT + 1, vipButton);
-      return;
-    }
     var wordsToggle = ev.target.closest('[data-words-expand]');
     if (wordsToggle) {
       ev.preventDefault();
@@ -6547,6 +6658,12 @@ if (typeof document !== 'undefined') {
     if (mathRecommendedBtn) {
       ev.preventDefault();
       openMathRecommendedLevel(Number(mathRecommendedBtn.dataset.level));
+      return;
+    }
+    var englishMapBtn = ev.target.closest('[data-open-english-map]');
+    if (englishMapBtn) {
+      ev.preventDefault();
+      openEnglishMap(englishMapBtn.dataset.world);
       return;
     }
     var assetPackBtn = ev.target.closest('[data-asset-pack-action]');

@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { MAP_WORLDS, MATH_ATTEMPT_KEY, MATH_ATTEMPT_SCHEMA_VERSION, activateVipPreferences, adaptMathLevel, addLearningActivityDay, appendMathAttempt, applyQuizAnswer, assetPackHasDownloadSource, assetPackLevelDownloadQueue, assetPackLevelVideoUrl, assetPackPlayableSummary, assetPackSummary, buildLearningDataExport, buildLocalRankings, buildMapJumpSegments, buildMathParentReport, buildMathVariant, calendarDays, canForceReleaseUpdate, canRegisterServiceWorker, compareAppVersions, completedLearningMinutes, completionUnlockText, curriculumAlignmentForTopic, desertLandmarkImage, desertLevels, formatActivityDate, generateMathVariant, getLevelAccess, islandStyleId, learningDays, learningReport, learningStreak, levelVideoDownloadLabel, levelVideoStateKey, levels, levelsForMapWorld, mathLevels, mathVoiceFeedback, membershipSummary, mergeMathAttempts, networkStatusText, nextMathPathRecommendation, normalizeAssetPackStates, normalizeLevelVideoStates, normalizeMapWorldId, normalizeMathAttempts, normalizeWorldProgress, notificationStatusText, normalizeChildProfile, normalizeLearningActivity, normalizeMistakeBook, normalizeProgress, parseRouteHash, profileAvatarText, questionPromptText, rankingScore, recordMistake, releaseUpdateInfo, requestReleaseUpdate, requestVipPurchase, requestVipRestore, resolveMathContinueLevel, resolveMistake, routePoint, segmentContainingLevel, levelsInJumpSegment, supportFeedbackText, summarizeMathSkill, validateSupportMessage, wordButtonDisabled } = require('./script.js');
+const { MAP_WORLDS, MATH_ATTEMPT_KEY, MATH_ATTEMPT_SCHEMA_VERSION, activateVipPreferences, adaptMathLevel, addLearningActivityDay, appendMathAttempt, applyQuizAnswer, assetPackHasDownloadSource, assetPackLevelDownloadQueue, assetPackLevelVideoUrl, assetPackPlayableSummary, assetPackSummary, buildLearningDataExport, buildLocalRankings, buildMapJumpSegments, buildMathParentReport, buildMathVariant, calendarDays, canForceReleaseUpdate, canRegisterServiceWorker, compareAppVersions, completedLearningMinutes, completionUnlockText, curriculumAlignmentForTopic, desertLandmarkImage, desertLevels, englishZoneProgress, formatActivityDate, generateMathVariant, getLevelAccess, islandStyleId, learningDays, learningReport, learningStreak, levelVideoDownloadLabel, levelVideoStateKey, levels, levelsForMapWorld, mathLevels, mathVoiceFeedback, membershipSummary, mergeMathAttempts, networkStatusText, nextMathPathRecommendation, normalizeAssetPackStates, normalizeLevelVideoStates, normalizeMapWorldId, normalizeMathAttempts, normalizeWorldProgress, notificationStatusText, normalizeChildProfile, normalizeLearningActivity, normalizeMistakeBook, normalizeProgress, parseRouteHash, profileAvatarText, questionPromptText, rankingScore, recordMistake, releaseUpdateInfo, requestReleaseUpdate, requestVipPurchase, requestVipRestore, resolveMathContinueLevel, resolveMistake, routePoint, segmentContainingLevel, levelsInJumpSegment, supportFeedbackText, summarizeMathSkill, validateSupportMessage, wordButtonDisabled } = require('./script.js');
 
 const read = (file) => fs.readFileSync(path.join(__dirname, file), 'utf8');
 const mapAudioTargets = () => [...levels, ...desertLevels].map((level) => ({
@@ -703,13 +703,15 @@ test('map clicks and direct level routes share the same access gate', () => {
   assert.doesNotMatch(read('index.html'), /data-access-dialog-content/);
 });
 
-test('paid levels open a VIP payment panel instead of a notice-only dialog', () => {
+test('paid levels open a per-map payment panel instead of a notice-only dialog', () => {
   const source = read('script.js');
   const css = read('style.css');
   const paywallFn = source.match(/function openPaywallDialog[\s\S]*?function closePaywallDialog/)?.[0] ?? '';
 
   assert.match(paywallFn, /paywall-card/);
-  assert.match(paywallFn, /VIP 学习卡/);
+  assert.match(paywallFn, /本地图学习卡/);
+  assert.match(paywallFn, /购买本地图，解锁本图会员关/);
+  assert.doesNotMatch(paywallFn, /开通 VIP|VIP 学习卡/);
   assert.match(paywallFn, /立即支付 ¥99/);
   assert.match(paywallFn, /data-vip-pay/);
   assert.match(paywallFn, /data-vip-restore/);
@@ -727,7 +729,7 @@ test('paid levels open a VIP payment panel instead of a notice-only dialog', () 
   assert.match(paywallFn, /后续新地图独立发售/);
   assert.match(paywallFn, /会员关卡权益/);
   assert.match(paywallFn, /后续课程内容更新后自动开放/);
-  assert.match(paywallFn, /完成后会员权益立即生效/);
+  assert.match(paywallFn, /完成后本地图权益立即生效/);
   assert.doesNotMatch(paywallFn, /全图解锁|完整视频课程|解锁全部会员关卡|一次买断解锁本地图全部课程|完成后自动解锁全部关卡/);
   assert.doesNotMatch(paywallFn, /收银台确认/);
   assert.doesNotMatch(paywallFn, /待接入/);
@@ -1244,6 +1246,12 @@ test('math AI report and path recommendation are visible without adding a new pa
   assert.match(source, /function openMathRecommendedLevel\(levelId\)/);
   assert.match(source, /state\.preferences\.mapWorld = 'math'/);
   assert.match(source, /openMathRecommendedLevel\(Number\(mathRecommendedBtn\.dataset\.level\)\)/);
+  // 从「我的」进数学图：走 showInlineMathLevel，不带常驻「已打开第 N 关」toast
+  assert.match(source, /function openMathRecommendedLevel\(levelId\)[\s\S]*?showInlineMathLevel\(levelId\)/);
+  assert.doesNotMatch(source, /function openMathRecommendedLevel\(levelId\)[\s\S]*?renderMap\(`已打开第/);
+  // 任意直调 renderMap（含从我的进图）必须挂 map-game-active，否则不是沉浸全屏数学图
+  assert.match(source, /function renderMap\(initialMessage = ''\)\s*\{[\s\S]*?document\.body\.classList\.add\('map-game-active'\)/);
+  assert.match(source, /function showInlineMathLevel\([\s\S]*?renderMap\(\);\s*if \(message\) showMapMessage\(message\)/);
   assert.match(source, /function resolveMathCoachContinueTarget\(plan,\s*levelId\)/);
   assert.match(source, /resolveMathCoachContinueTarget\(latestCoachPlan,\s*level\.id\)[\s\S]*?resolveMathContinueLevel\(state\.mathAttempts,\s*level\.id/);
 });
@@ -1681,7 +1689,7 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
   assert.match(script, /aria-label="当前第 \$\{currentLevel\.id\} 关，共 \$\{DISPLAY_LEVEL_COUNT\} 关"/);
   assert.match(script, /mathMapTransition === 'drop' \? ' is-changing' : ''/);
   assert.match(script, /<strong><span>第 \$\{currentLevel\.id\}<\/span><small>\/ \$\{DISPLAY_LEVEL_COUNT\} 关<\/small><\/strong>/);
-  assert.match(script, /renderMap\(message\)/);
+  assert.match(script, /function showInlineMathLevel[\s\S]*?renderMap\(\);\s*if \(message\) showMapMessage\(message\)/);
   assert.doesNotMatch(script, /已切到第/);
   assert.match(script, /data-math-inline-question/);
   assert.match(script, /data-math-step="-1"/);
@@ -1715,7 +1723,9 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
   assert.match(css, /\.math-level-switch-indicator\s*\{[\s\S]*?position:\s*sticky[\s\S]*?grid-template-columns:\s*auto auto minmax\(0,\s*1fr\)/);
   assert.match(css, /\.math-level-switch-indicator\.is-changing\s*\{[\s\S]*?animation:\s*math-level-switch-pop/);
   assert.match(css, /\.math-level-switch-indicator\.is-changing strong span\s*\{[\s\S]*?animation:\s*math-level-number-pop/);
-  assert.match(css, /\.map-message:not\(\[hidden\]\) \+ \.math-level-switch-indicator\s*\{[\s\S]*?display:\s*none/);
+  // toast 与「当前关卡」并存；禁止再 display:none 顶掉胶囊
+  assert.doesNotMatch(css, /\.map-message:not\(\[hidden\]\) \+ \.math-level-switch-indicator\s*\{[^}]*display:\s*none/);
+  assert.match(css, /\.map-message:not\(\[hidden\]\) \+ \.math-level-switch-indicator\s*\{[^}]*margin-top:/);
   assert.match(css, /@keyframes math-level-switch-pop[\s\S]*?var\(--math-level-switch-base-transform\)/);
   assert.match(css, /@keyframes math-level-number-pop/);
   assert.match(css, /@media \(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.math-level-switch-indicator\.is-changing/);
@@ -3271,36 +3281,94 @@ test('mine page settings are real app switches with persisted preferences', () =
   assert.match(source, /data-nav-route="about"/);
 });
 
-test('mine page distinguishes VIP and non-VIP status', () => {
+test('mine page shows map entitlement status without VIP upgrade CTA', () => {
   const free = membershipSummary({ vipActive: false });
   const vip = membershipSummary({ vipActive: true });
   const source = read('script.js');
   const css = read('style.css');
+  const mineFn = source.match(/function renderMine\(\)[\s\S]*?function renderSupport/)?.[0] ?? '';
 
   assert.equal(free.status, 'free');
-  assert.equal(free.title, '非 VIP 体验中');
+  assert.equal(free.title, '免费体验中');
   assert.equal(free.count, '10');
-  assert.equal(free.action, '开通 VIP');
+  assert.equal(free.action, '');
+  assert.match(free.note, /按本地图购买|地图内/);
   assert.equal(vip.status, 'vip');
-  assert.equal(vip.title, 'VIP 已开通');
+  assert.equal(vip.title, '本地图已开通');
   assert.equal(vip.count, '200');
   assert.equal(vip.countLabel, '规划关卡');
-  assert.equal(vip.action, 'VIP 权益已生效');
+  assert.equal(vip.action, '');
+  assert.match(vip.note, /新地图需单独购买/);
 
   assert.match(source, /vipActive:\s*saved\?\.vipActive === true/);
   assert.match(source, /getLevelAccess\(route\.id, state\.progress, state\.preferences\.vipActive === true\)/);
   assert.match(source, /membershipSummary\(state\.preferences\)/);
   assert.match(source, /data-membership-status="\$\{membership\.status\}"/);
   assert.match(source, /membership-card is-\$\{membership\.status\}/);
-  assert.match(source, /VIP 权益已生效；第 \$\{FREE_LEVEL_COUNT \+ 1\}-\$\{DISPLAY_LEVEL_COUNT\} 关会随课程内容更新开放。/);
-  assert.doesNotMatch(source, /已解锁第 \$\{FREE_LEVEL_COUNT \+ 1\}-\$\{DISPLAY_LEVEL_COUNT\} 关会员内容。/);
-  assert.match(source, /data-open-vip-paywall/);
-  assert.match(source, /openPaywallDialog\(FREE_LEVEL_COUNT \+ 1, vipButton\)/);
+  assert.match(source, /本地图会员权益已生效；第 \$\{FREE_LEVEL_COUNT \+ 1\}-\$\{DISPLAY_LEVEL_COUNT\} 关会随课程内容更新开放。新地图需单独购买。/);
+  // 「我的」不再放统一开通 VIP；付费只在地图遇到会员关时弹出
+  assert.doesNotMatch(mineFn, /data-open-vip-paywall/);
+  assert.doesNotMatch(mineFn, /开通 VIP/);
+  assert.doesNotMatch(mineFn, /membership-upgrade-button/);
+  assert.doesNotMatch(mineFn, /membershipAction/);
+  assert.doesNotMatch(source, /openPaywallDialog\(FREE_LEVEL_COUNT \+ 1, vipButton\)/);
   assert.match(css, /\.membership-card\s*\{/);
   assert.match(css, /\.membership-card\.is-free\s*\{/);
   assert.match(css, /\.membership-card\.is-vip\s*\{/);
-  assert.match(css, /\.membership-upgrade-button\s*\{/);
-  assert.match(css, /\.membership-active-note\s*\{/);
+});
+
+test('mine page branding is HiRota, not English Island', () => {
+  const source = read('script.js');
+  const css = read('style.css');
+  const mineFn = source.match(/function renderMine\(\)[\s\S]*?function renderSupport/)?.[0] ?? '';
+  const about = source.match(/about:\s*\{[\s\S]*?\},\s*\};/)?.[0] ?? '';
+  const supportFn = source.match(/function renderSupport\(\)[\s\S]*?function renderInfoPage/)?.[0] ?? '';
+  const notFoundFn = source.match(/function renderNotFound\(\)[\s\S]*?function setActiveTab/)?.[0] ?? '';
+
+  assert.match(mineFn, /MY HIROTA/);
+  assert.match(mineFn, /id="mine-title">我的</);
+  assert.match(mineFn, /嗨洛塔小小探索家/);
+  assert.match(mineFn, /家长总览：英语、数学，以及即将开放的语文/);
+  assert.match(mineFn, /学科进度/);
+  assert.match(mineFn, /data-subject="english"/);
+  assert.match(mineFn, /data-subject="math"/);
+  assert.match(mineFn, /data-subject="chinese"/);
+  assert.match(mineFn, /英语区/);
+  assert.match(mineFn, /数学区/);
+  assert.match(mineFn, /语文区/);
+  assert.match(mineFn, /即将开放/);
+  assert.match(mineFn, /data-open-english-map/);
+  assert.match(mineFn, /data-open-math-recommended/);
+  assert.match(mineFn, /数学题数/);
+  assert.match(mineFn, /学会的单词/);
+  assert.match(mineFn, /地图播放背景音乐/);
+  assert.match(source, /function englishZoneProgress/);
+  assert.match(source, /function openEnglishMap/);
+  assert.match(css, /\.subject-cards\s*\{/);
+  assert.match(css, /\.subject-card-chinese/);
+  assert.doesNotMatch(mineFn, /我的英语岛|MY ENGLISH JOURNEY|Island progress|岛屿进度|英语小小探索家|英语学习站点|带回小岛|小岛地图|小岛中文|英语学习统计/);
+  assert.match(about, /英语地图、数学启蒙/);
+  assert.match(about, /多地图闯关/);
+  assert.doesNotMatch(about, /海岛闯关|海岛地图/);
+  assert.doesNotMatch(supportFn, /下一座小岛/);
+  assert.doesNotMatch(notFoundFn, /LOST ISLAND|小岛入口/);
+});
+
+test('english zone progress aggregates ocean and desert for parent overview', () => {
+  const oceanLevels = levelsForMapWorld('ocean', levels);
+  const desertLevelsList = levelsForMapWorld('desert', levels);
+  const summary = englishZoneProgress({
+    ocean: { completed: [1, 2, 3], unlockedThrough: 4 },
+    desert: { completed: [1], unlockedThrough: 2 },
+  }, { dates: ['2026-08-01', '2026-08-02'] }, levels);
+
+  assert.equal(summary.completed, 4);
+  assert.equal(summary.total, oceanLevels.length + desertLevelsList.length);
+  assert.equal(summary.activeDays, 2);
+  assert.equal(summary.continueWorldId, 'ocean');
+  assert.equal(summary.maps.length, 2);
+  assert.match(summary.suggestion, /魔法海岛|沙漠/);
+  assert.ok(summary.learnedWords.length >= 1);
 });
 
 test('mine page removes local data management, cache, and share entries', () => {

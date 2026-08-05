@@ -2542,8 +2542,9 @@ body:has(.map-switch-dialog[open]) {
   -webkit-backdrop-filter: blur(0.24rem);
 }
 
+/* 数学图：toast 与「当前关卡」胶囊并存，禁 display:none 顶掉胶囊（从我的进图会误成“旧壳”） */
 .map-message:not([hidden]) + .math-level-switch-indicator {
-  display: none;
+  margin-top: 0.15rem;
 }
 
 .math-level-switch-label {
@@ -5338,6 +5339,168 @@ body:has(.map-switch-dialog[open]) {
 
 .mine-progress .progress-row { margin-top: 0.75rem; }
 .mine-progress p { margin-bottom: 0; color: var(--muted); font-size: 0.8rem; }
+
+.mine-intro {
+  margin: 0 0 0.85rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.mine-week-stats {
+  margin-bottom: 1rem;
+}
+
+.mine-subjects-title {
+  margin: 0.35rem 0 0.7rem;
+}
+
+.subject-cards {
+  display: grid;
+  gap: 0.85rem;
+  margin-bottom: 0.35rem;
+}
+
+.subject-card {
+  padding: 1rem 1.05rem 1.1rem;
+}
+
+.subject-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.65rem;
+  margin-bottom: 0.7rem;
+}
+
+.subject-card-head .eyebrow {
+  margin: 0;
+}
+
+.subject-card-head h3 {
+  margin: 0;
+  color: var(--earth);
+  font-size: 1.12rem;
+  font-weight: 900;
+}
+
+.subject-soon-badge {
+  margin-left: auto;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  border: 1.5px solid rgba(121, 79, 39, 0.16);
+  background: #f4efe4;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.subject-card-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin-bottom: 0.7rem;
+}
+
+.subject-card-metrics > div {
+  padding: 0.55rem 0.3rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 253, 245, 0.9);
+  border: 1.5px solid rgba(121, 79, 39, 0.1);
+  text-align: center;
+}
+
+.subject-metric-value {
+  display: block;
+  color: var(--earth);
+  font-size: 1rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.subject-metric-label {
+  display: block;
+  margin-top: 0.18rem;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.subject-progress-row {
+  margin: 0 0 0.65rem;
+}
+
+.subject-map-list {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0 0 0.65rem;
+  padding: 0;
+  list-style: none;
+}
+
+.subject-map-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 0.65rem;
+  background: rgba(244, 239, 228, 0.55);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.subject-map-list strong {
+  color: var(--earth);
+  font-variant-numeric: tabular-nums;
+}
+
+.subject-card-mastery,
+.subject-card-suggest {
+  margin: 0 0 0.55rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.subject-card-cta {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 0.15rem;
+}
+
+.subject-word-bank {
+  margin-top: 0.9rem;
+  padding-top: 0.85rem;
+  border-top: 1.5px solid rgba(121, 79, 39, 0.1);
+}
+
+.subject-word-bank h4 {
+  margin: 0 0 0.55rem;
+  color: var(--earth);
+  font-size: 0.92rem;
+  font-weight: 900;
+}
+
+.word-chip-empty {
+  color: var(--muted) !important;
+  background: transparent !important;
+  border-style: dashed !important;
+}
+
+.subject-card-chinese.is-coming-soon {
+  opacity: 0.88;
+  background: linear-gradient(180deg, #fffdf8 0%, #f7f2e8 100%);
+}
+
+.subject-card-chinese .subject-card-metrics > div {
+  background: rgba(244, 239, 228, 0.7);
+}
 
 .word-bank {
   margin-bottom: 1.25rem;
