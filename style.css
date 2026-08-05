@@ -405,7 +405,9 @@ h2 {
 .map-brand {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: clamp(0.4rem, 1vw, 0.6rem);
+  min-width: 0;
 }
 
 .map-brand h1,
@@ -418,6 +420,7 @@ h2 {
    品牌卡 / 资源芯片：同高、同圆角、同描边、同材质、同投影。
    各组件自身只保留布局（display/padding/gap），视觉一律走这里。 */
 .map-brand-card,
+.map-pack-btn,
 .resource-chip {
   min-height: 3.75rem;
   border: 2px solid rgba(196, 184, 158, 0.55);
@@ -430,8 +433,10 @@ h2 {
    这里只保留布局，严禁再私自拔高/加宽（会打破整排胶囊统一感）。 */
 .map-brand-card {
   display: flex;
+  flex: 0 1 auto;
   align-items: center;
   gap: clamp(0.5rem, 1vw, 0.75rem);
+  min-width: 0;
   padding: 0.42rem 0.7rem 0.42rem 0.8rem;
 }
 
@@ -933,7 +938,275 @@ h2 {
   gap: 0.8rem;
 }
 
-/* 右下 FAB 组：跳关 | 回最新进度（横排，gap≥1rem） */
+/* 顶栏下载状态：不打开弹窗也能看见当前下载动作 */
+.map-pack-status-hud {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  max-width: min(14.5rem, 100%);
+  pointer-events: none;
+}
+
+.map-pack-status-hud:empty {
+  display: none;
+}
+
+.map-pack-btn {
+  pointer-events: auto;
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.55rem minmax(0, auto);
+  align-items: center;
+  gap: 0.55rem;
+  max-width: min(15.5rem, 100%);
+  min-height: 3rem;
+  padding: 0.28rem 0.78rem 0.28rem 0.3rem;
+  border: 2px solid #b8945d;
+  border-radius: 999px;
+  color: var(--earth);
+  background: rgba(255, 253, 245, 0.94);
+  box-shadow: 0 0.22rem 0 #b8945d, inset 0 0.1rem 0 rgba(255, 255, 255, 0.78), 0 0.45rem 1.2rem rgba(121, 79, 39, 0.2);
+  backdrop-filter: blur(0.35rem) saturate(1.08);
+  -webkit-backdrop-filter: blur(0.35rem) saturate(1.08);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.map-pack-btn:hover { transform: translateY(-2px); }
+.map-pack-btn:active { transform: translateY(2px); box-shadow: 0 0.08rem 0 #b8945d; }
+.map-pack-btn:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
+
+.map-topbar .map-pack-btn {
+  min-height: 3.75rem;
+  border-color: rgba(196, 184, 158, 0.55);
+  border-radius: 1.15rem;
+  background: rgba(248, 248, 240, 0.88);
+  box-shadow: 0 0.18rem 0 var(--warm-shadow);
+}
+
+.map-topbar .map-pack-btn:active {
+  box-shadow: 0 0.08rem 0 var(--warm-shadow);
+}
+
+.global-update-btn {
+  grid-template-columns: 2.44rem minmax(0, auto) auto;
+  --pack-progress: 100%;
+}
+
+.global-update-btn .global-update-ring {
+  color: #0e8f84;
+  background: rgba(213, 250, 244, 0.95);
+}
+
+.global-update-btn .map-switch-icon {
+  width: 1.18rem;
+  height: 1.18rem;
+  fill: currentColor;
+}
+
+.global-update-state {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.65rem;
+  min-height: 1.65rem;
+  padding: 0 0.48rem;
+  border: 2px solid rgba(25, 200, 185, 0.22);
+  border-radius: 999px;
+  color: #0e8f84;
+  background: rgba(213, 250, 244, 0.86);
+  font-size: 0.68rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.global-update-btn[data-check-update-status="checking"] {
+  cursor: wait;
+}
+
+.global-update-btn[data-check-update-status="checking"] .map-switch-icon {
+  animation: check-update-spin 0.8s linear infinite;
+}
+
+.global-update-btn[data-check-update-status="ready"] .global-update-state {
+  color: var(--earth);
+  border-color: rgba(255, 204, 0, 0.48);
+  background: rgba(255, 243, 185, 0.96);
+}
+
+.global-update-btn[data-check-update-status="current"] .global-update-state {
+  color: #3f7b32;
+  border-color: rgba(91, 156, 67, 0.28);
+  background: rgba(231, 247, 221, 0.94);
+}
+
+.global-update-btn[data-check-update-status="retry"] .global-update-state,
+.global-update-btn[data-check-update-status="unsupported"] .global-update-state {
+  color: var(--error);
+  border-color: rgba(211, 87, 74, 0.28);
+  background: rgba(255, 231, 226, 0.94);
+}
+
+.map-pack-attention-dot {
+  position: absolute;
+  top: -0.18rem;
+  right: 0.12rem;
+  width: 0.78rem;
+  height: 0.78rem;
+  border: 2px solid #fffdf5;
+  border-radius: 50%;
+  background: #f04438;
+  box-shadow: 0 0.12rem 0.35rem rgba(159, 47, 47, 0.35);
+}
+
+.map-pack-progress-ring {
+  --pack-ring-accent: #0e9d8c;
+  --pack-ring-track: rgba(121, 79, 39, 0.13);
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.44rem;
+  height: 2.44rem;
+  border-radius: 50%;
+  background: conic-gradient(var(--pack-ring-accent) var(--pack-progress), var(--pack-ring-track) 0);
+  box-shadow: inset 0 0 0 2px rgba(121, 79, 39, 0.14);
+  overflow: hidden;
+}
+
+.map-pack-progress-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0.26rem;
+  border-radius: 50%;
+  background: #fffdf5;
+  box-shadow: inset 0 0.08rem 0 rgba(255, 255, 255, 0.82);
+}
+
+.map-pack-progress-ring::after {
+  display: none;
+}
+
+.map-pack-progress-core {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+}
+
+.map-pack-progress-core svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  overflow: visible;
+}
+
+.map-pack-progress-core svg path {
+  fill: none;
+  stroke: #8b6a34;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.map-pack-download-arrow {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.map-pack-status-copy {
+  display: grid;
+  gap: 0.05rem;
+  min-width: 0;
+  text-align: left;
+  line-height: 1.12;
+}
+
+.map-pack-status-copy strong {
+  color: var(--earth);
+  font-size: 0.78rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.map-pack-status-copy small {
+  max-width: 10rem;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.66rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.map-pack-btn.is-downloading .map-pack-status-copy strong,
+.map-pack-btn.is-queued .map-pack-status-copy strong,
+.map-pack-btn.is-paused .map-pack-status-copy strong,
+.map-pack-btn.is-stale .map-pack-status-copy strong {
+  color: #9a5b00;
+}
+
+.map-pack-btn.is-ready .map-pack-progress-ring {
+  --pack-ring-accent: #0e9d8c;
+}
+
+.map-pack-btn.is-downloading .map-pack-progress-ring,
+.map-pack-btn.is-queued .map-pack-progress-ring {
+  --pack-ring-accent: #0e9d8c;
+}
+
+.map-pack-btn.is-paused .map-pack-progress-ring,
+.map-pack-btn.is-stale .map-pack-progress-ring {
+  --pack-ring-accent: #d49a17;
+}
+
+.map-pack-btn.is-failed .map-pack-progress-ring {
+  --pack-ring-accent: #d24b3f;
+}
+
+.map-pack-btn.is-ready .map-pack-status-copy strong {
+  color: var(--mint-active);
+}
+
+.map-pack-btn.is-failed .map-pack-status-copy strong {
+  color: #9f2f2f;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .map-pack-btn.has-attention .map-pack-attention-dot {
+    animation: pack-attention-pop 1.45s ease-in-out infinite;
+  }
+
+  .map-pack-btn.is-downloading .map-pack-download-arrow,
+  .map-pack-btn.is-queued .map-pack-download-arrow {
+    animation: pack-download-arrow-drop 1.28s cubic-bezier(0.42, 0, 0.22, 1) infinite;
+    will-change: transform, opacity;
+  }
+}
+
+@keyframes pack-attention-pop {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.22); }
+}
+
+@keyframes pack-download-arrow-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.34rem);
+  }
+  18% {
+    opacity: 1;
+  }
+  68% {
+    opacity: 1;
+    transform: translateY(0.18rem);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0.36rem);
+  }
+}
+
+/* 右下 FAB 组：背景音 | 跳关 | 回最新进度（横排，gap≥1rem） */
 .map-fab-cluster {
   position: absolute;
   z-index: 5;
@@ -953,7 +1226,8 @@ h2 {
 }
 
 .map-locate-btn,
-.map-jump-btn {
+.map-jump-btn,
+.map-music-btn {
   position: relative;
   z-index: 5;
   display: grid;
@@ -969,13 +1243,68 @@ h2 {
   background: #fff1ab;
   box-shadow: 0 0.2rem 0 #dba90e, 0 4px 12px rgba(121, 79, 39, 0.22);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
 .map-jump-btn {
   border-color: #5a9e7a;
   background: #e8f7ef;
   box-shadow: 0 0.2rem 0 #5a9e7a, 0 4px 12px rgba(121, 79, 39, 0.18);
+}
+
+.map-music-btn {
+  border: 2.5px solid #2f91ab;
+  background: #d8f4fb;
+  color: #156a82;
+  box-shadow: 0 0.22rem 0 #2f91ab, 0 5px 14px rgba(31, 111, 134, 0.22);
+}
+
+/* 静音态：高对比珊瑚红 + 角标，避免融进米黄纸面 */
+.map-music-btn.is-muted {
+  border-color: #d4533f;
+  background: #ffe8e0;
+  color: #c23a28;
+  box-shadow:
+    0 0.22rem 0 #b83a2a,
+    0 0 0 3px rgba(212, 83, 63, 0.22),
+    0 6px 16px rgba(194, 58, 40, 0.28);
+  animation: map-music-muted-nudge 1.7s ease-in-out infinite;
+}
+
+.map-music-btn.is-muted::after {
+  content: "静音";
+  position: absolute;
+  top: auto;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.12rem 0.42rem;
+  border-radius: 0.55rem;
+  color: #fff;
+  background: #c23a28;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 2px 0 #9b2f22, 0 3px 8px rgba(194, 58, 40, 0.28);
+}
+
+@keyframes map-music-muted-nudge {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.045);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-music-btn.is-muted {
+    animation: none;
+  }
 }
 
 .map-locate-btn::after {
@@ -996,14 +1325,27 @@ h2 {
 }
 
 .map-locate-btn:hover,
-.map-jump-btn:hover { transform: translateY(-2px); }
+.map-jump-btn:hover,
+.map-music-btn:hover { transform: translateY(-2px); }
+.map-music-btn.is-muted:hover {
+  transform: translateY(-2px) scale(1.04);
+  animation: none;
+}
 .map-locate-btn:active { transform: translateY(2px); box-shadow: 0 0.08rem 0 #dba90e; }
 .map-jump-btn:active { transform: translateY(2px); box-shadow: 0 0.08rem 0 #5a9e7a; }
+.map-music-btn:active { transform: translateY(2px); box-shadow: 0 0.08rem 0 #2f91ab; }
+.map-music-btn.is-muted:active {
+  transform: translateY(2px) scale(1);
+  animation: none;
+  box-shadow: 0 0.08rem 0 #b83a2a, 0 0 0 2px rgba(212, 83, 63, 0.18);
+}
 .map-locate-btn:focus-visible,
-.map-jump-btn:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
+.map-jump-btn:focus-visible,
+.map-music-btn:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
 
 .map-locate-btn svg,
-.map-jump-btn svg {
+.map-jump-btn svg,
+.map-music-btn svg {
   width: 1.65rem;
   height: 1.65rem;
   overflow: visible;
@@ -1031,9 +1373,48 @@ h2 {
   stroke-linejoin: round;
 }
 
+.map-music-btn svg path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.map-music-btn.is-muted svg path {
+  stroke-width: 3.4;
+}
+
+.map-music-btn.is-muted svg {
+  width: 1.78rem;
+  height: 1.78rem;
+}
+
+.asset-pack-dialog {
+  --dialog-width: 50rem;
+}
+
+.map-switch-card.asset-pack-dialog-card {
+  align-items: stretch;
+  gap: 0.9rem;
+  justify-items: stretch;
+}
+
+.asset-pack-dialog-card .map-switch-hero,
+.asset-pack-dialog-card h2,
+.asset-pack-dialog-card > p,
+.asset-pack-dialog-card .paywall-eyebrow {
+  justify-self: center;
+  text-align: center;
+}
+
+.asset-pack-dialog-card > p:not(.paywall-eyebrow) {
+  max-width: 38rem;
+}
+
 /* ─── 通用居中弹窗底座（VIP / 发版更新） ───────────── */
 .map-switch-dialog {
-  width: min(calc(100% - 2rem), 28rem);
+  width: min(calc(100% - 2rem), var(--dialog-width, 28rem));
   max-height: calc(100dvh - 2rem);
   padding: 0;
   border: 0;
@@ -1043,8 +1424,7 @@ h2 {
   overflow: auto;
 }
 
-/* 「选择冒险世界」选择器：弹窗高度收紧到「第一行卡片完整 + 第二行露出小半」，
-   用卡内滚动承载未来更多地图；无 CTA 后底部留白也收窄。 */
+/* 「选择冒险世界」选择器：竖向长方形弹窗，地图卡使用上图下文的竖卡。 */
 .map-switch-picker-dialog {
   width: min(calc(100% - 2.5rem), 41rem);
   max-height: calc(100dvh - 1.5rem);
@@ -1128,8 +1508,115 @@ h2 {
   margin-bottom: 0.1rem;
 }
 
+.map-zone-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem;
+  width: min(100%, 28rem);
+  padding: 0.25rem;
+  border: 0.14rem solid rgba(121, 79, 39, 0.22);
+  border-radius: 1.1rem;
+  background: rgba(255, 248, 224, 0.82);
+  box-shadow: inset 0 0.08rem 0 rgba(255, 255, 255, 0.7);
+}
+
+.map-zone-tab {
+  display: grid;
+  gap: 0.08rem;
+  min-height: 2.65rem;
+  padding: 0.35rem 0.5rem;
+  border: 0;
+  border-radius: 0.85rem;
+  color: var(--earth);
+  background: transparent;
+  font: inherit;
+  text-align: center;
+}
+
+.map-zone-tab strong {
+  font-size: 0.88rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.map-zone-tab small {
+  color: var(--muted);
+  font-size: 0.66rem;
+  font-weight: 800;
+  line-height: 1.12;
+}
+
+.map-zone-tab[aria-selected="true"] {
+  color: #fff;
+  background: linear-gradient(180deg, #32bfa4, #0e9d8c);
+  box-shadow: 0 0.16rem 0 rgba(9, 107, 95, 0.42), inset 0 0.08rem 0 rgba(255, 255, 255, 0.34);
+}
+
+.map-zone-tab[aria-selected="true"] small {
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.map-zone-panel[hidden] {
+  display: none;
+}
+
 /* 世界卡网格：宽屏一列三个方块（未来多地图正好），不足 3 张自动拉伸补齐；
    窄屏自动降为 2 列 / 1 列。 */
+.map-world-groups {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 0.15rem;
+}
+
+.map-world-group {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.map-world-group-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: var(--earth);
+}
+
+.map-world-group-heading h3 {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 900;
+}
+
+.map-world-group-heading small {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+.map-switch-picker-card .map-world-groups {
+  gap: 0.6rem;
+  margin-top: 0.2rem;
+}
+
+.map-switch-picker-card .map-world-group {
+  gap: 0.35rem;
+}
+
+.map-switch-picker-card .map-world-group-heading {
+  display: flex;
+  justify-content: center;
+}
+
+.map-switch-picker-card .map-world-group-heading h3 {
+  display: none;
+}
+
+.map-switch-picker-card .map-world-group-heading small {
+  text-align: center;
+}
+
 .map-world-options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 11.5rem), 1fr));
@@ -1157,6 +1644,26 @@ h2 {
   transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, filter 0.16s ease;
 }
 
+.map-switch-picker-card .map-world-options {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.4rem), 1fr));
+  justify-content: center;
+  align-items: stretch;
+  gap: 0.7rem;
+  max-width: min(100%, 36rem);
+  margin: 0 auto;
+}
+
+.map-switch-picker-card .map-world-option {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.45rem;
+  min-height: 16.8rem;
+  padding: 0.68rem 0.68rem 0.82rem;
+  border-radius: 1.18rem;
+  text-align: center;
+}
+
 /* 未选中的世界：轻微降饱和，把视觉重心让给选中卡 */
 .map-world-option:not(.is-active) {
   filter: saturate(0.72) brightness(0.995);
@@ -1173,6 +1680,18 @@ h2 {
 
 .map-world-option--desert {
   background: linear-gradient(160deg, #fdeecb 0%, #fdf3dd 55%, #ffe9c4 100%);
+}
+
+.map-world-option--math {
+  background: linear-gradient(160deg, #e8f7ed 0%, #fff8d7 58%, #f4f0ff 100%);
+}
+
+.map-world-option--math58 {
+  background: linear-gradient(160deg, #f9efd4 0%, #fff8dd 58%, #e8f4ed 100%);
+}
+
+.map-world-option--math912 {
+  background: linear-gradient(160deg, #e8f1fb 0%, #f4f6ff 58%, #f6efff 100%);
 }
 
 .map-world-option:hover {
@@ -1198,18 +1717,44 @@ h2 {
   box-shadow: inset 0 0 0 0.12rem rgba(255, 255, 255, 0.85), 0 0.2rem 0.5rem rgba(29, 69, 68, 0.12);
 }
 
+.map-switch-picker-card .map-world-art {
+  width: 100%;
+  aspect-ratio: 1.06;
+  border-radius: 0.92rem;
+}
+
 .map-world-art img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
+.map-world-option--ocean .map-world-art img {
+  object-position: center 46%;
+  background: linear-gradient(180deg, #d9f6f1 0%, #9edfd4 100%);
+}
+
 .map-world-option--desert .map-world-art img {
-  /* 与海岛一致：完整 4:3 世界卡面 cover 铺满，不再用透明地标 + 假底 */
+  /* 完整 4:3 世界卡面 cover 铺满，不再用透明地标 + 假底 */
   object-fit: cover;
   object-position: center 42%;
   padding: 0;
   background: linear-gradient(180deg, #fff1d2 0%, #f0d29a 100%);
+}
+
+.map-world-option--math .map-world-art img {
+  object-position: center 50%;
+  background: linear-gradient(180deg, #fff4cf 0%, #f5dfae 100%);
+}
+
+.map-world-option--math58 .map-world-art img {
+  object-position: center 48%;
+  background: linear-gradient(180deg, #dff4e4 0%, #fff1bf 100%);
+}
+
+.map-world-option--math912 .map-world-art img {
+  object-position: center 42%;
+  background: linear-gradient(180deg, #dce9ff 0%, #f2e4f8 100%);
 }
 .map-world-playing {
   position: absolute;
@@ -1225,6 +1770,14 @@ h2 {
   font-weight: 900;
   background: linear-gradient(180deg, #2bc4ae, #0e9d8c);
   box-shadow: 0 0.12rem 0 rgba(9, 107, 95, 0.55), 0 0 0 0.14rem rgba(255, 255, 255, 0.85);
+}
+
+.map-switch-picker-card .map-world-playing {
+  left: 0.25rem;
+  bottom: 0.25rem;
+  width: 1.22rem;
+  height: 1.22rem;
+  font-size: 0.62rem;
 }
 
 /* 「推荐」角标：按宝宝年龄算出的世界，缩略图右上角贴橙色旗 */
@@ -1246,6 +1799,14 @@ h2 {
   box-shadow: 0 0.14rem 0 rgba(173, 97, 0, 0.5), 0 0 0 0.13rem rgba(255, 255, 255, 0.85), 0 0 0.65rem rgba(255, 179, 71, 0.6);
 }
 
+.map-switch-picker-card .map-world-recommend {
+  top: 0.28rem;
+  right: 0.28rem;
+  padding: 0.12rem 0.36rem;
+  font-size: 0.62rem;
+  box-shadow: 0 0.1rem 0 rgba(173, 97, 0, 0.42), 0 0 0 0.08rem rgba(255, 255, 255, 0.85);
+}
+
 .map-world-copy {
   display: grid;
   justify-items: center;
@@ -1253,10 +1814,20 @@ h2 {
   min-width: 0;
 }
 
+.map-switch-picker-card .map-world-copy {
+  justify-items: center;
+  gap: 0.18rem;
+  text-align: center;
+}
+
 .map-world-copy strong {
   font-size: 1.15rem;
   font-weight: 900;
   line-height: 1.15;
+}
+
+.map-switch-picker-card .map-world-copy strong {
+  font-size: 1rem;
 }
 
 /* 适龄区块：整张卡的第一视觉锚点。大数字用地图主题色 + 白底贴纸，
@@ -1273,6 +1844,16 @@ h2 {
   box-shadow: inset 0 0 0 0.14rem currentColor, 0 0.2rem 0.5rem rgba(29, 69, 68, 0.12);
 }
 
+.map-switch-picker-card .map-world-age-block {
+  display: inline-flex;
+  align-items: baseline;
+  width: auto;
+  margin: 0;
+  padding: 0.18rem 0.48rem 0.16rem;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 0.1rem currentColor;
+}
+
 .map-world-age-num {
   font-family: Nunito, "Noto Sans SC", sans-serif;
   font-size: 1.8rem;
@@ -1285,10 +1866,18 @@ h2 {
   gap: 0.18rem;
 }
 
+.map-switch-picker-card .map-world-age-num {
+  font-size: 0.98rem;
+}
+
 .map-world-age-num small {
   font-size: 0.95rem;
   font-weight: 900;
   opacity: 0.82;
+}
+
+.map-switch-picker-card .map-world-age-num small {
+  font-size: 0.7rem;
 }
 
 .map-world-age-label {
@@ -1296,6 +1885,10 @@ h2 {
   font-weight: 900;
   letter-spacing: 0.14em;
   opacity: 0.78;
+}
+
+.map-switch-picker-card .map-world-age-label {
+  display: none;
 }
 
 .map-world-option--ocean .map-world-age-block {
@@ -1306,11 +1899,27 @@ h2 {
   color: #b06e10;
 }
 
+.map-world-option--math .map-world-age-block {
+  color: #238457;
+}
+
+.map-world-option--math58 .map-world-age-block {
+  color: #997a12;
+}
+
+.map-world-option--math912 .map-world-age-block {
+  color: #4c6ba6;
+}
+
 .map-world-tagline {
   color: var(--muted);
   font-size: 0.76rem;
   font-weight: 800;
   line-height: 1.28;
+}
+
+.map-switch-picker-card .map-world-tagline {
+  font-size: 0.72rem;
 }
 
 /* 进度条：展示「第 N/200 关」的直观比例，选中卡染薄荷绿 */
@@ -1321,6 +1930,11 @@ h2 {
   overflow: hidden;
   background: rgba(121, 79, 39, 0.14);
   box-shadow: inset 0 0.1rem 0.2rem rgba(121, 79, 39, 0.16);
+}
+
+.map-switch-picker-card .map-world-progress {
+  width: 100%;
+  height: 0.32rem;
 }
 
 .map-world-progress > span {
@@ -1342,6 +1956,10 @@ h2 {
   line-height: 1.25;
 }
 
+.map-switch-picker-card .map-world-subinfo {
+  font-size: 0.7rem;
+}
+
 /* 选中对勾徽章：未选中时占位但隐形，布局不跳；无 CTA 后浮在卡片右上角 */
 .map-world-check {
   position: absolute;
@@ -1361,6 +1979,14 @@ h2 {
   transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+.map-switch-picker-card .map-world-check {
+  top: 0.52rem;
+  right: 0.52rem;
+  width: 1.45rem;
+  height: 1.45rem;
+  transform: scale(0.4);
+}
+
 .map-world-check svg {
   width: 1.05rem;
   height: 1.05rem;
@@ -1373,6 +1999,10 @@ h2 {
 
 .map-world-option.is-active .map-world-check {
   opacity: 1;
+  transform: scale(1);
+}
+
+.map-switch-picker-card .map-world-option.is-active .map-world-check {
   transform: scale(1);
 }
 
@@ -1409,6 +2039,146 @@ h2 {
     font-size: 1.65rem;
   }
 
+}
+
+@media (min-width: 700px) {
+  .map-switch-picker-card {
+    padding: 1.85rem 3.6rem 2.15rem;
+    gap: 0.45rem;
+  }
+
+  .map-switch-picker-card .map-switch-hero {
+    width: 4.35rem;
+    height: 4.35rem;
+  }
+
+  .map-switch-picker-card .map-switch-hero svg {
+    width: 2.55rem;
+    height: 2.55rem;
+  }
+
+  .map-switch-picker-card h2 {
+    font-size: clamp(1.9rem, 3.6vw, 2.45rem);
+  }
+
+  .map-switch-picker-card > p:not(.paywall-eyebrow) {
+    font-size: 1.08rem;
+  }
+
+  .map-zone-tabs {
+    width: min(100%, 50rem);
+    margin-top: 0.2rem;
+  }
+
+  .map-zone-tab {
+    min-height: 3.45rem;
+  }
+
+  .map-zone-tab strong {
+    font-size: 1.2rem;
+  }
+
+  .map-zone-tab small {
+    font-size: 0.86rem;
+  }
+
+  .map-switch-picker-card .map-world-groups {
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+  }
+
+  .map-switch-picker-card .map-world-group {
+    gap: 0.48rem;
+  }
+
+  .map-switch-picker-card .map-world-group-heading small {
+    font-size: 1.08rem;
+  }
+
+  .map-switch-picker-card .map-world-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.82rem;
+    max-width: 36rem;
+  }
+
+  .map-switch-picker-card .map-world-option {
+    gap: 0.58rem;
+    min-height: 18.6rem;
+    padding: 0.9rem;
+    border-radius: 1.35rem;
+  }
+
+  .map-switch-picker-card .map-world-art {
+    width: 100%;
+    aspect-ratio: 1.06;
+    border-radius: 1rem;
+  }
+
+  .map-switch-picker-card .map-world-playing {
+    left: 0.55rem;
+    bottom: 0.55rem;
+    width: 1.7rem;
+    height: 1.7rem;
+    font-size: 0.82rem;
+  }
+
+  .map-switch-picker-card .map-world-recommend {
+    top: 0.55rem;
+    right: 0.55rem;
+    padding: 0.22rem 0.55rem;
+    font-size: 0.75rem;
+  }
+
+  .map-switch-picker-card .map-world-soon-badge {
+    top: 50%;
+    left: 50%;
+    right: auto;
+    min-width: min(8.4rem, calc(100% - 0.8rem));
+    padding: 0.42rem 0.68rem;
+    font-size: 0.94rem;
+    transform: translate(-50%, -50%) rotate(-4deg);
+  }
+
+  .map-switch-picker-card .map-world-copy {
+    gap: 0.2rem;
+  }
+
+  .map-switch-picker-card .map-world-copy strong {
+    font-size: 1.5rem;
+  }
+
+  .map-switch-picker-card .map-world-age-block {
+    padding: 0.18rem 0.62rem 0.16rem;
+  }
+
+  .map-switch-picker-card .map-world-age-num {
+    font-size: 1.2rem;
+  }
+
+  .map-switch-picker-card .map-world-age-num small {
+    font-size: 0.78rem;
+  }
+
+  .map-switch-picker-card .map-world-tagline {
+    font-size: 0.94rem;
+  }
+
+  .map-switch-picker-card .map-world-progress {
+    width: 100%;
+    height: 0.42rem;
+  }
+
+  .map-switch-picker-card .map-world-subinfo,
+  .map-switch-picker-card .map-world-soon-note {
+    font-size: 0.84rem;
+  }
+
+  .map-switch-picker-card .map-world-check {
+    top: 0.65rem;
+    right: 0.65rem;
+    width: 2rem;
+    height: 2rem;
+  }
 }
 
 .map-switch-card .access-primary-button {
@@ -1746,6 +2516,111 @@ body:has(.map-switch-dialog[open]) {
   display: none;
 }
 
+.math-level-switch-indicator {
+  --math-level-switch-base-transform: translateX(0);
+  position: sticky;
+  z-index: 5;
+  top: 0.75rem;
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.35rem 0.62rem;
+  width: fit-content;
+  min-width: clamp(13rem, 24vw, 24rem);
+  max-width: min(30rem, calc(100% - 2rem));
+  margin: 0.4rem auto 0.2rem;
+  padding: 0.54rem 1rem;
+  border: 2px solid rgba(121, 79, 39, 0.18);
+  border-radius: var(--pill-radius);
+  color: var(--earth);
+  background: rgba(255, 253, 238, 0.92);
+  box-shadow: 0 0.2rem 0 rgba(164, 132, 84, 0.2), 0 0.7rem 1.4rem rgba(84, 58, 28, 0.12);
+  font-weight: 900;
+  pointer-events: none;
+  transform: var(--math-level-switch-base-transform);
+  backdrop-filter: blur(0.24rem);
+  -webkit-backdrop-filter: blur(0.24rem);
+}
+
+.map-message:not([hidden]) + .math-level-switch-indicator {
+  display: none;
+}
+
+.math-level-switch-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.45rem;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  color: #0e8f81;
+  background: rgba(217, 250, 243, 0.92);
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
+.math-level-switch-indicator strong {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  color: #0b927f;
+  font-size: clamp(1rem, 1.85vw, 1.45rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.math-level-switch-indicator strong small {
+  color: rgba(109, 71, 36, 0.7);
+  font-size: 0.72em;
+}
+
+.math-level-switch-title {
+  min-width: 0;
+  overflow: hidden;
+  color: rgba(109, 71, 36, 0.76);
+  font-size: 0.86rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.math-level-switch-indicator.is-changing {
+  animation: math-level-switch-pop 0.46s cubic-bezier(0.18, 0.84, 0.28, 1.08) both;
+}
+
+.math-level-switch-indicator.is-changing strong span {
+  animation: math-level-number-pop 0.4s cubic-bezier(0.18, 0.84, 0.28, 1.08) both;
+}
+
+@keyframes math-level-switch-pop {
+  0% {
+    opacity: 0.45;
+    transform: var(--math-level-switch-base-transform) translateY(0.35rem) scale(0.94);
+  }
+  58% {
+    opacity: 1;
+    transform: var(--math-level-switch-base-transform) translateY(-0.12rem) scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: var(--math-level-switch-base-transform) translateY(0) scale(1);
+  }
+}
+
+@keyframes math-level-number-pop {
+  0% {
+    opacity: 0.35;
+    transform: scale(0.78);
+  }
+  56% {
+    opacity: 1;
+    transform: scale(1.22);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .route-ocean {
   position: relative;
   isolation: isolate;
@@ -1758,6 +2633,45 @@ body:has(.map-switch-dialog[open]) {
 
 .route-ocean[data-map-theme="desert"] {
   background: #e8b767 url("assets/egypt-map/background/egypt-desert-infinite-clean-bg-dreamina-v2.png?v=20260720-desert-infinite-v2") center / cover;
+}
+
+.route-ocean[data-map-theme="math"] {
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.16), transparent 18% 82%, rgba(255, 255, 255, 0.12)),
+    repeating-linear-gradient(90deg, rgba(104, 69, 38, 0.1) 0 2px, transparent 2px 4.6rem),
+    linear-gradient(180deg, #dfb77b 0%, #c9935a 58%, #ad7542 100%);
+}
+
+.route-ocean[data-map-theme="math"]::before,
+.route-ocean[data-map-theme="math"]::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.route-ocean[data-map-theme="math"]::before {
+  z-index: 1;
+  inset: clamp(1rem, 2.2vw, 1.8rem) clamp(1.2rem, 3vw, 2.8rem);
+  border: 0.18rem solid rgba(68, 116, 76, 0.22);
+  border-radius: 1.1rem;
+  background:
+    linear-gradient(90deg, transparent 0 5.2rem, rgba(220, 88, 74, 0.18) 5.2rem 5.38rem, transparent 5.38rem),
+    repeating-linear-gradient(0deg, rgba(54, 116, 82, 0.11) 0 1px, transparent 1px 2.25rem),
+    repeating-linear-gradient(90deg, rgba(54, 116, 82, 0.08) 0 1px, transparent 1px 2.25rem),
+    linear-gradient(180deg, rgba(255, 255, 250, 0.94), rgba(248, 246, 221, 0.9));
+  box-shadow:
+    0 0.55rem 0 rgba(120, 78, 37, 0.16),
+    0 1.3rem 2.8rem rgba(83, 54, 29, 0.18);
+  transform: rotate(-0.45deg);
+}
+
+.route-ocean[data-map-theme="math"]::after {
+  z-index: 0;
+  inset: 0;
+  background:
+    radial-gradient(circle at 11% 78%, rgba(90, 151, 113, 0.24), transparent 16%),
+    radial-gradient(circle at 88% 18%, rgba(255, 213, 92, 0.24), transparent 17%),
+    linear-gradient(180deg, rgba(255, 241, 204, 0.2), rgba(94, 57, 26, 0.1));
 }
 
 .route-ocean[data-map-theme="desert"]::before,
@@ -1812,6 +2726,402 @@ body:has(.map-switch-dialog[open]) {
 .route-ocean[data-map-theme="desert"] .flying-seagull,
 .route-ocean[data-map-theme="desert"] .flying-seagull-pair {
   display: none;
+}
+
+.route-ocean[data-map-theme="math"] .ocean-loop,
+.route-ocean[data-map-theme="math"] .flying-seagull,
+.route-ocean[data-map-theme="math"] .flying-seagull-pair {
+  display: none;
+}
+
+.route-ocean[data-map-theme="math"] .route-scroll {
+  border-color: rgba(68, 116, 76, 0.34);
+  background: rgba(255, 252, 226, 0.22);
+  box-shadow:
+    inset 0 0 0 0.16rem rgba(255, 255, 255, 0.22),
+    inset 0 0 2.5rem rgba(81, 127, 91, 0.1);
+  overflow-x: hidden;
+  scrollbar-width: none;
+  touch-action: none;
+}
+
+.route-ocean[data-map-theme="math"] .route-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.route-ocean[data-map-theme="math"] .boat-dock {
+  display: none;
+}
+
+.route-ocean[data-map-theme="math"] .toy-steamboat.is-math-rider {
+  display: none;
+}
+
+.math-map-decor {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.math-map-prop {
+  position: absolute;
+  display: block;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  filter: drop-shadow(0 0.24rem 0.28rem rgba(84, 63, 36, 0.14));
+}
+
+.math-map-prop--ruler {
+  top: 8%;
+  left: 7%;
+  width: clamp(6.2rem, 12vw, 11.5rem);
+  aspect-ratio: 1100 / 743;
+  background-image: url("assets/math-map/props/ruler-handpaint-depth-v2.webp?v=20260804-math-handpaint-v2");
+  transform: rotate(-8deg);
+}
+
+.math-map-prop--pencil {
+  right: 7%;
+  bottom: 8%;
+  width: clamp(7.5rem, 16vw, 15rem);
+  aspect-ratio: 1100 / 219;
+  background-image: url("assets/math-map/props/pencil-handpaint-depth-v2.webp?v=20260804-math-handpaint-v2");
+  transform: rotate(-15deg);
+}
+
+.math-map-prop--block {
+  width: clamp(2.2rem, 4.6vw, 4rem);
+  aspect-ratio: 1;
+}
+
+.math-map-prop--one {
+  top: 73%;
+  left: 9%;
+  background-image: url("assets/math-map/props/plus-tile-handpaint-depth-v3.webp?v=20260804-math-handpaint-v2");
+  transform: rotate(7deg);
+}
+
+.math-map-prop--two {
+  top: 16%;
+  right: 12%;
+  background-image: url("assets/math-map/props/equal-tile-handpaint-depth-v3.webp?v=20260804-math-handpaint-v2");
+  transform: rotate(-6deg);
+}
+
+.math-map-prop--counter {
+  width: clamp(1.35rem, 3vw, 2.4rem);
+  aspect-ratio: 1;
+}
+
+.math-map-prop--counter-a {
+  left: 18%;
+  bottom: 10%;
+  background-image: url("assets/math-map/props/teal-bead-handpaint-depth-v2.webp?v=20260804-math-handpaint-v2");
+}
+
+.math-map-prop--counter-b {
+  right: 18%;
+  top: 11%;
+  background-image: url("assets/math-map/props/red-bead-handpaint-depth-v2.webp?v=20260804-math-handpaint-v2");
+}
+
+.math-map-prop--kid-doodle {
+  right: clamp(8.4rem, 16vw, 16.8rem);
+  bottom: clamp(9.2rem, 18vh, 13rem);
+  width: clamp(2.8rem, 5.1vw, 4.7rem);
+  aspect-ratio: 433 / 773;
+  background-image: url("assets/math-map/props/pencil-kid-figure-handpaint-v1.webp?v=20260804-math-covers-v1");
+  filter: none;
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+  transform: rotate(-7deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .math-level-switch-indicator.is-changing,
+  .math-level-switch-indicator.is-changing strong span {
+    animation: none;
+  }
+}
+
+.math-map-play-area {
+  position: absolute;
+  z-index: 12;
+  top: clamp(6.8rem, 14vh, 9.5rem);
+  right: clamp(3rem, 7cqw, 7rem);
+  bottom: clamp(2.6rem, 6vh, 4.8rem);
+  left: clamp(3rem, 7cqw, 7rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.math-inline-panel {
+  width: min(53rem, 56cqw);
+  max-height: 100%;
+  position: relative;
+  display: grid;
+  gap: 0.65rem;
+  pointer-events: auto;
+}
+
+.math-level-step {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  width: clamp(2.8rem, 4.8cqw, 3.8rem);
+  aspect-ratio: 1;
+  border: 2px solid rgba(110, 70, 24, 0.55);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 248, 220, 0.98);
+  color: #5a3812;
+  box-shadow:
+    0 0.28rem 0.55rem rgba(70, 45, 18, 0.34),
+    0 0 0 0.14rem rgba(255, 255, 255, 0.92),
+    0 0 0 0.22rem rgba(125, 86, 33, 0.18),
+    inset 0 0.1rem 0 rgba(255, 255, 255, 0.95);
+  transform: translateY(-50%);
+  transition: opacity 0.16s ease, transform 0.16s ease, background 0.16s ease;
+}
+
+.math-level-step::before {
+  content: "";
+  width: 0.78rem;
+  aspect-ratio: 1;
+  border-left: 0.22rem solid currentColor;
+  border-bottom: 0.22rem solid currentColor;
+  transform: rotate(45deg);
+}
+
+.math-level-step--prev {
+  left: clamp(-4.2rem, -5.4cqw, -2.9rem);
+}
+
+.math-level-step--next {
+  right: clamp(-4.2rem, -5.4cqw, -2.9rem);
+}
+
+.math-level-step--next::before {
+  transform: rotate(-135deg);
+}
+
+.math-level-step:hover:not(:disabled),
+.math-level-step:focus-visible {
+  border-color: rgba(110, 70, 24, 0.72);
+  background: rgba(255, 242, 196, 0.99);
+  transform: translateY(-50%) scale(1.06);
+}
+
+.math-level-step:active:not(:disabled) {
+  transform: translateY(-48%) scale(0.96);
+}
+
+.math-level-step:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.math-inline-header {
+  display: none;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.2rem 0.1rem;
+  color: #5f442a;
+}
+
+.math-inline-header strong,
+.math-inline-header small {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.math-inline-header strong {
+  font-size: clamp(1.05rem, 1.8cqw, 1.45rem);
+  font-weight: 950;
+}
+
+.math-inline-header small {
+  grid-column: 2 / 3;
+  font-size: 0.78rem;
+  font-weight: 850;
+  color: rgba(100, 85, 65, 0.76);
+}
+
+.math-inline-panel .math-layout {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  min-height: 0;
+}
+
+.math-inline-panel.is-switching-out .math-table {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(1.2rem) scale(0.94);
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.math-inline-panel.is-dropping-in .math-question-card {
+  animation: math-question-drop-in 0.34s cubic-bezier(0.18, 0.84, 0.28, 1) both;
+}
+
+.math-inline-panel.is-dropping-in .math-choice {
+  animation: math-choice-pop-in 0.14s ease-out both;
+  animation-delay: var(--math-choice-delay, 0ms);
+}
+
+.math-inline-panel.is-dropping-in .math-object {
+  animation: math-apple-drop-in 0.82s cubic-bezier(0.56, 0.06, 0.8, 0.34) both;
+  animation-delay: var(--math-object-delay, 0ms);
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
+.math-inline-panel.is-dropping-in .math-object::after {
+  animation: math-apple-shadow-drop-in 0.82s cubic-bezier(0.56, 0.06, 0.8, 0.34) both;
+  animation-delay: var(--math-object-delay, 0ms);
+  will-change: transform, opacity;
+}
+
+@keyframes math-question-drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3.8rem) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes math-choice-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35rem) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes math-apple-drop-in {
+  0% {
+    opacity: 0;
+    transform: scale(3.65);
+  }
+  12% {
+    opacity: 1;
+  }
+  76%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes math-apple-shadow-drop-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.1);
+  }
+  76% {
+    opacity: 0.66;
+    transform: translate(-50%, -50%) scale(1.42);
+  }
+  88% {
+    opacity: 0.38;
+    transform: translate(-50%, -50%) scale(0.98);
+  }
+  100% {
+    opacity: 0.34;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.math-inline-panel .math-table {
+  min-height: min(19rem, 42vh);
+}
+
+.math-inline-panel .math-choice {
+  min-height: clamp(7.2rem, 15vh, 9.8rem);
+}
+
+.route-ocean[data-map-theme="math"] .level-stop .island-art {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -50%) scale(0.82) rotate(var(--math-card-tilt, 0deg));
+  pointer-events: none;
+}
+
+.route-ocean[data-map-theme="math"] .level-stop .level-node,
+.route-ocean[data-map-theme="math"] .level-stop .level-name,
+.route-ocean[data-map-theme="math"] .level-stop .level-state-text,
+.route-ocean[data-map-theme="math"] .level-stop.square-island::after {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+
+.map-view .map-topbar,
+.map-view .map-message,
+.map-view .math-level-switch-indicator,
+.route-ocean[data-map-theme="math"] .math-map-decor,
+.route-ocean[data-map-theme="math"] .route-scroll,
+.route-ocean[data-map-theme="math"] .map-fab-cluster,
+.route-ocean[data-map-theme="math"] .math-map-play-area,
+.map-view .swipe-hint,
+.bottom-tabs {
+  transition: filter 0.18s ease, opacity 0.18s ease;
+}
+
+@media (max-width: 760px), (orientation: portrait) {
+  .math-map-play-area {
+    top: 5.8rem;
+    right: 0.75rem;
+    bottom: 1rem;
+    left: 0.75rem;
+  }
+
+  .math-inline-panel {
+    width: min(100%, 22rem);
+    padding-inline: 2.45rem;
+  }
+
+  .math-level-step {
+    width: 2.45rem;
+  }
+
+  .math-level-step--prev {
+    left: -0.1rem;
+  }
+
+  .math-level-step--next {
+    right: -0.1rem;
+  }
+
+  .math-inline-header {
+    grid-template-columns: 1fr auto;
+  }
+
+  .math-inline-header .level-pill,
+  .math-inline-header small {
+    grid-column: 1 / -1;
+  }
+
+  .math-inline-panel .math-options {
+    grid-template-columns: 1fr;
+  }
 }
 
 .route-scroll {
@@ -1873,6 +3183,11 @@ body:has(.map-switch-dialog[open]) {
 
 .route-ocean[data-map-theme="ocean"] .route-stage {
   --level-stop-width: 60cqw;
+}
+
+.route-ocean[data-map-theme="math"] .route-stage {
+  --level-stop-width: 60cqw;
+  --island-art-width: min(28cqw, 18rem);
 }
 
 .route-ocean[data-map-theme="desert"] .route-stage {
@@ -2184,6 +3499,92 @@ body:has(.map-switch-dialog[open]) {
 
 .route-ocean[data-map-theme="ocean"] .level-stop.square-island .island-art {
   width: 30cqw;
+}
+
+.level-stop[data-map-theme="math"] .island-art {
+  top: 55%;
+  width: var(--island-art-width);
+  aspect-ratio: 1;
+  border: 0.22rem solid rgba(61, 107, 76, 0.3);
+  border-radius: 1.15rem;
+  background:
+    linear-gradient(90deg, rgba(220, 88, 74, 0.12) 0 0.18rem, transparent 0.18rem),
+    repeating-linear-gradient(0deg, rgba(47, 108, 77, 0.12) 0 1px, transparent 1px 1.15rem),
+    repeating-linear-gradient(90deg, rgba(47, 108, 77, 0.08) 0 1px, transparent 1px 1.15rem),
+    linear-gradient(180deg, #fffdf0, #f2edcc);
+  box-shadow:
+    0 0.28rem 0 rgba(91, 74, 39, 0.22),
+    0 0.8rem 1.25rem rgba(84, 57, 30, 0.16);
+  filter: none;
+  opacity: 1;
+  -webkit-mask-image: none;
+  mask-image: none;
+  transform: translate(-50%, -50%) rotate(var(--math-card-tilt, 0deg));
+}
+
+.level-stop[data-map-theme="math"] .island-art::before {
+  content: attr(data-math-symbol);
+  position: absolute;
+  inset: 17% 0 auto;
+  color: #2f6c4d;
+  text-align: center;
+  font-size: clamp(2.3rem, 7.2cqw, 5rem);
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 0.08rem 0 rgba(255, 255, 255, 0.8);
+}
+
+.level-stop[data-map-theme="math"] .island-art::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 19%;
+  width: clamp(0.62rem, 2.4cqw, 1.35rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 27%, rgba(255, 255, 255, 0.7), transparent 25%),
+    linear-gradient(180deg, #ff8f7b, #df584f);
+  box-shadow:
+    -2.2rem 0 0 #44b89e,
+    2.2rem 0 0 #ffd45f;
+  transform: translateX(-50%);
+}
+
+.level-stop[data-map-theme="math"].square-island::after {
+  top: 72%;
+  width: min(24cqw, 15rem);
+  height: min(4.2cqw, 2.8rem);
+  background: radial-gradient(ellipse at center, rgba(91, 67, 36, 0.2), rgba(91, 67, 36, 0.08) 52%, transparent 74%);
+  filter: blur(0.08rem);
+  opacity: 0.76;
+}
+
+.level-stop[data-map-theme="math"] .level-node {
+  top: 29%;
+}
+
+.level-stop[data-map-theme="math"] .level-name {
+  top: 74%;
+  background: rgba(255, 253, 226, 0.94);
+  box-shadow:
+    0 0.22rem 0 rgba(46, 125, 74, 0.22),
+    0 0.35rem 0.8rem rgba(45, 105, 70, 0.14);
+}
+
+.level-stop[data-map-theme="math"] .level-name-copy strong {
+  color: #2d7449;
+}
+
+.level-stop[data-map-theme="math"].is-centered .island-art {
+  transform: translate(-50%, -50%) rotate(var(--math-card-tilt, 0deg)) scale(1.06);
+  animation: math-card-pop 0.4s ease-out both;
+}
+
+@keyframes math-card-pop {
+  0% { transform: translate(-50%, -50%) rotate(var(--math-card-tilt, 0deg)) scale(1); }
+  48% { transform: translate(-50%, -50%) rotate(var(--math-card-tilt, 0deg)) scale(1.08); }
+  100% { transform: translate(-50%, -50%) rotate(var(--math-card-tilt, 0deg)) scale(1.06); }
 }
 
 .level-stop.square-island::after {
@@ -2566,6 +3967,53 @@ body:has(.map-switch-dialog[open]) {
 
 .toy-steamboat.is-desert-rider .steamboat-asset {
   filter: drop-shadow(0 0.9rem 0.65rem rgba(109, 63, 22, 0.2));
+}
+
+.toy-steamboat.is-math-rider {
+  --boat-half-h: calc(clamp(7rem, 13vw, 10.5rem) * 0.18);
+  top: 58%;
+  width: clamp(7rem, 13vw, 10.5rem);
+  aspect-ratio: 5 / 1;
+}
+
+.toy-steamboat.is-math-rider::before,
+.toy-steamboat.is-math-rider::after {
+  display: none;
+}
+
+.toy-steamboat.is-math-rider .steamboat-body {
+  inset: 22% 0;
+  border: 0.16rem solid rgba(98, 67, 38, 0.35);
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, #ee6b5b 0 13%, #ffd964 13% 78%, #9b6a3e 78% 91%, #302c28 91% 100%);
+  box-shadow: 0 0.38rem 0.78rem rgba(74, 48, 28, 0.2);
+  transform: rotate(-7deg);
+  animation: none;
+}
+
+.toy-steamboat.is-math-rider .steamboat-body::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -0.9rem;
+  border-top: 0.48rem solid transparent;
+  border-bottom: 0.48rem solid transparent;
+  border-left: 1rem solid #9b6a3e;
+  transform: translateY(-50%);
+}
+
+.toy-steamboat.is-math-rider .steamboat-asset {
+  display: none;
+}
+
+.toy-steamboat.is-math-rider.is-sailing .steamboat-body {
+  animation: none;
+}
+
+@keyframes math-pencil-scoot {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0.12rem -0.08rem; }
 }
 
 @keyframes camel-turn-dust {
@@ -3896,6 +5344,220 @@ body:has(.map-switch-dialog[open]) {
   padding: 1.25rem;
 }
 
+.asset-pack-list {
+  display: grid;
+  gap: 0.6rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.asset-pack-row {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, 0.95fr) minmax(14rem, 1.65fr) auto;
+  align-items: center;
+  gap: 0.72rem 1.1rem;
+  padding: 0.88rem 1rem 0.95rem;
+  border: 2px solid rgba(121, 79, 39, 0.14);
+  border-radius: 0.85rem;
+  background: #fffdf5;
+  text-align: left;
+}
+
+.asset-pack-copy {
+  display: grid;
+  gap: 0.18rem;
+  justify-self: start;
+  min-width: 0;
+  text-align: left;
+}
+
+.asset-pack-copy strong {
+  color: var(--earth);
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+
+.asset-pack-copy span,
+.asset-pack-copy small {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.asset-pack-row.is-ready .asset-pack-copy span {
+  color: var(--mint-active);
+}
+
+.asset-pack-row.is-failed .asset-pack-copy span {
+  color: #9f2f2f;
+}
+
+.asset-pack-row.is-downloading,
+.asset-pack-row.is-queued {
+  border-color: rgba(14, 157, 140, 0.26);
+  background: #f5fffb;
+}
+
+.asset-pack-row.is-downloading .asset-pack-copy span,
+.asset-pack-row.is-queued .asset-pack-copy span,
+.asset-pack-row.is-downloading .asset-pack-copy small,
+.asset-pack-row.is-queued .asset-pack-copy small {
+  color: #0b7d74;
+}
+
+.asset-pack-meter {
+  position: relative;
+  width: 100%;
+  height: 0.52rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(121, 79, 39, 0.13);
+}
+
+.asset-pack-meter > span {
+  position: relative;
+  z-index: 1;
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ffd166, #ff9f43);
+  transition: width 0.35s ease;
+}
+
+.asset-pack-row.is-downloading .asset-pack-meter,
+.asset-pack-row.is-queued .asset-pack-meter {
+  background: rgba(14, 157, 140, 0.15);
+}
+
+.asset-pack-row.is-downloading .asset-pack-meter > span,
+.asset-pack-row.is-queued .asset-pack-meter > span {
+  background: linear-gradient(90deg, #3bd7c6, #0e9d8c);
+  box-shadow: 0 0 0.6rem rgba(14, 157, 140, 0.24);
+}
+
+.asset-pack-row.is-not-installed .asset-pack-meter > span {
+  background: rgba(121, 79, 39, 0.26);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .asset-pack-row.is-downloading .asset-pack-meter > span,
+  .asset-pack-row.is-queued .asset-pack-meter > span {
+    animation: asset-pack-fill-pulse 1.45s ease-in-out infinite;
+  }
+
+  .asset-pack-row.is-downloading .asset-pack-meter::after,
+  .asset-pack-row.is-queued .asset-pack-meter::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, transparent 12%, rgba(59, 215, 198, 0.24) 48%, transparent 84%);
+    opacity: 0;
+    transform: translateX(-100%);
+    animation: asset-pack-track-flow 1.65s ease-in-out infinite;
+  }
+
+  .asset-pack-row.is-downloading .asset-pack-meter > span::after,
+  .asset-pack-row.is-queued .asset-pack-meter > span::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 180%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, transparent 18%, rgba(255, 255, 255, 0.72) 48%, transparent 78%);
+    opacity: 0;
+    transform: translateX(-120%);
+    animation: asset-pack-meter-sheen 1.18s cubic-bezier(0.42, 0, 0.2, 1) infinite;
+  }
+}
+
+@keyframes asset-pack-fill-pulse {
+  0%, 100% { opacity: 0.82; }
+  50% { opacity: 1; }
+}
+
+@keyframes asset-pack-track-flow {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  22%, 70% { opacity: 1; }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+@keyframes asset-pack-meter-sheen {
+  0% {
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+  28%, 62% { opacity: 0.74; }
+  100% {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}
+
+.asset-pack-row.is-ready .asset-pack-meter > span {
+  background: linear-gradient(90deg, #5adbc9, #0e9d8c);
+}
+
+.asset-pack-action {
+  justify-self: end;
+  min-width: 4.8rem;
+  min-height: 2.4rem;
+  padding: 0 0.72rem;
+  border: 2px solid #087b77;
+  border-radius: 0.8rem;
+  color: #fffdf5;
+  background: #0e9d8c;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 0.18rem 0 #087b77;
+}
+
+.asset-pack-action[data-asset-pack-action="pause"] {
+  border-color: #8b5a19;
+  color: var(--earth);
+  background: var(--focus);
+  box-shadow: 0 0.18rem 0 rgba(121, 79, 39, 0.28);
+}
+
+.asset-pack-action[data-asset-pack-action="start"],
+.asset-pack-action[data-asset-pack-action="resume"] {
+  border-color: #087b77;
+  color: #fffdf5;
+  background: #0e9d8c;
+  box-shadow: 0 0.18rem 0 #087b77;
+}
+
+.asset-pack-action[data-asset-pack-action="start"]:active,
+.asset-pack-action[data-asset-pack-action="resume"]:active {
+  transform: translateY(1px);
+  box-shadow: 0 0.08rem 0 #087b77;
+}
+
+.asset-pack-action[data-asset-pack-action="pause"]:active {
+  transform: translateY(1px);
+  box-shadow: 0 0.08rem 0 rgba(121, 79, 39, 0.28);
+}
+
+.asset-pack-action:disabled {
+  border-color: rgba(121, 79, 39, 0.16);
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: none;
+  cursor: default;
+}
+
 .word-bank > p:last-child {
   margin: 0.8rem 0 0;
   color: var(--muted);
@@ -4035,6 +5697,73 @@ body:has(.map-switch-dialog[open]) {
   font-size: 1.8rem;
   font-weight: 900;
   line-height: 1;
+}
+
+.setting-check-status {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.65rem;
+  min-height: 2rem;
+  padding: 0 0.7rem;
+  border: 2px solid rgba(121, 79, 39, 0.16);
+  border-radius: var(--pill-radius);
+  color: var(--earth);
+  background: rgba(247, 243, 223, 0.82);
+  font-size: 0.76rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.setting-button[data-check-update-status="checking"] {
+  background: rgba(25, 200, 185, 0.08);
+  cursor: wait;
+}
+
+.setting-button[data-check-update-status="checking"] .setting-check-status {
+  color: #0f766e;
+  border-color: rgba(25, 200, 185, 0.34);
+  background: rgba(213, 250, 244, 0.92);
+}
+
+.setting-button[data-check-update-status="ready"] .setting-check-status {
+  color: var(--earth);
+  border-color: rgba(255, 204, 0, 0.48);
+  background: rgba(255, 243, 185, 0.96);
+}
+
+.setting-button[data-check-update-status="current"] .setting-check-status {
+  color: #3f7b32;
+  border-color: rgba(91, 156, 67, 0.28);
+  background: rgba(231, 247, 221, 0.94);
+}
+
+.setting-button[data-check-update-status="retry"],
+.setting-button[data-check-update-status="unsupported"] {
+  background: rgba(255, 122, 109, 0.08);
+}
+
+.setting-button[data-check-update-status="retry"] .setting-check-status,
+.setting-button[data-check-update-status="unsupported"] .setting-check-status {
+  color: var(--error);
+  border-color: rgba(211, 87, 74, 0.28);
+  background: rgba(255, 231, 226, 0.94);
+}
+
+.setting-button[data-check-update-status="checking"] .setting-check-status::before {
+  content: "";
+  width: 0.52rem;
+  height: 0.52rem;
+  margin-right: 0.38rem;
+  border: 2px solid rgba(15, 118, 110, 0.22);
+  border-top-color: #0f766e;
+  border-radius: 50%;
+  animation: check-update-spin 0.8s linear infinite;
+}
+
+@keyframes check-update-spin {
+  to { transform: rotate(360deg); }
 }
 
 .setting-row-account + .setting-row-account {
@@ -5383,6 +7112,7 @@ noscript {
   /* 沉浸 topbar：全部胶囊统一磨砂玻璃，任何海面背景下都可读 */
   .map-game-active .map-brand-card,
   .map-game-active .j-capsule,
+  .map-game-active .map-pack-btn,
   .map-game-active .resource-chip {
     border-color: rgba(255, 255, 255, 0.65);
     background: rgba(255, 255, 255, 0.58);
@@ -5418,6 +7148,24 @@ noscript {
     left: 50%;
     margin: 0;
     transform: translateX(-50%);
+  }
+
+  /* 当前关卡胶囊：对齐 math-map-play-area 水平带（左右对称作答区），
+     不要用全屏 left:50%——会相对题干/三选项偏左。
+     居中用 left/right + margin-inline:auto，不用 translateX(-50%)——
+     会被 .is-changing 的 transform 动画冲掉。 */
+  .map-game-active .math-level-switch-indicator {
+    position: absolute;
+    z-index: 10;
+    top: clamp(5.8rem, 13dvh, 8.25rem);
+    left: clamp(3rem, 7cqw, 7rem);
+    right: clamp(3rem, 7cqw, 7rem);
+    width: fit-content;
+    max-width: min(30rem, calc(100% - 2rem));
+    margin-block: 0;
+    margin-inline: auto;
+    --math-level-switch-base-transform: translateX(0);
+    transform: var(--math-level-switch-base-transform);
   }
 
   /* FAB 组：dock 右侧空隙，不贴死屏幕右下角 */
@@ -5528,9 +7276,16 @@ noscript {
     bottom: calc(var(--bottom-tabs-height) + max(0.75rem, env(safe-area-inset-bottom)));
   }
 
-  .map-game-active .map-message {
+  .map-game-active .map-message,
+  .map-game-active .math-level-switch-indicator {
     /* 竖屏顶栏可能两行，message 下移避让 */
     top: clamp(6.5rem, 16dvh, 9rem);
+  }
+
+  /* 竖屏 play-area 左右 inset 更紧，胶囊跟着对齐 */
+  .map-game-active .math-level-switch-indicator {
+    left: clamp(5.7rem, 25vw, 7.2rem);
+    right: 0.75rem;
   }
 
   /* 竖屏顶栏信息较多：在窄屏优先保住品牌与关卡芯片，压缩资源/航程胶囊 */
@@ -5606,9 +7361,18 @@ noscript {
   }
 }
 
+/* 窄屏：当前关卡胶囊跟随 play-area 的紧 inset（须写在沉浸 map-game 规则之后，才能盖过宽 inset） */
+@media (max-width: 760px) {
+  .map-game-active .math-level-switch-indicator {
+    left: clamp(5.7rem, 25vw, 7.2rem);
+    right: 0.75rem;
+  }
+}
+
 /* 7–9 英寸平板横屏 / 分屏时，顶部 HUD 会排为两行，给地图控件让出空间。 */
 @media (min-width: 700px) and (max-width: 899px) and (orientation: landscape) {
-  .map-game-active .map-message {
+  .map-game-active .map-message,
+  .map-game-active .math-level-switch-indicator {
     top: clamp(10.75rem, 24dvh, 12rem);
   }
 
@@ -5730,15 +7494,46 @@ noscript {
   }
 
   .map-locate-btn,
-  .map-jump-btn {
+  .map-jump-btn,
+  .map-music-btn {
     width: 2.75rem;
     height: 2.75rem;
   }
 
   .map-locate-btn svg,
-  .map-jump-btn svg {
+  .map-jump-btn svg,
+  .map-music-btn svg {
     width: 1.25rem;
     height: 1.25rem;
+  }
+
+  .map-pack-status-hud {
+    max-width: min(11.25rem, 100%);
+  }
+
+  .map-pack-btn {
+    grid-template-columns: 2.28rem minmax(0, 1fr);
+    max-width: 11.25rem;
+    min-height: 2.75rem;
+    padding: 0.22rem 0.62rem 0.22rem 0.26rem;
+  }
+
+  .map-pack-progress-ring {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+
+  .map-pack-progress-core svg {
+    width: 1.12rem;
+    height: 1.12rem;
+  }
+
+  .map-pack-status-copy strong {
+    font-size: 0.72rem;
+  }
+
+  .map-pack-status-copy small {
+    display: none;
   }
 
   .map-locate-btn::after {
@@ -6044,6 +7839,38 @@ body.level-quiz-active .view {
   .back-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--button-shadow); }
   .back-btn svg { width: 24px; height: 24px; }
 
+  .level-quiz .global-update-btn {
+    margin-left: auto;
+  }
+
+  .level-quiz .global-update-btn--level {
+    grid-template-columns: 2rem minmax(0, auto) auto;
+    max-width: 11rem;
+    min-height: 2.65rem;
+    padding: 0.2rem 0.58rem 0.2rem 0.24rem;
+    border-radius: 999px;
+  }
+
+  .level-quiz .global-update-btn--level .global-update-ring {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .level-quiz .global-update-btn--level .map-pack-status-copy strong {
+    font-size: 0.72rem;
+  }
+
+  .level-quiz .global-update-btn--level .map-pack-status-copy small {
+    display: none;
+  }
+
+  .level-quiz .global-update-btn--level .global-update-state {
+    min-width: 2.2rem;
+    min-height: 1.42rem;
+    padding: 0 0.34rem;
+    font-size: 0.62rem;
+  }
+
   .level-quiz .level-pill {
     display: inline-block;
     padding: 0.5rem 1.1rem;
@@ -6103,6 +7930,115 @@ body.level-quiz-active .view {
     background: #0d3b3e;
   }
   .video-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .video-card--download {
+    width: min(760px, 82vw);
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  .video-frame--download {
+    display: grid;
+    place-items: center;
+    background: transparent;
+  }
+
+  .level-video-loading-close {
+    position: fixed;
+    top: max(clamp(0.8rem, 2.2vh, 1.2rem), env(safe-area-inset-top, 0px));
+    right: max(clamp(0.8rem, 2.2vh, 1.2rem), env(safe-area-inset-right, 0px));
+    z-index: 12;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(2.75rem, 6.2vh, 3.35rem);
+    height: clamp(2.75rem, 6.2vh, 3.35rem);
+    padding: 0;
+    border: 2px solid rgba(114, 93, 66, 0.22);
+    border-radius: 50%;
+    color: #725d42;
+    background: rgba(255, 253, 245, 0.72);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 0.35rem 1rem rgba(75, 63, 48, 0.1);
+    backdrop-filter: blur(0.35rem);
+    -webkit-backdrop-filter: blur(0.35rem);
+  }
+
+  .level-video-loading-close:active {
+    transform: translateY(1px) scale(0.98);
+  }
+
+  .level-video-loading-close svg {
+    width: 56%;
+    height: 56%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+
+  .level-video-download-panel {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: clamp(0.7rem, 2.2vh, 1rem);
+    width: min(20rem, 56vw);
+    min-height: clamp(13rem, 34vh, 18rem);
+  }
+
+  .level-video-loading-lottie,
+  .level-video-loading-lottie svg {
+    display: block;
+    width: clamp(9rem, 24vh, 13.5rem);
+    height: clamp(9rem, 24vh, 13.5rem);
+    overflow: visible;
+  }
+
+  .level-video-loading-dots {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.52rem;
+    color: rgba(95, 102, 104, 0.74);
+  }
+
+  .level-video-loading-dots span {
+    display: block;
+    width: 0.72rem;
+    height: 0.72rem;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.28;
+    transform: translateY(0) scale(0.84);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .level-video-loading-dots span {
+      animation: level-video-loading-dot 1.1s ease-in-out infinite;
+    }
+
+    .level-video-loading-dots span:nth-child(2) {
+      animation-delay: 0.16s;
+    }
+
+    .level-video-loading-dots span:nth-child(3) {
+      animation-delay: 0.32s;
+    }
+  }
+
+  @keyframes level-video-loading-dot {
+    0%,
+    100% {
+      opacity: 0.28;
+      transform: translateY(0) scale(0.84);
+    }
+    45% {
+      opacity: 0.88;
+      transform: translateY(-0.42rem) scale(1);
+    }
+  }
 
   .play-overlay {
     position: absolute;
@@ -6586,12 +8522,340 @@ body.level-quiz-active .view {
     transform: translate(-50%, -50%) rotate(-45deg);
   }
 
+  .math-quiz .math-layout {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: 0.9rem;
+  }
+
+  .math-table {
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: clamp(0.65rem, 1.7vh, 1rem);
+    padding: clamp(0.35rem, 1vw, 0.75rem);
+    background: transparent;
+  }
+
+  .math-question-card {
+    justify-self: center;
+    width: min(42rem, 100%);
+    padding: 0.15rem 0.5rem;
+    color: #6f5638;
+    text-align: center;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
+  }
+
+  .math-options {
+    --math-option-columns: 3;
+    /* 选中环：贴合盘缘的单层超粗薄荷绿硬边，无黄圈/无外环/无光晕 */
+    /* 选中盘子必须一眼变大：1.02 肉眼无感，基线 ≥1.14 */
+    --math-selected-ring-inset: 2.5%;
+    --math-selected-ring-border: 0.52rem;
+    --math-selected-plate-scale: 1.16;
+    /* 盘内苹果：各盘统一尺寸，不随颗数缩放 */
+    --math-object-size: clamp(2.35rem, 6.4vh, 3.2rem);
+    --math-object-gap: 0.14rem;
+    --math-plate-pad: 5%;
+    display: grid;
+    grid-template-columns: repeat(var(--math-option-columns), minmax(0, 1fr));
+    gap: clamp(1rem, 2.6vw, 2rem);
+    min-height: 0;
+    align-items: stretch;
+    overflow: visible;
+  }
+
+  .math-options--count-2 {
+    --math-option-columns: 2;
+    --math-selected-ring-inset: 2.5%;
+    --math-selected-ring-border: 0.48rem;
+    --math-selected-plate-scale: 1.14;
+    --math-object-size: clamp(2.35rem, 6.4vh, 3.2rem);
+    --math-object-gap: 0.14rem;
+    --math-plate-pad: 4%;
+    justify-self: center;
+    width: min(44rem, 100%);
+  }
+
+  .math-options--count-4 {
+    --math-option-columns: 4;
+    --math-object-size: clamp(2.35rem, 6.4vh, 3.2rem);
+    --math-object-gap: 0.12rem;
+    --math-plate-pad: 4%;
+    gap: clamp(0.7rem, 1.5vw, 1.25rem);
+  }
+
+  .math-choice {
+    position: relative;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: 0.3rem;
+    min-width: 0;
+    min-height: 10.2rem;
+    /* 放大选中盘时预留环边，避免邻卡裁切 */
+    padding: 0.55rem 0.35rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    font: inherit;
+    color: var(--earth);
+    text-align: center;
+    overflow: visible;
+    z-index: 0;
+    transition: transform 0.18s cubic-bezier(0.18, 0.9, 0.22, 1.15);
+  }
+
+  .math-choice:active {
+    transform: translateY(0.08rem) scale(0.985);
+  }
+
+  .math-choice.is-selected {
+    /* 选中抬层，避免放大被邻卡盖住 */
+    z-index: 2;
+  }
+
+  .math-choice.is-correct {
+    z-index: 2;
+    transform: none;
+  }
+
+  .math-choice.is-wrong {
+    animation: lq-shake 0.45s ease;
+  }
+
+  .math-choice.is-correct .result-badge,
+  .math-choice.is-wrong .result-badge {
+    display: flex;
+  }
+
+  .math-choice.is-correct .result-badge {
+    background: var(--success);
+  }
+
+  .math-choice.is-correct .result-badge::after {
+    content: "";
+    width: 0.42rem;
+    height: 0.72rem;
+    margin-top: -0.12rem;
+    border: solid #fff;
+    border-width: 0 0.2rem 0.2rem 0;
+    transform: rotate(40deg);
+  }
+
+  .math-choice.is-wrong .result-badge {
+    background: var(--error);
+  }
+
+  .math-choice.is-selected .math-plate,
+  .math-choice.is-correct .math-plate {
+    /* 扁平：只保留极轻硬投影；盘子明显放大（用 CSS 变量，禁止再掉回 1.02） */
+    filter: drop-shadow(0 0.16rem 0 rgba(93, 61, 33, 0.14));
+    transform: translateY(-0.1rem) scale(var(--math-selected-plate-scale, 1.16));
+    transform-origin: center center;
+  }
+
+  .math-choice.is-selected .math-plate {
+    /* 在放大基线上呼吸：scale 在 ~0.97x～1.04x 变量之间振荡 */
+    animation: math-selected-plate-breathe 1.8s ease-in-out infinite;
+  }
+
+  .math-choice.is-correct .math-plate {
+    animation: none;
+  }
+
+  .math-choice.is-wrong .math-plate {
+    filter: drop-shadow(0 0.18rem 0.22rem rgba(190, 77, 70, 0.28));
+  }
+
+  .math-choice.is-wrong .result-badge::before,
+  .math-choice.is-wrong .result-badge::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0.95rem;
+    height: 0.2rem;
+    background: #fff;
+    border-radius: 99px;
+  }
+
+  .math-choice.is-wrong .result-badge::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .math-choice.is-wrong .result-badge::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+
+  .math-plate {
+    /* 正圆盘面：宽高 1:1；苹果可轻微溢出盘缘（visible） */
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: min(100%, clamp(6.6rem, 19vh, 8.8rem));
+    aspect-ratio: 1;
+    min-height: 0;
+    margin-inline: auto;
+    padding: var(--math-plate-pad, 5%);
+    border-radius: 50%;
+    background: center / contain no-repeat url("assets/math-map/quiz/plate-handpaint-depth-v1.webp?v=20260804-math-quiz-props-v1");
+    filter: drop-shadow(0 0.18rem 0.22rem rgba(93, 61, 33, 0.16));
+    isolation: isolate;
+    overflow: visible;
+    transition:
+      transform 0.18s cubic-bezier(0.18, 0.9, 0.22, 1.15),
+      filter 0.16s ease;
+  }
+
+  .math-plate::before {
+    /* 选中环贴盘缘：与盘子同圆，不再用格子宽度画大圈 */
+    content: "";
+    position: absolute;
+    z-index: 2;
+    inset: var(--math-selected-ring-inset, 2.5%);
+    width: auto;
+    height: auto;
+    border: var(--math-selected-ring-border) solid rgba(9, 161, 139, 0);
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    box-sizing: border-box;
+    transform: scale(0.96);
+    transform-origin: center;
+    transition:
+      opacity 0.16s ease,
+      transform 0.18s cubic-bezier(0.18, 0.9, 0.22, 1.15),
+      border-color 0.16s ease,
+      box-shadow 0.16s ease;
+  }
+
+  .math-choice.is-selected .math-plate::before,
+  .math-choice.is-correct .math-plate::before {
+    /* 仅一层超粗薄荷绿硬边 — 不要黄圈、不要外环、不要 box-shadow 光晕 */
+    border-color: #0a9a84;
+    box-shadow: none;
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .math-choice.is-selected .math-plate::before {
+    /* 环本身也轻轻呼吸，幅度小，平面感；不冲出盘外 */
+    animation: math-selected-ring-breathe 1.8s ease-in-out infinite;
+  }
+
+  .math-choice.is-correct .math-plate::before {
+    animation: none;
+  }
+
+  .math-object-set {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    gap: var(--math-object-gap, 0.18rem);
+    /* 略宽于盘内 padding 盒，允许苹果贴边/轻溢出 */
+    width: 108%;
+    max-width: none;
+    height: auto;
+    max-height: none;
+  }
+
+  .math-object {
+    position: relative;
+    isolation: isolate;
+    flex: 0 0 auto;
+    width: var(--math-object-size, clamp(2.35rem, 6.4vh, 3.2rem));
+    max-width: none;
+    aspect-ratio: 1;
+    background: center / contain no-repeat url("assets/math-map/quiz/apple-handpaint-depth-v2.webp?v=20260804-math-quiz-props-v1");
+  }
+
+  /* 苹果大小统一：不按颗数缩放，靠数量区分对错 */
+  .math-object::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    top: 68%;
+    width: 86%;
+    height: 32%;
+    border-radius: 999px;
+    background: radial-gradient(ellipse at center, rgba(87, 53, 30, 0.36) 0 32%, rgba(87, 53, 30, 0.16) 52%, rgba(87, 53, 30, 0) 76%);
+    opacity: 0.34;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .math-choice-label {
+    font-size: clamp(1.15rem, 3vh, 1.7rem);
+    font-weight: 900;
+    line-height: 1.15;
+    color: #6f4522;
+    text-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.78),
+      0 0.12rem 0.16rem rgba(93, 61, 33, 0.12);
+  }
+
+  .math-choice.is-selected .math-choice-label,
+  .math-choice.is-correct .math-choice-label {
+    color: #0c6f5a;
+    font-weight: 900;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.95);
+  }
+
+  .math-choice.is-wrong .math-choice-label {
+    color: var(--error);
+  }
+
+  /* 选中盘子呼吸：叠在 --math-selected-plate-scale 放大基线上（平面，无光晕） */
+  @keyframes math-selected-plate-breathe {
+    0%,
+    100% {
+      transform: translateY(-0.08rem) scale(calc(var(--math-selected-plate-scale, 1.16) * 0.97));
+    }
+    50% {
+      transform: translateY(-0.16rem) scale(calc(var(--math-selected-plate-scale, 1.16) * 1.04));
+    }
+  }
+
+  /* 描边环同步轻扩缩，保持中心对齐；幅度收小，不冲出盘缘 */
+  @keyframes math-selected-ring-breathe {
+    0%,
+    100% {
+      transform: scale(1);
+      border-color: #0a9a84;
+    }
+    50% {
+      transform: scale(1.02);
+      border-color: #0bb597;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .math-choice.is-selected .math-plate {
+      animation: none;
+      transform: translateY(-0.1rem) scale(var(--math-selected-plate-scale, 1.16));
+    }
+
+    .math-choice.is-selected .math-plate::before {
+      animation: none;
+    }
+  }
+
   /* ── 竖屏降级：单栏堆叠（横屏产品，竖屏仅保证可用） ───── */
   @media (max-width: 760px), (orientation: portrait) {
     .level-quiz { height: auto; min-height: 100dvh; }
     .stage { flex: none; }
     .video-card { width: 100%; }
+    .level-video-download-panel { justify-items: center; }
     .quiz-layout { grid-template-columns: 1fr; grid-template-rows: none; }
+    .math-options { grid-template-columns: 1fr; }
+    .math-choice { min-height: 9.5rem; }
     .question-card, .options, .quiz-footer { grid-column: 1; grid-row: auto; }
     .quiz-footer { margin-top: 0.25rem; min-height: 96px; }
     .play-circle { width: 88px; height: 88px; }
@@ -6611,12 +8875,35 @@ body.level-quiz-active .view {
    家长一眼看出「将来这里还会有一张适合大孩子的图」 */
 .map-world-option.is-coming-soon {
   cursor: default;
-  filter: saturate(0.7);
+  border-style: dashed;
+  border-color: rgba(116, 83, 184, 0.46);
+  filter: none;
 }
 
 .map-world-option.is-coming-soon:hover {
+  filter: none;
   transform: none;
   box-shadow: 0 0.3rem 0 rgba(121, 79, 39, 0.16), 0 0.9rem 1.6rem rgba(29, 69, 68, 0.1);
+}
+
+.map-world-option.is-coming-soon .map-world-art,
+.map-world-option.is-coming-soon .map-world-copy {
+  filter: saturate(0.48) brightness(0.95);
+}
+
+.map-world-option.is-coming-soon .map-world-art::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    repeating-linear-gradient(-32deg, rgba(62, 49, 88, 0.08) 0 0.34rem, transparent 0.34rem 0.68rem),
+    linear-gradient(180deg, rgba(46, 38, 68, 0.08), rgba(46, 38, 68, 0.42));
+  pointer-events: none;
+}
+
+.map-world-option.is-coming-soon .map-world-art img {
+  filter: saturate(0.7) brightness(0.9);
 }
 
 .map-world-art-placeholder {
@@ -6626,6 +8913,13 @@ body.level-quiz-active .view {
   height: 100%;
   color: #8b7bc0;
   background: linear-gradient(150deg, #e6def7 0%, #f4efff 70%);
+}
+
+.map-world-art-placeholder--math {
+  color: #287d53;
+  background:
+    radial-gradient(circle at 24% 28%, rgba(255, 213, 94, 0.42), transparent 18%),
+    linear-gradient(150deg, #dff4e4 0%, #fff5c7 100%);
 }
 
 .map-world-art-placeholder svg {
@@ -6639,20 +8933,40 @@ body.level-quiz-active .view {
   opacity: 0.9;
 }
 
-/* 「敬请期待」旗标：贴在缩略图右上角，与「推荐」旗标同款不同色 */
+/* 「敬请期待」旗标：压在缩略图中心，和右上角推荐旗标彻底区分 */
 .map-world-soon-badge {
   position: absolute;
-  top: 0.4rem;
-  right: 0.4rem;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
   display: grid;
   place-items: center;
-  padding: 0.22rem 0.55rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
+  min-width: min(8.6rem, calc(100% - 1rem));
+  padding: 0.36rem 0.72rem;
+  border-radius: 0.78rem;
+  font-size: 0.88rem;
   font-weight: 900;
+  letter-spacing: 0.04em;
   color: #fff;
-  background: linear-gradient(180deg, #b39ae8, #8b6fd8);
-  box-shadow: 0 0.14rem 0 rgba(94, 68, 168, 0.55), 0 0 0 0.13rem rgba(255, 255, 255, 0.85), 0 0 0.65rem rgba(179, 154, 232, 0.6);
+  background: linear-gradient(180deg, #ff9d2f, #d86d06);
+  box-shadow:
+    0 0.18rem 0 rgba(128, 70, 4, 0.64),
+    0 0 0 0.14rem rgba(255, 255, 255, 0.92),
+    0 0.7rem 1.2rem rgba(112, 65, 4, 0.38);
+  text-shadow: 0 0.08rem 0 rgba(128, 70, 4, 0.58);
+  transform: translate(-50%, -50%) rotate(-4deg);
+}
+
+.map-switch-picker-card .map-world-soon-badge {
+  top: 50%;
+  left: 50%;
+  min-width: min(7.8rem, calc(100% - 0.6rem));
+  padding: 0.34rem 0.56rem;
+  font-size: 0.86rem;
+  box-shadow:
+    0 0.14rem 0 rgba(128, 70, 4, 0.58),
+    0 0 0 0.1rem rgba(255, 255, 255, 0.92),
+    0 0.55rem 0.9rem rgba(112, 65, 4, 0.34);
 }
 
 /* 城堡卡的适龄贴纸用紫色主题 */
@@ -6665,6 +8979,10 @@ body.level-quiz-active .view {
   font-size: 0.76rem;
   font-weight: 800;
   line-height: 1.3;
+}
+
+.map-switch-picker-card .map-world-soon-note {
+  font-size: 0.68rem;
 }
 
 @media (max-width: 560px) {

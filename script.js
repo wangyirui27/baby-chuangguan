@@ -111,6 +111,10 @@ const FREE_LEVEL_COUNT = 10;
 const DISPLAY_LEVEL_COUNT = 200;
 const APP_RELEASE_VERSION = '1.0.0';
 const APP_RELEASE_UPDATE_URL = 'app-release.json';
+const ASSET_PACK_MANIFEST_URL = 'asset-packs.json';
+const ASSET_PACK_STORAGE_KEY = 'baby-island-asset-packs-v1';
+const LEVEL_VIDEO_STORAGE_KEY = 'baby-island-level-videos-v1';
+const LEVEL_VIDEO_LOADING_LOTTIE_URL = 'assets/lottie/level-video-loading.json';
 
 // ===== 启动页控制 (Animal-Island #7DC395 + home_bg + logo + 5秒 + 奶油3D跳过) =====
 (function initAppSplash() {
@@ -340,7 +344,280 @@ const desertLevels = buildLevelsFromUnits(desertPhraseUnits, {}, (phrase) => phr
     question: `Which English line means ${level.zhTitle}?`,
   }));
 
-const lessonUnavailableMessage = '这关视频还在准备中，请先复习前 10 关。';
+const MATH_COUNT_WORDS = ['0 个', '1 个', '2 个', '3 个', '4 个', '5 个'];
+
+function mathCountLabel(count) {
+  return `${MATH_COUNT_WORDS[count] || `${count} 个`}苹果`;
+}
+
+function mathChoiceCountsForLevel(levelId) {
+  const targetCount = ((levelId - 1) % 5) + 1;
+  const candidates = [
+    targetCount,
+    targetCount === 1 ? 0 : targetCount - 1,
+    targetCount === 5 ? 3 : targetCount + 1,
+    targetCount <= 3 ? targetCount + 2 : targetCount - 2,
+  ].filter((count) => count >= 0 && count <= 5);
+  const counts = [...new Set(candidates)].slice(0, 3);
+  const shift = (levelId - 1) % counts.length;
+  return counts.slice(shift).concat(counts.slice(0, shift));
+}
+
+function buildMathLevels(totalLevels = DISPLAY_LEVEL_COUNT) {
+  return Array.from({ length: totalLevels }, (_, index) => {
+    const id = index + 1;
+    const targetCount = ((id - 1) % 5) + 1;
+    const choiceCounts = mathChoiceCountsForLevel(id);
+    const correct = choiceCounts.indexOf(targetCount);
+    return {
+      id,
+      title: id === 1 ? '只有一个' : `数到 ${targetCount}`,
+      zhTitle: '数量感知',
+      topic: id <= FREE_LEVEL_COUNT ? '数学启蒙 · 免费体验' : '数学启蒙 · 会员练习',
+      curriculum: {
+        standard: '3-5岁数学启蒙',
+        claim: '为人教版一年级数学“数一数”和10以内数认知打基础',
+        alignment: 'core',
+        theme: '数量感知',
+        pepUnits: ['人教版一年级上册 准备课 数一数'],
+      },
+      duration: '2 分钟',
+      guidance: `看清桌面，找出${mathCountLabel(targetCount)}的一组。`,
+      question: `哪一组是${mathCountLabel(targetCount)}？`,
+      options: choiceCounts.map(mathCountLabel),
+      correct,
+      worldId: 'math',
+      itemType: 'count',
+      targetCount,
+      math: {
+        objectName: '苹果',
+        groups: choiceCounts.map((count, optionIndex) => ({
+          id: `math-${id}-${optionIndex}`,
+          count,
+          label: mathCountLabel(count),
+        })),
+      },
+    };
+  });
+}
+
+const mathLevels = buildMathLevels();
+
+const MATH_ATTEMPT_KEY = 'baby-island-math-attempts-v1';
+const MATH_ATTEMPT_LIMIT = 80;
+const MATH_ATTEMPT_SCHEMA_VERSION = 1;
+
+function normalizeMathAttempts(value, limit = MATH_ATTEMPT_LIMIT) {
+  const entries = Array.isArray(value) ? value : [];
+  const safeLimit = Math.max(1, Number(limit) || MATH_ATTEMPT_LIMIT);
+  return entries.map((entry) => {
+    const levelId = Number(entry?.levelId);
+    if (!Number.isInteger(levelId) || levelId < 1 || levelId > DISPLAY_LEVEL_COUNT) return null;
+    const targetCount = Math.max(0, Math.min(10, Number(entry?.targetCount) || 0));
+    const selectedCount = Number.isFinite(Number(entry?.selectedCount))
+      ? Math.max(0, Math.min(10, Number(entry.selectedCount)))
+      : null;
+    const ts = Number.isFinite(Number(entry?.ts)) ? Number(entry.ts) : Date.now();
+    const mode = ['easier', 'same', 'harder'].includes(entry?.mode) ? entry.mode : 'same';
+    const responseMs = Number.isFinite(Number(entry?.responseMs))
+      ? Math.max(0, Math.min(600000, Math.round(Number(entry.responseMs))))
+      : null;
+    return {
+      attemptId: String(entry?.attemptId || `local-${ts}-${levelId}-${selectedCount ?? 'x'}-${mode}`).slice(0, 80),
+      schemaVersion: MATH_ATTEMPT_SCHEMA_VERSION,
+      ts,
+      worldId: 'math',
+      levelId,
+      skill: String(entry?.skill || 'count'),
+      targetCount,
+      selected: String(entry?.selected || ''),
+      selectedCount,
+      correct: String(entry?.correct || mathCountLabel(targetCount)),
+      isCorrect: entry?.isCorrect === true,
+      mode,
+      responseMs,
+    };
+  }).filter(Boolean).slice(-safeLimit);
+}
+
+function appendMathAttempt(log, attempt, limit = MATH_ATTEMPT_LIMIT) {
+  return normalizeMathAttempts([...normalizeMathAttempts(log, limit), attempt], limit);
+}
+
+function mergeMathAttempts(localLog, remoteLog, limit = MATH_ATTEMPT_LIMIT) {
+  const byId = new Map();
+  [...normalizeMathAttempts(remoteLog, limit), ...normalizeMathAttempts(localLog, limit)].forEach((entry) => {
+    byId.set(entry.attemptId, entry);
+  });
+  return [...byId.values()].sort((a, b) => a.ts - b.ts).slice(-limit);
+}
+
+function summarizeMathSkill(log, options = {}) {
+  const skill = String(options.skill || 'count');
+  const windowSize = Math.max(1, Number(options.window) || 6);
+  const entries = normalizeMathAttempts(log, 500)
+    .filter((entry) => entry.skill === skill)
+    .filter((entry) => !Number.isInteger(options.levelId) || entry.levelId === options.levelId)
+    .slice(-windowSize);
+  let correctStreak = 0;
+  let wrongStreak = 0;
+  for (let index = entries.length - 1; index >= 0; index -= 1) {
+    if (entries[index].isCorrect) {
+      if (wrongStreak) break;
+      correctStreak += 1;
+    } else {
+      if (correctStreak) break;
+      wrongStreak += 1;
+    }
+  }
+  const correct = entries.filter((entry) => entry.isCorrect).length;
+  return {
+    skill,
+    total: entries.length,
+    correct,
+    wrong: entries.length - correct,
+    accuracy: entries.length ? correct / entries.length : null,
+    correctStreak,
+    wrongStreak,
+  };
+}
+
+function buildMathVariant(level, mode = 'same') {
+  const safeMode = ['easier', 'same', 'harder'].includes(mode) ? mode : 'same';
+  const levelId = Number(level?.id) || 1;
+  const targetCount = Math.max(0, Math.min(5, Number(level?.targetCount) || 1));
+  const fullPool = [0, 1, 2, 3, 4, 5];
+  let counts;
+  if (safeMode === 'easier') {
+    // 固定 3 选 1：降难度只拉开干扰距离，不减选项数
+    const far = fullPool
+      .filter((count) => count !== targetCount)
+      .sort((a, b) => Math.abs(b - targetCount) - Math.abs(a - targetCount) || a - b);
+    counts = [targetCount, far[0], far[1]];
+  } else if (safeMode === 'harder') {
+    // 固定 3 选 1：升难度用更近的干扰项
+    const near = fullPool
+      .filter((count) => count !== targetCount)
+      .sort((a, b) => Math.abs(a - targetCount) - Math.abs(b - targetCount) || a - b);
+    counts = [targetCount, near[0], near[1]];
+  } else {
+    counts = Array.isArray(level?.math?.groups) && level.math.groups.length
+      ? level.math.groups.map((group) => Number(group.count))
+      : mathChoiceCountsForLevel(levelId);
+  }
+  counts = [...new Set(counts.filter((count) => Number.isInteger(count) && count >= 0 && count <= 5))];
+  if (!counts.includes(targetCount)) counts.unshift(targetCount);
+  fullPool.forEach((count) => {
+    if (counts.length >= 3) return;
+    if (!counts.includes(count)) counts.push(count);
+  });
+  counts = counts.slice(0, 3);
+  if (safeMode !== 'same') {
+    const shiftSeed = safeMode === 'easier' ? 2 : 1;
+    const shift = (levelId - 1 + shiftSeed) % counts.length;
+    counts = counts.slice(shift).concat(counts.slice(0, shift));
+  }
+  const correct = counts.indexOf(targetCount);
+  return {
+    ...level,
+    options: counts.map(mathCountLabel),
+    correct,
+    math: {
+      ...(level?.math || {}),
+      adaptiveMode: safeMode,
+      groups: counts.map((count, optionIndex) => ({
+        id: `math-${levelId}-${safeMode}-${optionIndex}`,
+        count,
+        label: mathCountLabel(count),
+      })),
+    },
+  };
+}
+
+function adaptMathLevel(level, log = []) {
+  const sameLevel = summarizeMathSkill(log, { levelId: Number(level?.id), window: 4 });
+  if (sameLevel.wrongStreak >= 2) return buildMathVariant(level, 'easier');
+  const skill = summarizeMathSkill(log, { window: 6 });
+  return buildMathVariant(level, skill.correctStreak >= 3 ? 'harder' : 'same');
+}
+
+function generateMathVariant(level, context = {}) {
+  return buildMathVariant(level, context.mode || adaptMathLevel(level, context.attempts || []).math.adaptiveMode);
+}
+
+function mathVoiceFeedback(kind, context = {}) {
+  const mode = String(kind || '');
+  const count = Number(context.targetCount) || 1;
+  const text = mode === 'correct'
+    ? '答对啦！'
+    : mode === 'wrong-easier'
+      ? `选项拉开了，再找${mathCountLabel(count)}。`
+      : '再数一数，从左往右数。';
+  return { provider: 'local-template', kind: mode || 'wrong', text };
+}
+
+function nextMathPathRecommendation(log, currentLevelId = 1) {
+  const summary = summarizeMathSkill(log, { window: 6 });
+  const recent = summarizeMathSkill(log, { window: 20 });
+  const current = Math.min(DISPLAY_LEVEL_COUNT, Math.max(1, Number(currentLevelId) || 1));
+  if (summary.wrongStreak >= 2) {
+    return {
+      levelId: current,
+      reason: 'repeat-current',
+      reasonText: `最近连续错了 ${summary.wrongStreak} 次，先巩固第 ${current} 关`,
+    };
+  }
+  if (summary.total >= 4 && summary.accuracy < 0.5) {
+    return {
+      levelId: current,
+      reason: 'repeat-current',
+      reasonText: `近 ${summary.total} 题正确率偏低，建议继续练第 ${current} 关`,
+    };
+  }
+  if (recent.total >= 8 && recent.accuracy >= 0.85 && summary.correctStreak >= 2) {
+    const next = Math.min(DISPLAY_LEVEL_COUNT, current + 1);
+    return {
+      levelId: next,
+      reason: 'next-level',
+      reasonText: `近 20 题表现稳定，可以挑战第 ${next} 关`,
+    };
+  }
+  const next = Math.min(DISPLAY_LEVEL_COUNT, current + 1);
+  return {
+    levelId: next,
+    reason: 'next-level',
+    reasonText: `可以继续第 ${next} 关`,
+  };
+}
+
+function resolveMathContinueLevel(log, currentLevelId = 1, totalLevels = DISPLAY_LEVEL_COUNT) {
+  const current = Math.min(totalLevels, Math.max(1, Number(currentLevelId) || 1));
+  const recommendation = nextMathPathRecommendation(log, current);
+  const recommended = Math.min(totalLevels, Math.max(1, Number(recommendation.levelId) || current));
+  return {
+    levelId: recommendation.reason === 'repeat-current' ? current : recommended,
+    reason: recommendation.reason,
+    reasonText: recommendation.reasonText || '',
+  };
+}
+
+function buildMathParentReport(log = []) {
+  const attempts = normalizeMathAttempts(log, 500);
+  const summary = summarizeMathSkill(attempts, { window: Math.min(20, Math.max(1, attempts.length || 1)) });
+  const accuracy = summary.accuracy === null ? null : Math.round(summary.accuracy * 100);
+  const recommendation = nextMathPathRecommendation(attempts, attempts.at(-1)?.levelId || 1);
+  return {
+    totalAttempts: attempts.length,
+    correct: attempts.filter((entry) => entry.isCorrect).length,
+    accuracy,
+    mastery: accuracy === null ? '暂无数据' : accuracy >= 80 ? '稳定' : accuracy >= 55 ? '需要巩固' : '建议陪练',
+    recommendation,
+    reasonText: recommendation.reasonText || '',
+    skill: summary.skill,
+    window: summary.total,
+  };
+}
+
 const DESERT_LANDMARK_IMAGES = [
   '01-great-pyramid-complex.webp',
   '02-large-sphinx-monument.webp',
@@ -487,6 +764,7 @@ const MAP_WORLDS = {
   ocean: {
     id: 'ocean',
     theme: 'ocean',
+    zone: 'english',
     startLevel: 1,
     endLevel: DISPLAY_LEVEL_COUNT,
     kicker: `${DISPLAY_LEVEL_COUNT} MAGIC ISLANDS`,
@@ -498,6 +776,7 @@ const MAP_WORLDS = {
   desert: {
     id: 'desert',
     theme: 'desert',
+    zone: 'english',
     startLevel: 1,
     endLevel: DISPLAY_LEVEL_COUNT,
     kicker: `${DISPLAY_LEVEL_COUNT} DESERT STOPS`,
@@ -506,9 +785,41 @@ const MAP_WORLDS = {
     routeLabel: `沙漠地图，共 ${DISPLAY_LEVEL_COUNT} 关`,
     hint: `← 左右滑动探索 ${DISPLAY_LEVEL_COUNT} 关沙漠地标 →`,
   },
+  math: {
+    id: 'math',
+    theme: 'math',
+    zone: 'math',
+    usesVideoAssets: false,
+    startLevel: 1,
+    endLevel: DISPLAY_LEVEL_COUNT,
+    kicker: `${DISPLAY_LEVEL_COUNT} MATH STOPS`,
+    title: '数学小桌',
+    chipPrefix: '数学地图',
+    routeLabel: `数学地图，共 ${DISPLAY_LEVEL_COUNT} 关`,
+    hint: `← 左右滑动探索 ${DISPLAY_LEVEL_COUNT} 关数学任务 →`,
+  },
+  math58: {
+    id: 'math58',
+    theme: 'math',
+    zone: 'math',
+    comingSoon: true,
+    kicker: 'MATH GARDEN',
+    title: '数学花园',
+    chipPrefix: '数学地图',
+  },
+  math912: {
+    id: 'math912',
+    theme: 'math',
+    zone: 'math',
+    comingSoon: true,
+    kicker: 'MATH STAR TOWER',
+    title: '数学星塔',
+    chipPrefix: '数学地图',
+  },
   castle: {
     id: 'castle',
     theme: 'castle',
+    zone: 'english',
     comingSoon: true,
     kicker: 'MAGIC CASTLE',
     title: '魔法城堡',
@@ -765,7 +1076,6 @@ function completionUnlockText(level, progress, isVip = false, allLevels = levels
   if (access === 'paid') return paidAccessMessage;
   if (access === 'locked') return `先完成第 ${progress.unlockedThrough} 关，再继续冒险。`;
   if (access === 'missing') return '没有找到下一关。';
-  if (!nextLevel.videoSrc) return lessonUnavailableMessage;
   return `第 ${nextLevel.id} 关已解锁。`;
 }
 
@@ -782,17 +1092,239 @@ function normalizeMapWorldId(value) {
 }
 
 function normalizeWorldProgress(value, totalLevels = DISPLAY_LEVEL_COUNT) {
-  const hasWorldProgress = value && typeof value === 'object' && ('ocean' in value || 'desert' in value || 'castle' in value);
+  const hasWorldProgress = value && typeof value === 'object' && Object.keys(MAP_WORLDS).some((worldId) => worldId in value);
+  return Object.values(MAP_WORLDS).reduce((progress, world) => {
+    const worldLevels = world.comingSoon ? [] : levelsForMapWorld(world.id);
+    const worldTotal = worldLevels.length || totalLevels;
+    return {
+      ...progress,
+      [world.id]: normalizeProgress(hasWorldProgress ? value[world.id] : world.id === 'ocean' ? value : null, worldTotal),
+    };
+  }, {});
+}
+
+function clampAssetPackProgress(value, fallback = 0) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return fallback;
+  return Math.min(100, Math.max(0, Math.round(numeric)));
+}
+
+function normalizeAssetPackState(value = {}) {
+  const validStatuses = ['not-installed', 'queued', 'downloading', 'paused', 'ready', 'stale', 'failed'];
+  const rawStatus = typeof value.status === 'string' ? value.status : 'not-installed';
+  const bytesDone = Math.max(0, Number(value.bytesDone) || 0);
+  const bytesTotal = Math.max(0, Number(value.bytesTotal) || 0);
+  const derivedProgress = bytesTotal > 0 ? (bytesDone / bytesTotal) * 100 : undefined;
+  const status = validStatuses.includes(rawStatus) ? rawStatus : 'not-installed';
   return {
-    ocean: normalizeProgress(hasWorldProgress ? value.ocean : value, totalLevels),
-    desert: normalizeProgress(hasWorldProgress ? value.desert : null, totalLevels),
-    castle: normalizeProgress(hasWorldProgress ? value.castle : null, totalLevels),
+    status,
+    progress: status === 'ready' ? 100 : clampAssetPackProgress(value.progress ?? derivedProgress, status === 'ready' ? 100 : 0),
+    bytesDone,
+    bytesTotal,
+    localVersion: typeof value.localVersion === 'string' ? value.localVersion : '',
+    remoteVersion: typeof value.remoteVersion === 'string' ? value.remoteVersion : '',
+    errorCode: typeof value.errorCode === 'string' ? value.errorCode : '',
+    downloadUrl: typeof value.downloadUrl === 'string' ? value.downloadUrl : '',
+    levelVideoUrlTemplate: typeof value.levelVideoUrlTemplate === 'string' ? value.levelVideoUrlTemplate : '',
+    levels: Array.isArray(value.levels) ? value.levels.map((item) => ({
+      levelId: Number(item?.levelId) || 0,
+      downloadUrl: typeof item?.downloadUrl === 'string' ? item.downloadUrl : '',
+      bytesTotal: Number(item?.bytesTotal) || 0,
+      sha256: typeof item?.sha256 === 'string' ? item.sha256 : '',
+    })).filter((item) => item.levelId > 0 && item.downloadUrl) : [],
+    updatedAt: Number(value.updatedAt) || 0,
+  };
+}
+
+function normalizeAssetPackStates(value = {}) {
+  return Object.values(MAP_WORLDS).reduce((states, world) => ({
+    ...states,
+    [world.id]: normalizeAssetPackState(value?.[world.id]),
+  }), {});
+}
+
+function levelVideoStateKey(worldId, levelId) {
+  return `${normalizeMapWorldId(worldId)}:${Number(levelId) || 0}`;
+}
+
+function normalizeLevelVideoState(value = {}) {
+  const validStatuses = ['not-installed', 'queued', 'downloading', 'ready', 'failed'];
+  const rawStatus = typeof value.status === 'string' ? value.status : 'not-installed';
+  const bytesDone = Math.max(0, Number(value.bytesDone) || 0);
+  const bytesTotal = Math.max(0, Number(value.bytesTotal) || 0);
+  const derivedProgress = bytesTotal > 0 ? (bytesDone / bytesTotal) * 100 : undefined;
+  const status = validStatuses.includes(rawStatus) ? rawStatus : 'not-installed';
+  return {
+    mapId: normalizeMapWorldId(value.mapId || value.worldId),
+    levelId: Number(value.levelId) || 0,
+    status,
+    progress: status === 'ready' ? 100 : clampAssetPackProgress(value.progress ?? derivedProgress, 0),
+    bytesDone,
+    bytesTotal,
+    localUrl: typeof value.localUrl === 'string' ? value.localUrl : '',
+    downloadUrl: typeof value.downloadUrl === 'string' ? value.downloadUrl : '',
+    errorCode: typeof value.errorCode === 'string' ? value.errorCode : '',
+    updatedAt: Number(value.updatedAt) || 0,
+  };
+}
+
+function normalizeLevelVideoStates(value = {}) {
+  if (!value || typeof value !== 'object') return {};
+  return Object.entries(value).reduce((states, [key, item]) => {
+    const fallbackLevelId = Number(String(key).split(':').pop()) || 0;
+    const normalized = normalizeLevelVideoState({ levelId: fallbackLevelId, ...item });
+    if (!normalized.levelId) return states;
+    return {
+      ...states,
+      [levelVideoStateKey(normalized.mapId, normalized.levelId)]: normalized,
+    };
+  }, {});
+}
+
+function levelVideoDownloadLabel(status, progress = 0) {
+  if (status === 'ready') return '已下载';
+  if (status === 'downloading') return `下载中 ${clampAssetPackProgress(progress)}%`;
+  if (status === 'queued') return '准备下载';
+  if (status === 'failed') return '下载失败';
+  return '未下载';
+}
+
+function assetPackLevelVideoUrl(mapId, levelId, packState = {}) {
+  const pack = normalizeAssetPackState(packState);
+  const id = Number(levelId) || 0;
+  const listed = pack.levels.find((item) => item.levelId === id);
+  if (listed?.downloadUrl) return listed.downloadUrl;
+  if (!pack.levelVideoUrlTemplate) return '';
+  const safeMapId = normalizeMapWorldId(mapId);
+  const padded2 = String(id).padStart(2, '0');
+  const padded3 = String(id).padStart(3, '0');
+  return pack.levelVideoUrlTemplate
+    .replaceAll('{mapId}', encodeURIComponent(safeMapId))
+    .replaceAll('{levelId}', String(id))
+    .replaceAll('{levelId2}', padded2)
+    .replaceAll('{levelId3}', padded3);
+}
+
+function assetPackHasLevelVideoSource(mapId, packState = {}) {
+  const pack = normalizeAssetPackState(packState);
+  if (pack.levels.length > 0) return true;
+  return Boolean(pack.levelVideoUrlTemplate && assetPackLevelVideoUrl(mapId, FREE_LEVEL_COUNT + 1, pack));
+}
+
+function assetPackHasDownloadSource(mapId, packState = {}) {
+  const pack = normalizeAssetPackState(packState);
+  return Boolean(pack.downloadUrl || assetPackHasLevelVideoSource(mapId, pack));
+}
+
+function assetPackLevelDownloadQueue(worldId, packState = {}, levelVideoStates = {}, options = {}) {
+  const mapId = normalizeMapWorldId(worldId);
+  const pack = normalizeAssetPackState(packState);
+  const states = normalizeLevelVideoStates(levelVideoStates);
+  const throughLevel = Math.min(
+    DISPLAY_LEVEL_COUNT,
+    Math.max(FREE_LEVEL_COUNT + 1, Number(options.throughLevel) || DISPLAY_LEVEL_COUNT),
+  );
+  return levelsForMapWorld(mapId)
+    .filter((level) => level.id > FREE_LEVEL_COUNT && level.id <= throughLevel)
+    .filter((level) => normalizeLevelVideoState(states[levelVideoStateKey(mapId, level.id)]).status !== 'ready')
+    .map((level) => {
+      const listed = pack.levels.find((item) => item.levelId === level.id);
+      return {
+        levelId: level.id,
+        downloadUrl: assetPackLevelVideoUrl(mapId, level.id, pack),
+        bytesTotal: listed?.bytesTotal || 0,
+        sha256: listed?.sha256 || '',
+      };
+    })
+    .filter((item) => item.downloadUrl)
+    .sort((a, b) => a.levelId - b.levelId);
+}
+
+function assetPackPlayableSummary(worldId, states = {}, options = {}) {
+  const world = MAP_WORLDS[normalizeMapWorldId(worldId)];
+  if (world.comingSoon) return { playable: 0, total: 0, progress: 0, text: '已可玩 0/0 关' };
+  const totalLevels = levelsForMapWorld(world.id).length || Math.max(0, (world.endLevel || 0) - (world.startLevel || 1) + 1);
+  const bundledThroughLevel = Math.min(totalLevels, Math.max(0, Number(options.bundledThroughLevel) || FREE_LEVEL_COUNT));
+  const pack = normalizeAssetPackState(states?.[world.id]);
+  const levelVideoStates = normalizeLevelVideoStates(options.levelVideoStates);
+  const readyLevelIds = new Set(Object.values(levelVideoStates)
+    .filter((item) => item.status === 'ready')
+    .filter((item) => normalizeMapWorldId(item.mapId) === world.id)
+    .map((item) => Number(item.levelId))
+    .filter((levelId) => levelId > bundledThroughLevel && levelId <= totalLevels));
+  let playable = bundledThroughLevel;
+
+  if (['ready', 'stale'].includes(pack.status)) {
+    playable = totalLevels;
+  } else {
+    for (let levelId = bundledThroughLevel + 1; levelId <= totalLevels; levelId += 1) {
+      if (!readyLevelIds.has(levelId)) break;
+      playable = levelId;
+    }
+  }
+
+  return {
+    playable,
+    total: totalLevels,
+    progress: totalLevels > 0 ? clampAssetPackProgress((playable / totalLevels) * 100) : 0,
+    text: `已可玩 ${playable}/${totalLevels} 关`,
+  };
+}
+
+function assetPackSummary(worldId, states = {}, options = {}) {
+  const world = MAP_WORLDS[normalizeMapWorldId(worldId)];
+  if (world.comingSoon) {
+    return {
+      status: 'coming-soon',
+      label: '敬请期待',
+      stateLabel: '敬请期待',
+      note: '新地图上线后会有新的关卡视频',
+      playableCount: 0,
+      totalLevels: 0,
+      playableText: '已可玩 0/0 关',
+      progress: 0,
+      action: '',
+      actionLabel: '',
+      disabled: true,
+    };
+  }
+  const bridgeAvailable = options.bridgeAvailable === true;
+  const pack = normalizeAssetPackState(states?.[world.id]);
+  const playable = assetPackPlayableSummary(world.id, states, options);
+  const effectiveStatus = playable.total > 0 && playable.playable >= playable.total ? 'ready' : pack.status;
+  const summaries = {
+    'not-installed': {
+      label: '未下载',
+      note: bridgeAvailable ? '后面的关卡视频可以在后台下载' : '打开 iPad 版后会在后台下载后面的关卡视频',
+      action: 'start',
+      actionLabel: '下载',
+    },
+    queued: { label: '下载中', note: 'iPad 正在按关卡顺序准备视频', action: 'pause', actionLabel: '暂停' },
+    downloading: { label: `下载中 ${pack.progress}%`, note: '按关卡顺序下载，可以暂停', action: 'pause', actionLabel: '暂停' },
+    paused: { label: `已暂停 ${pack.progress}%`, note: '继续后会接着下载', action: 'resume', actionLabel: '继续' },
+    ready: { label: '已完成', note: '这一张地图的关卡视频都可以玩了', action: '', actionLabel: '' },
+    stale: { label: '有新视频', note: '现在的关卡还能玩，点一下就能拿到最新内容', action: 'start', actionLabel: '更新' },
+    failed: { label: '下载失败', note: '请稍后重试', action: 'start', actionLabel: '重试' },
+  };
+  const summary = summaries[effectiveStatus] || summaries['not-installed'];
+  return {
+    ...summary,
+    stateLabel: summary.label,
+    status: effectiveStatus,
+    playableCount: playable.playable,
+    totalLevels: playable.total,
+    playableText: playable.text,
+    downloadProgress: pack.progress,
+    progress: playable.progress,
+    actionLabel: summary.actionLabel,
+    disabled: !summary.action,
   };
 }
 
 function levelsForMapWorld(worldId, allLevels = levels) {
   const world = MAP_WORLDS[normalizeMapWorldId(worldId)];
   if (world.id === 'desert') return desertLevels;
+  if (world.id === 'math') return mathLevels;
   if (world.comingSoon) return [];
   return allLevels.filter((level) => level.id >= world.startLevel && level.id <= world.endLevel);
 }
@@ -1094,7 +1626,7 @@ function supportFeedbackText(message, context = {}) {
   ].filter(Boolean).join('\n');
 }
 
-function buildLearningDataExport(progress, activity, preferences, mistakeBook, _account, allLevels = levels, exportedAt = new Date().toISOString()) {
+function buildLearningDataExport(progress, activity, preferences, mistakeBook, _account, allLevels = levels, exportedAt = new Date().toISOString(), mathAttempts = []) {
   const safeProgress = normalizeProgress(progress, allLevels.length);
   const safeActivity = normalizeLearningActivity(activity);
   const safeMistakes = normalizeMistakeBook(mistakeBook, allLevels);
@@ -1112,6 +1644,7 @@ function buildLearningDataExport(progress, activity, preferences, mistakeBook, _
     },
     mistakeBook: safeMistakes,
     report: learningReport(safeProgress, safeActivity, allLevels),
+    mathAiReport: buildMathParentReport(mathAttempts),
   };
 }
 
@@ -1169,12 +1702,12 @@ function requestReleaseUpdate(updateInfo, runtime = globalThis) {
     storeName: updateInfo?.storeName || 'App Store',
   };
   const iosHandler = runtime?.webkit?.messageHandlers?.babyIslandAppUpdate;
-  if (iosHandler && typeof iosHandler.postMessage === 'function') {
+  if (payload.updateUrl && iosHandler && typeof iosHandler.postMessage === 'function') {
     iosHandler.postMessage(payload);
     return true;
   }
   const androidBridge = runtime?.BabyIslandAppUpdate;
-  if (androidBridge && typeof androidBridge.openStore === 'function') {
+  if (payload.updateUrl && androidBridge && typeof androidBridge.openStore === 'function') {
     androidBridge.openStore(payload.updateUrl);
     return true;
   }
@@ -1188,10 +1721,7 @@ function requestReleaseUpdate(updateInfo, runtime = globalThis) {
 function canForceReleaseUpdate(updateInfo, runtime = globalThis) {
   if (!updateInfo?.force) return false;
   if (updateInfo.updateUrl) return true;
-  return Boolean(
-    runtime?.webkit?.messageHandlers?.babyIslandAppUpdate?.postMessage ||
-    runtime?.BabyIslandAppUpdate?.openStore
-  );
+  return false;
 }
 
 function parseRouteHash(hashValue) {
@@ -1207,6 +1737,9 @@ function parseRouteHash(hashValue) {
 }
 
 function questionPromptText(level) {
+  if (level?.worldId === 'math' || level?.itemType === 'count') {
+    return `小朋友，哪一组是${mathCountLabel(Number(level?.targetCount) || 1)}？`;
+  }
   if (level?.worldId === 'desert' || level?.itemType === 'expression') {
     return `小朋友，视频里的英语，哪一句是在说「${level.zhTitle}」？`;
   }
@@ -1291,7 +1824,7 @@ function levelsInJumpSegment(levelsList, segment) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { MAP_WORLDS, MAP_JUMP_COPY, MAP_JUMP_SEGMENT_SIZE, CURRICULUM_ALIGNMENT_BY_TOPIC, buildMapJumpSegments, curriculumAlignmentForTopic, segmentContainingLevel, levelsInJumpSegment, activateVipPreferences, addLearningActivityDay, applyQuizAnswer, buildLearningDataExport, buildLocalRankings, calendarDays, canForceReleaseUpdate, canRegisterServiceWorker, compareAppVersions, completedLearningMinutes, completionUnlockText, desertLandmarkImage, desertLevels, formatActivityDate, getLevelAccess, islandStyleId, learningDays, learningReport, learningStreak, levels, levelsForMapWorld, membershipSummary, networkStatusText, normalizeMapWorldId, normalizeWorldProgress, notificationStatusText, normalizeChildProfile, normalizeLearningActivity, normalizeMistakeBook, normalizeProgress, parseRouteHash, profileAvatarText, questionPromptText, rankingScore, recordMistake, releaseUpdateInfo, requestReleaseUpdate, requestVipPurchase, requestVipRestore, resolveMistake, routePoint, supportFeedbackText, validateSupportMessage, wordButtonDisabled };
+  module.exports = { MAP_WORLDS, MAP_JUMP_COPY, MAP_JUMP_SEGMENT_SIZE, MATH_ATTEMPT_KEY, MATH_ATTEMPT_SCHEMA_VERSION, CURRICULUM_ALIGNMENT_BY_TOPIC, adaptMathLevel, appendMathAttempt, assetPackHasDownloadSource, assetPackLevelDownloadQueue, assetPackLevelVideoUrl, assetPackPlayableSummary, assetPackSummary, buildMapJumpSegments, buildMathParentReport, buildMathVariant, curriculumAlignmentForTopic, segmentContainingLevel, levelsInJumpSegment, activateVipPreferences, addLearningActivityDay, applyQuizAnswer, buildLearningDataExport, buildLocalRankings, calendarDays, canForceReleaseUpdate, canRegisterServiceWorker, compareAppVersions, completedLearningMinutes, completionUnlockText, desertLandmarkImage, desertLevels, formatActivityDate, generateMathVariant, getLevelAccess, islandStyleId, learningDays, learningReport, learningStreak, levelVideoDownloadLabel, levelVideoStateKey, levels, levelsForMapWorld, mathLevels, mathVoiceFeedback, membershipSummary, mergeMathAttempts, networkStatusText, nextMathPathRecommendation, normalizeAssetPackStates, normalizeLevelVideoStates, normalizeMapWorldId, normalizeMathAttempts, normalizeWorldProgress, notificationStatusText, normalizeChildProfile, normalizeLearningActivity, normalizeMistakeBook, normalizeProgress, parseRouteHash, profileAvatarText, questionPromptText, rankingScore, recordMistake, releaseUpdateInfo, requestReleaseUpdate, requestVipPurchase, requestVipRestore, resolveMathContinueLevel, resolveMistake, routePoint, summarizeMathSkill, supportFeedbackText, validateSupportMessage, wordButtonDisabled };
 }
 
 if (typeof document !== 'undefined') {
@@ -1304,9 +1837,11 @@ if (typeof document !== 'undefined') {
   const MAP_MUSIC_BY_WORLD = {
     ocean: 'assets/audio/map-bgm.mp3',
     desert: 'assets/audio/desert-map-bgm.mp3?v=20260720-desert-bgm-v2',
+    math: 'assets/audio/math-map-bgm.mp3?v=20260804-math-bgm-v2',
   };
   const MAP_MUSIC_VOLUME = 0.16;
   const DESERT_MAP_MUSIC_VOLUME = 0.2;
+  const MATH_MAP_MUSIC_VOLUME = 0.3;
   const MAP_MUSIC_DUCK_VOLUME = 0.05;
   const MAP_AMBIENT_VOLUME = 0.28;
   const MAP_AMBIENT_SRC = 'assets/audio/sfx/random-ambient.mp3?v=20260718-surround-ambient-v1';
@@ -1316,6 +1851,11 @@ if (typeof document !== 'undefined') {
   const MAP_RARE_AMBIENT_VOLUME = 0.16;
   const MAP_RARE_AMBIENT_MIN_DELAY_MS = 25000;
   const MAP_RARE_AMBIENT_MAX_DELAY_MS = 55000;
+  const UI_BUTTON_CLICK_SFX_SRC = 'assets/audio/sfx/ui-button-click.mp3?v=20260804-ui-click-v2';
+  const UI_BUTTON_CLICK_SFX_VOLUME = 0.45;
+  const MATH_APPLE_DROP_SFX_SRC = 'assets/audio/sfx/math-apple-drop-blop-soft-01.mp3?v=20260804-math-sfx-v1';
+  const MATH_APPLE_DROP_SFX_VOLUME = 0.62;
+  const MATH_APPLE_DROP_IMPACT_OFFSET_MS = 620;
   const BOAT_PADDLE_VOLUME = 0.48;
   const WORD_AUDIO_VOLUME = 1;
   const QUESTION_AUDIO_VOLUME = 1;
@@ -1329,6 +1869,10 @@ if (typeof document !== 'undefined') {
   mapRareAmbientAudio.preload = 'auto';
   mapRareAmbientAudio.loop = false;
   mapRareAmbientAudio.volume = MAP_RARE_AMBIENT_VOLUME;
+  const uiButtonClickAudio = new Audio(UI_BUTTON_CLICK_SFX_SRC);
+  uiButtonClickAudio.preload = 'auto';
+  uiButtonClickAudio.volume = UI_BUTTON_CLICK_SFX_VOLUME;
+  let mathAppleDropSoundTimers = [];
   const tabButtons = [...document.querySelectorAll('[data-tab]')];
   const PREVIEW_PROGRESS_KEY = 'baby-island-preview-progress-v1';
   const LEARNING_ACTIVITY_KEY = 'baby-island-learning-activity-v1';
@@ -1383,9 +1927,15 @@ if (typeof document !== 'undefined') {
   let previewProgressByWorld = normalizeWorldProgress(null, levels.length);
   let learningActivity = normalizeLearningActivity(null);
   let mistakeBook = normalizeMistakeBook(null);
+  let assetPackStates = normalizeAssetPackStates(null);
+  let levelVideoStates = normalizeLevelVideoStates(null);
+  let mathAttempts = normalizeMathAttempts(null);
   try { previewProgressByWorld = normalizeWorldProgress(JSON.parse(localStorage.getItem(PREVIEW_PROGRESS_KEY)), levels.length); } catch {}
   try { learningActivity = normalizeLearningActivity(JSON.parse(localStorage.getItem(LEARNING_ACTIVITY_KEY))); } catch {}
   try { mistakeBook = normalizeMistakeBook(JSON.parse(localStorage.getItem(MISTAKE_BOOK_KEY)), levels); } catch {}
+  try { assetPackStates = normalizeAssetPackStates(JSON.parse(localStorage.getItem(ASSET_PACK_STORAGE_KEY))); } catch {}
+  try { levelVideoStates = normalizeLevelVideoStates(JSON.parse(localStorage.getItem(LEVEL_VIDEO_STORAGE_KEY))); } catch {}
+  try { mathAttempts = normalizeMathAttempts(JSON.parse(localStorage.getItem(MATH_ATTEMPT_KEY))); } catch {}
   function loadAppPreferences() {
     try {
       const saved = JSON.parse(localStorage.getItem(APP_PREFERENCES_KEY));
@@ -1411,6 +1961,12 @@ if (typeof document !== 'undefined') {
     preferences,
     learningActivity,
     mistakeBook,
+    assetPacks: assetPackStates,
+    levelVideos: levelVideoStates,
+    mathAttempts,
+    mathCoachPlans: {},
+    mathMapLevelId: null,
+    mathMapTransition: '',
     messageTimer: null,
   };
   let learningSyncTimer = 0;
@@ -1434,6 +1990,7 @@ if (typeof document !== 'undefined') {
       progressByWorld: normalizeWorldProgress(state.progressByWorld, DISPLAY_LEVEL_COUNT),
       learningActivity: normalizeLearningActivity(state.learningActivity),
       mistakeBook: normalizeMistakeBook(state.mistakeBook, activeWorldLevels()),
+      mathAttempts: normalizeMathAttempts(state.mathAttempts),
     };
   }
 
@@ -1442,6 +1999,160 @@ if (typeof document !== 'undefined') {
     try { localStorage.setItem(LEARNING_ACTIVITY_KEY, JSON.stringify(state.learningActivity)); } catch {}
     try { localStorage.setItem(APP_PREFERENCES_KEY, JSON.stringify(state.preferences)); } catch {}
     try { localStorage.setItem(MISTAKE_BOOK_KEY, JSON.stringify(state.mistakeBook)); } catch {}
+    try { localStorage.setItem(MATH_ATTEMPT_KEY, JSON.stringify(state.mathAttempts)); } catch {}
+  }
+
+  function recordLocalMathAttempt(level, selectedIndex, isCorrect, responseMs = null) {
+    const now = Date.now();
+    const selectedGroup = level?.math?.groups?.[selectedIndex] || {};
+    const attempt = {
+      attemptId: `math-${level.id}-${now}-${Math.random().toString(36).slice(2, 8)}`,
+      ts: now,
+      worldId: 'math',
+      levelId: level.id,
+      skill: level.itemType || 'count',
+      targetCount: level.targetCount,
+      selected: level.options[selectedIndex],
+      selectedCount: selectedGroup.count,
+      correct: level.options[level.correct],
+      isCorrect,
+      mode: level.math?.adaptiveMode || 'same',
+      responseMs,
+    };
+    state.mathAttempts = appendMathAttempt(state.mathAttempts, attempt);
+    delete state.mathCoachPlans[level.id];
+    try { localStorage.setItem(MATH_ATTEMPT_KEY, JSON.stringify(state.mathAttempts)); } catch {}
+    return attempt;
+  }
+
+  function mathCoachPayload(level, attempt) {
+    return {
+      levelId: level.id,
+      skill: level.itemType || 'count',
+      targetCount: level.targetCount,
+      selectedCount: attempt?.selectedCount ?? null,
+      isCorrect: attempt?.isCorrect === true,
+      responseMs: attempt?.responseMs ?? null,
+      attempts: normalizeMathAttempts(state.mathAttempts).slice(-20),
+    };
+  }
+
+  function fallbackMathCoachPlan(level, attempt) {
+    const nextVariant = adaptMathLevel(level, state.mathAttempts);
+    const variantMode = nextVariant.math?.adaptiveMode || 'same';
+    return {
+      provider: 'local-template',
+      variantMode,
+      feedbackText: mathVoiceFeedback(
+        attempt?.isCorrect ? 'correct' : variantMode === 'easier' ? 'wrong-easier' : 'wrong',
+        { targetCount: level.targetCount },
+      ).text,
+      recommendation: nextMathPathRecommendation(state.mathAttempts, level.id),
+    };
+  }
+
+  function requestMathCoachPlan(level, attempt) {
+    const fallback = fallbackMathCoachPlan(level, attempt);
+    const api = learningApi();
+    if (!api?.generateMathCoachPlan) return Promise.resolve(fallback);
+    return api.generateMathCoachPlan(mathCoachPayload(level, attempt))
+      .then((plan) => ({
+        provider: String(plan?.provider || fallback.provider).slice(0, 40),
+        variantMode: ['easier', 'same', 'harder'].includes(plan?.variantMode) ? plan.variantMode : fallback.variantMode,
+        feedbackText: String(plan?.feedbackText || fallback.feedbackText).slice(0, 80),
+        recommendation: {
+          levelId: Math.max(1, Math.min(DISPLAY_LEVEL_COUNT, Number(plan?.recommendation?.levelId) || fallback.recommendation.levelId)),
+          reason: plan?.recommendation?.reason === 'repeat-current' ? 'repeat-current' : 'next-level',
+        },
+      }))
+      .catch(() => fallback);
+  }
+
+  function speakMathVoiceFeedback(feedbackText, forceCorrect) {
+    // Intentional MVP: audio is correct/wrong local MP3 only.
+    // Dynamic feedbackText is shown in the banner; do not restore system Chinese TTS.
+    const message = String(feedbackText || '').trim().slice(0, 80);
+    if (!message || state.preferences.autoPronunciation === false) return false;
+    const isCorrect = typeof forceCorrect === 'boolean'
+      ? forceCorrect
+      : /答对|太好了|对了|棒棒/.test(message);
+    return playMathCoachFeedbackTone(isCorrect ? 'correct' : 'wrong');
+  }
+
+  function playMathCoachFeedbackTone(kind) {
+    // MATH_VOICE_FEEDBACK_MODE = 'correct-wrong-mp3'
+    if (state.preferences.autoPronunciation === false) return false;
+    try {
+      mathFeedbackSpeechToken += 1;
+      const token = mathFeedbackSpeechToken;
+      const normalized = kind === 'correct' ? 'correct' : 'wrong';
+      const src = MATH_COACH_FEEDBACK_AUDIO_SRC[normalized];
+      const mathCoachAudio = new Audio(src);
+      const restoreMusic = () => {
+        if (token === mathFeedbackSpeechToken) mapMusic.volume = currentMapMusicVolume();
+      };
+      const clearCoachAudio = () => {
+        if (mathCoachAudioEl === mathCoachAudio) mathCoachAudioEl = null;
+        restoreMusic();
+      };
+      mathCoachAudio.onended = clearCoachAudio;
+      mathCoachAudio.onerror = clearCoachAudio;
+      if (mathCoachAudioEl) {
+        mathCoachAudioEl.pause();
+        mathCoachAudioEl.currentTime = 0;
+      }
+      mathCoachAudio.volume = FEEDBACK_AUDIO_VOLUME;
+      mathCoachAudioEl = mathCoachAudio;
+      mapMusic.volume = MAP_MUSIC_DUCK_VOLUME;
+      mathCoachAudio.play().catch(restoreMusic);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function rememberMathCoachPlan(level, plan) {
+    const variantMode = ['easier', 'same', 'harder'].includes(plan?.variantMode) ? plan.variantMode : null;
+    if (!variantMode) return null;
+    const recommendation = {
+      levelId: Math.max(1, Math.min(DISPLAY_LEVEL_COUNT, Number(plan?.recommendation?.levelId) || level.id)),
+      reason: plan?.recommendation?.reason === 'repeat-current' ? 'repeat-current' : 'next-level',
+    };
+    const targetLevelId = recommendation.reason === 'repeat-current' ? level.id : recommendation.levelId;
+    const safePlan = {
+      provider: String(plan?.provider || 'local-template').slice(0, 40),
+      variantMode,
+      feedbackText: String(plan?.feedbackText || '').slice(0, 80),
+      recommendation,
+    };
+    state.mathCoachPlans[targetLevelId] = safePlan;
+    return safePlan;
+  }
+
+  function mathLevelForCoachPlan(level) {
+    const plan = state.mathCoachPlans[level.id];
+    return plan?.variantMode ? generateMathVariant(level, { mode: plan.variantMode }) : adaptMathLevel(level, state.mathAttempts);
+  }
+
+  function resolveMathCoachContinueTarget(plan, levelId) {
+    if (!plan?.recommendation) return null;
+    return {
+      levelId: Math.max(1, Math.min(DISPLAY_LEVEL_COUNT, Number(plan.recommendation.levelId) || levelId)),
+      reason: plan.recommendation.reason === 'repeat-current' ? 'repeat-current' : 'next-level',
+    };
+  }
+
+  function openMathRecommendedLevel(levelId) {
+    state.preferences.mapWorld = 'math';
+    state.progress = state.progressByWorld.math;
+    state.mathMapLevelId = normalizeMathMapLevelId(levelId, state.progress.unlockedThrough);
+    try { localStorage.setItem(APP_PREFERENCES_KEY, JSON.stringify(state.preferences)); } catch {}
+    persistLearningStateLocal();
+    applyPreferences();
+    if (location.hash !== '#map') history.pushState(null, '', '#map');
+    renderMap(`已打开第 ${state.mathMapLevelId} 关`);
+    setActiveTab('map');
+    window.scrollTo(0, 0);
   }
 
   function mergeProgress(localProgress, remoteProgress) {
@@ -1492,6 +2203,7 @@ if (typeof document !== 'undefined') {
     state.mistakeBook = normalizeMistakeBook({
       items: [...normalizeMistakeBook(remote.mistakeBook, activeWorldLevels()).items, ...state.mistakeBook.items],
     }, activeWorldLevels());
+    state.mathAttempts = mergeMathAttempts(state.mathAttempts, remote.mathAttempts);
     persistLearningStateLocal();
     applyPreferences();
     return true;
@@ -1566,6 +2278,10 @@ if (typeof document !== 'undefined') {
     islandLock: '<span class="island-lock" aria-hidden="true"><svg viewBox="0 0 64 72"><path class="island-lock-shackle" d="M18 30v-8C18 12 24 7 32 7s14 5 14 15v8"/><rect class="island-lock-body" x="7" y="27" width="50" height="37" rx="12"/><path class="island-lock-highlight" d="M17 36h20"/><circle class="island-lock-keyhole" cx="32" cy="46" r="5"/><path class="island-lock-keyhole-stem" d="M32 50v7"/></svg></span>',
     locate: '<svg class="locate-progress-icon" aria-hidden="true" viewBox="0 0 48 48"><path d="M18 7h-5a6 6 0 0 0-6 6v5M30 7h5a6 6 0 0 1 6 6v5M18 41h-5a6 6 0 0 1-6-6v-5M30 41h5a6 6 0 0 0 6-6v-5"/><circle cx="24" cy="24" r="11"/></svg>',
     jump: '<svg class="map-jump-icon" aria-hidden="true" viewBox="0 0 48 48"><path d="M14 13m-4 0a4 4 0 1 0 8 0a4 4 0 1 0-8 0"/><path d="M18 13h8c5.5 0 9 3.2 9 7.5S31.5 28 26 28h-6c-4.4 0-7 2.6-7 6s2.6 6 7 6h14"/><path d="m31 34 6 6-6 6"/></svg>',
+    mapMusicOn: '<svg class="map-music-icon" aria-hidden="true" viewBox="0 0 48 48"><path d="M10 19h7l9-7v24l-9-7h-7z"/><path d="M32 18c3.2 2.8 3.2 9.2 0 12"/><path d="M37 13c6.2 5.4 6.2 16.6 0 22"/></svg>',
+    mapMusicOff: '<svg class="map-music-icon" aria-hidden="true" viewBox="0 0 48 48"><path d="M10 19h7l9-7v24l-9-7h-7z"/><path d="M33 18 42 30"/><path d="M42 18 33 30"/></svg>',
+    assetPack: '<svg class="asset-pack-icon" aria-hidden="true" viewBox="0 0 48 48"><path d="M24 7 8 14l16 7 16-7z"/><path d="M8 24l16 7 16-7"/><path d="M8 34l16 7 16-7"/></svg>',
+    download: '<svg class="asset-pack-icon" aria-hidden="true" viewBox="0 0 48 48"><g class="map-pack-download-arrow"><path d="M24 8v22"/><path d="m15 21 9 9 9-9"/></g><path class="map-pack-download-tray" d="M12 39h24"/></svg>',
     mapSwitch: '<svg class="map-switch-icon" aria-hidden="true" viewBox="0 0 1024 1024"><path d="M883.875 684.806c41.592-90.131 47.607-188.11 23.715-277.077-27.468-102.682-95.063-194.238-193.08-249.865l43.48-93.961-247.21 64.819 110.564 230.424 45.491-98.308c66.606 40.672 112.204 104.396 131.498 176.146 17.257 64.639 13.024 134.926-17.145 200.514-38.445 83.352-110.309 140.105-192.603 162.245a296.78 296.78 0 0 1-36.221 7.297l51.033 105.49c4.853-1.129 9.665-2.263 14.447-3.572 113.302-30.203 213.143-109.249 266.031-224.152z m-524.696 82.476c-67.595-40.598-113.886-104.87-133.367-177.273-17.252-64.64-12.985-134.967 17.145-200.48 38.447-83.386 110.31-140.141 192.605-162.28 13.646-3.651 27.541-6.275 41.587-7.957l-50.886-106.037c-6.676 1.426-13.353 2.956-19.957 4.744-113.266 30.272-213.141 109.317-266.07 224.221-41.511 90.097-47.533 188.11-23.639 277.038l0.073 0.293c27.686 103.375 96.083 195.406 195.196 250.886l-41.111 89.661 246.955-65.694-111.329-230.022-47.202 102.9z m0 0"/></svg>',
     wordAudio: '<svg class="word-audio-icon" aria-hidden="true" viewBox="0 0 48 48"><path d="M9 19h8l10-8v26l-10-8H9z"/><path d="M33 18c3 3 3 9 0 12M38 13c7 6 7 16 0 22"/></svg>',
     stateCompleted: '<svg class="level-state-icon state-completed" aria-hidden="true" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20"/><path d="m15 24 6 6 13-14"/></svg>',
@@ -1579,15 +2295,22 @@ if (typeof document !== 'undefined') {
   let networkStatusTimer;
   let toastTimer;
   let appUpdateReady = false;
+  let appUpdateApplying = false;
   let serviceWorkerRegistration = null;
   let mapSwitchDialog = null;
+  let assetPackDialog = null;
   let releaseUpdateDialog = null;
+  let levelVideoLoadingDataPromise = null;
   let promptedReleaseVersion = '';
-  const pronunciationAvailable = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
   const QUESTION_AUDIO_VERSION = '20260719-question-200-nouns-v2';
+  const FEEDBACK_AUDIO_VERSION = '20260804-peiqi-feedback-v3';
   const FEEDBACK_AUDIO_SRC = {
-    correct: 'assets/audio/feedback-holly/correct.mp3?v=20260718-holly-feedback-v1',
-    wrong: 'assets/audio/feedback-holly/wrong.mp3?v=20260718-holly-feedback-v1',
+    correct: `assets/audio/feedback-holly/correct.mp3?v=${FEEDBACK_AUDIO_VERSION}`,
+    wrong: `assets/audio/feedback-holly/wrong.mp3?v=${FEEDBACK_AUDIO_VERSION}`,
+  };
+  const MATH_COACH_FEEDBACK_AUDIO_SRC = {
+    correct: FEEDBACK_AUDIO_SRC.correct,
+    wrong: FEEDBACK_AUDIO_SRC.wrong,
   };
 
   // ─── 本地 MP3（豆包 TTS 预录） ──────────────────────
@@ -1597,6 +2320,8 @@ if (typeof document !== 'undefined') {
   let wordAudioMap = {};
   let wordAudioManifestLoaded = false;
   let localAudioEl = null;
+  let mathFeedbackSpeechToken = 0;
+  let mathCoachAudioEl = null;
 
   function wordAudioSrcFor(word) {
     const key = String(word || '').toLowerCase();
@@ -1671,7 +2396,6 @@ if (typeof document !== 'undefined') {
   function cancelWordPronunciation() {
     clearTimeout(pronunciationTimer);
     pronunciationToken += 1;
-    if (pronunciationAvailable) speechSynthesis.cancel();
     if (localAudioEl) {
       localAudioEl.pause();
       localAudioEl.currentTime = 0;
@@ -1689,7 +2413,6 @@ if (typeof document !== 'undefined') {
     // 优先本地 MP3（豆包 TTS 预录，BGM 压低/恢复 + 取消机制）
     const localUrl = wordAudioSrcFor(word);
     if (localUrl) {
-      if (pronunciationAvailable) speechSynthesis.cancel();
       if (!localAudioEl) {
         localAudioEl = new Audio();
         localAudioEl.preload = 'auto';
@@ -1724,7 +2447,9 @@ if (typeof document !== 'undefined') {
   }
 
   function currentMapMusicVolume() {
-    return state.preferences.mapWorld === 'desert' ? DESERT_MAP_MUSIC_VOLUME : MAP_MUSIC_VOLUME;
+    if (state.preferences.mapWorld === 'desert') return DESERT_MAP_MUSIC_VOLUME;
+    if (state.preferences.mapWorld === 'math') return MATH_MAP_MUSIC_VOLUME;
+    return MAP_MUSIC_VOLUME;
   }
 
   let mapAmbientTimer = 0;
@@ -1824,11 +2549,22 @@ if (typeof document !== 'undefined') {
     syncMapMusic();
   }
 
+  function paintMapMusicToggle(button = main.querySelector('[data-map-music-toggle]')) {
+    if (!button) return;
+    const on = state.preferences.mapMusic !== false;
+    button.classList.toggle('is-muted', !on);
+    button.setAttribute('aria-pressed', on ? 'true' : 'false');
+    button.setAttribute('aria-label', on ? '关闭背景音' : '打开背景音');
+    button.title = on ? '关闭背景音' : '打开背景音';
+    button.innerHTML = on ? icons.mapMusicOn : icons.mapMusicOff;
+  }
+
   function setPreference(key, value) {
     if (!(key in defaultPreferences)) return;
     state.preferences[key] = value;
     try { localStorage.setItem(APP_PREFERENCES_KEY, JSON.stringify(state.preferences)); } catch {}
     applyPreferences();
+    if (key === 'mapMusic') paintMapMusicToggle();
     scheduleLearningSync();
     showToast(`${preferenceLabels[key]}已${value ? '开启' : '关闭'}`);
     if (routeFromHash().type === 'mine') renderMine();
@@ -1913,6 +2649,455 @@ if (typeof document !== 'undefined') {
     }, 2200);
   }
 
+  function canUseAssetPackBridge() {
+    return !!window.webkit?.messageHandlers?.babyIslandAssetPack?.postMessage;
+  }
+
+  function persistAssetPackStates() {
+    try { localStorage.setItem(ASSET_PACK_STORAGE_KEY, JSON.stringify(state.assetPacks)); } catch {}
+  }
+
+  function persistLevelVideoStates() {
+    try { localStorage.setItem(LEVEL_VIDEO_STORAGE_KEY, JSON.stringify(state.levelVideos)); } catch {}
+  }
+
+  function loadLevelVideoLoadingData() {
+    if (window.__LEVEL_VIDEO_LOADING_LOTTIE_DATA) return Promise.resolve(window.__LEVEL_VIDEO_LOADING_LOTTIE_DATA);
+    if (!levelVideoLoadingDataPromise) {
+      levelVideoLoadingDataPromise = fetch(`${LEVEL_VIDEO_LOADING_LOTTIE_URL}?v=20260803-rocking-horse-v1`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) window.__LEVEL_VIDEO_LOADING_LOTTIE_DATA = data;
+          return data;
+        })
+        .catch(() => null);
+    }
+    return levelVideoLoadingDataPromise;
+  }
+
+  function mountLevelVideoLoadingLottie(root = document) {
+    const lottieApi = window.lottie || window.bodymovin;
+    if (!lottieApi) return;
+    root.querySelectorAll('[data-level-video-loading-lottie]:not([data-lottie-mounted])').forEach((host) => {
+      host.dataset.lottieMounted = '1';
+      loadLevelVideoLoadingData().then((data) => {
+        if (!data || !host.isConnected) return;
+        host.innerHTML = '';
+        lottieApi.loadAnimation({
+          container: host,
+          renderer: 'svg',
+          loop: true,
+          autoplay: true,
+          animationData: JSON.parse(JSON.stringify(data)),
+        });
+      });
+    });
+  }
+
+  function hydrateAssetPackManifest() {
+    fetch(`${ASSET_PACK_MANIFEST_URL}?v=${APP_RELEASE_VERSION}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((manifest) => {
+        if (!manifest || !Array.isArray(manifest.maps)) return;
+        const nextStates = { ...state.assetPacks };
+        manifest.maps.forEach((pack) => {
+          const mapId = normalizeMapWorldId(pack.mapId);
+          if (MAP_WORLDS[mapId]?.comingSoon) return;
+          const current = normalizeAssetPackState(nextStates[mapId]);
+          const remoteVersion = typeof pack.packVersion === 'string' ? pack.packVersion : current.remoteVersion;
+          const status = current.localVersion && remoteVersion && current.localVersion !== remoteVersion && current.status === 'ready'
+            ? 'stale'
+            : current.status;
+          nextStates[mapId] = {
+            ...current,
+            status,
+            remoteVersion,
+            downloadUrl: typeof pack.downloadUrl === 'string' ? pack.downloadUrl : current.downloadUrl,
+            levelVideoUrlTemplate: typeof pack.levelVideoUrlTemplate === 'string' ? pack.levelVideoUrlTemplate : current.levelVideoUrlTemplate,
+            levels: Array.isArray(pack.levels) ? pack.levels : current.levels,
+            bytesTotal: Number(pack.totalBytes) || current.bytesTotal,
+          };
+        });
+        state.assetPacks = normalizeAssetPackStates(nextStates);
+        persistAssetPackStates();
+        if (routeFromHash().type === 'mine') renderMine();
+        refreshAssetPackDialog();
+        refreshAssetPackEntrances();
+        const route = routeFromHash();
+        if (route.type === 'level') {
+          const level = activeLevelById(route.id);
+          if (level && !levelVideoSourceFor(level)) {
+            ensureLevelVideoDownload(level);
+            refreshLevelVideoDownloadPanel(level);
+          }
+        }
+      })
+      .catch(() => {});
+  }
+
+  function postAssetPackMessage(action, worldId) {
+    const handler = window.webkit?.messageHandlers?.babyIslandAssetPack;
+    if (!handler?.postMessage) return false;
+    const mapId = normalizeMapWorldId(worldId);
+    const pack = state.assetPacks?.[mapId] || {};
+    const levelQueue = assetPackLevelDownloadQueue(mapId, pack, state.levelVideos);
+    handler.postMessage({
+      action,
+      mapId,
+      manifestUrl: ASSET_PACK_MANIFEST_URL,
+      bundledThroughLevel: FREE_LEVEL_COUNT,
+      downloadUrl: pack.downloadUrl || '',
+      downloadMode: pack.downloadUrl ? 'pack' : 'level',
+      downloadOrder: 'level-ascending',
+      levelQueue,
+      remoteVersion: pack.remoteVersion || '',
+    });
+    return true;
+  }
+
+  function levelVideoKeyFor(level) {
+    return levelVideoStateKey(level?.worldId || state.preferences.mapWorld, level?.id);
+  }
+
+  function levelVideoStateFor(level) {
+    if (!level) return normalizeLevelVideoState();
+    if (level.videoSrc) {
+      return normalizeLevelVideoState({
+        mapId: level.worldId || state.preferences.mapWorld,
+        levelId: level.id,
+        status: 'ready',
+        progress: 100,
+        localUrl: level.videoSrc,
+      });
+    }
+    return normalizeLevelVideoState({
+      mapId: level.worldId || state.preferences.mapWorld,
+      levelId: level.id,
+      ...state.levelVideos[levelVideoKeyFor(level)],
+    });
+  }
+
+  function levelVideoDownloadUrl(level) {
+    if (!level || level.videoSrc) return '';
+    const mapId = normalizeMapWorldId(level.worldId || state.preferences.mapWorld);
+    const pack = normalizeAssetPackState(state.assetPacks?.[mapId]);
+    return assetPackLevelVideoUrl(mapId, level.id, pack);
+  }
+
+  function levelVideoSourceFor(level) {
+    const videoState = levelVideoStateFor(level);
+    return level?.videoSrc || (videoState.status === 'ready' ? videoState.localUrl : '');
+  }
+
+  function setLevelVideoState(level, patch) {
+    if (!level) return;
+    const key = levelVideoKeyFor(level);
+    state.levelVideos = normalizeLevelVideoStates({
+      ...state.levelVideos,
+      [key]: {
+        ...state.levelVideos[key],
+        mapId: level.worldId || state.preferences.mapWorld,
+        levelId: level.id,
+        ...patch,
+        updatedAt: Date.now(),
+      },
+    });
+    persistLevelVideoStates();
+  }
+
+  function postLevelVideoMessage(action, level, downloadUrl = levelVideoDownloadUrl(level)) {
+    const handler = window.webkit?.messageHandlers?.babyIslandAssetPack;
+    if (!handler?.postMessage || !level) return false;
+    const mapId = normalizeMapWorldId(level.worldId || state.preferences.mapWorld);
+    const pack = state.assetPacks?.[mapId] || {};
+    const levelQueue = assetPackLevelDownloadQueue(mapId, pack, state.levelVideos, { throughLevel: level.id });
+    const nextQueued = levelQueue[0] || null;
+    handler.postMessage({
+      action,
+      mapId,
+      levelId: nextQueued?.levelId || level.id,
+      targetLevelId: level.id,
+      manifestUrl: ASSET_PACK_MANIFEST_URL,
+      bundledThroughLevel: FREE_LEVEL_COUNT,
+      downloadUrl: nextQueued?.downloadUrl || downloadUrl,
+      downloadMode: 'level',
+      downloadOrder: 'level-ascending',
+      levelQueue,
+      remoteVersion: pack.remoteVersion || '',
+    });
+    return true;
+  }
+
+  function ensureLevelVideoDownload(level) {
+    if (!level || level.videoSrc) return;
+    const current = levelVideoStateFor(level);
+    if (['queued', 'downloading', 'ready'].includes(current.status)) return;
+    const downloadUrl = levelVideoDownloadUrl(level);
+    const queued = postLevelVideoMessage('startLevelVideo', level, downloadUrl);
+    if (queued) {
+      const mapId = normalizeMapWorldId(level.worldId || state.preferences.mapWorld);
+      const pack = normalizeAssetPackState(state.assetPacks?.[mapId]);
+      if (!['ready', 'downloading', 'queued'].includes(pack.status)) {
+        state.assetPacks = normalizeAssetPackStates({
+          ...state.assetPacks,
+          [mapId]: { ...pack, status: 'queued', updatedAt: Date.now() },
+        });
+        persistAssetPackStates();
+        refreshAssetPackDialog();
+        refreshAssetPackEntrances();
+      }
+    }
+    setLevelVideoState(level, {
+      status: queued ? 'queued' : 'not-installed',
+      progress: 0,
+      downloadUrl,
+      errorCode: downloadUrl || queued ? '' : 'missing_url',
+    });
+  }
+
+  function levelVideoDownloadMarkup(level) {
+    const videoState = levelVideoStateFor(level);
+    const label = levelVideoDownloadLabel(videoState.status, videoState.progress);
+    return `
+      <div class="level-video-download-panel is-${videoState.status}" data-level-video-download-panel role="status" aria-live="polite" aria-label="${escapeHtml(label)}">
+        <div class="level-video-loading-lottie" data-level-video-loading-lottie aria-hidden="true"></div>
+        <div class="level-video-loading-dots" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>`;
+  }
+
+  function refreshLevelVideoDownloadPanel(level) {
+    const host = main.querySelector('[data-level-video-download-panel]');
+    if (!host || !level) return;
+    host.outerHTML = levelVideoDownloadMarkup(level);
+    mountLevelVideoLoadingLottie(main);
+  }
+
+  function assetPackRowsMarkup() {
+    const bridgeAvailable = canUseAssetPackBridge();
+    return Object.values(MAP_WORLDS)
+      .filter((world) => world.comingSoon !== true && world.usesVideoAssets !== false)
+      .map((world) => {
+        const pack = assetPackSummary(world.id, state.assetPacks, { bridgeAvailable, levelVideoStates: state.levelVideos });
+        return `
+          <li class="asset-pack-row is-${pack.status}">
+            <div class="asset-pack-copy">
+              <strong>${escapeHtml(world.title)}</strong>
+              <span>${escapeHtml(pack.playableText)}</span>
+              <small>${escapeHtml(pack.stateLabel)}</small>
+            </div>
+            <div class="asset-pack-meter" aria-hidden="true"><span style="width:${Math.max(2, pack.progress)}%"></span></div>
+            <button class="asset-pack-action" type="button" data-asset-pack-action="${pack.action}" data-asset-pack-world="${world.id}"${pack.disabled ? ' disabled' : ''}>${escapeHtml(pack.actionLabel || '已完成')}</button>
+          </li>`;
+      })
+      .join('');
+  }
+
+  function assetPackOverview() {
+    const packs = Object.values(MAP_WORLDS)
+      .filter((world) => world.comingSoon !== true && world.usesVideoAssets !== false)
+      .map((world) => {
+        const pack = normalizeAssetPackState(state.assetPacks?.[world.id]);
+        const sourceAvailable = assetPackHasDownloadSource(world.id, pack);
+        const summary = assetPackSummary(world.id, state.assetPacks, { sourceAvailable, bridgeAvailable: canUseAssetPackBridge(), levelVideoStates: state.levelVideos });
+        return { world, pack, sourceAvailable, summary };
+      });
+    const byStatus = (status) => packs.filter((item) => item.pack.status === status);
+    const averageProgress = (items) => {
+      if (!items.length) return 0;
+      const total = items.reduce((sum, item) => sum + item.pack.progress, 0);
+      return clampAssetPackProgress(total / items.length);
+    };
+    const total = Math.max(1, packs.length);
+    const totalPlayable = packs.reduce((sum, item) => sum + item.summary.playableCount, 0);
+    const totalLevels = packs.reduce((sum, item) => sum + item.summary.totalLevels, 0);
+    const currentMapId = normalizeMapWorldId(state.preferences?.mapWorld);
+    const currentPack = packs.find((item) => item.world.id === currentMapId) || packs[0];
+    const playableText = currentPack?.summary.playableText || `已可玩 ${totalPlayable}/${totalLevels} 关`;
+    const ready = byStatus('ready');
+    const downloading = byStatus('downloading');
+    const queued = byStatus('queued');
+    const paused = byStatus('paused');
+    const failed = byStatus('failed');
+    const stale = byStatus('stale');
+    const blocked = packs.filter((item) => !item.sourceAvailable && item.pack.status !== 'ready');
+    const pending = packs.filter((item) => !['ready', 'downloading', 'queued', 'paused', 'failed', 'stale'].includes(item.pack.status));
+    const firstName = (items) => items.length === 1 ? items[0].world.title : `${items.length} 张地图`;
+    const needsAttention = Boolean(failed.length || stale.length || blocked.length || pending.length || paused.length);
+
+    if (downloading.length) {
+      const progress = averageProgress(downloading);
+      return { status: 'downloading', progress, playableText, label: `下载中 ${progress}%`, detail: firstName(downloading), live: true, attention: needsAttention };
+    }
+    if (queued.length) {
+      const progress = averageProgress(queued);
+      return { status: 'queued', progress, playableText, label: progress ? `下载中 ${progress}%` : '下载中', detail: firstName(queued), live: true, attention: needsAttention };
+    }
+    if (paused.length) {
+      const progress = averageProgress(paused);
+      return { status: 'paused', progress, playableText, label: `已暂停 ${progress}%`, detail: firstName(paused), live: false, attention: true };
+    }
+    if (failed.length) {
+      return { status: 'failed', progress: averageProgress(failed), playableText, label: '下载失败', detail: `${failed.length} 张地图可重试`, live: false, attention: true };
+    }
+    if (stale.length) {
+      return { status: 'stale', progress: averageProgress(stale), playableText, label: '有新视频', detail: firstName(stale), live: false, attention: true };
+    }
+    if (blocked.length) {
+      return { status: 'not-installed', progress: 0, playableText, label: '未下载', detail: '点开下载', live: false, attention: true };
+    }
+    if (pending.length) {
+      return { status: 'not-installed', progress: 0, playableText, label: '未下载', detail: firstName(pending), live: false, attention: true };
+    }
+    return { status: 'ready', progress: 100, playableText, label: '已完成', detail: `${packs.length} 张地图`, live: false, attention: false };
+  }
+
+  function assetPackStatusButtonMarkup(summary = assetPackOverview()) {
+    const liveClass = summary.live ? ' is-live' : '';
+    const attentionClass = summary.attention ? ' has-attention' : '';
+    const attentionDot = summary.attention ? '<span class="map-pack-attention-dot" aria-hidden="true"></span>' : '';
+    const playableText = escapeHtml(summary.playableText);
+    const stateText = escapeHtml(`${summary.label}${summary.detail ? ` · ${summary.detail}` : ''}`);
+    return `
+      <button class="map-pack-btn is-${summary.status}${liveClass}${attentionClass}" type="button" data-asset-pack-panel aria-label="关卡视频，${playableText}，${stateText}" title="查看关卡视频" style="--pack-progress:${summary.progress}%">
+        ${attentionDot}
+        <span class="map-pack-progress-ring" aria-hidden="true"><span class="map-pack-progress-core">${icons.download}</span></span>
+        <span class="map-pack-status-copy"><strong>${playableText}</strong><small>${stateText}</small></span>
+      </button>`;
+  }
+
+  function globalUpdateButtonMarkup(context = 'map') {
+    const contextClass = context === 'level' ? ' global-update-btn--level' : '';
+    return `
+      <button class="map-pack-btn global-update-btn${contextClass}" type="button" data-check-update data-global-update data-check-update-status="idle" aria-busy="false" aria-label="检查内容更新" title="检查内容更新">
+        <span class="map-pack-progress-ring global-update-ring" aria-hidden="true"><span class="map-pack-progress-core">${icons.mapSwitch}</span></span>
+        <span class="map-pack-status-copy global-update-copy"><strong>内容更新</strong><small data-check-update-note>检查课程资源</small></span>
+        <span class="global-update-state" data-check-update-state aria-hidden="true">检查</span>
+      </button>`;
+  }
+
+  function refreshAssetPackDialog() {
+    const list = assetPackDialog?.querySelector('[data-asset-pack-list]');
+    if (list) list.innerHTML = assetPackRowsMarkup();
+  }
+
+  function refreshAssetPackEntrances() {
+    const activeWorld = MAP_WORLDS[normalizeMapWorldId(state.preferences?.mapWorld)];
+    document.querySelectorAll('[data-asset-pack-status]').forEach((host) => {
+      host.innerHTML = activeWorld?.usesVideoAssets === false ? '' : assetPackStatusButtonMarkup();
+    });
+  }
+
+  function closeAssetPackDialog() {
+    if (assetPackDialog && assetPackDialog.open) assetPackDialog.close();
+  }
+
+  function openAssetPackDialog(trigger = null) {
+    if (assetPackDialog) {
+      if (assetPackDialog.open) return;
+      assetPackDialog.remove();
+    }
+
+    assetPackDialog = document.createElement('dialog');
+    assetPackDialog.className = 'map-switch-dialog asset-pack-dialog';
+    assetPackDialog.setAttribute('role', 'dialog');
+    assetPackDialog.setAttribute('aria-modal', 'true');
+    assetPackDialog.setAttribute('aria-labelledby', 'asset-pack-dialog-title');
+    assetPackDialog.__returnFocus = trigger;
+    assetPackDialog.innerHTML = [
+      '<div class="map-switch-card asset-pack-dialog-card">',
+      '<button class="access-dialog-close" type="button" data-asset-pack-close aria-label="关闭窗口">',
+      '<svg aria-hidden="true" viewBox="0 0 32 32"><path d="m9 9 14 14M23 9 9 23"/></svg></button>',
+      '<div class="map-switch-hero" aria-hidden="true">',
+      icons.assetPack,
+      '</div>',
+      '<p class="paywall-eyebrow">关卡视频</p>',
+      '<h2 id="asset-pack-dialog-title">关卡视频下载</h2>',
+      `<p>每张地图前 ${FREE_LEVEL_COUNT} 关打开就能玩。后面的关卡视频会按关卡顺序在 iPad 后台下载，可以暂停，也可以继续。这里能看到每张地图的可玩进度。</p>`,
+      `<ul class="asset-pack-list" data-asset-pack-list aria-label="全部地图关卡视频">${assetPackRowsMarkup()}</ul>`,
+      '</div>',
+    ].join('');
+
+    const dialog = assetPackDialog;
+    document.body.appendChild(dialog);
+    dialog.querySelectorAll('[data-asset-pack-close]').forEach((button) => {
+      button.addEventListener('click', closeAssetPackDialog);
+    });
+    dialog.addEventListener('click', (event) => {
+      const assetPackBtn = event.target.closest('[data-asset-pack-action]');
+      if (handleAssetPackActionClick(assetPackBtn, event)) return;
+      if (event.target === dialog) closeAssetPackDialog();
+    });
+    dialog.addEventListener('close', () => {
+      const returnTarget = dialog.__returnFocus;
+      dialog.remove();
+      assetPackDialog = null;
+      if (returnTarget && returnTarget.isConnected) returnTarget.focus();
+    }, { once: true });
+
+    dialog.showModal();
+    requestAnimationFrame(() => dialog.querySelector('[data-asset-pack-close]')?.focus());
+  }
+
+  function handleAssetPackAction(action, worldId, trigger = null) {
+    const toastHost = trigger?.closest('dialog');
+    const delivered = postAssetPackMessage(action, worldId);
+    const mapId = normalizeMapWorldId(worldId);
+    const current = normalizeAssetPackState(state.assetPacks?.[mapId]);
+    state.assetPacks = normalizeAssetPackStates({
+      ...state.assetPacks,
+      [mapId]: { ...current, status: action === 'pause' ? 'paused' : 'queued', updatedAt: Date.now() },
+    });
+    persistAssetPackStates();
+    showToast(action === 'pause' ? '已请求暂停下载' : delivered ? '已交给 iPad 后台下载' : '已加入下载队列', toastHost);
+    if (routeFromHash().type === 'mine') renderMine();
+    refreshAssetPackDialog();
+    refreshAssetPackEntrances();
+  }
+
+  function handleAssetPackActionClick(assetPackBtn, event = null) {
+    if (!assetPackBtn) return false;
+    event?.preventDefault();
+    if (assetPackBtn.disabled || !assetPackBtn.dataset.assetPackAction) return true;
+    handleAssetPackAction(assetPackBtn.dataset.assetPackAction, assetPackBtn.dataset.assetPackWorld, assetPackBtn);
+    return true;
+  }
+
+  window.babyIslandAssetPackEvent = function babyIslandAssetPackEvent(event) {
+    const mapId = normalizeMapWorldId(event?.mapId || event?.worldId);
+    state.assetPacks = normalizeAssetPackStates({
+      ...state.assetPacks,
+      [mapId]: {
+        ...state.assetPacks?.[mapId],
+        ...event,
+        updatedAt: Date.now(),
+      },
+    });
+    persistAssetPackStates();
+    const route = routeFromHash();
+    if (route.type === 'mine') renderMine();
+    refreshAssetPackDialog();
+    refreshAssetPackEntrances();
+  };
+
+  window.babyIslandLevelVideoEvent = function babyIslandLevelVideoEvent(event) {
+    const mapId = normalizeMapWorldId(event?.mapId || event?.worldId);
+    const levelId = Number(event?.levelId) || 0;
+    const level = levelsForMapWorld(mapId).find((item) => item.id === levelId);
+    if (!level) return;
+    setLevelVideoState(level, event);
+    const route = routeFromHash();
+    refreshAssetPackDialog();
+    refreshAssetPackEntrances();
+    if (route.type === 'level' && route.id === levelId && mapId === normalizeMapWorldId(state.preferences.mapWorld)) {
+      if (levelVideoStateFor(level).status === 'ready' && levelVideoSourceFor(level)) renderDetail(level);
+      else refreshLevelVideoDownloadPanel(level);
+    }
+  };
+
   function nudgeMustLogin(dialog) {
     const host = dialog || loginDialogEl;
     showToast('请先登录后继续探险', host);
@@ -1945,6 +3130,9 @@ if (typeof document !== 'undefined') {
         hash: location.hash || '#map',
         routeType: route && route.type ? route.type : 'map',
         mapWorld: state.preferences.mapWorld,
+        mathMapLevelId: state.preferences.mapWorld === 'math'
+          ? normalizeMathMapLevelId(state.mathMapLevelId, state.progress.unlockedThrough)
+          : null,
         unlockedThrough: state.progress.unlockedThrough,
         at: Date.now(),
       };
@@ -1965,6 +3153,9 @@ if (typeof document !== 'undefined') {
           try {
             localStorage.setItem(APP_PREFERENCES_KEY, JSON.stringify(state.preferences));
           } catch (_) {}
+        }
+        if (nextWorld === 'math' && data.mathMapLevelId) {
+          state.mathMapLevelId = normalizeMathMapLevelId(data.mathMapLevelId, state.progress.unlockedThrough);
         }
       }
       if (data.hash && typeof data.hash === 'string' && data.hash.startsWith('#') && data.hash !== location.hash) {
@@ -2314,6 +3505,18 @@ if (typeof document !== 'undefined') {
     networkStatus.hidden = false;
   }
 
+  function applyAppUpdate() {
+    if (appUpdateApplying) return;
+    appUpdateApplying = true;
+    const waitingWorker = serviceWorkerRegistration?.waiting;
+    if (waitingWorker) {
+      waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+      setTimeout(() => location.reload(), 1200);
+      return;
+    }
+    location.reload();
+  }
+
   function copySupportFeedback(form) {
     if (!form) return;
     const input = form.querySelector('[data-support-message]');
@@ -2359,8 +3562,12 @@ if (typeof document !== 'undefined') {
 
   function registerServiceWorker() {
     if (!('serviceWorker' in navigator) || !canRegisterServiceWorker(location.protocol)) return;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!appUpdateApplying) return;
+      location.reload();
+    });
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=58').then((registration) => {
+      navigator.serviceWorker.register('./sw.js?v=71').then((registration) => {
         serviceWorkerRegistration = registration;
         // 每次打开应用都主动检查一次热更新（浏览器原生检查有 24h 间隔，不够用）
         registration.update().catch(() => {});
@@ -2376,38 +3583,63 @@ if (typeof document !== 'undefined') {
     });
   }
 
-  // 我的页"检查内容更新"：手动触发一次 H5 资源检查，状态直接写回行内小字
+  function setCheckUpdateFeedback(status, message) {
+    const buttons = document.querySelectorAll('[data-check-update]');
+    const labels = {
+      idle: '检查',
+      checking: '检查中',
+      current: '最新',
+      ready: '更新',
+      retry: '重试',
+      unsupported: '不可用',
+    };
+    document.querySelectorAll('[data-check-update-note]').forEach((note) => {
+      note.textContent = message;
+    });
+    buttons.forEach((button) => {
+      const state = button.querySelector('[data-check-update-state]');
+      button.dataset.checkUpdateStatus = status;
+      button.disabled = status === 'checking';
+      button.setAttribute('aria-busy', String(status === 'checking'));
+      if (state) state.textContent = labels[status] || labels.idle;
+    });
+  }
+
+  // 我的页"检查内容更新"：手动触发一次 H5 资源检查，并给按钮即时状态反馈
   function checkAppUpdate() {
-    const note = document.querySelector('[data-check-update-note]');
+    const finish = (status, message, toastMessage = message) => {
+      setCheckUpdateFeedback(status, message);
+      showToast(toastMessage);
+    };
     if (!('serviceWorker' in navigator) || !canRegisterServiceWorker(location.protocol)) {
-      if (note) note.textContent = '当前环境不支持自动更新';
+      finish('unsupported', '当前环境不支持自动更新');
       return;
     }
     if (!serviceWorkerRegistration) {
-      if (note) note.textContent = '更新服务尚未就绪，请稍后重试';
+      finish('retry', '更新服务尚未就绪，请稍后重试');
       return;
     }
     if (appUpdateReady) {
       showAppUpdateReady();
-      if (note) note.textContent = '内容更新已准备好，点顶部「立即更新」生效';
+      finish('ready', '内容更新已准备好，点顶部「立即更新」生效', '内容更新已准备好');
       return;
     }
-    if (note) note.textContent = '正在检查更新…';
+    setCheckUpdateFeedback('checking', '正在检查更新…');
+    showToast('正在检查内容更新');
     serviceWorkerRegistration.update().then(() => {
       // updatefound → installed 是异步的，留一个短窗口再下结论
       setTimeout(() => {
-        if (!note) return;
-        note.textContent = appUpdateReady
-          ? '发现内容更新，点顶部「立即更新」生效'
-          : '当前已是最新版本';
+        if (appUpdateReady) {
+          finish('ready', '发现内容更新，点顶部「立即更新」生效', '发现内容更新');
+          return;
+        }
+        finish('current', '当前已是最新版本');
       }, 900);
     }).catch((err) => {
       // InvalidStateError = SW 还没激活完（多为首次打开），不是网络问题，文案要区分
-      if (note) {
-        note.textContent = err && err.name === 'InvalidStateError'
-          ? '更新服务尚未就绪，请稍后重试'
-          : '网络不可用，请稍后重试';
-      }
+      finish('retry', err && err.name === 'InvalidStateError'
+        ? '更新服务尚未就绪，请稍后重试'
+        : '网络不可用，请稍后重试');
     });
   }
 
@@ -2423,37 +3655,47 @@ if (typeof document !== 'undefined') {
 
     const activeWorldId = normalizeMapWorldId(state.preferences.mapWorld);
     const worldArt = {
-      ocean: 'assets/islands-v1/runtime/island-001.webp',
-      // 专用 4:3 沙漠世界卡面（与海岛缩略图同级软插画），勿用地标抠图顶替
+      ocean: 'assets/ocean/covers/ocean-world-cover-v1.webp',
+      // 专用 4:3 世界卡面，勿用关卡抠图顶替
       desert: 'assets/egypt-map/covers/desert-world-cover-v1.webp',
+      math: 'assets/math-map/covers/math-desk-cover-v1.webp',
+      math58: 'assets/math-map/covers/math-garden-cover-v1.webp',
+      math912: 'assets/math-map/covers/math-star-tower-cover-v1.webp',
     };
     // 每个世界的适龄段与一句话卖点：帮家长 1 秒判断该选哪张图
     const worldMeta = {
       ocean: { ageRange: '3-5', tagline: '启蒙磨耳朵 · 字母单词起步' },
       desert: { ageRange: '6-8', tagline: '进阶挑战 · 句型对话冲刺' },
+      math: { ageRange: '3-5', tagline: '数量感知 · 给一年级打基础' },
+      math58: { ageRange: '5-8', tagline: '运算比较 · 低年级衔接' },
+      math912: { ageRange: '9-12', tagline: '逻辑应用 · 高年级挑战' },
       castle: { ageRange: '9-12', tagline: '章节冒险 · 读写表达飞跃' },
     };
     // 按家长设置的宝宝年龄给出推荐世界（设置项目前覆盖 3-6 岁，6 岁进沙漠段；9+ 岁等城堡开放）
     const childAge = Number(normalizeChildProfile(state.preferences).childAge) || 4;
     const recommendedWorldId = childAge >= 6 ? 'desert' : 'ocean';
 
-    const worldOptions = Object.values(MAP_WORLDS).map((world) => {
+    const mathPlaceholder = '<span class="map-world-art-placeholder map-world-art-placeholder--math"><svg viewBox="0 0 48 48"><rect x="8" y="10" width="32" height="28" rx="6"/><path d="M16 20h16M16 28h10"/><circle cx="34" cy="30" r="5"/></svg></span>';
+    const castlePlaceholder = '<span class="map-world-art-placeholder"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-4Z"/><path d="M12 8v4"/><path d="m12 16 .01 0"/></svg></span>';
+    const worldOptionMarkup = (world) => {
       const isComingSoon = world.comingSoon === true;
       const isActive = !isComingSoon && world.id === activeWorldId;
       const isRecommended = !isComingSoon && world.id === recommendedWorldId;
-      // state.progressByWorld 存的已是 { ocean, desert } 形状，直接取对应世界；
+      // state.progressByWorld 存的是按世界隔离的进度；旧扁平 progress 只迁移到 ocean。
       // 旧数据可能是单世界扁平 progress，normalizeProgress 会兜底。
-      const worldProgress = normalizeProgress(state.progressByWorld?.[world.id], DISPLAY_LEVEL_COUNT);
-      const currentLevel = Math.min(Math.max(worldProgress.unlockedThrough, 1), DISPLAY_LEVEL_COUNT);
-      const meta = worldMeta[world.id];
+      const totalLevels = levelsForMapWorld(world.id).length || DISPLAY_LEVEL_COUNT;
+      const worldProgress = normalizeProgress(state.progressByWorld?.[world.id], totalLevels);
+      const currentLevel = isComingSoon ? 0 : Math.min(Math.max(worldProgress.unlockedThrough, 1), totalLevels);
+      const meta = worldMeta[world.id] || { ageRange: '3-5', tagline: '启蒙闯关' };
       const art = worldArt[world.id];
+      const placeholder = world.zone === 'math' ? mathPlaceholder : castlePlaceholder;
       const ariaLabel = isComingSoon
         ? `${world.title}，适合 ${meta.ageRange} 岁，${meta.tagline}，敬请期待`
-        : `${world.title}，适合 ${meta.ageRange} 岁，${meta.tagline}，共 ${DISPLAY_LEVEL_COUNT} 关，已闯到第 ${currentLevel} 关${isActive ? '，正在游玩' : ''}${isRecommended ? '，按宝宝年龄推荐' : ''}`;
+        : `${world.title}，适合 ${meta.ageRange} 岁，${meta.tagline}，共 ${totalLevels} 关，已闯到第 ${currentLevel} 关${isActive ? '，正在游玩' : ''}${isRecommended ? '，按宝宝年龄推荐' : ''}`;
       return `
-      <button class="map-world-option map-world-option--${world.id}${isActive ? ' is-active' : ''}${isComingSoon ? ' is-coming-soon' : ''}" type="button" ${isComingSoon ? 'disabled' : `data-map-world="${world.id}" aria-pressed="${isActive ? 'true' : 'false'}"`} aria-label="${ariaLabel}">
+      <button class="map-world-option map-world-option--${world.id}${isActive ? ' is-active' : ''}${isComingSoon ? ' is-coming-soon' : ''}" type="button" role="listitem" ${isComingSoon ? 'disabled' : `data-map-world="${world.id}" aria-pressed="${isActive ? 'true' : 'false'}"`} aria-label="${ariaLabel}">
         <span class="map-world-art" aria-hidden="true">
-          ${art ? `<img src="${assetHref(art)}" alt="" loading="lazy">` : '<span class="map-world-art-placeholder"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-4Z"/><path d="M12 8v4"/><path d="m12 16 .01 0"/></svg></span>'}
+          ${art ? `<img src="${assetHref(art)}" alt="" loading="lazy">` : placeholder}
           ${isActive ? '<span class="map-world-playing" aria-hidden="true">玩</span>' : ''}
           ${isRecommended ? '<span class="map-world-recommend" aria-hidden="true">推荐</span>' : ''}
           ${isComingSoon ? '<span class="map-world-soon-badge" aria-hidden="true">敬请期待</span>' : ''}
@@ -2465,12 +3707,30 @@ if (typeof document !== 'undefined') {
             <span class="map-world-age-label">适合年龄</span>
           </span>
           <small class="map-world-tagline">${meta.tagline}</small>
-          ${isComingSoon ? '<small class="map-world-soon-note">新地图制作中，上线后第一时间通知你</small>' : `<span class="map-world-progress" aria-hidden="true"><span style="width:${Math.max(2, Math.round((currentLevel / DISPLAY_LEVEL_COUNT) * 100))}%"></span></span>
-          <small class="map-world-subinfo">第 ${currentLevel}/${DISPLAY_LEVEL_COUNT} 关</small>`}
+          ${isComingSoon ? '<small class="map-world-soon-note">新地图制作中，上线后第一时间通知你</small>' : `<span class="map-world-progress" aria-hidden="true"><span style="width:${Math.max(2, Math.round((currentLevel / totalLevels) * 100))}%"></span></span>
+          <small class="map-world-subinfo">第 ${currentLevel}/${totalLevels} 关</small>`}
         </span>
         <span class="map-world-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span>
       </button>`;
-    }).join('');
+    };
+    const mapZones = [
+      { id: 'english', title: '英语区', note: '单词、句型、听说闯关', worldIds: ['ocean', 'desert', 'castle'] },
+      { id: 'math', title: '数学区', note: '数感、比较、分类闯关', worldIds: ['math', 'math58', 'math912'] },
+    ];
+    const activeZoneId = MAP_WORLDS[activeWorldId]?.zone === 'math' ? 'math' : 'english';
+    const zoneTabs = mapZones.map((zone) => `
+      <button class="map-zone-tab" id="map-zone-tab-${zone.id}" type="button" role="tab" data-map-zone-tab="${zone.id}" aria-selected="${zone.id === activeZoneId ? 'true' : 'false'}" aria-controls="map-zone-panel-${zone.id}" tabindex="${zone.id === activeZoneId ? '0' : '-1'}">
+        <strong>${zone.title}</strong>
+        <small>${zone.note}</small>
+      </button>`).join('');
+    const worldGroups = mapZones.map((group) => `
+      <section class="map-world-group map-world-group--${group.id} map-zone-panel" id="map-zone-panel-${group.id}" data-map-zone-panel="${group.id}" role="tabpanel" aria-labelledby="map-zone-tab-${group.id}"${group.id === activeZoneId ? '' : ' hidden'}>
+        <div class="map-world-group-heading">
+          <h3 id="map-world-group-${group.id}">${group.title}</h3>
+          <small>${group.note}</small>
+        </div>
+        <div class="map-world-options" role="list">${group.worldIds.map((worldId) => MAP_WORLDS[worldId]).filter(Boolean).map(worldOptionMarkup).join('')}</div>
+      </section>`).join('');
 
     mapSwitchDialog = document.createElement('dialog');
     mapSwitchDialog.className = 'map-switch-dialog map-switch-picker-dialog';
@@ -2488,8 +3748,9 @@ if (typeof document !== 'undefined') {
       '</div>',
       '<p class="paywall-eyebrow">切换地图</p>',
       '<h2 id="map-switch-title">选择冒险世界</h2>',
-      '<p>按宝宝年龄挑一张地图，从最适合的世界开始冒险吧！</p>',
-      `<div class="map-world-options" role="list">${worldOptions}</div>`,
+      '<p>先切学习区，再选地图。</p>',
+      `<div class="map-zone-tabs" role="tablist" aria-label="学习区">${zoneTabs}</div>`,
+      `<div class="map-world-groups">${worldGroups}</div>`,
       '</div>',
     ].join('');
 
@@ -2498,11 +3759,25 @@ if (typeof document !== 'undefined') {
     dialog.querySelectorAll('[data-map-switch-close]').forEach((button) => {
       button.addEventListener('click', closeMapSwitchDialog);
     });
+    dialog.querySelectorAll('[data-map-zone-tab]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const nextZoneId = button.dataset.mapZoneTab;
+        dialog.querySelectorAll('[data-map-zone-tab]').forEach((tab) => {
+          const selected = tab.dataset.mapZoneTab === nextZoneId;
+          tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+          tab.tabIndex = selected ? 0 : -1;
+        });
+        dialog.querySelectorAll('[data-map-zone-panel]').forEach((panel) => {
+          panel.hidden = panel.dataset.mapZonePanel !== nextZoneId;
+        });
+      });
+    });
     dialog.querySelectorAll('[data-map-world]').forEach((button) => {
       button.addEventListener('click', () => {
         const nextWorldId = normalizeMapWorldId(button.dataset.mapWorld);
         state.preferences.mapWorld = nextWorldId;
-        state.progress = state.progressByWorld[nextWorldId];
+        state.progress = state.progressByWorld[nextWorldId] || normalizeProgress(null, levelsForMapWorld(nextWorldId).length || DISPLAY_LEVEL_COUNT);
+        state.progressByWorld[nextWorldId] = state.progress;
         try { localStorage.setItem(APP_PREFERENCES_KEY, JSON.stringify(state.preferences)); } catch {}
         scheduleLearningSync();
         closeMapSwitchDialog();
@@ -2638,12 +3913,74 @@ if (typeof document !== 'undefined') {
     return activeWorldLevels().find((item) => item.id === levelId);
   }
 
+  function normalizeMathMapLevelId(levelId, fallback = 1) {
+    const id = Number(levelId) || Number(fallback) || 1;
+    return Math.min(DISPLAY_LEVEL_COUNT, Math.max(1, id));
+  }
+
+  function clearMathAppleDropSounds() {
+    mathAppleDropSoundTimers.forEach((timer) => clearTimeout(timer));
+    mathAppleDropSoundTimers = [];
+  }
+
+  function cssTimeToMs(value) {
+    const raw = String(value || '').trim();
+    const amount = Number.parseFloat(raw);
+    if (!Number.isFinite(amount)) return 0;
+    return Math.max(0, raw.endsWith('s') && !raw.endsWith('ms') ? amount * 1000 : amount);
+  }
+
+  function playMathAppleDropSounds(root) {
+    clearMathAppleDropSounds();
+    const objects = [...(root?.querySelectorAll('.math-inline-panel.is-dropping-in .math-object') || [])];
+    objects.forEach((object) => {
+      const delayMs = cssTimeToMs(getComputedStyle(object).getPropertyValue('--math-object-delay'));
+      const play = () => {
+        try {
+          const audio = new Audio(MATH_APPLE_DROP_SFX_SRC);
+          audio.volume = MATH_APPLE_DROP_SFX_VOLUME;
+          audio.play().catch(() => {});
+        } catch (_) {}
+      };
+      mathAppleDropSoundTimers.push(setTimeout(play, delayMs + MATH_APPLE_DROP_IMPACT_OFFSET_MS));
+    });
+  }
+
+  function playUiButtonClickSfx() {
+    try {
+      uiButtonClickAudio.currentTime = 0;
+      uiButtonClickAudio.volume = UI_BUTTON_CLICK_SFX_VOLUME;
+      uiButtonClickAudio.play().catch(() => {});
+    } catch (_) {}
+  }
+
+  function handleUiButtonClickSfx(event) {
+    if (event.isTrusted === false || !(event.target instanceof Element)) return;
+    const button = event.target.closest('button, [role="button"], input[type="button"], input[type="submit"], input[type="reset"]');
+    if (!button) return;
+    if (button.disabled || button.closest('[disabled], [aria-disabled="true"]')) return;
+    playUiButtonClickSfx();
+  }
+
+  function showInlineMathLevel(levelId, message = '', transition = '') {
+    state.mathMapLevelId = normalizeMathMapLevelId(levelId, state.progress.unlockedThrough);
+    state.mathMapTransition = transition;
+    if (routeFromHash().type !== 'map') {
+      history.replaceState(null, '', '#map');
+    }
+    renderMap(message);
+    rememberLastStay({ type: 'map' });
+  }
+
   function requestLevelAccess(levelId, trigger = null) {
     const access = getLevelAccess(levelId, state.progress, state.preferences.vipActive === true);
     if (access === 'allowed') {
       const level = activeLevelById(levelId);
-      if (!level?.videoSrc) {
-        showMapMessage(lessonUnavailableMessage);
+      if (state.preferences.mapWorld === 'math' && (level?.worldId === 'math' || level?.itemType === 'count')) {
+        const currentMathLevelId = normalizeMathMapLevelId(state.mathMapLevelId, state.progress.unlockedThrough);
+        const nextMathLevelId = normalizeMathMapLevelId(levelId, state.progress.unlockedThrough);
+        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        showInlineMathLevel(nextMathLevelId, '', !reduceMotion && nextMathLevelId !== currentMathLevelId ? 'drop' : '');
         return;
       }
       navigate(`level-${levelId}`, { fromMap: true });
@@ -3002,7 +4339,11 @@ if (typeof document !== 'undefined') {
         }
         const levelBtn = ev.target.closest('[data-jump-level]');
         if (levelBtn) {
-          selectLevel(Number(levelBtn.dataset.jumpLevel));
+          const targetLevel = Number(levelBtn.dataset.jumpLevel);
+          selectLevel(targetLevel);
+          if (Number.isFinite(targetLevel) && targetLevel > FREE_LEVEL_COUNT) {
+            departSelected();
+          }
           return;
         }
         if (ev.target.closest('[data-jump-depart]')) {
@@ -3034,31 +4375,69 @@ if (typeof document !== 'undefined') {
       });
     }
 
+
+  function mathMapInlinePanelMarkup(level, transition = '') {
+    const alreadyCompleted = state.progress.completed.includes(level.id);
+    const topicShort = String(level.topic || '').split('·')[0].trim();
+    const dropClass = transition === 'drop' ? ' is-dropping-in' : '';
+    const questionLevel = mathLevelForCoachPlan(level);
+    const prevId = level.id - 1;
+    const nextId = level.id + 1;
+    return `
+            <div class="math-map-play-area" data-math-inline-question>
+              <section class="math-inline-panel math-quiz${dropClass}" data-math-panel-level="${level.id}" aria-label="当前数学题">
+                <button class="math-level-step math-level-step--prev" type="button" data-math-step="-1" aria-label="${prevId >= 1 ? `切到第 ${prevId} 关` : '已经是第 1 关'}" ${prevId < 1 ? 'disabled' : ''}></button>
+                <header class="math-inline-header">
+                  <span class="level-pill">第 ${level.id} 关</span>
+                  <strong>${escapeHtml(level.title)}</strong>
+                  <small>${escapeHtml(topicShort || level.zhTitle)}</small>
+                  <span class="status-pill" data-detail-state>${alreadyCompleted ? '已完成' : '进行中'}</span>
+                </header>
+                <div class="math-layout">
+                  ${mathQuestionTableMarkup(questionLevel)}
+                </div>
+                <button class="math-level-step math-level-step--next" type="button" data-math-step="1" aria-label="${nextId <= DISPLAY_LEVEL_COUNT ? `切到第 ${nextId} 关` : '已经是最后一关'}" ${nextId > DISPLAY_LEVEL_COUNT ? 'disabled' : ''}></button>
+              </section>
+            </div>`;
+  }
+
   function renderMap(initialMessage = '') {
+    clearMathAppleDropSounds();
     const completed = state.progress.completed.length;
     const activeWorldId = normalizeMapWorldId(state.preferences.mapWorld);
     const activeWorld = MAP_WORLDS[activeWorldId];
     const worldLevels = levelsForMapWorld(activeWorldId);
-    const focusedLevelId = Math.min(
+    const progressLevelId = Math.min(
       activeWorld.endLevel,
       Math.max(activeWorld.startLevel, state.progress.unlockedThrough),
     );
+    const focusedLevelId = activeWorldId === 'math'
+      ? normalizeMathMapLevelId(state.mathMapLevelId, progressLevelId)
+      : progressLevelId;
     const currentLevel = worldLevels.find((level) => level.id === focusedLevelId) || worldLevels[0] || levels[0];
     const currentMapTheme = activeWorld.theme;
+    const mathMapTransition = currentMapTheme === 'math' ? state.mathMapTransition : '';
     const currentVehicle = MAP_VEHICLES[currentMapTheme] || MAP_VEHICLES.ocean;
     const stars = completed * 3;
-    const shells = 120 + completed * 25;
     const levelNodes = worldLevels.map((level) => {
       const status = levelStatus(level.id);
       const label = `第 ${level.id} 关，${level.title}，${statusText(status)}`;
+      const isMathLevel = level.worldId === 'math' || level.itemType === 'count';
+      const isSelectedMathLevel = currentMapTheme === 'math' && level.id === currentLevel.id;
       const islandId = String(islandStyleId(level.id)).padStart(3, '0');
       const islandImage = assetHref(`assets/islands-v1/runtime/island-${islandId}.webp?v=20260720-underwater-fade-v3`);
       const mapImage = currentMapTheme === 'desert' ? assetHref(desertLandmarkImage(level.id)) : islandImage;
-      const stopClass = currentMapTheme === 'desert' ? 'desert-landmark' : 'ocean-island';
+      const stopClass = currentMapTheme === 'desert' ? 'desert-landmark' : currentMapTheme === 'math' ? 'math-table-stop' : 'ocean-island';
+      const mathSymbol = isMathLevel ? Number(level.targetCount) || 1 : '';
+      const stopStyle = currentMapTheme === 'math'
+        ? `--math-card-tilt:${((level.id % 5) - 2) * 1.2}deg`
+        : `--island-image:url('${mapImage}')`;
+      const mathArtAttrs = isMathLevel ? ` data-math-symbol="${mathSymbol}"` : '';
+      const wordAudioMarkup = isMathLevel ? '' : `<button class="word-audio-button" type="button" data-speak-word="${level.title}" aria-label="播放 ${level.title} 发音"${wordCanPronounce(level.title) ? '' : ' disabled'}>${icons.wordAudio}</button>`;
 
       return `
-        <div class="level-stop square-island ${stopClass}" data-stop="${level.id}" data-word="${level.title}" data-status="${status}" data-map-theme="${currentMapTheme}" style="--island-image:url('${mapImage}')">
-          <span class="island-art" aria-hidden="true"></span>
+        <div class="level-stop square-island ${stopClass}${isSelectedMathLevel ? ' is-selected' : ''}" data-stop="${level.id}" data-word="${level.title}" data-status="${status}" data-map-theme="${currentMapTheme}" style="${stopStyle}">
+          <span class="island-art"${mathArtAttrs} aria-hidden="true"></span>
           ${desertDecorMarkup(level.id, currentMapTheme)}
           ${status === 'locked' || status === 'premium' ? icons.islandLock : ''}
           <button class="level-node ${status}" type="button" data-level="${level.id}" aria-label="${label}" ${status === 'locked' ? 'aria-disabled="true"' : ''}>
@@ -3067,7 +4446,7 @@ if (typeof document !== 'undefined') {
           </button>
           <span class="level-name">
             <span class="level-name-copy"><strong>${level.title}</strong><small>${level.zhTitle}</small></span>
-            <button class="word-audio-button" type="button" data-speak-word="${level.title}" aria-label="播放 ${level.title} 发音"${wordCanPronounce(level.title) ? '' : ' disabled'}>${icons.wordAudio}</button>
+            ${wordAudioMarkup}
           </span>
           <span class="level-state-text ${status}" aria-label="${statusText(status)}">
             ${status === 'completed' ? icons.stateCompleted : status === 'current' ? icons.stateCurrent : icons.stateLocked}
@@ -3085,6 +4464,31 @@ if (typeof document !== 'undefined') {
         <source src="${currentVehicle.sailingVideo.hevc}" type='video/quicktime; codecs="hvc1"'>
         <source src="${currentVehicle.sailingVideo.webm}" type='video/webm; codecs="vp9"'>
       </video>` : '';
+    const vehicleThemeClass = currentMapTheme === 'desert' ? 'is-desert-rider' : currentMapTheme === 'math' ? 'is-math-rider' : '';
+    const mathMapDecorMarkup = currentMapTheme === 'math' ? `
+            <div class="math-map-decor" aria-hidden="true">
+              <span class="math-map-prop math-map-prop--ruler"></span>
+              <span class="math-map-prop math-map-prop--pencil"></span>
+              <span class="math-map-prop math-map-prop--block math-map-prop--one"></span>
+              <span class="math-map-prop math-map-prop--block math-map-prop--two"></span>
+              <span class="math-map-prop math-map-prop--counter math-map-prop--counter-a"></span>
+              <span class="math-map-prop math-map-prop--counter math-map-prop--counter-b"></span>
+              <span class="math-map-prop math-map-prop--kid-doodle"></span>
+            </div>` : '';
+    const mathInlinePanelMarkup = currentMapTheme === 'math'
+      ? mathMapInlinePanelMarkup(currentLevel, mathMapTransition)
+      : '';
+    const mathLevelIndicatorMarkup = currentMapTheme === 'math' ? `
+        <div class="math-level-switch-indicator${mathMapTransition === 'drop' ? ' is-changing' : ''}" data-math-level-switch-indicator role="status" aria-live="polite" aria-label="当前第 ${currentLevel.id} 关，共 ${DISPLAY_LEVEL_COUNT} 关">
+          <span class="math-level-switch-label">当前关卡</span>
+          <strong><span>第 ${currentLevel.id}</span><small>/ ${DISPLAY_LEVEL_COUNT} 关</small></strong>
+          <span class="math-level-switch-title">${escapeHtml(currentLevel.title)}</span>
+        </div>` : '';
+    const globalUpdateStatusMarkup = currentMapTheme === 'math' ? '' : `
+            <div class="map-pack-status-hud" data-global-update-status>
+              ${globalUpdateButtonMarkup()}
+            </div>`;
+    const swipeHintMarkup = currentMapTheme === 'math' ? '' : `<p class="swipe-hint" aria-hidden="true">${activeWorld.hint}</p>`;
     main.innerHTML = `
       <section class="view map-view" aria-labelledby="map-title">
         <header class="map-topbar surface">
@@ -3100,9 +4504,13 @@ if (typeof document !== 'undefined') {
               <span class="map-brand-divider" aria-hidden="true"></span>
               <span class="map-level-chip">
                 <svg class="map-level-flag" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 5c4-2.2 8 2.2 12 0v8.5c-4 2.2-8-2.2-12 0"/></svg>
-                <span>${activeWorld.chipPrefix} · 第 ${currentLevel.id} 关 · ${currentLevel.title} ${currentLevel.zhTitle}</span>
+                <span>第 ${currentLevel.id} 关 · ${currentLevel.title} ${currentLevel.zhTitle}</span>
               </span>
             </div>
+            <div class="map-pack-status-hud" data-asset-pack-status>
+              ${activeWorld.usesVideoAssets === false ? '' : assetPackStatusButtonMarkup()}
+            </div>
+            ${globalUpdateStatusMarkup}
           </div>
 
           <div class="resource-strip" aria-label="冒险资源">
@@ -3110,16 +4518,14 @@ if (typeof document !== 'undefined') {
               <span class="resource-icon star" aria-hidden="true"><img class="resource-glyph" src="assets/icons/resource-star.webp?v=20260714-v1" alt="" draggable="false"></span>
               <span><small>星星</small><strong>${stars}</strong></span>
             </div>
-            <div class="resource-chip">
-              <span class="resource-icon gem" aria-hidden="true"><svg class="resource-glyph resource-glyph--gem" viewBox="0 0 48 48" role="img" aria-label="宝石"><path d="M12 6h24l8 12-20 24L4 18l8-12Z" fill="#a5f3fc" stroke="#0e7490" stroke-width="2.4" stroke-linejoin="round"/><path d="M4 18h40M12 6l12 12 12-12M24 42V18" fill="none" stroke="#0e7490" stroke-width="2" stroke-linejoin="round"/><path d="M12 6h24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity="0.7"/></svg></span>
-              <span><small>宝石</small><strong>${shells}</strong></span>
-            </div>
           </div>
         </header>
 
         <p class="map-message" role="status" ${initialMessage ? '' : 'hidden'}>${initialMessage}</p>
+        ${mathLevelIndicatorMarkup}
         <section class="route-card surface" aria-label="${activeWorld.routeLabel}" data-map-world="${activeWorld.id}" data-map-theme="${currentMapTheme}">
           <div class="route-ocean" data-map-theme="${currentMapTheme}">
+            ${mathMapDecorMarkup}
             <video class="ocean-loop ocean-loop--ocean" autoplay muted loop playsinline preload="auto" poster="assets/ocean/front-ocean-bg-v2-libtv.webp" aria-hidden="true">
               <source src="assets/ocean/front-ocean-loop-v4-libtv-seamless-clouds.mp4?v=20260719-handpainted-libtv-v1" type="video/mp4" media="(prefers-reduced-motion: no-preference)">
             </video>
@@ -3131,18 +4537,21 @@ if (typeof document !== 'undefined') {
               <img src="assets/ocean/seagull-fly.webp?v=20260720-libtv-flap-v1" alt="" draggable="false">
               <img src="assets/ocean/seagull-fly.webp?v=20260720-libtv-flap-v1" alt="" draggable="false">
             </div>
-            <div class="map-fab-cluster" role="group" aria-label="地图定位与跳关">
+            <div class="map-fab-cluster" role="group" aria-label="地图工具">
+              <button class="map-music-btn${state.preferences.mapMusic === false ? ' is-muted' : ''}" type="button" data-map-music-toggle role="switch" aria-pressed="${state.preferences.mapMusic !== false}" aria-label="${state.preferences.mapMusic === false ? '打开背景音' : '关闭背景音'}" title="${state.preferences.mapMusic === false ? '打开背景音' : '关闭背景音'}">
+                ${state.preferences.mapMusic === false ? icons.mapMusicOff : icons.mapMusicOn}
+              </button>
               <button class="map-jump-btn" type="button" data-map-jump aria-label="跳关，仅移动地图到某一关" title="跳关（仅移动地图）">
                 ${icons.jump}
               </button>
-              <button class="map-locate-btn" type="button" data-locate-progress data-current-level="${currentLevel.id}" aria-label="回到第 ${currentLevel.id} 关最新进度" title="回到当前最新进度">
+              <button class="map-locate-btn" type="button" data-locate-progress data-current-level="${progressLevelId}" aria-label="回到第 ${progressLevelId} 关最新进度" title="回到当前最新进度">
                 ${icons.locate}
               </button>
             </div>
             <div class="route-scroll" data-route-scroll tabindex="0" aria-label="${activeWorld.routeLabel}，左右滑动浏览">
               <div class="route-canvas">
                 <div class="boat-dock" aria-hidden="true">
-                  <div class="toy-steamboat ${currentMapTheme === 'desert' ? 'is-desert-rider' : ''}" data-current-boat>
+                  <div class="toy-steamboat ${vehicleThemeClass}" data-current-boat>
                     <span class="steamboat-body">
                       <img class="steamboat-asset steamboat-asset--idle" data-boat-asset-idle src="${currentVehicle.idle}" alt="" draggable="false" decoding="sync">
                       ${idleVideoMarkup}
@@ -3154,10 +4563,12 @@ if (typeof document !== 'undefined') {
                 <div class="route-stage">${levelNodes}</div>
               </div>
             </div>
+            ${mathInlinePanelMarkup}
           </div>
-          <p class="swipe-hint" aria-hidden="true">${activeWorld.hint}</p>
+          ${swipeHintMarkup}
         </section>
       </section>`;
+    state.mathMapTransition = '';
 
     main.querySelector('[data-map-switch]')?.addEventListener('click', (event) => {
       event.preventDefault();
@@ -3199,6 +4610,12 @@ if (typeof document !== 'undefined') {
       });
     });
 
+    const inlineMathPanel = main.querySelector('[data-math-inline-question]');
+    if (inlineMathPanel && currentMapTheme === 'math') {
+      bindInlineMathQuestion(inlineMathPanel, mathLevelForCoachPlan(currentLevel));
+      playMathAppleDropSounds(inlineMathPanel);
+    }
+
     const routeScroll = main.querySelector('[data-route-scroll]');
     const currentBoat = main.querySelector('[data-current-boat]');
     const idleVideo = main.querySelector('[data-boat-idle-video]');
@@ -3215,7 +4632,8 @@ if (typeof document !== 'undefined') {
       const image = new Image();
       image.src = src;
     });
-    const BOAT_HOLD_MS = 300;
+    const MAP_STOP_BEFORE_VEHICLE_MS = 1000;
+    const BOAT_HOLD_MS = 0;
     const BOAT_SAIL_MS = 2800;
     const reduceBoatMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     // Paddle SFX: original clip is ~5.6s. At 2.0x it lands at ~2.8s, matching
@@ -3464,12 +4882,6 @@ if (typeof document !== 'undefined') {
       setBoatX(getStopOffsetX(boatHomeStop));
     };
 
-    const getBoatDepartureStop = (targetStop, direction) => {
-      const targetIndex = stops.indexOf(targetStop);
-      const departIndex = targetIndex - (direction < 0 ? -1 : 1);
-      return stops[departIndex] || boatHomeStop;
-    };
-
     // 禁止把船“冻”在两关中间的假 home：任何中断都只能落回真实关卡节点。
     const hardCancelBoatMotion = () => {
       clearTimeout(boatHoldTimer);
@@ -3484,10 +4896,19 @@ if (typeof document !== 'undefined') {
       setBoatSailing(false);
     };
 
+    // 滑屏打断时，先把船/骆驼结算到已确认的目标关，再等待新的停留确认。
+    const settleBoatAtLastConfirmedStop = () => {
+      if (boatPhase === 'idle') return false;
+      hardCancelBoatMotion();
+      boatHomeStop = lastFeedbackStop;
+      boatHomeFrozen = false;
+      snapBoatToHome();
+      return true;
+    };
+
     /** 跳关/定位：立刻停航，由调用方把船吸附到真实关卡，绝不半路停 */
     const interruptBoatSail = () => {
-      if (boatPhase === 'idle') return;
-      hardCancelBoatMotion();
+      settleBoatAtLastConfirmedStop();
     };
 
     const finishBoatAtCenter = () => {
@@ -3533,10 +4954,9 @@ if (typeof document !== 'undefined') {
       boatSailFrame = requestAnimationFrame(tick);
     };
 
-    // Island switches first; after skipped stops, the boat only rows the
-    // adjacent segment into the new center.
-    // fromCurrent=true：滑动改终点时从当前像素位续航，禁止 snap 到假 home（会卡两关中间）
-    const scheduleBoatCrossing = (direction, { fromCurrent = false } = {}) => {
+    // Island switches always depart from the last confirmed stop; scrolling the
+    // map must not turn the current viewport position into a fake dock.
+    const scheduleBoatCrossing = (direction) => {
       clearTimeout(boatHoldTimer);
       boatHoldTimer = 0;
       stopPaddleSfx();
@@ -3546,12 +4966,10 @@ if (typeof document !== 'undefined') {
       }
       boatPhase = 'holding';
       boatHomeFrozen = false;
-      if (!fromCurrent) {
-        setBoatSailing(false);
-        snapBoatToHome();
-      }
+      setBoatSailing(false);
+      snapBoatToHome();
       setCamelFacing(direction);
-      boatHoldTimer = setTimeout(startBoatSailToCenter, fromCurrent ? 0 : BOAT_HOLD_MS);
+      boatHoldTimer = setTimeout(startBoatSailToCenter, BOAT_HOLD_MS);
     };
 
     const updateCenteredStop = () => {
@@ -3566,9 +4984,9 @@ if (typeof document !== 'undefined') {
       centeredStop.classList.remove('is-centered');
       nextStop.classList.add('is-centered');
       centeredStop = nextStop;
-      // 航行中不改 home（由 confirm 续航重定向）；idle/holding 才预挂邻关出发位
+      // 滑动只换目标关，不改出发关；船/骆驼仍钉在上一停靠点。
       if (boatPhase === 'idle') {
-        boatHomeStop = getBoatDepartureStop(centeredStop, travelDirection);
+        boatHomeStop = lastFeedbackStop;
         boatHomeFrozen = false;
       }
     };
@@ -3591,20 +5009,14 @@ if (typeof document !== 'undefined') {
       }
 
       const travelDirection = centeredStop.offsetLeft < lastFeedbackStop.offsetLeft ? -1 : 1;
-      const wasInTransit = boatPhase === 'sailing' || boatPhase === 'holding';
+      const departStop = lastFeedbackStop;
       lastFeedbackStop = centeredStop;
       boatHomeFrozen = false;
       navigator.vibrate?.(30);
       playIslandSound();
 
-      if (wasInTransit) {
-        // 滑动改终点：从当前位置直接驶向新居中关，绝不冻在半路
-        scheduleBoatCrossing(travelDirection, { fromCurrent: true });
-      } else {
-        // 静止起步：只邻关一程（从邻岛出发驶入中心）
-        boatHomeStop = getBoatDepartureStop(centeredStop, travelDirection);
-        scheduleBoatCrossing(travelDirection, { fromCurrent: false });
-      }
+      boatHomeStop = departStop;
+      scheduleBoatCrossing(travelDirection);
 
       if (!state.preferences.autoPronunciation) return;
       if (!wordCanPronounce(centeredStop.dataset.word)) return;
@@ -3619,6 +5031,7 @@ if (typeof document !== 'undefined') {
     // 轻点：只武装反馈，不打断航行（点屏不得把船卡在两关中间）
     // 真正改终点：靠 scroll 落定后的 confirmIslandSwitch
     const handleRouteIntent = () => {
+      settleBoatAtLastConfirmedStop();
       armIslandFeedback();
     };
     // 拖动阈值：≥10px 才视为“要改道”的意图（与记忆一致）；轻点完全不碰船
@@ -3640,6 +5053,7 @@ if (typeof document !== 'undefined') {
       if (Math.hypot(dx, dy) < BOAT_DRAG_INTERRUPT_PX) return;
       // 达到拖动阈值：只武装反馈，仍不冻船；等 scroll 落定重定向
       routePointerStart = null;
+      settleBoatAtLastConfirmedStop();
       armIslandFeedback();
     };
     const onRoutePointerEnd = (event) => {
@@ -3654,6 +5068,7 @@ if (typeof document !== 'undefined') {
     routeScroll.addEventListener('wheel', handleRouteIntent, { passive: true });
     routeScroll.addEventListener('keydown', handleRouteIntent);
     routeScroll.addEventListener('scroll', () => {
+      settleBoatAtLastConfirmedStop();
       if (!scrollFrame) {
         scrollFrame = requestAnimationFrame(() => {
           scrollFrame = 0;
@@ -3666,16 +5081,33 @@ if (typeof document !== 'undefined') {
       clearTimeout(feedbackTimer);
       // 滑动中保持 armed，落定后再确认终点关
       feedbackArmed = true;
-      feedbackTimer = setTimeout(confirmIslandSwitch, 140);
+      feedbackTimer = setTimeout(confirmIslandSwitch, MAP_STOP_BEFORE_VEHICLE_MS);
     }, { passive: true });
 
     const locateBtn = main.querySelector('[data-locate-progress]');
     const jumpBtn = main.querySelector('[data-map-jump]');
-    // 定位钮：硬吸附当前进度关前（可打断航行，但终点必是关卡）
+    const musicBtn = main.querySelector('[data-map-music-toggle]');
+    // 定位钮：回到「最新进度关」。数学图无可见航线，直接切题；海/沙漠仍滚地图。
     locateBtn?.addEventListener('click', () => {
-      locateToLevelId(currentLevel.id, 'smooth');
+      if (currentMapTheme === 'math') {
+        const homeId = progressLevelId;
+        if (Number(currentLevel.id) === Number(homeId)) {
+          showMapMessage(`已在第 ${homeId} 关 · 最新进度`);
+          const pill = main.querySelector('[data-math-level-switch-indicator]');
+          if (pill) {
+            pill.classList.remove('is-changing');
+            // force reflow so pop animation can replay
+            void pill.offsetWidth;
+            pill.classList.add('is-changing');
+          }
+          return;
+        }
+        showInlineMathLevel(homeId, `已回到第 ${homeId} 关最新进度`, 'drop');
+        return;
+      }
+      locateToLevelId(progressLevelId, 'smooth');
     });
-    // 跳关钮：两级选关（每 20 关一段，覆盖 200 关）；仅移动地图，不写通关进度
+    // 跳关钮：两级选关（每 20 关一段，覆盖 200 关）；仅移动地图/切题，不写通关进度
     jumpBtn?.addEventListener('click', () => {
       armIslandFeedback();
       openMapJumpDialog({
@@ -3684,10 +5116,19 @@ if (typeof document !== 'undefined') {
         unlockedThrough: state.progress.unlockedThrough,
         trigger: jumpBtn,
         onDepart: (levelId) => {
+          if (currentMapTheme === 'math') {
+            showInlineMathLevel(levelId, `已到达第 ${levelId} 关`, 'drop');
+            return;
+          }
           locateToLevelId(levelId, 'auto');
         },
       });
     });
+    // 背景音开关：三张地图共用 mapMusic 偏好，关即停 BGM + 环境音
+    musicBtn?.addEventListener('click', () => {
+      setPreference('mapMusic', state.preferences.mapMusic === false);
+    });
+    paintMapMusicToggle(musicBtn);
     requestAnimationFrame(() => {
       locateProgress('auto');
       centeredStop.classList.add('is-centered');
@@ -3709,7 +5150,229 @@ if (typeof document !== 'undefined') {
     document.querySelectorAll('[data-global-hint-hand]').forEach((hand) => hand.remove());
   }
 
+  function mathQuestionParts(level) {
+    const groups = Array.isArray(level.math?.groups) && level.math.groups.length
+      ? level.math.groups
+      : level.options.map((label, index) => ({ id: `math-${level.id}-${index}`, count: index, label }));
+    const targetLabel = level.options[level.correct] || mathCountLabel(level.targetCount || 1);
+    const questionText = questionPromptText(level);
+    let objectIndex = 0;
+    const objectMarkup = (count) => {
+      const safeCount = Math.max(0, Math.min(10, Number(count) || 0));
+      if (safeCount === 0) return '';
+      return Array.from(
+        { length: safeCount },
+        () => `<span class="math-object" style="--math-object-delay:${objectIndex++ * 190}ms" aria-hidden="true"></span>`,
+      ).join('');
+    };
+    const choicesMarkup = groups.map((group, index) => `
+      <button class="math-choice" type="button" data-math-choice="${index}" style="--math-choice-delay:${index * 56}ms" aria-label="${escapeHtml(group.label)}">
+        <span class="math-plate" aria-hidden="true"><span class="math-object-set" data-count="${Math.max(0, Math.min(10, Number(group.count) || 0))}">${objectMarkup(group.count)}</span></span>
+        <span class="math-choice-label">${escapeHtml(group.label)}</span>
+        <span class="result-badge" aria-hidden="true"></span>
+      </button>`).join('');
+    return {
+      choicesMarkup,
+      optionCount: groups.length,
+      targetLabel,
+      questionMarkup: escapeHtml(questionText)
+        .replace(String(level.targetCount || ''), `<strong>${level.targetCount || 1}</strong>`),
+    };
+  }
+
+  function mathQuestionTableMarkup(level) {
+    const parts = mathQuestionParts(level);
+    return `
+          <div class="math-table">
+            <div class="math-question-card">
+              <p class="question-text">${parts.questionMarkup}</p>
+            </div>
+            <div class="math-options math-options--count-${parts.optionCount}" data-math-options>${parts.choicesMarkup}</div>
+          </div>
+          <div class="quiz-footer">
+            <button class="submit-btn" type="button" data-submit hidden aria-label="提交答案">
+              <svg viewBox="0 0 24 24"><path d="M4 12.5l5.2 5.2L20 6.8"/></svg>
+            </button>
+            <div class="feedback-banner" data-feedback hidden role="status" aria-live="polite" tabindex="-1"></div>
+            <button class="replay-btn" type="button" data-continue-map hidden aria-label="继续下一关">
+              <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.3"/><path d="M3 4v5h5"/></svg>
+            </button>
+          </div>`;
+  }
+
+  function bindInlineMathQuestion(root, level) {
+    const optionsBox = root.querySelector('[data-math-options]');
+    const feedback = root.querySelector('[data-feedback]');
+    const continueBtn = root.querySelector('[data-continue-map]');
+    const submitBtn = root.querySelector('[data-submit]');
+    const statePill = root.querySelector('[data-detail-state]');
+    const stepButtons = root.querySelectorAll('[data-math-step]');
+    if (!optionsBox || !feedback || !continueBtn || !submitBtn) return;
+    const targetLabel = mathQuestionParts(level).targetLabel;
+    let selectedIndex = null;
+    let quizState = 'answering';
+    const startedAt = typeof performance !== 'undefined' && typeof performance.now === 'function'
+      ? performance.now()
+      : Date.now();
+    let latestCoachPlan = null;
+
+    function selectChoice(index, card) {
+      if (quizState !== 'answering') return;
+      selectedIndex = index;
+      optionsBox.querySelectorAll('.math-choice').forEach((choice) => choice.classList.remove('is-selected'));
+      card.classList.add('is-selected');
+      submitBtn.hidden = false;
+    }
+
+  function transitionToInlineMathLevel(targetId, trigger) {
+      const nextId = normalizeMathMapLevelId(targetId, level.id);
+      if (nextId === level.id) return;
+      const targetLevel = activeLevelById(nextId);
+      if (!targetLevel) {
+        showMapMessage('没有找到这个关卡。');
+        return;
+      }
+      const access = getLevelAccess(nextId, state.progress, state.preferences.vipActive === true);
+      if (access === 'paid') {
+        showMapMessage(paidAccessMessage);
+        openPaywallDialog(nextId, trigger);
+        return;
+      }
+      if (access === 'locked') {
+        showMapMessage(`先完成第 ${state.progress.unlockedThrough} 关，再继续冒险。`);
+        return;
+      }
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) {
+        showInlineMathLevel(nextId);
+        return;
+      }
+      root.querySelector('.math-inline-panel')?.classList.add('is-switching-out');
+      root.querySelectorAll('button:not([disabled])').forEach((button) => { button.disabled = true; });
+      setTimeout(() => {
+        showInlineMathLevel(nextId, '', 'drop');
+      }, 190);
+    }
+
+    function continueInlineMath() {
+      const next = resolveMathCoachContinueTarget(latestCoachPlan, level.id)
+        || resolveMathContinueLevel(state.mathAttempts, level.id, DISPLAY_LEVEL_COUNT);
+      const nextId = next.levelId;
+      if (next.reason === 'repeat-current') {
+        showInlineMathLevel(level.id, '再练一次', 'drop');
+        return;
+      }
+      if (nextId > level.id) {
+        transitionToInlineMathLevel(nextId, continueBtn);
+        return;
+      }
+      renderMap('本关已完成');
+    }
+
+    function submitAnswer() {
+      if (selectedIndex === null || quizState !== 'answering') return;
+      quizState = 'judging';
+      submitBtn.hidden = true;
+      const card = optionsBox.children[selectedIndex];
+      const worldLevels = activeWorldLevels();
+      const result = applyQuizAnswer(state.progress, level.id, selectedIndex, level.correct, worldLevels.length);
+      const endedAt = typeof performance !== 'undefined' && typeof performance.now === 'function'
+        ? performance.now()
+        : Date.now();
+      const attempt = recordLocalMathAttempt(level, selectedIndex, result.correct, endedAt - startedAt);
+      const coachPlanPromise = requestMathCoachPlan(level, attempt).then((plan) => {
+        latestCoachPlan = rememberMathCoachPlan(level, plan) || plan;
+        return latestCoachPlan;
+      });
+
+      if (result.correct) {
+        const wasCompleted = state.progress.completed.includes(level.id);
+        quizState = 'correct';
+        card.classList.remove('is-selected');
+        card.classList.add('is-correct');
+        state.progress = result.progress;
+        state.progressByWorld[state.preferences.mapWorld] = state.progress;
+        recordLearningActivity();
+        persistLearningStateLocal();
+        recordQuizAttemptSync({
+          worldId: state.preferences.mapWorld,
+          levelId: level.id,
+          selected: level.options[selectedIndex],
+          correct: targetLabel,
+          isCorrect: true,
+        });
+        scheduleLearningSync();
+        if (statePill) statePill.textContent = '已完成';
+        feedback.hidden = false;
+        feedback.className = 'feedback-banner correct';
+        feedback.innerHTML = `<span class="fb-mark correct-mark" aria-hidden="true"></span><span class="fb-text">答对啦！<small>${wasCompleted ? '本关已经完成。' : completionUnlockText(level, state.progress, state.preferences.vipActive === true, worldLevels)}</small></span>`;
+        coachPlanPromise.then((plan) => {
+          if (quizState === 'correct') speakMathVoiceFeedback(plan.feedbackText, true);
+        });
+        continueBtn.hidden = false;
+      } else {
+        const nextVariant = adaptMathLevel(level, state.mathAttempts);
+        const shouldRefreshEasier = nextVariant.math?.adaptiveMode === 'easier' && level.math?.adaptiveMode !== 'easier';
+        recordQuizAttemptSync({
+          worldId: state.preferences.mapWorld,
+          levelId: level.id,
+          selected: level.options[selectedIndex],
+          correct: targetLabel,
+          isCorrect: false,
+        });
+        scheduleLearningSync();
+        card.classList.remove('is-selected');
+        card.classList.add('is-wrong');
+        feedback.hidden = false;
+        feedback.className = 'feedback-banner wrong';
+        feedback.innerHTML = `<span class="fb-mark wrong-mark" aria-hidden="true"></span><span class="fb-text">再数一数。<small>${escapeHtml(mathVoiceFeedback(shouldRefreshEasier ? 'wrong-easier' : 'wrong', { targetCount: level.targetCount }).text)}</small></span>`;
+        coachPlanPromise.then((plan) => {
+          if (quizState !== 'judging') return;
+          const detail = feedback.querySelector('.fb-text small');
+          if (detail) detail.textContent = plan.feedbackText;
+          speakMathVoiceFeedback(plan.feedbackText, false);
+        });
+        setTimeout(() => {
+          coachPlanPromise.then((plan) => {
+            if (quizState !== 'judging') return;
+            const plannedMode = plan?.variantMode || nextVariant.math?.adaptiveMode;
+            if (plannedMode === 'easier' && level.math?.adaptiveMode !== 'easier') {
+              showInlineMathLevel(level.id, '', 'drop');
+              return;
+            }
+            card.classList.remove('is-wrong');
+            selectedIndex = null;
+            feedback.hidden = true;
+            quizState = 'answering';
+          });
+        }, 1800);
+      }
+    }
+
+    optionsBox.querySelectorAll('[data-math-choice]').forEach((button) => {
+      button.addEventListener('click', () => selectChoice(Number(button.dataset.mathChoice), button));
+    });
+    submitBtn.addEventListener('click', submitAnswer);
+    continueBtn.addEventListener('click', continueInlineMath);
+    stepButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        transitionToInlineMathLevel(level.id + Number(button.dataset.mathStep), button);
+      });
+    });
+  }
+
+  // Math never uses the old island full-page level-quiz shell (topbar + hidden bottom tabs).
+  // All count/math levels stay on the map surface via showInlineMathLevel.
   function renderDetail(level) {
+    if (level.worldId === 'math' || level.itemType === 'count') {
+      state.preferences.mapWorld = 'math';
+      state.progress = state.progressByWorld.math;
+      try { localStorage.setItem(APP_PREFERENCES_KEY, JSON.stringify(state.preferences)); } catch {}
+      showInlineMathLevel(level.id, `已在数学地图打开第 ${level.id} 关`);
+      setActiveTab('map');
+      return;
+    }
+
     removeGlobalHintHand();
     const alreadyCompleted = state.progress.completed.includes(level.id);
     const correctWord = level.options[level.correct];
@@ -3722,6 +5385,32 @@ if (typeof document !== 'undefined') {
       ? `小朋友，视频里的英语，<br>哪一句是在说 <strong>「${level.zhTitle}」</strong>？`
       : `小朋友，视频里学到的单词，<br>哪一个是 <strong>「${level.zhTitle}」</strong> 的意思？`;
     const topicShort = String(level.topic || '').split('·')[0].trim();
+    let videoSource = levelVideoSourceFor(level);
+    if (!videoSource) {
+      ensureLevelVideoDownload(level);
+      videoSource = levelVideoSourceFor(level);
+    }
+    const videoStageMarkup = videoSource ? `
+            <div class="video-card">
+              <div class="video-frame">
+                <video data-video playsinline preload="metadata" src="${escapeHtml(videoSource)}" data-video-source="${escapeHtml(level.videoMeta?.source || 'local')}" data-video-task-id="${escapeHtml(level.videoMeta?.taskId || '')}" data-video-qa="${escapeHtml(level.videoMeta?.qa || '')}" data-video-audio="${escapeHtml(level.videoMeta?.audio || '')}"></video>
+                <button class="play-overlay" type="button" data-play-overlay aria-label="播放视频">
+                  <span class="play-circle" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  </span>
+                </button>
+              </div>
+              <p class="video-hint">认真看完，问题马上出现</p>
+              <div class="video-progress" aria-hidden="true"><i data-video-progress></i></div>
+            </div>` : `
+            <div class="video-card video-card--download">
+              <div class="video-frame video-frame--download">
+                <button class="level-video-loading-close" type="button" data-back-map aria-label="返回闯关地图">
+                  <svg aria-hidden="true" viewBox="0 0 32 32"><path d="m9 9 14 14M23 9 9 23"/></svg>
+                </button>
+                ${levelVideoDownloadMarkup(level)}
+              </div>
+            </div>`;
 
     const wordAudioSrc = (word) => {
       const local = wordAudioSrcFor(word);
@@ -3738,22 +5427,12 @@ if (typeof document !== 'undefined') {
           </button>
           <span class="level-pill" id="detail-title">第 ${level.id} 关 · ${topicShort || level.title}</span>
           <span class="status-pill" data-detail-state>${alreadyCompleted ? '已完成' : '进行中'}</span>
+          ${globalUpdateButtonMarkup('level')}
         </nav>
 
         <section class="stage" data-stage-video aria-label="课程视频">
           <div class="stage-video-inner">
-            <div class="video-card">
-              <div class="video-frame">
-                <video data-video playsinline preload="metadata" src="${level.videoSrc}" data-video-source="${level.videoMeta?.source || 'local'}" data-video-task-id="${level.videoMeta?.taskId || ''}" data-video-qa="${level.videoMeta?.qa || ''}" data-video-audio="${level.videoMeta?.audio || ''}"></video>
-                <button class="play-overlay" type="button" data-play-overlay aria-label="播放视频">
-                  <span class="play-circle" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                  </span>
-                </button>
-              </div>
-              <p class="video-hint">认真看完，问题马上出现</p>
-              <div class="video-progress" aria-hidden="true"><i data-video-progress></i></div>
-            </div>
+            ${videoStageMarkup}
           </div>
         </section>
 
@@ -3909,7 +5588,9 @@ if (typeof document !== 'undefined') {
       }
     };
 
-    main.querySelector('[data-back-map]').addEventListener('click', goBackMap);
+    main.querySelectorAll('[data-back-map]').forEach((button) => {
+      button.addEventListener('click', goBackMap);
+    });
 
     function shuffle(arr) {
       const a = [...arr];
@@ -3949,20 +5630,25 @@ if (typeof document !== 'undefined') {
         osc.stop(audioCtx.currentTime + start + duration);
       } catch (_) {}
     }
-    const soundCorrect = () => { tone(523.25, 0, 0.18); tone(659.25, 0.14, 0.18); tone(783.99, 0.28, 0.3); };
-    const soundWrong = () => { tone(220, 0, 0.22, 'triangle', 0.07); tone(174.61, 0.18, 0.3, 'triangle', 0.07); };
+    const soundCorrect = () => { }; // Deprecated: keep for backward compatibility; now no tone used.
+    const soundWrong = () => { };
     const soundSelect = () => { tone(440, 0, 0.09, 'sine', 0.05); };
 
     function stopSpeaking() {
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-        currentAudio = null;
+      if (mathCoachAudioEl) {
+        mathCoachAudioEl.pause();
+        mathCoachAudioEl.currentTime = 0;
+        mathCoachAudioEl = null;
       }
-      cancelWordPronunciation();
-      try { window.speechSynthesis?.cancel(); } catch (_) {}
-      main.querySelectorAll('.is-playing').forEach((b) => b.classList.remove('is-playing'));
+      mathFeedbackSpeechToken += 1;
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
     }
+    cancelWordPronunciation();
+    main.querySelectorAll('.is-playing').forEach((b) => b.classList.remove('is-playing'));
+  }
 
     function markPlaying(btn) {
       btn.classList.add('is-playing');
@@ -4218,6 +5904,13 @@ if (typeof document !== 'undefined') {
     function rewatchVideo() {
       stopSpeaking();
       hideHint();
+      if (!video) {
+        stageQuiz.hidden = true;
+        stageVideo.hidden = false;
+        ensureLevelVideoDownload(level);
+        refreshLevelVideoDownloadPanel(level);
+        return;
+      }
       startRound();
       stageQuiz.hidden = true;
       stageVideo.hidden = false;
@@ -4228,20 +5921,25 @@ if (typeof document !== 'undefined') {
       video.play().catch(() => { playOverlay.hidden = false; });
     }
 
-    playOverlay.addEventListener('click', () => {
-      playOverlay.hidden = true;
-      hideHint();
-      video.play().catch(() => { playOverlay.hidden = false; });
-    });
-    video.addEventListener('timeupdate', () => {
-      if (video.duration) videoProgress.style.width = `${(video.currentTime / video.duration) * 100}%`;
-    });
-    video.addEventListener('ended', showQuizStage);
-    // 视频加载失败时仍允许进入答题（不卡死）
-    video.addEventListener('error', () => {
-      playOverlay.hidden = true;
-      showQuizStage();
-    });
+    if (video && playOverlay) {
+      playOverlay.addEventListener('click', () => {
+        playOverlay.hidden = true;
+        hideHint();
+        video.play().catch(() => { playOverlay.hidden = false; });
+      });
+      video.addEventListener('timeupdate', () => {
+        if (video.duration) videoProgress.style.width = `${(video.currentTime / video.duration) * 100}%`;
+      });
+      video.addEventListener('ended', showQuizStage);
+      // 视频加载失败时仍允许进入答题（不卡死）
+      video.addEventListener('error', () => {
+        playOverlay.hidden = true;
+        showQuizStage();
+      });
+    } else {
+      ensureLevelVideoDownload(level);
+      refreshLevelVideoDownloadPanel(level);
+    }
 
     main.querySelector('[data-rewatch]').addEventListener('click', rewatchVideo);
     listenQuestionBtn.addEventListener('click', speakQuestion);
@@ -4251,10 +5949,10 @@ if (typeof document !== 'undefined') {
     startRound();
     // 立刻出现引导手（指向播放按钮）
     requestAnimationFrame(() => {
-      if (isCurrentQuizView() && !playOverlay.hidden) showHintAt(playOverlay);
+      if (playOverlay && isCurrentQuizView() && !playOverlay.hidden) showHintAt(playOverlay);
     });
     setTimeout(() => {
-      if (isCurrentQuizView() && !playOverlay.hidden) showHintAt(playOverlay);
+      if (playOverlay && isCurrentQuizView() && !playOverlay.hidden) showHintAt(playOverlay);
     }, 400);
   }
 
@@ -4432,6 +6130,19 @@ if (typeof document !== 'undefined') {
     const mistakeCount = state.mistakeBook.items.length;
     const childProfile = normalizeChildProfile(state.preferences);
     const membership = membershipSummary(state.preferences);
+    const mathReport = buildMathParentReport(state.mathAttempts);
+    const mathRec = mathReport.recommendation;
+    const mathRecLevel = mathLevels.find((level) => level.id === mathRec.levelId) || mathLevels[0];
+    const mathAccuracyText = mathReport.accuracy === null ? '先玩几题' : `${mathReport.accuracy}%`;
+    const mathRecText = mathReport.totalAttempts
+      ? (mathRec.reasonText
+        || (mathRec.reason === 'repeat-current'
+          ? `建议再练第 ${mathRec.levelId} 关`
+          : `建议挑战第 ${mathRec.levelId} 关`))
+      : '完成 3 道数学题后生成建议';
+    const mathReportAction = mathReport.totalAttempts
+      ? `<button class="secondary-button" type="button" data-open-math-recommended data-level="${mathRec.levelId}">去数学地图</button>`
+      : '<button class="secondary-button" type="button" disabled>先玩数学</button>';
     const membershipAction = membership.isVip
       ? '<span class="membership-active-note">VIP 权益已生效</span>'
       : '<button class="membership-upgrade-button" type="button" data-open-vip-paywall>开通 VIP</button>';
@@ -4448,7 +6159,6 @@ if (typeof document !== 'undefined') {
           </button>
         </li>`;
     };
-
     main.innerHTML = `
       <section class="view" aria-labelledby="mine-title">
         <div class="mine-layout">
@@ -4489,6 +6199,13 @@ if (typeof document !== 'undefined') {
                 <span class="progress-number">${progressPercent()}%</span>
               </div>
             </section>
+
+            <section class="surface mine-progress" data-math-ai-report aria-labelledby="math-ai-report-title">
+              <h2 id="math-ai-report-title">Math coach <span>数学陪练简报</span></h2>
+              <p>已答 ${mathReport.totalAttempts} 题，正确率 ${mathAccuracyText}，状态：${escapeHtml(mathReport.mastery)}</p>
+              <p>${escapeHtml(mathRecText)}：${escapeHtml(mathRecLevel.title)}</p>
+              ${mathReportAction}
+            </section>
           </section>
 
           <aside class="mine-side">
@@ -4524,9 +6241,9 @@ if (typeof document !== 'undefined') {
             <h2 class="section-title">App info <span>应用信息</span></h2>
             <ul class="settings-list app-info-list" aria-label="应用信息">
               <li class="setting-row setting-row-control">
-                <button class="setting-button setting-link-button" type="button" data-check-update>
+                <button class="setting-button setting-link-button" type="button" data-check-update data-check-update-status="idle" aria-busy="false">
                   <span class="setting-copy"><span class="setting-title">检查内容更新</span><span class="setting-note" data-check-update-note>检查课程资源和页面内容更新</span></span>
-                  <span class="setting-arrow" aria-hidden="true">›</span>
+                  <span class="setting-check-status" data-check-update-state aria-hidden="true">检查</span>
                 </button>
               </li>
               <li class="setting-row setting-row-control">
@@ -4672,6 +6389,30 @@ if (typeof document !== 'undefined') {
     if (route.type === 'level') {
       const level = activeLevelById(route.id);
       const access = level ? getLevelAccess(route.id, state.progress, state.preferences.vipActive === true) : 'missing';
+      if (state.preferences.mapWorld === 'math') {
+        history.replaceState(null, '', '#map');
+        bottomTabs.hidden = false;
+        appShell.classList.remove('detail-shell');
+        document.body.classList.remove('level-quiz-active');
+        document.body.classList.add('map-game-active');
+        setActiveTab('map');
+        if (access === 'allowed') {
+          state.mathMapLevelId = route.id;
+        }
+        renderMap(access === 'allowed'
+          ? `已在数学地图打开第 ${route.id} 关`
+          : access === 'locked'
+            ? `先完成第 ${state.progress.unlockedThrough} 关，再继续冒险。`
+            : access === 'paid'
+              ? paidAccessMessage
+              : '没有找到这个关卡。');
+        if (access === 'paid') {
+          requestAnimationFrame(() => openPaywallDialog(route.id));
+        }
+        document.title = '嗨洛塔少儿启蒙APP';
+        syncMapMusic();
+        return;
+      }
       if (access !== 'allowed') {
         history.replaceState(null, '', '#map');
         bottomTabs.hidden = false;
@@ -4687,18 +6428,6 @@ if (typeof document !== 'undefined') {
         if (access === 'paid') {
           requestAnimationFrame(() => openPaywallDialog(route.id));
         }
-        document.title = '嗨洛塔少儿启蒙APP';
-        syncMapMusic();
-        return;
-      }
-      if (!level.videoSrc) {
-        history.replaceState(null, '', '#map');
-        bottomTabs.hidden = false;
-        appShell.classList.remove('detail-shell');
-        document.body.classList.remove('level-quiz-active');
-        document.body.classList.add('map-game-active');
-        setActiveTab('map');
-        renderMap(lessonUnavailableMessage);
         document.title = '嗨洛塔少儿启蒙APP';
         syncMapMusic();
         return;
@@ -4740,6 +6469,7 @@ if (typeof document !== 'undefined') {
   window.addEventListener('pointerdown', () => {
     syncMapMusic();
   }, { passive: true });
+  document.addEventListener('click', handleUiButtonClickSfx, true);
   tabButtons.forEach((button) => {
     button.addEventListener('click', () => navigate(button.dataset.tab));
   });
@@ -4760,9 +6490,11 @@ if (typeof document !== 'undefined') {
   });
   window.addEventListener('popstate', render);
   networkStatus?.addEventListener('click', (event) => {
-    if (event.target.closest('[data-app-refresh]')) location.reload();
+    if (event.target.closest('[data-app-refresh]')) applyAppUpdate();
   });
   registerServiceWorker();
+  hydrateAssetPackManifest();
+  postAssetPackMessage('list', state.preferences.mapWorld);
 
   if (!location.hash) history.replaceState(null, '', '#map');
   updateNetworkStatus(false);
@@ -4805,6 +6537,20 @@ if (typeof document !== 'undefined') {
       checkAppUpdate();
       return;
     }
+    var assetPackPanelBtn = ev.target.closest('[data-asset-pack-panel]');
+    if (assetPackPanelBtn) {
+      ev.preventDefault();
+      openAssetPackDialog(assetPackPanelBtn);
+      return;
+    }
+    var mathRecommendedBtn = ev.target.closest('[data-open-math-recommended]');
+    if (mathRecommendedBtn) {
+      ev.preventDefault();
+      openMathRecommendedLevel(Number(mathRecommendedBtn.dataset.level));
+      return;
+    }
+    var assetPackBtn = ev.target.closest('[data-asset-pack-action]');
+    if (handleAssetPackActionClick(assetPackBtn, ev)) return;
     var routeBtn = ev.target.closest('[data-nav-route]');
     if (routeBtn) {
       ev.preventDefault();

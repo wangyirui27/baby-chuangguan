@@ -170,6 +170,10 @@
   }
 
   function tryLocalMock(method, path, body) {
+    // POST /api/learning/math-coach
+    if (method === 'POST' && path === '/api/learning/math-coach') {
+      return { data: mockMathCoachPlan(body || {}), error: null };
+    }
     // POST /api/auth/verify-code
     if (method === 'POST' && path === '/api/auth/verify-code') {
       var phone = body && body.phone;
@@ -232,6 +236,33 @@
       return { data: { success: true }, error: null };
     }
     return null;
+  }
+
+  function mockMathCoachPlan(body) {
+    var attempts = Array.isArray(body.attempts) ? body.attempts.slice(-20) : [];
+    var correctStreak = 0;
+    var wrongStreak = 0;
+    for (var i = attempts.length - 1; i >= 0; i -= 1) {
+      if (attempts[i].isCorrect === true && wrongStreak === 0) correctStreak += 1;
+      else if (attempts[i].isCorrect !== true && correctStreak === 0) wrongStreak += 1;
+      else break;
+    }
+    var levelId = Math.min(200, Math.max(1, Number(body.levelId) || 1));
+    var targetCount = Math.min(10, Math.max(0, Number(body.targetCount) || 1));
+    var variantMode = wrongStreak >= 2 ? 'easier' : correctStreak >= 3 ? 'harder' : 'same';
+    return {
+      provider: 'local-template',
+      variantMode: variantMode,
+      feedbackText: body.isCorrect === true
+        ? '答对啦！'
+        : variantMode === 'easier'
+          ? '换成两盘，再找' + targetCount + '个。'
+          : '再数一数，从左往右数。',
+      recommendation: {
+        levelId: variantMode === 'easier' ? levelId : Math.min(200, levelId + 1),
+        reason: variantMode === 'easier' ? 'repeat-current' : 'next-level',
+      },
+    };
   }
 
   function makeError(message, code, status) {
@@ -374,6 +405,10 @@
     return apiRequest('POST', '/api/learning/support-feedback', feedback);
   }
 
+  function generateMathCoachPlan(payload) {
+    return apiRequest('POST', '/api/learning/math-coach', payload);
+  }
+
   // ─── 全局导出 ────────────────────────────────
 
   window.babyIslandApi = {
@@ -389,6 +424,7 @@
     saveLearningPreferences: saveLearningPreferences,
     recordQuizAttempt: recordQuizAttempt,
     sendSupportFeedback: sendSupportFeedback,
+    generateMathCoachPlan: generateMathCoachPlan,
     getToken: getToken,
     clearToken: clearToken,
     isFileProtocol: isFileProtocol,

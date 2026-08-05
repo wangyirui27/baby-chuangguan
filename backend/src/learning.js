@@ -43,6 +43,92 @@ function validateFeedback(body) {
   };
 }
 
+function clampInteger(value, min, max, fallback) {
+  const number = Number(value);
+  if (!Number.isInteger(number)) return fallback;
+  return Math.min(max, Math.max(min, number));
+}
+
+function boundedInteger(value, min, max) {
+  const number = Number(value);
+  return Number.isInteger(number) && number >= min && number <= max ? number : null;
+}
+
+function validateMathCoachAttempt(entry) {
+  if (!requireObject(entry)) return null;
+  const levelId = boundedInteger(entry.levelId, 1, 200);
+  const targetCount = clampInteger(entry.targetCount, 0, 10, 0);
+  const responseMs = Number.isInteger(Number(entry.responseMs))
+    ? clampInteger(Math.round(Number(entry.responseMs)), 0, 600000, 0)
+    : null;
+  if (!levelId) return null;
+  return {
+    levelId,
+    skill: String(entry.skill || 'count').slice(0, 24),
+    targetCount,
+    selectedCount: Number.isInteger(Number(entry.selectedCount))
+      ? clampInteger(entry.selectedCount, 0, 10, 0)
+      : null,
+    isCorrect: entry.isCorrect === true,
+    mode: ['easier', 'same', 'harder'].includes(entry.mode) ? entry.mode : 'same',
+    responseMs,
+  };
+}
+
+function validateMathCoachRequest(body) {
+  if (!requireObject(body)) return null;
+  const levelId = boundedInteger(body.levelId, 1, 200);
+  const targetCount = clampInteger(body.targetCount, 0, 10, 0);
+  const responseMs = Number.isInteger(Number(body.responseMs))
+    ? clampInteger(Math.round(Number(body.responseMs)), 0, 600000, 0)
+    : null;
+  if (!levelId) return null;
+  const attempts = Array.isArray(body.attempts)
+    ? body.attempts.map(validateMathCoachAttempt).filter(Boolean).slice(-20)
+    : [];
+  return {
+    worldId: 'math',
+    levelId,
+    skill: String(body.skill || 'count').slice(0, 24),
+    targetCount,
+    selectedCount: Number.isInteger(Number(body.selectedCount))
+      ? clampInteger(body.selectedCount, 0, 10, 0)
+      : null,
+    isCorrect: body.isCorrect === true,
+    responseMs,
+    attempts,
+  };
+}
+
+function streak(attempts, expected) {
+  let count = 0;
+  for (let index = attempts.length - 1; index >= 0; index -= 1) {
+    if (attempts[index].isCorrect !== expected) break;
+    count += 1;
+  }
+  return count;
+}
+
+function localMathCoachPlan(request) {
+  const correctStreak = streak(request.attempts, true);
+  const wrongStreak = streak(request.attempts, false);
+  const variantMode = wrongStreak >= 2 ? 'easier' : correctStreak >= 3 ? 'harder' : 'same';
+  const nextLevelId = variantMode === 'easier' ? request.levelId : Math.min(200, request.levelId + 1);
+  return {
+    provider: 'local-template',
+    variantMode,
+    feedbackText: request.isCorrect
+      ? '答对啦！'
+      : variantMode === 'easier'
+        ? `换成两盘，再找${request.targetCount || 1}个。`
+        : '再数一数，从左往右数。',
+    recommendation: {
+      levelId: nextLevelId,
+      reason: variantMode === 'easier' ? 'repeat-current' : 'next-level',
+    },
+  };
+}
+
 function handleLearningError(res, err) {
   if (err && err.code === 'INSFORGE_NOT_CONFIGURED') {
     return jsonError(res, 503, '学习数据服务尚未配置', 'LEARNING_BACKEND_NOT_CONFIGURED');
@@ -53,6 +139,7 @@ function handleLearningError(res, err) {
 
 function createLearningRouter(options = {}) {
   const repository = options.repository || createInsForgeLearningRepository();
+  const mathCoach = options.mathCoach || { generatePlan: localMathCoachPlan };
   const requireAuth = options.requireAuth;
   if (typeof requireAuth !== 'function') {
     throw new Error('createLearningRouter requires requireAuth middleware');
@@ -115,7 +202,23 @@ function createLearningRouter(options = {}) {
     }
   });
 
+  router.post('/math-coach', writeLimiter.middleware(), async (req, res) => {
+    const coachRequest = validateMathCoachRequest(req.body);
+    if (!coachRequest) {
+      return jsonError(res, 400, '数学陪练请求格式不正确', 'INVALID_MATH_COACH_REQUEST');
+    }
+    try {
+      return res.json(await mathCoach.generatePlan(coachRequest, req.user));
+    } catch (err) {
+      return handleLearningError(res, err);
+    }
+  });
+
   return router;
 }
 
-module.exports = { createLearningRouter };
+module.exports = {
+  createLearningRouter,
+  localMathCoachPlan,
+  validateMathCoachRequest,
+};

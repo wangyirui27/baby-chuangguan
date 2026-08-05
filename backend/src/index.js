@@ -10,10 +10,12 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const db = require('./db');
 const authRouter = require('./auth');
-const { createLearningRouter } = require('./learning');
+const { createLearningRouter, localMathCoachPlan } = require('./learning');
+const { createMathCoachProvider } = require('./math-coach-ai');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const mathCoach = createMathCoachProvider({ fallback: localMathCoachPlan });
 
 // ─── CORS 配置 ──────────────────────────────────────
 // 支持 null origin (file:// 场景) 和可配置 origin 白名单
@@ -87,7 +89,12 @@ app.get('/healthz', (_req, res) => {
 app.use('/api/auth', authRouter);
 
 // ─── 学习数据路由 ──────────────────────────────────
-app.use('/api/learning', createLearningRouter({ requireAuth: authRouter.requireAuth }));
+// math-coach: default = local rules (streak → easier/harder). Remote LLM only if
+// MATH_COACH_AI_ENABLED=1 and a key are set; any failure falls back to localMathCoachPlan.
+app.use('/api/learning', createLearningRouter({
+  requireAuth: authRouter.requireAuth,
+  mathCoach,
+}));
 
 // ─── 404 兜底 ──────────────────────────────────────
 app.use((_req, res) => {
@@ -103,6 +110,9 @@ function start() {
     const mode = process.env.NODE_ENV || 'development';
     console.log(`[INFO] Server listening on http://localhost:${PORT} (${mode})`);
     console.log(`[INFO] SMS provider: ${process.env.SMS_PROVIDER || 'development'}`);
+    console.log(
+      `[INFO] Math coach AI: ${mathCoach.config.enabled ? `on (${mathCoach.config.model})` : 'off → local-template'}`,
+    );
   });
 
   // 优雅关闭：保存数据到磁盘

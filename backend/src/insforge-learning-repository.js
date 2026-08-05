@@ -1,8 +1,10 @@
 'use strict';
 
-const WORLD_IDS = ['ocean', 'desert', 'castle'];
+const WORLD_IDS = ['ocean', 'desert', 'math', 'math58', 'math912', 'castle'];
 const MAX_LEVEL = 200;
 const DEFAULT_WORLD_ID = 'ocean';
+const MATH_ATTEMPT_LIMIT = 80;
+const MATH_ATTEMPT_SCHEMA_VERSION = 1;
 
 let _sdkPromise = null;
 
@@ -134,6 +136,48 @@ function normalizeMistakeItems(value, activeWorldId) {
     .slice(0, 50);
 }
 
+function normalizeMathAttempts(value, limit = MATH_ATTEMPT_LIMIT) {
+  let entries = Array.isArray(value) ? value : [];
+  if (!entries.length && typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      entries = Array.isArray(parsed) ? parsed : [];
+    } catch (_) {
+      entries = [];
+    }
+  }
+  const safeLimit = Math.max(1, Number(limit) || MATH_ATTEMPT_LIMIT);
+  return entries.map((entry) => {
+    if (!entry || typeof entry !== 'object') return null;
+    const levelId = boundedInteger(entry.levelId, 1, MAX_LEVEL, null);
+    if (levelId === null) return null;
+    const targetCount = clampInteger(entry.targetCount, 0, 10, 0);
+    const selectedCount = Number.isInteger(Number(entry.selectedCount))
+      ? clampInteger(entry.selectedCount, 0, 10, 0)
+      : null;
+    const ts = Number.isFinite(Number(entry.ts)) ? Number(entry.ts) : Date.now();
+    const mode = ['easier', 'same', 'harder'].includes(entry.mode) ? entry.mode : 'same';
+    const responseMs = Number.isFinite(Number(entry.responseMs))
+      ? clampInteger(Math.round(Number(entry.responseMs)), 0, 600000, 0)
+      : null;
+    return {
+      attemptId: compactText(entry.attemptId || `local-${ts}-${levelId}-${selectedCount ?? 'x'}-${mode}`, 80),
+      schemaVersion: MATH_ATTEMPT_SCHEMA_VERSION,
+      ts,
+      worldId: 'math',
+      levelId,
+      skill: compactText(entry.skill || 'count', 24) || 'count',
+      targetCount,
+      selected: compactText(entry.selected, 40),
+      selectedCount,
+      correct: compactText(entry.correct, 40),
+      isCorrect: entry.isCorrect === true,
+      mode,
+      responseMs,
+    };
+  }).filter(Boolean).slice(-safeLimit);
+}
+
 function normalizeSnapshot(snapshot) {
   const profilePatch = toProfilePatch({
     ...(snapshot?.preferences || {}),
@@ -147,6 +191,7 @@ function normalizeSnapshot(snapshot) {
     mistakeBook: {
       items: normalizeMistakeItems(snapshot?.mistakeBook, activeWorldId),
     },
+    mathAttempts: normalizeMathAttempts(snapshot?.mathAttempts),
   };
 }
 
@@ -191,6 +236,7 @@ function stateFromRows(profile, progressRows, activityRows, mistakeRows) {
         updatedAt: row.updated_at,
       })),
     },
+    mathAttempts: normalizeMathAttempts(profile.math_attempts || profile.mathAttempts),
     syncedAt: new Date().toISOString(),
   };
 }
@@ -269,6 +315,11 @@ class InsForgeLearningRepository {
       completed_levels: safeSnapshot.progressByWorld[worldId].completed,
       unlocked_through: safeSnapshot.progressByWorld[worldId].unlockedThrough,
     }));
+
+    requireNoError(await admin.database
+      .from('baby_profiles')
+      .update({ math_attempts: safeSnapshot.mathAttempts })
+      .eq('id', profile.id), 'save math attempts');
 
     requireNoError(await admin.database
       .from('baby_world_progress')
@@ -369,6 +420,7 @@ module.exports = {
   WORLD_IDS,
   clampInteger,
   normalizeLearningSnapshot: normalizeSnapshot,
+  normalizeMathAttempts,
   stateFromRows,
   toProfilePatch,
   createInsForgeLearningRepository: (options) => new InsForgeLearningRepository(options),

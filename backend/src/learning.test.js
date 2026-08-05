@@ -5,14 +5,15 @@ const assert = require('node:assert/strict');
 const http = require('node:http');
 const express = require('express');
 
-const { createLearningRouter } = require('./learning');
-const { normalizeLearningSnapshot, toProfilePatch } = require('./insforge-learning-repository');
+const { createLearningRouter, localMathCoachPlan, validateMathCoachRequest } = require('./learning');
+const { normalizeLearningSnapshot, normalizeMathAttempts, toProfilePatch } = require('./insforge-learning-repository');
 
-function createServer(repository) {
+function createServer(repository, mathCoach = undefined) {
   const app = express();
   app.use(express.json());
   app.use('/api/learning', createLearningRouter({
     repository,
+    mathCoach,
     requireAuth: (req, res, next) => {
       if (req.headers.authorization !== 'Bearer test-token') {
         return res.status(401).json({ error: '未登录', code: 'UNAUTHORIZED' });
@@ -75,6 +76,10 @@ test('normalizeLearningSnapshot fills missing worlds and sanitizes progress', ()
         { levelId: 999, word: 'bad' },
       ],
     },
+    mathAttempts: [
+      { attemptId: 'math-ok', ts: 100, levelId: 2, targetCount: 2, selected: '1 个苹果', selectedCount: 1, correct: '2 个苹果', isCorrect: false, mode: 'same', responseMs: 1288 },
+      { levelId: 999, targetCount: 9 },
+    ],
   });
 
   assert.deepEqual(snapshot.progressByWorld.ocean, {
@@ -82,9 +87,17 @@ test('normalizeLearningSnapshot fills missing worlds and sanitizes progress', ()
     unlockedThrough: 4,
   });
   assert.deepEqual(snapshot.progressByWorld.desert, { completed: [], unlockedThrough: 1 });
+  assert.deepEqual(snapshot.progressByWorld.math, { completed: [], unlockedThrough: 1 });
+  assert.deepEqual(snapshot.progressByWorld.math58, { completed: [], unlockedThrough: 1 });
+  assert.deepEqual(snapshot.progressByWorld.math912, { completed: [], unlockedThrough: 1 });
   assert.deepEqual(snapshot.learningActivity.dates, ['2026-07-20']);
   assert.equal(snapshot.mistakeBook.items.length, 1);
   assert.equal(snapshot.mistakeBook.items[0].worldId, 'desert');
+  assert.equal(snapshot.mathAttempts.length, 1);
+  assert.equal(snapshot.mathAttempts[0].attemptId, 'math-ok');
+  assert.equal(snapshot.mathAttempts[0].schemaVersion, 1);
+  assert.equal(snapshot.mathAttempts[0].responseMs, 1288);
+  assert.equal(normalizeMathAttempts('[{\"levelId\":1,\"targetCount\":1}]').length, 1);
 });
 
 test('learning routes require auth', async () => {
@@ -119,6 +132,7 @@ test('PUT /api/learning/state saves normalized snapshot', async () => {
       },
       learningActivity: { dates: ['2026-07-20'] },
       mistakeBook: { items: [{ levelId: 2, selected: 'pear', correct: 'grape', count: 3 }] },
+      mathAttempts: [{ attemptId: 'math-sync', ts: 1785825600000, levelId: 4, targetCount: 4, selectedCount: 3, isCorrect: false, mode: 'easier' }],
     });
 
     assert.equal(result.status, 200);
@@ -129,6 +143,9 @@ test('PUT /api/learning/state saves normalized snapshot', async () => {
       completed: [1, 2],
       unlockedThrough: 3,
     });
+    assert.equal(savedSnapshot.mathAttempts.length, 1);
+    assert.equal(savedSnapshot.mathAttempts[0].attemptId, 'math-sync');
+    assert.equal(savedSnapshot.mathAttempts[0].worldId, 'math');
   } finally {
     server.close();
   }
@@ -149,24 +166,97 @@ test('POST /api/learning/quiz-attempts validates payload', async () => {
     assert.equal(bad.data.code, 'INVALID_QUIZ_ATTEMPT');
 
     const good = await request(baseUrl, 'POST', '/api/learning/quiz-attempts', {
-      worldId: 'ocean',
-      levelId: 1,
-      selected: 'mom',
-      correct: 'mom',
+      worldId: 'math',
+      levelId: 4,
+      selected: '3 个苹果',
+      correct: '4 个苹果',
       isCorrect: true,
     });
     assert.equal(good.status, 201);
-    assert.equal(good.data.id, 'ocean-1');
+    assert.equal(good.data.id, 'math-4');
     assert.deepEqual(savedAttempt, {
-      worldId: 'ocean',
-      levelId: 1,
-      selected: 'mom',
-      correct: 'mom',
+      worldId: 'math',
+      levelId: 4,
+      selected: '3 个苹果',
+      correct: '4 个苹果',
       isCorrect: true,
     });
   } finally {
     server.close();
   }
+});
+
+test('math coach route validates payload and calls a replaceable generator', async () => {
+  let coachRequest;
+  let coachUser;
+  const repository = {};
+  const mathCoach = {
+    generatePlan: async (payload, user) => {
+      coachRequest = payload;
+      coachUser = user;
+      return {
+        provider: 'test-coach',
+        variantMode: 'harder',
+        feedbackText: '再挑战一次。',
+        recommendation: { levelId: 5, reason: 'next-level' },
+      };
+    },
+  };
+  const { server, baseUrl } = await createServer(repository, mathCoach);
+  try {
+    const bad = await request(baseUrl, 'POST', '/api/learning/math-coach', { levelId: 0 });
+    assert.equal(bad.status, 400);
+    assert.equal(bad.data.code, 'INVALID_MATH_COACH_REQUEST');
+
+    const good = await request(baseUrl, 'POST', '/api/learning/math-coach', {
+      levelId: 4,
+      targetCount: 4,
+      selectedCount: 99,
+      isCorrect: false,
+      responseMs: 1234,
+      attempts: [
+        { levelId: 4, skill: 'count', targetCount: 4, selectedCount: 3, isCorrect: false, mode: 'same', responseMs: 988, transcript: 'raw voice ignored' },
+        { levelId: 4, skill: 'count', targetCount: 4, selectedCount: 5, isCorrect: false, mode: 'same' },
+      ],
+    });
+    assert.equal(good.status, 200);
+    assert.equal(good.data.provider, 'test-coach');
+    assert.equal(coachUser.id, '11111111-1111-4111-8111-111111111111');
+    assert.deepEqual(coachRequest, {
+      worldId: 'math',
+      levelId: 4,
+      skill: 'count',
+      targetCount: 4,
+      selectedCount: 10,
+      isCorrect: false,
+      responseMs: 1234,
+      attempts: [
+        { levelId: 4, skill: 'count', targetCount: 4, selectedCount: 3, isCorrect: false, mode: 'same', responseMs: 988 },
+        { levelId: 4, skill: 'count', targetCount: 4, selectedCount: 5, isCorrect: false, mode: 'same', responseMs: null },
+      ],
+    });
+  } finally {
+    server.close();
+  }
+});
+
+test('local math coach plan recommends easier repeat after repeated misses', () => {
+  const request = validateMathCoachRequest({
+    levelId: 4,
+    targetCount: 4,
+    isCorrect: false,
+    attempts: [
+      { levelId: 4, targetCount: 4, selectedCount: 3, isCorrect: false },
+      { levelId: 4, targetCount: 4, selectedCount: 5, isCorrect: false },
+    ],
+  });
+
+  assert.deepEqual(localMathCoachPlan(request), {
+    provider: 'local-template',
+    variantMode: 'easier',
+    feedbackText: '换成两盘，再找4个。',
+    recommendation: { levelId: 4, reason: 'repeat-current' },
+  });
 });
 
 test('POST /api/learning/support-feedback validates message length', async () => {

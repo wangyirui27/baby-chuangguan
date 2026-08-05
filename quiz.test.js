@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { MAP_WORLDS, activateVipPreferences, addLearningActivityDay, applyQuizAnswer, buildLearningDataExport, buildLocalRankings, calendarDays, canForceReleaseUpdate, canRegisterServiceWorker, compareAppVersions, completedLearningMinutes, completionUnlockText, desertLandmarkImage, desertLevels, formatActivityDate, getLevelAccess, islandStyleId, learningDays, learningReport, learningStreak, levels, levelsForMapWorld, membershipSummary, networkStatusText, normalizeMapWorldId, normalizeWorldProgress, notificationStatusText, normalizeChildProfile, normalizeLearningActivity, normalizeMistakeBook, normalizeProgress, parseRouteHash, profileAvatarText, questionPromptText, rankingScore, recordMistake, releaseUpdateInfo, requestReleaseUpdate, requestVipPurchase, requestVipRestore, resolveMistake, routePoint, supportFeedbackText, validateSupportMessage, wordButtonDisabled } = require('./script.js');
+const { MAP_WORLDS, MATH_ATTEMPT_KEY, MATH_ATTEMPT_SCHEMA_VERSION, activateVipPreferences, adaptMathLevel, addLearningActivityDay, appendMathAttempt, applyQuizAnswer, assetPackHasDownloadSource, assetPackLevelDownloadQueue, assetPackLevelVideoUrl, assetPackPlayableSummary, assetPackSummary, buildLearningDataExport, buildLocalRankings, buildMapJumpSegments, buildMathParentReport, buildMathVariant, calendarDays, canForceReleaseUpdate, canRegisterServiceWorker, compareAppVersions, completedLearningMinutes, completionUnlockText, curriculumAlignmentForTopic, desertLandmarkImage, desertLevels, formatActivityDate, generateMathVariant, getLevelAccess, islandStyleId, learningDays, learningReport, learningStreak, levelVideoDownloadLabel, levelVideoStateKey, levels, levelsForMapWorld, mathLevels, mathVoiceFeedback, membershipSummary, mergeMathAttempts, networkStatusText, nextMathPathRecommendation, normalizeAssetPackStates, normalizeLevelVideoStates, normalizeMapWorldId, normalizeMathAttempts, normalizeWorldProgress, notificationStatusText, normalizeChildProfile, normalizeLearningActivity, normalizeMistakeBook, normalizeProgress, parseRouteHash, profileAvatarText, questionPromptText, rankingScore, recordMistake, releaseUpdateInfo, requestReleaseUpdate, requestVipPurchase, requestVipRestore, resolveMathContinueLevel, resolveMistake, routePoint, segmentContainingLevel, levelsInJumpSegment, supportFeedbackText, summarizeMathSkill, validateSupportMessage, wordButtonDisabled } = require('./script.js');
 
 const read = (file) => fs.readFileSync(path.join(__dirname, file), 'utf8');
 const mapAudioTargets = () => [...levels, ...desertLevels].map((level) => ({
@@ -45,9 +45,9 @@ test('completion feedback does not claim paid or unpublished levels are unlocked
 
   assert.equal(completionUnlockText(levels[8], afterNine, false), '第 10 关已解锁。');
   assert.equal(completionUnlockText(levels[9], afterTen, false), '第 11 关起是会员关卡，后续课程内容会随更新开放。');
-  assert.equal(completionUnlockText(levels[9], afterTen, true), '这关视频还在准备中，请先复习前 10 关。');
-  assert.equal(completionUnlockText(levels[10], afterEleven, true), '这关视频还在准备中，请先复习前 10 关。');
-  assert.equal(completionUnlockText(levels[11], afterTwelve, true), '这关视频还在准备中，请先复习前 10 关。');
+  assert.equal(completionUnlockText(levels[9], afterTen, true), '第 11 关已解锁。');
+  assert.equal(completionUnlockText(levels[10], afterEleven, true), '第 12 关已解锁。');
+  assert.equal(completionUnlockText(levels[11], afterTwelve, true), '第 13 关已解锁。');
   assert.equal(completionUnlockText(levels[199], afterTen, true), '全部关卡已完成！');
 });
 
@@ -234,8 +234,8 @@ test('unknown hash routes show a branded not-found screen instead of silently fa
   assert.match(source, /navigate\('map'\)/);
   assert.match(css, /\.not-found-view\s*\{[\s\S]*?place-items:\s*center/);
   assert.match(css, /\.not-found-icon\s*\{[\s\S]*?border-radius:\s*50%/);
-  assert.match(html, /style\.css\?v=20260801-desert-decor-v13c/);
-  assert.match(html, /script\.js\?v=20260801-desert-decor-v13c/);
+  assert.match(html, /style\.css\?v=20260804-math-apple-uniform-v1/);
+  assert.match(html, /script\.js\?v=20260804-math-apple-uniform-v1/);
 });
 
 test('app shell exposes child-safe network status for offline use', () => {
@@ -304,7 +304,7 @@ test('app startup checks App Store release version and opens centered update dia
     updateUrl: '',
   }, {
     webkit: { messageHandlers: { babyIslandAppUpdate: { postMessage() {} } } },
-  }), true);
+  }), false);
 
   const source = read('script.js');
   const css = read('style.css');
@@ -365,8 +365,8 @@ test('release update button prefers native app-update bridge before URL fallback
       },
     },
   };
-  assert.equal(requestReleaseUpdate({ ...updateInfo, updateUrl: '' }, androidRuntime), true);
-  assert.equal(androidUrl, '');
+  assert.equal(requestReleaseUpdate({ ...updateInfo, updateUrl: '' }, androidRuntime), false);
+  assert.equal(androidUrl, null);
 
   let opened = null;
   assert.equal(requestReleaseUpdate(updateInfo, {
@@ -522,17 +522,17 @@ test('H5 app shell registers a minimal offline cache', () => {
   const source = read('script.js');
   const worker = read('sw.js');
 
-  assert.match(html, /style\.css\?v=20260801-desert-decor-v13c/);
-  assert.match(html, /script\.js\?v=20260801-desert-decor-v13c/);
+  assert.match(html, /style\.css\?v=20260804-math-apple-uniform-v1/);
+  assert.match(html, /script\.js\?v=20260804-math-apple-uniform-v1/);
   assert.match(source, /function registerServiceWorker\(\)/);
   assert.match(source, /navigator\.serviceWorker\.register\('\.\/sw\.js(\?[^']*)?'\)/);
   assert.match(source, /canRegisterServiceWorker\(location\.protocol\)/);
   assert.match(source, /registration\.addEventListener\('updatefound'/);
   assert.match(source, /worker\.state === 'installed' && navigator\.serviceWorker\.controller/);
-  assert.match(worker, /CACHE_NAME = 'baby-island-shell-20260801-desert-hayley-v37'/);
+  assert.match(worker, /CACHE_NAME = 'baby-island-shell-20260804-math-apple-uniform-v1'/);
   assert.match(worker, /APP_SHELL = \[/);
-  assert.match(worker, /style\.css\?v=20260801-desert-decor-v13c/);
-  assert.match(worker, /script\.js\?v=20260801-desert-decor-v13c/);
+  assert.match(worker, /style\.css\?v=20260804-math-apple-uniform-v1/);
+  assert.match(worker, /script\.js\?v=20260804-math-apple-uniform-v1/);
   assert.match(worker, /assets\/ocean\/front-ocean-bg-v2-libtv\.webp\?v=20260720-clean-ocean-v1/);
   assert.match(worker, /assets\/ocean\/front-ocean-loop-v4-libtv-seamless-clouds\.mp4\?v=20260719-handpainted-libtv-v1/);
   assert.match(worker, /assets\/ocean\/seagull-fly\.webp\?v=20260720-libtv-flap-v1/);
@@ -540,8 +540,14 @@ test('H5 app shell registers a minimal offline cache', () => {
   assert.match(worker, /assets\/egypt-map\/background\/egypt-desert-infinite-bg-libtv-v4\.mp4\?v=20260720-desert-bg-v4/);
   assert.match(worker, /assets\/ocean\/rowing-kids-boat-idle\.webp\?v=20260720-libtv-original-v3/);
   assert.match(worker, /assets\/ocean\/rowing-kids-boat-sailing\.webp\?v=20260720-libtv-original-rowing-v3/);
+  assert.match(worker, /assets\/lottie\/level-video-loading\.json\?v=20260803-rocking-horse-v1/);
+  assert.match(worker, /assets\/math-map\/covers\/math-desk-cover-v1\.webp\?v=20260804-math-covers-v1/);
+  assert.match(worker, /assets\/math-map\/covers\/math-garden-cover-v1\.webp\?v=20260804-math-covers-v1/);
+  assert.match(worker, /assets\/math-map\/covers\/math-star-tower-cover-v1\.webp\?v=20260804-math-covers-v1/);
   assert.match(worker, /assets\/icons\/resource-star\.webp\?v=20260714-v1/);
   assert.match(worker, /assets\/audio\/map-bgm\.mp3/);
+  assert.match(worker, /assets\/audio\/math-map-bgm\.mp3\?v=20260804-math-bgm-v2/);
+  assert.match(worker, /assets\/audio\/sfx\/math-apple-drop-blop-soft-01\.mp3\?v=20260804-math-sfx-v1/);
   assert.match(worker, /assets\/audio\/words\/word-audio-manifest\.json/);
   assert.match(worker, /function cacheGeneratedWordAudio\(cache\)/);
   assert.match(worker, /entry\.status === 'generated'/);
@@ -589,17 +595,21 @@ test('frontend production build carries the root static app shell', () => {
   const frontendPackage = JSON.parse(read('apps/frontend/package.json'));
   const viteConfig = read('apps/frontend/vite.config.js');
   const copyScript = read('apps/frontend/scripts/copy-root-static.cjs');
+  const packScript = read('tools/pack-app-www.sh');
   const requiredRuntimeAssets = [
     'script.js',
     'style.css',
     'sw.js',
     'manifest.webmanifest',
     'app-release.json',
+    'asset-packs.json',
+    'assets/audio/math-map-bgm.mp3',
     'assets/audio/words',
     'assets/audio/questions-holly',
     'assets/video/free-levels',
     'assets/egypt-map',
     'assets/islands-v1/runtime',
+    'assets/math-map',
     'assets/ocean/front-ocean-loop-v4-libtv-seamless-clouds.mp4',
   ];
 
@@ -609,6 +619,7 @@ test('frontend production build carries the root static app shell', () => {
     assert.match(copyScript, new RegExp(`'${name.replace('.', '\\.')}'`));
   });
   assert.match(copyScript, /fs\.cpSync\(src, dest, \{ recursive: true, force: true \}\)/);
+  assert.match(packScript, /copy_dir "assets\/math-map"/);
   assert.doesNotMatch(copyScript, /'assets'/);
   assert.doesNotMatch(copyScript, /free-levels-libtv-downloads|generated|voice-samples/);
 });
@@ -680,9 +691,12 @@ test('map clicks and direct level routes share the same access gate', () => {
 
   assert.match(source, /requestLevelAccess\(Number\(button\.dataset\.level\), button\)/);
   assert.match(source, /getLevelAccess\(route\.id, state\.progress, state\.preferences\.vipActive === true\)/);
-  assert.match(source, /lessonUnavailableMessage = '这关视频还在准备中，请先复习前 10 关。'/);
-  assert.match(source, /if \(!level\?\.videoSrc\) \{[\s\S]*?showMapMessage\(lessonUnavailableMessage\)/);
-  assert.match(source, /if \(!level\.videoSrc\) \{[\s\S]*?renderMap\(lessonUnavailableMessage\)/);
+  assert.match(source, /navigate\(`level-\$\{levelId\}`/);
+  assert.match(source, /function levelVideoDownloadMarkup\(level\)/);
+  assert.match(source, /ensureLevelVideoDownload\(level\)/);
+  assert.match(source, /data-level-video-download-panel/);
+  assert.match(source, /window\.babyIslandLevelVideoEvent/);
+  assert.doesNotMatch(source, /lessonUnavailableMessage/);
   assert.match(source, /openPaywallDialog\(levelId, trigger\)/);
   assert.match(source, /openPaywallDialog\(route\.id\)/);
   assert.doesNotMatch(source, /openAccessDialog|payment-required|login-required/);
@@ -877,30 +891,44 @@ test('map worlds keep independent progress while castle is coming soon', () => {
   const source = read('script.js');
   const oceanLevels = levelsForMapWorld('ocean');
   const desertLevels = levelsForMapWorld('desert');
+  const mathMapLevels = levelsForMapWorld('math');
   const migratedProgress = normalizeWorldProgress({ completed: [1, 2], unlockedThrough: 3 });
 
   assert.equal(normalizeMapWorldId('missing'), 'ocean');
   assert.doesNotMatch(source, /function mapWorldForLevel/);
   assert.equal(oceanLevels.length, 200);
   assert.equal(desertLevels.length, 200);
+  assert.equal(mathMapLevels, mathLevels);
+  assert.equal(mathMapLevels.length, 200);
   assert.deepEqual([oceanLevels[0].id, oceanLevels.at(-1).id], [1, 200]);
   assert.deepEqual([desertLevels[0].id, desertLevels.at(-1).id], [1, 200]);
+  assert.deepEqual([mathMapLevels[0].id, mathMapLevels.at(-1).id], [1, 200]);
   assert.deepEqual(migratedProgress.ocean, { completed: [1, 2], unlockedThrough: 3 });
   assert.deepEqual(migratedProgress.desert, { completed: [], unlockedThrough: 1 });
+  assert.deepEqual(migratedProgress.math, { completed: [], unlockedThrough: 1 });
   assert.deepEqual(normalizeWorldProgress({
     ocean: { completed: [1], unlockedThrough: 2 },
     desert: { completed: [1, 2, 3], unlockedThrough: 4 },
+    math: { completed: [1], unlockedThrough: 2 },
   }), {
     ocean: { completed: [1], unlockedThrough: 2 },
     desert: { completed: [1, 2, 3], unlockedThrough: 4 },
+    math: { completed: [1], unlockedThrough: 2 },
+    math58: { completed: [], unlockedThrough: 1 },
+    math912: { completed: [], unlockedThrough: 1 },
     castle: { completed: [], unlockedThrough: 1 },
   });
   assert.match(desertLandmarkImage(1), /01-great-pyramid-complex/);
   assert.match(desertLandmarkImage(1), /v6-sand-blend/);
   assert.match(desertLandmarkImage(1), /desert-landmarks-v30/);
   assert.match(desertLandmarkImage(200), /10-monumental-city-gate/);
+  assert.match(source, /ocean-world-cover-v1\.webp/);
+  assert.match(source, /assets\/ocean\/covers\/ocean-world-cover-v1\.webp/);
   assert.match(source, /desert-world-cover-v1\.webp/);
   assert.match(source, /assets\/egypt-map\/covers\/desert-world-cover-v1\.webp/);
+  assert.match(source, /assets\/math-map\/covers\/math-desk-cover-v1\.webp/);
+  assert.match(source, /assets\/math-map\/covers\/math-garden-cover-v1\.webp/);
+  assert.match(source, /assets\/math-map\/covers\/math-star-tower-cover-v1\.webp/);
   // 10 座沙漠地标文件必须齐（缺失则地图建筑空白）
   const desertLandmarkDir = path.join(__dirname, 'assets/egypt-map/cutouts/buildings/v6-sand-blend');
   const desertLandmarks = [
@@ -920,18 +948,51 @@ test('map worlds keep independent progress while castle is coming soon', () => {
     assert.ok(fs.existsSync(filePath), `missing desert landmark ${name}`);
     assert.ok(fs.statSync(filePath).size > 50_000, `desert landmark too small: ${name}`);
   }
+  const oceanCover = path.join(__dirname, 'assets/ocean/covers/ocean-world-cover-v1.webp');
+  assert.ok(fs.existsSync(oceanCover), 'missing ocean world cover thumb');
+  assert.ok(fs.statSync(oceanCover).size > 10_000, 'ocean cover too small');
   const desertCover = path.join(__dirname, 'assets/egypt-map/covers/desert-world-cover-v1.webp');
   assert.ok(fs.existsSync(desertCover), 'missing desert world cover thumb');
   assert.ok(fs.statSync(desertCover).size > 10_000, 'desert cover too small');
+  [
+    'math-desk-cover-v1.webp',
+    'math-garden-cover-v1.webp',
+    'math-star-tower-cover-v1.webp',
+  ].forEach((name) => {
+    const filePath = path.join(__dirname, 'assets/math-map/covers', name);
+    assert.ok(fs.existsSync(filePath), `missing math world cover ${name}`);
+    assert.ok(fs.statSync(filePath).size > 10_000, `math world cover too small: ${name}`);
+  });
   assert.equal(MAP_WORLDS.ocean.startLevel, 1);
   assert.equal(MAP_WORLDS.ocean.endLevel, 200);
   assert.equal(MAP_WORLDS.desert.startLevel, 1);
   assert.equal(MAP_WORLDS.desert.endLevel, 200);
+  assert.equal(MAP_WORLDS.math.startLevel, 1);
+  assert.equal(MAP_WORLDS.math.endLevel, 200);
+  assert.equal(MAP_WORLDS.math.usesVideoAssets, false);
+  assert.equal(MAP_WORLDS.math58.comingSoon, true);
+  assert.equal(MAP_WORLDS.math58.zone, 'math');
+  assert.equal(MAP_WORLDS.math58.title, '数学花园');
+  assert.equal(MAP_WORLDS.math912.comingSoon, true);
+  assert.equal(MAP_WORLDS.math912.zone, 'math');
+  assert.equal(MAP_WORLDS.math912.title, '数学星塔');
   assert.equal(MAP_WORLDS.ocean.title, '魔法海岛');
   assert.equal(MAP_WORLDS.desert.title, '沙漠奇境');
+  assert.equal(MAP_WORLDS.math.title, '数学小桌');
   assert.equal(MAP_WORLDS.castle.comingSoon, true);
+  assert.equal(mathMapLevels[0].itemType, 'count');
+  assert.equal(mathMapLevels[0].targetCount, 1);
+  assert.equal(mathMapLevels[0].options[mathMapLevels[0].correct], '1 个苹果');
+  assert.equal(mathMapLevels[0].videoSrc, undefined);
+  assert.equal(questionPromptText(mathMapLevels[0]), '小朋友，哪一组是1 个苹果？');
   assert.match(source, /state\.progressByWorld\[nextWorldId\]/);
   assert.match(source, /JSON\.stringify\(state\.progressByWorld\)/);
+  assert.match(source, /英语区/);
+  assert.match(source, /数学区/);
+  assert.match(source, /worldIds:\s*\['math',\s*'math58',\s*'math912'\]/);
+  assert.match(source, /math58:\s*\{\s*ageRange:\s*'5-8'/);
+  assert.match(source, /math912:\s*\{\s*ageRange:\s*'9-12'/);
+  assert.match(source, /world\.zone === 'math' \? mathPlaceholder : castlePlaceholder/);
   assert.match(source, /共 \$\{DISPLAY_LEVEL_COUNT\} 关/);
   assert.match(source, /const worldLevels = levelsForMapWorld\(activeWorldId\)/);
   assert.match(source, /const levelNodes = worldLevels\.map/);
@@ -948,18 +1009,23 @@ test('map worlds keep independent progress while castle is coming soon', () => {
   assert.match(source, /data-map-world="\$\{activeWorld\.id\}"/);
   assert.match(source, /data-route-scroll/);
   assert.match(source, /data-locate-progress/);
-  assert.match(source, /data-locate-progress[^>]*aria-label="回到第 \$\{currentLevel\.id\} 关最新进度"/);
+  assert.match(source, /data-locate-progress[^>]*aria-label="回到第 \$\{progressLevelId\} 关最新进度"/);
   assert.match(source, /class="locate-progress-icon"/);
   assert.match(source, /data-map-jump/);
   assert.match(source, /class="map-fab-cluster"/);
   assert.match(source, /class="map-jump-btn"/);
+  assert.match(source, /data-map-music-toggle/);
+  assert.match(source, /class="map-music-btn/);
+  assert.match(source, /function paintMapMusicToggle/);
+  assert.match(source, /setPreference\('mapMusic',\s*state\.preferences\.mapMusic === false\)/);
   assert.doesNotMatch(source, /data-locate-progress>定位第/);
   assert.match(source, /routeScroll\.scrollTo/);
   assert.match(source, /resource-strip/);
-  assert.equal((source.match(/class="resource-glyph(?:\s|")/g) || []).length, 2);
+  assert.equal((source.match(/class="resource-glyph(?:\s|")/g) || []).length, 1);
   assert.equal((source.match(/src="assets\/icons\/resource-star\.webp/g) || []).length, 1);
-  assert.match(source, /resource-glyph--gem/);
-  assert.match(source, /<small>宝石<\/small>/);
+  assert.doesNotMatch(source, /resource-glyph--gem/);
+  assert.doesNotMatch(source, /resource-icon gem/);
+  assert.doesNotMatch(source, /<small>宝石<\/small>/);
   const starIcon = path.join(__dirname, 'assets/icons/resource-star.webp');
   assert.ok(fs.existsSync(starIcon));
   assert.ok(fs.statSync(starIcon).size < 15_000);
@@ -992,13 +1058,380 @@ test('map worlds keep independent progress while castle is coming soon', () => {
   assert.match(source, /route\.type === 'map' && state\.preferences\.mapMusic/);
   assert.match(source, /const playPromise = mapMusic\.play\(\)/);
   assert.match(source, /mapMusic\.pause\(\)/);
+  assert.match(source, /math:\s*'assets\/audio\/math-map-bgm\.mp3\?v=20260804-math-bgm-v2'/);
+  assert.match(source, /const MATH_MAP_MUSIC_VOLUME = 0\.3/);
+  assert.match(source, /state\.preferences\.mapWorld === 'math'\) return MATH_MAP_MUSIC_VOLUME/);
   assert.ok(fs.existsSync(path.join(__dirname, 'assets/audio/map-bgm.mp3')));
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/audio/math-map-bgm.mp3')));
+  assert.ok(fs.statSync(path.join(__dirname, 'assets/audio/math-map-bgm.mp3')).size > 100_000);
   Array.from({ length: 10 }, (_, index) => index + 1).forEach((number) => {
     assert.ok(fs.existsSync(path.join(__dirname, `assets/ocean/island-${String(number).padStart(2, '0')}.webp`)));
     const cutout = path.join(__dirname, `assets/ocean/scene-island-cutout-${String(number).padStart(2, '0')}.webp`);
     assert.ok(fs.existsSync(cutout));
     assert.ok(fs.statSync(cutout).size < 250_000);
   });
+});
+
+test('math AI local attempts keep a bounded count-learning log', () => {
+  let log = [];
+  for (let index = 0; index < 84; index += 1) {
+    log = appendMathAttempt(log, {
+      attemptId: `attempt-${index}`,
+      ts: index + 1,
+      levelId: (index % 5) + 1,
+      skill: 'count',
+      targetCount: (index % 5) + 1,
+      selected: `${index % 5} 个苹果`,
+      selectedCount: index % 5,
+      correct: `${(index % 5) + 1} 个苹果`,
+      isCorrect: index % 3 !== 0,
+      mode: 'same',
+      responseMs: index * 100,
+    });
+  }
+
+  assert.equal(MATH_ATTEMPT_KEY, 'baby-island-math-attempts-v1');
+  assert.equal(MATH_ATTEMPT_SCHEMA_VERSION, 1);
+  assert.equal(log.length, 80);
+  assert.equal(log[0].ts, 5);
+  assert.equal(log[0].attemptId, 'attempt-4');
+  assert.equal(log[0].schemaVersion, 1);
+  assert.equal(log[0].responseMs, 400);
+  assert.equal(log.at(-1).worldId, 'math');
+  assert.equal(log.at(-1).skill, 'count');
+  assert.equal(normalizeMathAttempts({ nope: true }).length, 0);
+  assert.equal(normalizeMathAttempts([{ levelId: 1, responseMs: 999999 }])[0].responseMs, 600000);
+  assert.equal(summarizeMathSkill(log, { window: 6 }).total, 6);
+});
+
+test('math AI attempts merge local and cloud logs without duplicates', () => {
+  const remote = [
+    { attemptId: 'old', ts: 1, levelId: 1, targetCount: 1, selectedCount: 1, isCorrect: true },
+    { attemptId: 'shared', ts: 2, levelId: 2, targetCount: 2, selectedCount: 1, isCorrect: false },
+  ];
+  const local = [
+    { attemptId: 'shared', ts: 3, levelId: 2, targetCount: 2, selectedCount: 2, isCorrect: true },
+    { attemptId: 'new', ts: 4, levelId: 3, targetCount: 3, selectedCount: 3, isCorrect: true },
+  ];
+
+  assert.deepEqual(mergeMathAttempts(local, remote).map((entry) => [entry.attemptId, entry.ts]), [
+    ['old', 1],
+    ['shared', 3],
+    ['new', 4],
+  ]);
+});
+
+test('math AI adapts repeated misses without changing map progress rules', () => {
+  const level = mathLevels[3];
+  const wrongLog = [
+    { levelId: level.id, skill: 'count', targetCount: level.targetCount, selected: '3 个苹果', selectedCount: 3, correct: level.options[level.correct], isCorrect: false, mode: 'same' },
+    { levelId: level.id, skill: 'count', targetCount: level.targetCount, selected: '5 个苹果', selectedCount: 5, correct: level.options[level.correct], isCorrect: false, mode: 'same' },
+  ];
+  const adapted = adaptMathLevel(level, wrongLog);
+  const result = applyQuizAnswer({ completed: [1, 2, 3], unlockedThrough: level.id }, level.id, adapted.correct, adapted.correct, mathLevels.length);
+
+  assert.equal(adapted.math.adaptiveMode, 'easier');
+  assert.equal(adapted.options.length, 3);
+  assert.equal(adapted.math.groups.length, 3);
+  assert.equal(adapted.options[adapted.correct], level.options[level.correct]);
+  assert.deepEqual(result.progress, { completed: [1, 2, 3, level.id], unlockedThrough: level.id + 1 });
+});
+
+test('math AI harder mode is a visible variant after a correct streak', () => {
+  const level = mathLevels[1];
+  const correctLog = [
+    { levelId: 1, skill: 'count', targetCount: 1, selected: '1 个苹果', selectedCount: 1, correct: '1 个苹果', isCorrect: true, mode: 'same' },
+    { levelId: 2, skill: 'count', targetCount: 2, selected: '2 个苹果', selectedCount: 2, correct: '2 个苹果', isCorrect: true, mode: 'same' },
+    { levelId: 3, skill: 'count', targetCount: 3, selected: '3 个苹果', selectedCount: 3, correct: '3 个苹果', isCorrect: true, mode: 'same' },
+  ];
+  const same = buildMathVariant(level, 'same');
+  const harder = adaptMathLevel(level, correctLog);
+
+  assert.equal(harder.math.adaptiveMode, 'harder');
+  assert.equal(harder.options.length, 3);
+  assert.equal(harder.math.groups.length, 3);
+  assert.notDeepEqual(harder.options, same.options);
+  assert.equal(harder.options[harder.correct], level.options[level.correct]);
+  // level 2 target=2：近邻干扰应是 1 和 3
+  assert.deepEqual(harder.math.groups.map((group) => group.count).sort((a, b) => a - b), [1, 2, 3]);
+});
+
+test('math AI planning interfaces use a backend coach with local fallback', () => {
+  const level = mathLevels[1];
+  const attempts = [
+    { levelId: level.id, skill: 'count', targetCount: 2, selected: '1 个苹果', selectedCount: 1, correct: '2 个苹果', isCorrect: false, mode: 'same' },
+    { levelId: level.id, skill: 'count', targetCount: 2, selected: '3 个苹果', selectedCount: 3, correct: '2 个苹果', isCorrect: false, mode: 'same' },
+  ];
+  const variant = generateMathVariant(level, { mode: 'easier' });
+  const report = buildMathParentReport(attempts);
+  const exported = buildLearningDataExport(
+    { completed: [1], unlockedThrough: 2 },
+    { dates: ['2026-08-04'] },
+    { childName: '小禾', childAge: '4' },
+    { items: [] },
+    null,
+    levels,
+    '2026-08-04T08:00:00.000Z',
+    attempts,
+  );
+
+  assert.equal(buildMathVariant(level, 'easier').options.length, 3);
+  assert.equal(variant.math.adaptiveMode, 'easier');
+  assert.equal(variant.math.groups.length, 3);
+  const path = nextMathPathRecommendation(attempts, level.id);
+  assert.equal(path.levelId, level.id);
+  assert.equal(path.reason, 'repeat-current');
+  assert.match(path.reasonText, /连续错了|正确率偏低|巩固|继续练/);
+  assert.equal(mathVoiceFeedback('wrong-easier', { targetCount: 2 }).provider, 'local-template');
+  assert.equal(report.mastery, '建议陪练');
+  assert.match(report.reasonText || '', /连续错了|正确率偏低|巩固|继续练/);
+  assert.equal(exported.mathAiReport.totalAttempts, 2);
+  assert.match(read('auth/apiClient.js'), /function generateMathCoachPlan\(payload\)/);
+});
+
+test('math AI runtime is current-page local logic with no frontend AI secret', () => {
+  const source = read('script.js');
+
+  assert.match(source, /MATH_ATTEMPT_KEY = 'baby-island-math-attempts-v1'/);
+  assert.match(source, /localStorage\.setItem\(MATH_ATTEMPT_KEY, JSON\.stringify\(state\.mathAttempts\)\)/);
+  assert.match(source, /mathAttempts:\s*normalizeMathAttempts\(state\.mathAttempts\)/);
+  assert.match(source, /mathCoachPlans:\s*\{\}/);
+  assert.match(source, /state\.mathAttempts = mergeMathAttempts\(state\.mathAttempts,\s*remote\.mathAttempts\)/);
+  assert.match(source, /recordLocalMathAttempt\(level, selectedIndex, result\.correct,\s*endedAt - startedAt\)/);
+  assert.match(source, /delete state\.mathCoachPlans\[level\.id\]/);
+  assert.match(source, /requestMathCoachPlan\(level,\s*attempt\)/);
+  assert.match(source, /api\.generateMathCoachPlan\(mathCoachPayload\(level,\s*attempt\)\)/);
+  assert.match(source, /latestCoachPlan = rememberMathCoachPlan\(level,\s*plan\) \|\| plan/);
+  assert.match(source, /function mathLevelForCoachPlan\(level\)/);
+  assert.match(source, /const questionLevel = mathLevelForCoachPlan\(level\)/);
+  assert.match(source, /bindInlineMathQuestion\(inlineMathPanel,\s*mathLevelForCoachPlan\(currentLevel\)\)/);
+  assert.match(source, /function speakMathVoiceFeedback\(feedbackText,\s*forceCorrect\)/);
+  assert.match(source, /function playMathCoachFeedbackTone\(kind\)/);
+  assert.match(source, /Intentional MVP: audio is correct\/wrong local MP3 only/);
+  assert.match(source, /const src = MATH_COACH_FEEDBACK_AUDIO_SRC\[normalized\]/);
+  assert.match(source, /const mathCoachAudio = new Audio\(src\);/);
+  assert.match(source, /state\.preferences\.autoPronunciation === false/);
+  assert.match(source, /mapMusic\.volume = MAP_MUSIC_DUCK_VOLUME/);
+  assert.match(source, /if \(quizState === 'correct'\) speakMathVoiceFeedback\(plan\.feedbackText,\s*true\)/);
+  assert.match(source, /mathVoiceFeedback\(shouldRefreshEasier \? 'wrong-easier' : 'wrong'/);
+  assert.match(source, /if \(detail\) detail\.textContent = plan\.feedbackText;[\s\S]*?speakMathVoiceFeedback\(plan\.feedbackText,\s*false\)/);
+  assert.match(source, /setTimeout\(\(\) => \{[\s\S]*?coachPlanPromise\.then\(\(plan\) => \{[\s\S]*?const plannedMode = plan\?\.variantMode/);
+  assert.match(source, /function generateMathVariant\(level,\s*context = \{\}\)/);
+  assert.match(source, /function buildMathParentReport\(log = \[\]\)/);
+  assert.match(source, /reasonText:/);
+  assert.doesNotMatch(source, /new SpeechSynthesisUtterance\(message\)/);
+  assert.doesNotMatch(source, /window\.speechSynthesis\.speak\(mathUtterance\)/);
+  assert.doesNotMatch(source, /OPENAI_API_KEY|ANTHROPIC_API_KEY|GEMINI_API_KEY|apiKey\s*[:=]|sk-[A-Za-z0-9]{12,}/);
+});
+
+test('math AI report and path recommendation are visible without adding a new page', () => {
+  const source = read('script.js');
+  const wrongLog = [
+    { levelId: 4, skill: 'count', targetCount: 4, selectedCount: 3, selected: '3 个苹果', correct: '4 个苹果', isCorrect: false },
+    { levelId: 4, skill: 'count', targetCount: 4, selectedCount: 5, selected: '5 个苹果', correct: '4 个苹果', isCorrect: false },
+  ];
+
+  assert.equal(resolveMathContinueLevel([], 4).levelId, 5);
+  assert.equal(resolveMathContinueLevel([], 4).reason, 'next-level');
+  assert.match(resolveMathContinueLevel([], 4).reasonText || '', /继续第 5 关/);
+  assert.equal(resolveMathContinueLevel(wrongLog, 4).levelId, 4);
+  assert.equal(resolveMathContinueLevel(wrongLog, 4).reason, 'repeat-current');
+  assert.match(resolveMathContinueLevel(wrongLog, 4).reasonText || '', /连续错了|正确率偏低|巩固|继续练/);
+  assert.match(source, /data-math-ai-report/);
+  assert.match(source, /buildMathParentReport\(state\.mathAttempts\)/);
+  assert.match(source, /mathRec\.reasonText/);
+  assert.match(source, /data-open-math-recommended data-level="\$\{mathRec\.levelId\}"/);
+  assert.match(source, /function openMathRecommendedLevel\(levelId\)/);
+  assert.match(source, /state\.preferences\.mapWorld = 'math'/);
+  assert.match(source, /openMathRecommendedLevel\(Number\(mathRecommendedBtn\.dataset\.level\)\)/);
+  assert.match(source, /function resolveMathCoachContinueTarget\(plan,\s*levelId\)/);
+  assert.match(source, /resolveMathCoachContinueTarget\(latestCoachPlan,\s*level\.id\)[\s\S]*?resolveMathContinueLevel\(state\.mathAttempts,\s*level\.id/);
+});
+
+test('math voice answer feature is removed; tap choices only', () => {
+  const source = read('script.js');
+  const css = read('style.css');
+  assert.doesNotMatch(source, /说答案/);
+  assert.doesNotMatch(source, /data-math-voice-answer/);
+  assert.doesNotMatch(source, /bindVoiceAnswer/);
+  assert.doesNotMatch(source, /matchMathVoiceChoice/);
+  assert.doesNotMatch(source, /parseMathVoiceTranscript/);
+  assert.doesNotMatch(source, /SpeechRecognition/);
+  assert.doesNotMatch(css, /math-voice-answer/);
+  // correct/wrong still use local Peiqi MP3 feedback, not system TTS
+  assert.match(source, /MATH_VOICE_FEEDBACK_MODE = 'correct-wrong-mp3'/);
+  assert.doesNotMatch(source, /mathUtterance\.lang|mathUtterance\.rate|new SpeechSynthesisUtterance/);
+});
+
+test('asset pack status model drives iPad map download UI', () => {
+  const source = read('script.js');
+  const manifest = JSON.parse(read('asset-packs.json'));
+  const states = normalizeAssetPackStates({
+    ocean: { status: 'downloading', progress: 42, bytesDone: 420, bytesTotal: 1000 },
+    desert: { status: 'paused', bytesDone: 250, bytesTotal: 1000 },
+  });
+  const levelStates = normalizeLevelVideoStates({
+    [levelVideoStateKey('ocean', 11)]: { mapId: 'ocean', levelId: 11, status: 'ready', localUrl: 'asset-pack://ocean/11.mp4' },
+    [levelVideoStateKey('ocean', 12)]: { mapId: 'ocean', levelId: 12, status: 'downloading', bytesDone: 25, bytesTotal: 100 },
+  });
+
+  const notInstalledPlayable = assetPackPlayableSummary('ocean', normalizeAssetPackStates(null));
+  const downloadingPlayable = assetPackPlayableSummary('ocean', states);
+  const downloadingPlayableWithReadyLevel = assetPackPlayableSummary('ocean', states, { levelVideoStates: levelStates });
+  const outOfOrderPlayable = assetPackPlayableSummary('ocean', normalizeAssetPackStates(null), {
+    levelVideoStates: normalizeLevelVideoStates({
+      [levelVideoStateKey('ocean', 12)]: { mapId: 'ocean', levelId: 12, status: 'ready', localUrl: 'asset-pack://ocean/12.mp4' },
+    }),
+  });
+  const ready = assetPackSummary('desert', normalizeAssetPackStates({ desert: { status: 'ready' } }), { bridgeAvailable: true, sourceAvailable: true });
+  const downloading = assetPackSummary('ocean', states, { bridgeAvailable: true, sourceAvailable: true, levelVideoStates: levelStates });
+  const paused = assetPackSummary('desert', states, { bridgeAvailable: true, sourceAvailable: true });
+  const noBridge = assetPackSummary('ocean', states, { bridgeAvailable: false, sourceAvailable: true });
+  const noSource = assetPackSummary('ocean', normalizeAssetPackStates(null), { bridgeAvailable: true, sourceAvailable: false });
+
+  assert.equal(manifest.schemaVersion, 1);
+  assert.equal(manifest.app.bridge, 'babyIslandAssetPack');
+  assert.equal(manifest.app.bundledThroughLevel, 10);
+  assert.equal(manifest.maps[0].levelVideoUrlTemplate, '');
+  assert.deepEqual(manifest.maps[0].levels, []);
+  assert.equal(notInstalledPlayable.text, '已可玩 10/200 关');
+  assert.equal(downloadingPlayable.text, '已可玩 10/200 关');
+  assert.equal(downloadingPlayableWithReadyLevel.text, '已可玩 11/200 关');
+  assert.equal(outOfOrderPlayable.text, '已可玩 10/200 关');
+  assert.equal(ready.playableText, '已可玩 200/200 关');
+  assert.equal(ready.label, '已完成');
+  assert.equal(downloading.status, 'downloading');
+  assert.equal(downloading.downloadProgress, 42);
+  assert.equal(downloading.progress, 6);
+  assert.equal(downloading.playableText, '已可玩 11/200 关');
+  assert.match(downloading.label, /下载中 42%/);
+  assert.equal(downloading.action, 'pause');
+  assert.equal(paused.downloadProgress, 25);
+  assert.equal(paused.progress, 5);
+  assert.equal(paused.playableText, '已可玩 10/200 关');
+  assert.equal(paused.action, 'resume');
+  assert.equal(noBridge.disabled, false);
+  assert.equal(noSource.disabled, false);
+  assert.equal(noSource.stateLabel, '未下载');
+  assert.equal(noSource.note, '后面的关卡视频可以在后台下载');
+  assert.equal(noSource.actionLabel, '下载');
+  assert.match(source, /ASSET_PACK_MANIFEST_URL = 'asset-packs\.json'/);
+  assert.match(source, /function assetPackPlayableSummary/);
+  assert.match(source, /downloadOrder:\s*'level-ascending'/);
+  assert.match(source, /levelQueue/);
+  assert.match(source, /targetLevelId:\s*level\.id/);
+  assert.match(source, /levelId:\s*nextQueued\?\.levelId \|\| level\.id/);
+  assert.match(source, /已可玩 \$\{playable\}\/\$\{totalLevels\} 关/);
+  assert.match(source, /已可玩 \$\{totalPlayable\}\/\$\{totalLevels\} 关/);
+  assert.match(source, /window\.babyIslandAssetPackEvent/);
+  assert.match(source, /function assetPackOverview/);
+  assert.match(source, /return \{ status: 'downloading', progress, playableText, label: `下载中 \$\{progress\}%`/);
+  assert.match(source, /return \{ status: 'queued', progress, playableText, label: progress \? `下载中 \$\{progress\}%` : '下载中'/);
+  assert.match(source, /return \{ status: 'paused', progress, playableText, label: `已暂停 \$\{progress\}%`/);
+  assert.match(source, /return \{ status: 'not-installed', progress: 0, playableText/);
+  assert.match(source, /function assetPackStatusButtonMarkup/);
+  assert.match(source, /function openAssetPackDialog/);
+  assert.match(source, /function handleAssetPackActionClick/);
+  assert.match(source, /dialog\.addEventListener\('click', \(event\) => \{[\s\S]*?data-asset-pack-action/);
+  assert.match(source, /data-asset-pack-panel/);
+  assert.match(source, /data-asset-pack-status/);
+  assert.match(source, /map-pack-progress-ring/);
+  assert.match(source, /map-pack-download-arrow/);
+  assert.match(source, /map-pack-attention-dot/);
+  assert.match(source, /data-asset-pack-list/);
+  assert.match(source, /data-asset-pack-action/);
+  assert.match(source, /babyIslandAssetPack/);
+  assert.match(source, /<div class="asset-pack-meter"[\s\S]*?<\/div>\s*<button class="asset-pack-action"/);
+  assert.doesNotMatch(source, /(地图资源包|资源包|待配置|源站|配置后)/);
+  assert.match(read('style.css'), /\.asset-pack-dialog\s*\{[^}]*?--dialog-width:\s*50rem/);
+  assert.match(read('style.css'), /\.map-switch-dialog\s*\{[^}]*?width:\s*min\(calc\(100% - 2rem\),\s*var\(--dialog-width,\s*28rem\)\)/);
+  assert.match(read('style.css'), /\.map-switch-card\.asset-pack-dialog-card\s*\{[^}]*?justify-items:\s*stretch/);
+  assert.match(read('style.css'), /\.asset-pack-list\s*\{[^}]*?width:\s*100%/);
+  assert.match(read('style.css'), /\.asset-pack-dialog-card > p:not\(\.paywall-eyebrow\)\s*\{[^}]*?max-width:\s*38rem/);
+  assert.match(read('style.css'), /\.asset-pack-row\s*\{[^}]*?grid-template-columns:\s*minmax\(7\.5rem,\s*0\.95fr\)\s*minmax\(14rem,\s*1\.65fr\)\s*auto/);
+  assert.match(read('style.css'), /\.asset-pack-row\s*\{[^}]*?text-align:\s*left/);
+  assert.match(read('style.css'), /\.asset-pack-copy\s*\{[^}]*?justify-self:\s*start[\s\S]*?text-align:\s*left/);
+  assert.match(read('style.css'), /\.asset-pack-action\s*\{[^}]*?justify-self:\s*end/);
+  assert.match(read('style.css'), /\.asset-pack-action\[data-asset-pack-action="pause"\]\s*\{[\s\S]*?background:\s*var\(--focus\)/);
+  assert.match(read('style.css'), /\.asset-pack-action\[data-asset-pack-action="start"\],[\s\S]*?\.asset-pack-action\[data-asset-pack-action="resume"\]\s*\{[\s\S]*?background:\s*#0e9d8c/);
+  assert.match(read('style.css'), /\.asset-pack-meter\s*\{[^}]*?height:\s*0\.52rem/);
+  assert.doesNotMatch(read('style.css'), /\.asset-pack-meter\s*\{[^}]*?grid-column:\s*1 \/ -1/);
+  assert.match(read('style.css'), /\.asset-pack-row\.is-downloading,[\s\S]*?\.asset-pack-row\.is-queued\s*\{[\s\S]*?border-color:\s*rgba\(14,\s*157,\s*140,\s*0\.26\)[\s\S]*?background:\s*#f5fffb/);
+  assert.match(read('style.css'), /\.asset-pack-row\.is-downloading \.asset-pack-meter > span,[\s\S]*?\.asset-pack-row\.is-queued \.asset-pack-meter > span\s*\{[\s\S]*?background:\s*linear-gradient\(90deg,\s*#3bd7c6,\s*#0e9d8c\)/);
+  assert.match(read('style.css'), /\.asset-pack-row\.is-not-installed \.asset-pack-meter > span\s*\{[\s\S]*?background:\s*rgba\(121,\s*79,\s*39,\s*0\.26\)/);
+  assert.match(read('style.css'), /\.asset-pack-row\.is-downloading \.asset-pack-meter > span,[\s\S]*?\.asset-pack-row\.is-queued \.asset-pack-meter > span\s*\{[\s\S]*?animation:\s*asset-pack-fill-pulse/);
+  assert.match(read('style.css'), /\.asset-pack-row\.is-downloading \.asset-pack-meter::after,[\s\S]*?\.asset-pack-row\.is-queued \.asset-pack-meter::after\s*\{[\s\S]*?animation:\s*asset-pack-track-flow/);
+  assert.match(read('style.css'), /\.asset-pack-row\.is-downloading \.asset-pack-meter > span::after,[\s\S]*?\.asset-pack-row\.is-queued \.asset-pack-meter > span::after\s*\{[\s\S]*?animation:\s*asset-pack-meter-sheen/);
+  assert.match(read('style.css'), /@keyframes\s+asset-pack-track-flow[\s\S]*?translateX\(-100%\)[\s\S]*?translateX\(100%\)/);
+  assert.match(read('style.css'), /@keyframes\s+asset-pack-meter-sheen[\s\S]*?translateX\(-120%\)[\s\S]*?translateX\(120%\)/);
+  assert.match(source, /LEVEL_VIDEO_LOADING_LOTTIE_URL = 'assets\/lottie\/level-video-loading\.json'/);
+  assert.match(source, /function mountLevelVideoLoadingLottie\(root = document\)/);
+  assert.match(source, /video-frame video-frame--download[\s\S]*?class="level-video-loading-close" type="button" data-back-map aria-label="返回闯关地图"[\s\S]*?levelVideoDownloadMarkup\(level\)/);
+  assert.match(source, /querySelectorAll\('\[data-back-map\]'\)\.forEach/);
+  assert.match(source, /data-level-video-loading-lottie/);
+  assert.match(source, /level-video-loading-dots/);
+  assert.match(read('style.css'), /\.level-video-loading-close\s*\{[\s\S]*?position:\s*fixed[\s\S]*?env\(safe-area-inset-right,\s*0px\)[\s\S]*?border-radius:\s*50%/);
+  assert.match(read('style.css'), /@keyframes\s+level-video-loading-dot/);
+  assert.doesNotMatch(source, /本关视频下载完成后/);
+  assert.doesNotMatch(source, /level-video-download-copy|level-video-download-action|level-video-download-ring/);
+  assert.doesNotMatch(read('style.css'), /level-video-download-spin|level-video-download-ring|level-video-download-action/);
+  assert.doesNotMatch(source, /class="surface asset-pack-card"/);
+});
+
+test('level video waiting page uses the small rocking-horse lottie', () => {
+  const lottiePath = path.join(__dirname, 'assets/lottie/level-video-loading.json');
+  const lottie = JSON.parse(fs.readFileSync(lottiePath, 'utf8'));
+  const preview = read('__level_loading_preview.html');
+
+  assert.equal(lottie.nm, 'racking-horse');
+  assert.ok(fs.statSync(lottiePath).size < 60_000);
+  assert.match(preview, /assets\/vendor\/lottie\.min\.js/);
+  assert.match(preview, /assets\/lottie\/level-video-loading\.json\?v=20260803-rocking-horse-v1/);
+  assert.match(preview, /class="level-video-loading-close" type="button" aria-label="关闭预览"/);
+  assert.match(preview, /data-level-video-loading-lottie/);
+  assert.match(preview, /level-video-loading-dots/);
+  assert.doesNotMatch(preview, /progress-card|motion-shell|map-bg-disc|map-actor|video-progress-track|video-progress-fill/);
+});
+
+test('level video download model starts unavailable lessons at zero progress', () => {
+  const states = normalizeLevelVideoStates({
+    [levelVideoStateKey('desert', 12)]: { mapId: 'desert', levelId: 12, status: 'downloading', bytesDone: 25, bytesTotal: 100 },
+    bad: { levelId: 0, status: 'ready' },
+  });
+
+  assert.equal(states['desert:12'].status, 'downloading');
+  assert.equal(states['desert:12'].progress, 25);
+  assert.equal(states.bad, undefined);
+  assert.equal(levelVideoDownloadLabel('not-installed', 0), '未下载');
+  assert.equal(levelVideoDownloadLabel('downloading', 42), '下载中 42%');
+  assert.equal(levelVideoDownloadLabel('ready', 100), '已下载');
+});
+
+test('level video downloads build an ascending queue before the requested lesson', () => {
+  const pack = normalizeAssetPackStates({
+    ocean: {
+      levelVideoUrlTemplate: 'https://cdn.example.test/{mapId}/level-{levelId3}.mp4',
+      levels: [
+        { levelId: 14, downloadUrl: 'https://cdn.example.test/ocean/custom-014.mp4', bytesTotal: 1400, sha256: 'abc' },
+        { levelId: 12, downloadUrl: 'https://cdn.example.test/ocean/custom-012.mp4', bytesTotal: 1200, sha256: 'def' },
+      ],
+    },
+  });
+  const states = normalizeLevelVideoStates({
+    [levelVideoStateKey('ocean', 11)]: { mapId: 'ocean', levelId: 11, status: 'ready', localUrl: 'asset-pack://ocean/011.mp4' },
+    [levelVideoStateKey('ocean', 13)]: { mapId: 'ocean', levelId: 13, status: 'downloading', bytesDone: 1, bytesTotal: 10 },
+  });
+  const queue = assetPackLevelDownloadQueue('ocean', pack.ocean, states, { throughLevel: 14 });
+
+  assert.equal(assetPackHasDownloadSource('ocean', pack.ocean), true);
+  assert.equal(assetPackLevelVideoUrl('ocean', 12, pack.ocean), 'https://cdn.example.test/ocean/custom-012.mp4');
+  assert.deepEqual(queue.map((item) => item.levelId), [12, 13, 14]);
+  assert.deepEqual(queue.map((item) => item.downloadUrl), [
+    'https://cdn.example.test/ocean/custom-012.mp4',
+    'https://cdn.example.test/ocean/level-013.mp4',
+    'https://cdn.example.test/ocean/custom-014.mp4',
+  ]);
+  assert.deepEqual(queue.map((item) => item.bytesTotal), [1200, 0, 1400]);
 });
 
 test('desert map uses the fixed 200 natural expression curriculum', () => {
@@ -1070,7 +1503,7 @@ test('source keeps three tabs and removes obsolete generic course copy', () => {
   assert.match(read('style.css'), /\.app-shell\.detail-shell\s*\{[^}]*padding-bottom:/);
   assert.match(read('style.css'), /\.bottom-tabs\[hidden\]\s*\{[^}]*display:\s*none/);
   assert.match(source, /嗨洛塔少儿启蒙APP/);
-  ['宝宝视频闯关', '数学启蒙', '安全过马路', '情绪认知'].forEach((copy) => {
+  ['宝宝视频闯关', '安全过马路', '情绪认知'].forEach((copy) => {
     assert.doesNotMatch(source, new RegExp(copy));
   });
 });
@@ -1117,8 +1550,9 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
   assert.match(css, /\.level-node\s*\{[\s\S]*?display:\s*inline-grid[\s\S]*?place-items:\s*center/);
   assert.match(css, /\.current \.node-icon\s*\{[\s\S]*?animation:\s*play-button-pop/);
   assert.match(css, /\.map-topbar\s*\{/);
-  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn\s*\{[\s\S]*?width:\s*3rem[\s\S]*?height:\s*3rem[\s\S]*?min-width:\s*44px[\s\S]*?min-height:\s*44px/);
-  assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?\.map-locate-btn,[\s\S]*?\.map-jump-btn\s*\{[^}]*width:\s*2\.75rem[^}]*height:\s*2\.75rem/);
+  assert.match(css, /\.map-pack-btn/);
+  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn,[\s\S]*?\.map-music-btn\s*\{[\s\S]*?width:\s*3rem[\s\S]*?height:\s*3rem[\s\S]*?min-width:\s*44px[\s\S]*?min-height:\s*44px/);
+  assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?\.map-locate-btn,[\s\S]*?\.map-jump-btn,[\s\S]*?\.map-music-btn\s*\{[^}]*width:\s*2\.75rem[^}]*height:\s*2\.75rem/);
   assert.match(css, /\.map-locate-btn svg circle\s*\{[\s\S]*?fill:\s*var\(--focus\)/);
   assert.match(css, /\.resource-strip\s*\{/);
   assert.match(css, /\.route-scroll\s*\{[\s\S]*?overflow-x:\s*auto/);
@@ -1138,6 +1572,166 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
   assert.match(css, /\.route-ocean\s*\{[\s\S]*?container-type:\s*inline-size/);
   assert.match(css, /--level-stop-width:\s*min\(50cqw,\s*42rem\)/);
   assert.match(css, /\.route-ocean\[data-map-theme="ocean"\] \.route-stage\s*\{\s*--level-stop-width:\s*60cqw/);
+  assert.match(css, /\.route-ocean\[data-map-theme="math"\]\s*\{[\s\S]*?repeating-linear-gradient\(90deg[\s\S]*?#dfb77b/);
+  assert.match(css, /\.route-ocean\[data-map-theme="math"\]::before\s*\{[\s\S]*?repeating-linear-gradient\(0deg[\s\S]*?#fffdf0|#f8f6dd/);
+  assert.match(css, /\.route-ocean\[data-map-theme="math"\] \.ocean-loop,[\s\S]*?\.route-ocean\[data-map-theme="math"\] \.flying-seagull/);
+  assert.match(css, /\.math-map-decor\s*\{[\s\S]*?pointer-events:\s*none/);
+  assert.match(css, /ruler-handpaint-depth-v2\.webp\?v=20260804-math-handpaint-v2/);
+  assert.match(css, /pencil-handpaint-depth-v2\.webp\?v=20260804-math-handpaint-v2/);
+  assert.match(css, /pencil-kid-figure-handpaint-v1\.webp\?v=20260804-math-covers-v1/);
+  assert.match(css, /plus-tile-handpaint-depth-v3\.webp\?v=20260804-math-handpaint-v2/);
+  assert.match(css, /equal-tile-handpaint-depth-v3\.webp\?v=20260804-math-handpaint-v2/);
+  assert.match(css, /teal-bead-handpaint-depth-v2\.webp\?v=20260804-math-handpaint-v2/);
+  assert.match(css, /red-bead-handpaint-depth-v2\.webp\?v=20260804-math-handpaint-v2/);
+  assert.match(css, /apple-handpaint-depth-v2\.webp\?v=20260804-math-quiz-props-v1/);
+  assert.match(css, /plate-handpaint-depth-v1\.webp\?v=20260804-math-quiz-props-v1/);
+  const mathObjectBlock = css.match(/\n\s{2}\.math-object\s*\{[^}]*\}/)?.[0] || '';
+  const mathObjectSetBlock = css.match(/\n\s{2}\.math-object-set\s*\{[^}]*\}/)?.[0] || '';
+  const mathPlateBlock = css.match(/\n\s{2}\.math-plate\s*\{[^}]*\}/)?.[0] || '';
+  const mathTableBlock = css.match(/\n  \.math-table\s*\{[^}]*\}/)?.[0] || '';
+  const mathQuestionCardBlock = css.match(/\n  \.math-question-card\s*\{[^}]*\}/)?.[0] || '';
+  const mathChoiceBlock = css.match(/\n  \.math-choice\s*\{[^}]*\}/)?.[0] || '';
+  const mathAppleDropStart = css.indexOf('@keyframes math-apple-drop-in');
+  const mathAppleShadowStart = css.indexOf('@keyframes math-apple-shadow-drop-in', mathAppleDropStart);
+  const mathAppleDropEnd = css.indexOf('.math-inline-panel .math-table', mathAppleDropStart);
+  const mathAppleBodyDropBlock = css.slice(mathAppleDropStart, mathAppleShadowStart);
+  const mathAppleDropBlock = css.slice(mathAppleDropStart, mathAppleDropEnd);
+  assert.doesNotMatch(mathObjectBlock, /radial-gradient/);
+  assert.doesNotMatch(mathObjectBlock, /filter:/);
+  assert.doesNotMatch(mathPlateBlock, /radial-gradient/);
+  assert.doesNotMatch(mathPlateBlock, /grid-template-columns/);
+  assert.match(mathPlateBlock, /place-items:\s*center/);
+  assert.match(mathPlateBlock, /isolation:\s*isolate/);
+  assert.match(mathPlateBlock, /overflow:\s*visible/);
+  assert.match(mathPlateBlock, /aspect-ratio:\s*1/);
+  assert.match(mathPlateBlock, /border-radius:\s*50%/);
+  assert.match(mathObjectSetBlock, /display:\s*flex/);
+  assert.match(mathObjectSetBlock, /position:\s*relative/);
+  assert.match(mathObjectSetBlock, /z-index:\s*1/);
+  assert.match(mathObjectSetBlock, /flex-wrap:\s*wrap/);
+  assert.match(mathObjectSetBlock, /justify-content:\s*center/);
+  assert.match(mathObjectSetBlock, /align-content:\s*center/);
+  assert.match(mathObjectSetBlock, /width:\s*108%/);
+  assert.match(mathObjectSetBlock, /max-width:\s*none/);
+  assert.match(mathObjectBlock, /width:\s*var\(--math-object-size,\s*clamp\(2\.35rem,\s*6\.4vh,\s*3\.2rem\)\)/);
+  assert.match(mathObjectBlock, /max-width:\s*none/);
+  assert.match(script, /class="math-object-set" data-count=/);
+  // 苹果统一尺寸：禁止按 data-count 改 --math-object-size
+  assert.doesNotMatch(css, /\.math-object-set\[data-count="1"\]\s*\{[^}]*--math-object-size/);
+  assert.doesNotMatch(css, /\.math-object-set\[data-count="2"\]\s*\{[^}]*--math-object-size/);
+  assert.doesNotMatch(css, /\.math-object-set\[data-count="3"\]\s*\{[^}]*--math-object-size/);
+  assert.doesNotMatch(css, /\.math-object-set\[data-count="4"\]\s*\{[^}]*--math-object-size/);
+  assert.doesNotMatch(css, /\.math-object-set\[data-count="5"\]/);
+  assert.doesNotMatch(css, /\.math-object-set\[data-count="6"\]/);
+  assert.doesNotMatch(script, /math-empty-mark/);
+  assert.doesNotMatch(css, /\.math-empty-mark/);
+  assert.match(mathTableBlock, /background:\s*transparent/);
+  assert.doesNotMatch(mathTableBlock, /border:/);
+  assert.doesNotMatch(mathTableBlock, /box-shadow:/);
+  assert.doesNotMatch(mathQuestionCardBlock, /border:/);
+  assert.doesNotMatch(mathQuestionCardBlock, /background:/);
+  assert.doesNotMatch(mathQuestionCardBlock, /box-shadow:/);
+  assert.match(mathChoiceBlock, /border:\s*0/);
+  assert.match(mathChoiceBlock, /background:\s*transparent/);
+  assert.doesNotMatch(mathChoiceBlock, /box-shadow:/);
+  assert.match(css, /\.math-choice\.is-selected \.math-plate,[\s\S]*?\.math-choice\.is-correct \.math-plate\s*\{[\s\S]*?transform:\s*translateY\(-0\.1rem\) scale\(var\(--math-selected-plate-scale,\s*1\.16\)\)/);
+  assert.match(css, /\.math-options\s*\{[\s\S]*?--math-selected-ring-border:\s*0\.52rem[\s\S]*?--math-selected-plate-scale:\s*1\.16/);
+  assert.match(css, /\.math-options--count-2\s*\{[\s\S]*?--math-selected-ring-border:\s*0\.48rem[\s\S]*?--math-selected-plate-scale:\s*1\.14/);
+  assert.match(css, /\.math-plate::before\s*\{[\s\S]*?border:\s*var\(--math-selected-ring-border\) solid rgba\(9,\s*161,\s*139,\s*0\)/);
+  assert.match(css, /\.math-plate::before\s*\{[\s\S]*?inset:\s*var\(--math-selected-ring-inset/);
+  assert.match(css, /\.math-choice\.is-selected \.math-plate::before,[\s\S]*?\.math-choice\.is-correct \.math-plate::before\s*\{[\s\S]*?border-color:\s*#0a9a84[\s\S]*?box-shadow:\s*none/);
+  assert.match(css, /\.math-choice\.is-selected \.math-plate\s*\{[\s\S]*?animation:\s*math-selected-plate-breathe 1\.8s/);
+  assert.match(css, /\.math-choice\.is-selected \.math-plate::before\s*\{[\s\S]*?animation:\s*math-selected-ring-breathe 1\.8s/);
+  assert.match(css, /@keyframes math-selected-plate-breathe[\s\S]*?--math-selected-plate-scale,\s*1\.16[\s\S]*?\* 1\.04\)/);
+  assert.match(css, /@keyframes math-selected-ring-breathe[\s\S]*?50%[\s\S]*?scale\(1\.02\)/);
+  assert.doesNotMatch(css, /--math-selected-ring-gold/);
+  assert.doesNotMatch(css, /--math-selected-ring-outer/);
+  assert.doesNotMatch(css, /--math-selected-ring-size/);
+  assert.doesNotMatch(css, /#f2c94d/);
+  assert.doesNotMatch(css, /math-selected-plate-pop/);
+  assert.doesNotMatch(css, /math-selected-ring-pop/);
+  assert.doesNotMatch(css, /math-selected-breathe[-\w]/);
+  assert.doesNotMatch(css, /--math-selected-plate-scale:\s*1\.02/);
+  assert.doesNotMatch(css, /scale\(1\.065\)/);
+  assert.doesNotMatch(css, /border:\s*0\.24rem solid rgba\(9,\s*161,\s*139/);
+  assert.doesNotMatch(css, /\.math-object::before/);
+  assert.doesNotMatch(css, /border-radius:\s*50%\s*\/\s*38%/);
+  assert.match(css, /\.math-object::after\s*\{[\s\S]*?radial-gradient/);
+  assert.match(css, /\.level-stop\[data-map-theme="math"\] \.island-art::before\s*\{[\s\S]*?content:\s*attr\(data-math-symbol\)/);
+  assert.match(script, /data-math-symbol="\$\{mathSymbol\}"/);
+  assert.match(script, /MATH_APPLE_DROP_SFX_SRC = 'assets\/audio\/sfx\/math-apple-drop-blop-soft-01\.mp3\?v=20260804-math-sfx-v1'/);
+  assert.match(script, /MATH_APPLE_DROP_IMPACT_OFFSET_MS = 620/);
+  assert.match(script, /function playMathAppleDropSounds\(root\)/);
+  assert.match(script, /querySelectorAll\('\.math-inline-panel\.is-dropping-in \.math-object'\)/);
+  assert.match(script, /getComputedStyle\(object\)\.getPropertyValue\('--math-object-delay'\)/);
+  assert.match(script, /new Audio\(MATH_APPLE_DROP_SFX_SRC\)/);
+  assert.match(script, /setTimeout\(play,\s*delayMs \+ MATH_APPLE_DROP_IMPACT_OFFSET_MS\)/);
+  assert.match(script, /function showInlineMathLevel[\s\S]*?history\.replaceState\(null,\s*'',\s*'#map'\)/);
+  assert.match(script, /function requestLevelAccess[\s\S]*?state\.preferences\.mapWorld === 'math'[\s\S]*?nextMathLevelId !== currentMathLevelId \? 'drop' : ''/);
+  assert.match(script, /data-math-level-switch-indicator/);
+  // 左侧关卡列表已删除：不渲染 rail DOM / 不绑定 rail 逻辑 / 无 rail 样式
+  assert.doesNotMatch(script, /data-math-level-rail/);
+  assert.doesNotMatch(script, /data-math-rail-level/);
+  assert.doesNotMatch(script, /mathMapLevelRailMarkup/);
+  assert.doesNotMatch(script, /is-math-rail-active/);
+  assert.doesNotMatch(script, /paintRailDialArc/);
+  assert.doesNotMatch(css, /\.math-level-rail\b/);
+  assert.doesNotMatch(css, /is-math-rail-active/);
+  assert.match(css, /\.math-map-play-area\s*\{[\s\S]*?left:\s*clamp\(3rem,\s*7cqw,\s*7rem\)/);
+  assert.match(script, /aria-label="当前第 \$\{currentLevel\.id\} 关，共 \$\{DISPLAY_LEVEL_COUNT\} 关"/);
+  assert.match(script, /mathMapTransition === 'drop' \? ' is-changing' : ''/);
+  assert.match(script, /<strong><span>第 \$\{currentLevel\.id\}<\/span><small>\/ \$\{DISPLAY_LEVEL_COUNT\} 关<\/small><\/strong>/);
+  assert.match(script, /renderMap\(message\)/);
+  assert.doesNotMatch(script, /已切到第/);
+  assert.match(script, /data-math-inline-question/);
+  assert.match(script, /data-math-step="-1"/);
+  assert.match(script, /data-math-step="1"/);
+  assert.match(script, /bindInlineMathQuestion\(inlineMathPanel,\s*mathLevelForCoachPlan\(currentLevel\)\)/);
+  assert.match(script, /playMathAppleDropSounds\(inlineMathPanel\)/);
+  assert.match(script, /mathMapTransition:\s*''/);
+  assert.match(script, /function showInlineMathLevel\(levelId,\s*message = '',\s*transition = ''\)/);
+  assert.match(script, /function transitionToInlineMathLevel[\s\S]*?classList\.add\('is-switching-out'\)[\s\S]*?showInlineMathLevel\(nextId,[\s\S]*?'drop'\)/);
+  assert.match(script, /stepButtons\.forEach[\s\S]*?transitionToInlineMathLevel\(level\.id \+ Number\(button\.dataset\.mathStep\),\s*button\)/);
+  assert.match(script, /window\.matchMedia\('\(prefers-reduced-motion: reduce\)'\)\.matches/);
+  assert.match(script, /route\.type === 'level'[\s\S]*?state\.preferences\.mapWorld === 'math'[\s\S]*?history\.replaceState\(null,\s*'',\s*'#map'\)/);
+  assert.match(css, /\.math-inline-header\s*\{[\s\S]*?display:\s*none/);
+  assert.match(css, /\.math-level-step\s*\{[\s\S]*?position:\s*absolute/);
+  assert.match(css, /\.math-level-step\s*\{[\s\S]*?border:\s*2px solid rgba\(110,\s*70,\s*24,\s*0\.55\)[\s\S]*?background:\s*rgba\(255,\s*248,\s*220,\s*0\.98\)/);
+  assert.match(css, /\.math-level-step--prev\s*\{[\s\S]*?left:\s*clamp/);
+  assert.match(css, /\.math-level-step--next\s*\{[\s\S]*?right:\s*clamp/);
+  assert.match(css, /\.math-inline-panel\.is-switching-out \.math-table\s*\{[\s\S]*?opacity:\s*0/);
+  assert.match(script, /--math-object-delay:\$\{objectIndex\+\+ \* 190\}ms/);
+  assert.match(css, /\.math-inline-panel\.is-dropping-in \.math-object\s*\{[\s\S]*?will-change:\s*transform,\s*opacity/);
+  assert.match(css, /\.math-inline-panel\.is-dropping-in \.math-object\s*\{[\s\S]*?animation:\s*math-apple-drop-in 0\.82s cubic-bezier\(0\.56,\s*0\.06,\s*0\.8,\s*0\.34\)/);
+  assert.match(css, /\.math-inline-panel\.is-dropping-in \.math-object::after\s*\{[\s\S]*?animation:\s*math-apple-shadow-drop-in 0\.82s cubic-bezier\(0\.56,\s*0\.06,\s*0\.8,\s*0\.34\)/);
+  assert.match(css, /@keyframes math-apple-drop-in[\s\S]*?0%[\s\S]*?scale\(3\.65\)[\s\S]*?12%[\s\S]*?opacity:\s*1[\s\S]*?76%,\s*100%[\s\S]*?scale\(1\)/);
+  assert.match(css, /@keyframes math-apple-shadow-drop-in[\s\S]*?scale\(0\.1\)[\s\S]*?76%[\s\S]*?opacity:\s*0\.66[\s\S]*?scale\(1\.42\)[\s\S]*?88%[\s\S]*?scale\(0\.98\)[\s\S]*?scale\(1\)/);
+  assert.doesNotMatch(mathAppleDropBlock, /blur\(/);
+  assert.doesNotMatch(mathAppleBodyDropBlock, /translate(?:3d|X|Y)?\(/);
+  assert.doesNotMatch(mathAppleBodyDropBlock, /rotate\(/);
+  assert.doesNotMatch(mathAppleBodyDropBlock, /scale\([^)]*,/);
+  assert.doesNotMatch(mathAppleBodyDropBlock, /scale\(0\./);
+  assert.doesNotMatch(mathAppleBodyDropBlock, /34%|58%|68%/);
+  assert.match(css, /\.math-level-switch-indicator\s*\{[\s\S]*?position:\s*sticky[\s\S]*?grid-template-columns:\s*auto auto minmax\(0,\s*1fr\)/);
+  assert.match(css, /\.math-level-switch-indicator\.is-changing\s*\{[\s\S]*?animation:\s*math-level-switch-pop/);
+  assert.match(css, /\.math-level-switch-indicator\.is-changing strong span\s*\{[\s\S]*?animation:\s*math-level-number-pop/);
+  assert.match(css, /\.map-message:not\(\[hidden\]\) \+ \.math-level-switch-indicator\s*\{[\s\S]*?display:\s*none/);
+  assert.match(css, /@keyframes math-level-switch-pop[\s\S]*?var\(--math-level-switch-base-transform\)/);
+  assert.match(css, /@keyframes math-level-number-pop/);
+  assert.match(css, /@media \(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.math-level-switch-indicator\.is-changing/);
+  assert.match(css, /\.math-map-play-area\s*\{[\s\S]*?position:\s*absolute/);
+  assert.match(css, /\.route-ocean\[data-map-theme="math"\] \.route-scroll\s*\{[\s\S]*?overflow-x:\s*hidden[\s\S]*?scrollbar-width:\s*none/);
+  assert.match(css, /\.route-ocean\[data-map-theme="math"\] \.route-scroll::-webkit-scrollbar\s*\{[\s\S]*?display:\s*none/);
+  assert.match(css, /\.route-ocean\[data-map-theme="math"\] \.boat-dock\s*\{[\s\S]*?display:\s*none/);
+  assert.match(css, /\.route-ocean\[data-map-theme="math"\] \.toy-steamboat\.is-math-rider\s*\{[\s\S]*?display:\s*none/);
+  assert.match(css, /\.toy-steamboat\.is-math-rider\.is-sailing \.steamboat-body\s*\{[\s\S]*?animation:\s*none/);
+  assert.match(css, /\.route-ocean\[data-map-theme="math"\] \.level-stop \.island-art\s*\{[\s\S]*?opacity:\s*0/);
+  assert.match(css, /\.route-ocean\[data-map-theme="math"\] \.level-stop \.level-node,[\s\S]*?\.route-ocean\[data-map-theme="math"\] \.level-stop \.level-state-text,[\s\S]*?visibility:\s*hidden/);
+  assert.doesNotMatch(script, /math-map-prop--one">\+/);
+  assert.doesNotMatch(script, /math-map-prop--two">=/);
+  assert.match(script, /math-map-prop--ruler/);
+  assert.match(script, /math-map-prop--kid-doodle/);
+  assert.match(script, /currentMapTheme === 'math' \? 'is-math-rider'/);
   assert.match(css, /\.route-ocean\[data-map-theme="desert"\] \.route-stage\s*\{\s*--level-stop-width:\s*min\(62cqw,\s*62rem\)/);
   assert.match(css, /\.route-ocean\[data-map-theme="ocean"\] \.level-stop\.square-island \.island-art\s*\{\s*width:\s*30cqw/);
   assert.match(css, /egypt-desert-infinite-clean-bg-dreamina-v2\.png\?v=20260720-desert-infinite-v2/);
@@ -1220,7 +1814,13 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
   assert.match(worker, /assets\/egypt-map\/cutouts\/decor\/runtime-v2\/43-foot-trail-lr\.webp\?v=20260801-desert-decor-v13c/);
   assert.match(worker, /assets\/egypt-map\/cutouts\/decor\/runtime-v2\/43b-foot-trail-lr\.webp\?v=20260801-desert-decor-v13c/);
   assert.match(worker, /assets\/egypt-map\/cutouts\/decor\/runtime-v2\/39-scarab-stone\.webp\?v=20260801-desert-decor-v13c/);
-  assert.match(worker, /baby-island-shell-20260801-desert-hayley-v37/);
+  assert.match(worker, /baby-island-shell-20260804-math-apple-uniform-v1/);
+  assert.match(worker, /assets\/math-map\/covers\/math-desk-cover-v1\.webp\?v=20260804-math-covers-v1/);
+  assert.match(worker, /assets\/math-map\/covers\/math-garden-cover-v1\.webp\?v=20260804-math-covers-v1/);
+  assert.match(worker, /assets\/math-map\/covers\/math-star-tower-cover-v1\.webp\?v=20260804-math-covers-v1/);
+  assert.match(worker, /assets\/audio\/math-map-bgm\.mp3\?v=20260804-math-bgm-v2/);
+  assert.match(worker, /assets\/math-map\/quiz\/apple-handpaint-depth-v2\.webp\?v=20260804-math-quiz-props-v1/);
+  assert.match(worker, /assets\/math-map\/quiz\/plate-handpaint-depth-v1\.webp\?v=20260804-math-quiz-props-v1/);
   assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/01-cactus-cluster.webp')));
   assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/13-acacia-sapling.webp')));
   assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/17-broken-clay-pot.webp')));
@@ -1286,7 +1886,8 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
     assert.ok(fs.statSync(path.join(__dirname, 'assets/ocean/rowing-kids-boat-sailing.webp')).size < 2_200_000);
     assert.doesNotMatch(script, /const delta = routeScroll\.scrollLeft - lastScrollLeft/);
     assert.doesNotMatch(script, /pendingBoatDirection|--boat-facing|recordBoatFacing/);
-    assert.match(script, /const BOAT_HOLD_MS = 300/);
+    assert.match(script, /const MAP_STOP_BEFORE_VEHICLE_MS = 1000/);
+    assert.match(script, /const BOAT_HOLD_MS = 0/);
     assert.match(script, /const BOAT_SAIL_MS = 2800/);
     assert.match(script, /const sailMs = BOAT_SAIL_MS/);
     assert.doesNotMatch(script, /distanceScale/);
@@ -1300,12 +1901,14 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
     assert.match(css, /\.steamboat-asset--idle-video,[\s\S]*?\.steamboat-asset--sailing-video\s*\{\s*visibility:\s*hidden/);
     assert.match(css, /\.toy-steamboat\.has-idle-video:not\(\.is-sailing\) \.steamboat-asset--idle-video\s*\{\s*visibility:\s*visible/);
     assert.match(css, /\.toy-steamboat\.is-sailing \.steamboat-asset--sailing\s*\{\s*visibility:\s*visible/);
-    assert.match(script, /setTimeout\(startBoatSailToCenter, fromCurrent \? 0 : BOAT_HOLD_MS\)/);
+    assert.match(script, /setTimeout\(startBoatSailToCenter, BOAT_HOLD_MS\)/);
+    assert.match(script, /feedbackTimer = setTimeout\(confirmIslandSwitch, MAP_STOP_BEFORE_VEHICLE_MS\)/);
     assert.match(script, /boatPhase = 'holding'/);
     assert.match(script, /boatPhase = 'sailing'/);
     assert.match(script, /setProperty\('--boat-x'/);
     assert.match(script, /getStopOffsetX/);
-    assert.match(script, /scheduleBoatCrossing\(travelDirection, \{ fromCurrent: (?:true|false) \}\);[\s\S]*?if \(!state\.preferences\.autoPronunciation\)/);
+    assert.doesNotMatch(script, /fromCurrent/);
+    assert.match(script, /boatHomeStop = departStop;[\s\S]*?scheduleBoatCrossing\(travelDirection\);[\s\S]*?if \(!state\.preferences\.autoPronunciation\)/);
     assert.doesNotMatch(script, /settleBoatAfterScroll|if \(feedbackArmed\) setBoatSailing\(true\)|setTimeout\(\(\) => setBoatSailing\(false\), 620\)/);
     assert.doesNotMatch(script, /is-entering|--boat-enter-x|sailBoatToCenteredStop/);
     assert.doesNotMatch(script, /--boat-facing|pendingBoatDirection|scaleX\(var\(--boat-facing/);
@@ -1366,13 +1969,15 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
     assert.match(script, /let boatHomeFrozen = false/);
     assert.doesNotMatch(script, /freezeBoatHomeAtCurrentX/);
     assert.match(script, /const hardCancelBoatMotion = \(\) => \{[\s\S]*?boatHomeFrozen = false;[\s\S]*?setBoatSailing\(false\);[\s\S]*?\}/);
-    assert.match(script, /const interruptBoatSail = \(\) => \{[\s\S]*?if \(boatPhase === 'idle'\) return;[\s\S]*?hardCancelBoatMotion\(\);[\s\S]*?\}/);
-    assert.match(script, /boatHomeStop = lastFeedbackStop;[\s\S]*?boatHomeFrozen = false;[\s\S]*?snapBoatToHome\(\)/);
-    assert.match(script, /const getBoatDepartureStop = \(targetStop, direction\) =>/);
-    assert.match(script, /const departIndex = targetIndex - \(direction < 0 \? -1 : 1\)/);
-    assert.match(script, /centeredStop = nextStop;[\s\S]*?if \(boatPhase === 'idle'\) \{[\s\S]*?boatHomeStop = getBoatDepartureStop\(centeredStop, travelDirection\);/);
-    assert.match(script, /boatHomeStop = getBoatDepartureStop\(centeredStop, travelDirection\)/);
+    assert.match(script, /const settleBoatAtLastConfirmedStop = \(\) => \{[\s\S]*?if \(boatPhase === 'idle'\) return false;[\s\S]*?hardCancelBoatMotion\(\);[\s\S]*?boatHomeStop = lastFeedbackStop;[\s\S]*?boatHomeFrozen = false;[\s\S]*?snapBoatToHome\(\);[\s\S]*?return true;[\s\S]*?\}/);
+    assert.match(script, /const interruptBoatSail = \(\) => \{[\s\S]*?settleBoatAtLastConfirmedStop\(\);[\s\S]*?\}/);
+    assert.doesNotMatch(script, /getBoatDepartureStop/);
+    assert.match(script, /centeredStop = nextStop;[\s\S]*?if \(boatPhase === 'idle'\) \{[\s\S]*?boatHomeStop = lastFeedbackStop;/);
+    assert.match(script, /const departStop = lastFeedbackStop;[\s\S]*?lastFeedbackStop = centeredStop;[\s\S]*?boatHomeStop = departStop;[\s\S]*?scheduleBoatCrossing\(travelDirection\);/);
     assert.doesNotMatch(script, /boatHomeStop = centeredStop;[\s\S]*?lastFeedbackStop = centeredStop;[\s\S]*?setBoatX\(0\)/);
+    assert.match(script, /const handleRouteIntent = \(\) => \{[\s\S]*?settleBoatAtLastConfirmedStop\(\);[\s\S]*?armIslandFeedback\(\);[\s\S]*?\}/);
+    assert.match(script, /if \(Math\.hypot\(dx, dy\) < BOAT_DRAG_INTERRUPT_PX\) return;[\s\S]*?routePointerStart = null;[\s\S]*?settleBoatAtLastConfirmedStop\(\);[\s\S]*?armIslandFeedback\(\);/);
+    assert.match(script, /routeScroll\.addEventListener\('scroll', \(\) => \{[\s\S]*?settleBoatAtLastConfirmedStop\(\);[\s\S]*?requestAnimationFrame/);
     assert.match(script, /routeScroll\.addEventListener\('pointerdown', onRoutePointerDown/);
     assert.match(script, /routeScroll\.addEventListener\('pointermove', onRoutePointerMove/);
     assert.match(script, /routeScroll\.addEventListener\('pointerup', onRoutePointerEnd/);
@@ -1410,11 +2015,11 @@ test('map FAB cluster: locate + jump beside, absolute in route-ocean', () => {
   // 1) cluster owns absolute bottom-right; buttons are relative inside
   assert.match(css, /\.map-fab-cluster\s*\{[^}]*?position:\s*absolute[^}]*?\}/);
   assert.doesNotMatch(css, /\.map-fab-cluster\s*\{[^}]*?position:\s*fixed[^}]*?\}/);
-  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn\s*\{[^}]*?position:\s*relative/);
+  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn,[\s\S]*?\.map-music-btn\s*\{[^}]*?position:\s*relative/);
 
   // 2) Proper z-index on cluster + buttons
   assert.match(css, /\.map-fab-cluster\s*\{[^}]*?z-index:\s*5/);
-  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn\s*\{[^}]*?z-index:\s*5/);
+  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn,[\s\S]*?\.map-music-btn\s*\{[^}]*?z-index:\s*5/);
 
   // 3) Positioned at bottom-right of ocean container
   assert.match(css, /\.map-fab-cluster\s*\{[^}]*?bottom:\s*clamp/);
@@ -1422,23 +2027,63 @@ test('map FAB cluster: locate + jump beside, absolute in route-ocean', () => {
   assert.match(css, /\.map-fab-cluster\s*\{[^}]*?top:\s*auto/);
   assert.match(css, /\.map-fab-cluster\s*\{[^}]*?gap:\s*1rem/);
 
-  // 4) markup: jump beside locate
+  // 4) markup: music + jump beside locate
   assert.match(script, /data-current-level=/);
+  assert.match(script, /data-asset-pack-panel/);
   assert.match(script, /data-map-jump/);
+  assert.match(script, /data-map-music-toggle/);
   assert.match(script, /map-fab-cluster/);
 
   // 5) ::after label shows "第 N 关" text (base); immersive map hides it
   assert.match(css, /\.map-locate-btn::after\s*\{[^}]*?content:\s*\"第[\s\S]*?关\"/);
   assert.match(css, /\.map-game-active\s+\.map-locate-btn::after\s*\{[^}]*?display:\s*none/);
 
-  // 6) Hit area ≥44px preserved on both FABs
-  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn\s*\{[^}]*?min-width:\s*44px[^}]*?min-height:\s*44px/);
+  // 6) Hit area ≥44px preserved on FABs
+  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn,[\s\S]*?\.map-music-btn\s*\{[^}]*?min-width:\s*44px[^}]*?min-height:\s*44px/);
 
   // 7) focus-visible + split semantics
-  assert.match(css, /\.map-locate-btn:focus-visible,[\s\S]*?\.map-jump-btn:focus-visible\s*\{[^}]*?outline:\s*3px\s+solid\s+var\(--mint\);\s*outline-offset:\s*3px/);
+  assert.match(css, /\.map-locate-btn:focus-visible,[\s\S]*?\.map-jump-btn:focus-visible,[\s\S]*?\.map-music-btn:focus-visible\s*\{[^}]*?outline:\s*3px\s+solid\s+var\(--mint\);\s*outline-offset:\s*3px/);
   assert.match(script, /aria-label=\"回到第/);
   assert.match(script, /title=\"回到当前最新进度/);
   assert.match(script, /aria-label=\"跳关，仅移动地图到某一关/);
+  assert.match(script, /关闭背景音/);
+  assert.match(script, /打开背景音/);
+});
+
+test('map asset pack HUD lives in topbar and exposes live progress outside dialog', () => {
+  const css = read('style.css');
+  const script = read('script.js');
+  const routeOceanBlock = script.match(/<div class="route-ocean"[\s\S]*?<div class="map-fab-cluster"/)?.[0] ?? '';
+
+  assert.match(script, /<div class="map-brand">[\s\S]*?<div class="map-brand-card">[\s\S]*?<\/div>\s*<div class="map-pack-status-hud" data-asset-pack-status>/);
+  assert.match(script, /const globalUpdateStatusMarkup = currentMapTheme === 'math' \? '' : `[\s\S]*?<div class="map-pack-status-hud" data-global-update-status>[\s\S]*?\$\{globalUpdateButtonMarkup\(\)\}/);
+  assert.match(script, /\$\{globalUpdateStatusMarkup\}/);
+  assert.match(script, /host\.innerHTML = activeWorld\?\.usesVideoAssets === false \? '' : assetPackStatusButtonMarkup\(\)/);
+  assert.doesNotMatch(routeOceanBlock, /map-pack-status-hud/);
+  assert.match(script, /style="--pack-progress:\$\{summary\.progress\}%"/);
+  assert.match(script, /is-\$\{summary\.status\}\$\{liveClass\}/);
+  assert.match(script, /<span class="map-pack-status-copy"><strong>\$\{playableText\}<\/strong><small>\$\{stateText\}<\/small><\/span>/);
+  assert.match(script, /has-attention/);
+  assert.doesNotMatch(script, /map-fab-cluster[\s\S]{0,420}class="map-pack-btn"/);
+  assert.match(css, /\.map-pack-status-hud\s*\{[^}]*?position:\s*relative[^}]*?flex:\s*0 0 auto/);
+  assert.doesNotMatch(css, /\.map-pack-status-hud\s*\{[^}]*?position:\s*absolute/);
+  assert.match(css, /\.map-pack-attention-dot\s*\{/);
+  assert.match(css, /\.map-pack-progress-ring\s*\{[^}]*?conic-gradient/);
+  assert.match(css, /\.map-pack-progress-ring::after\s*\{[^}]*?display:\s*none/);
+  assert.match(css, /\.map-pack-btn\.is-downloading \.map-pack-download-arrow,[\s\S]*?\.map-pack-btn\.is-queued \.map-pack-download-arrow\s*\{[\s\S]*?animation:\s*pack-download-arrow-drop/);
+  assert.match(css, /@keyframes\s+pack-download-arrow-drop[\s\S]*?translateY\(-0\.34rem\)[\s\S]*?translateY\(0\.36rem\)/);
+  assert.doesNotMatch(css, /pack-ring-spin|pack-core-pulse/);
+  assert.match(css, /\.map-topbar \.map-pack-btn\s*\{[^}]*?min-height:\s*3\.75rem/);
+  assert.doesNotMatch(css, /\.map-game-active \.map-pack-status-hud\s*\{[^}]*?top:/);
+});
+
+test('math map locate returns to progress level via showInlineMathLevel, not hidden route scroll', () => {
+  const source = read('script.js');
+  assert.match(source, /data-current-level=\"\$\{progressLevelId\}\"/);
+  assert.match(source, /currentMapTheme === 'math'[\s\S]*?showInlineMathLevel\(homeId/);
+  assert.match(source, /currentMapTheme === 'math'[\s\S]*?showInlineMathLevel\(levelId/);
+  assert.match(source, /locateToLevelId\(progressLevelId, 'smooth'\)/);
+  assert.doesNotMatch(source, /locateBtn\?\.addEventListener\('click', \(\) => \{\s*locateToLevelId\(currentLevel\.id/);
 });
 
 test('initial map locate bypasses smooth scroll so boat docks at current level after refresh', () => {
@@ -1513,7 +2158,7 @@ test('all levels reuse only the five approved natural square-island styles', () 
   const source = read('script.js');
   assert.match(source, /assets\/islands-v1\/runtime\/island-\$\{islandId\}\.webp/);
   assert.match(source, /const islandId = String\(islandStyleId\(level\.id\)\)/);
-  assert.match(source, /class="level-stop square-island \$\{stopClass\}"/);
+  assert.match(source, /class="level-stop square-island \$\{stopClass\}\$\{isSelectedMathLevel \? ' is-selected' : ''\}"/);
   assert.doesNotMatch(source, /level\.id <= 10 \? ' square-island' : ''/);
   assert.doesNotMatch(source, /scene-island-cutout/);
 
@@ -1813,7 +2458,7 @@ test('quiz question narration uses per-level Peppa local MP3 for released free l
   });
 });
 
-test('quiz feedback uses Holly local MP3 instead of Chinese system TTS', () => {
+test('quiz and math AI feedback use local MP3 instead of Chinese system TTS', () => {
   const source = read('script.js');
   const html = read('index.html');
   const worker = read('sw.js');
@@ -1824,16 +2469,22 @@ test('quiz feedback uses Holly local MP3 instead of Chinese system TTS', () => {
   assert.ok(fs.statSync(correctPath).size > 1_000);
   assert.ok(fs.existsSync(wrongPath));
   assert.ok(fs.statSync(wrongPath).size > 1_000);
-  assert.match(source, /FEEDBACK_AUDIO_SRC = \{[\s\S]*?correct: 'assets\/audio\/feedback-holly\/correct\.mp3\?v=20260718-holly-feedback-v1'/);
-  assert.match(source, /wrong: 'assets\/audio\/feedback-holly\/wrong\.mp3\?v=20260718-holly-feedback-v1'/);
+  assert.match(source, /const FEEDBACK_AUDIO_VERSION = '20260804-peiqi-feedback-v3'/);
+  assert.match(source, /FEEDBACK_AUDIO_SRC = \{[\s\S]*?correct: `assets\/audio\/feedback-holly\/correct\.mp3\?v=\$\{FEEDBACK_AUDIO_VERSION\}`/);
+  assert.match(source, /wrong: `assets\/audio\/feedback-holly\/wrong\.mp3\?v=\$\{FEEDBACK_AUDIO_VERSION\}`/);
+  assert.match(source, /MATH_COACH_FEEDBACK_AUDIO_SRC = \{[\s\S]*?correct: FEEDBACK_AUDIO_SRC\.correct,[\s\S]*?wrong: FEEDBACK_AUDIO_SRC\.wrong/);
+  assert.match(source, /const mathCoachAudio = new Audio\(src\);/);
   assert.match(source, /playFileAudio\(feedback, FEEDBACK_AUDIO_SRC\.correct, FEEDBACK_AUDIO_VOLUME\)/);
   assert.match(source, /playFileAudio\(feedback, FEEDBACK_AUDIO_SRC\.wrong, FEEDBACK_AUDIO_VOLUME\)/);
+  assert.match(source, /function speakMathVoiceFeedback\(feedbackText,\s*forceCorrect\)/);
+  assert.match(source, /return playMathCoachFeedbackTone\(isCorrect \? 'correct' : 'wrong'\)/);
   assert.match(source, /\}, 2600\)/);
   assert.match(source, /\}, 3400\)/);
   assert.doesNotMatch(source, /function speakChinese|SpeechSynthesisUtterance\(text\)|speakChinese\(/);
-  assert.match(html, /script\.js\?v=20260801-desert-decor-v13c/);
-  assert.match(worker, /assets\/audio\/feedback-holly\/correct\.mp3\?v=20260718-holly-feedback-v1/);
-  assert.match(worker, /assets\/audio\/feedback-holly\/wrong\.mp3\?v=20260718-holly-feedback-v1/);
+  assert.doesNotMatch(source, /new SpeechSynthesisUtterance\(message\)|window\.speechSynthesis\.speak\(mathUtterance\)/);
+  assert.match(html, /script\.js\?v=20260804-math-apple-uniform-v1/);
+  assert.match(worker, /assets\/audio\/feedback-holly\/correct\.mp3\?v=20260804-peiqi-feedback-v3/);
+  assert.match(worker, /assets\/audio\/feedback-holly\/wrong\.mp3\?v=20260804-peiqi-feedback-v3/);
 });
 
 test('first ten free levels use local 15s videos and Natasha word MP3s', () => {
@@ -1857,13 +2508,13 @@ test('first ten free levels use local 15s videos and Natasha word MP3s', () => {
 
   assert.match(source, /FREE_LEVEL_VIDEO_VERSION = '20260720-map-switch-cards-v13'/);
   assert.doesNotMatch(source, /interactive-examples\.mdn\.mozilla\.net|flower\.mp4|flowerVideoUrl/);
-  assert.match(source, /src="\$\{level\.videoSrc\}"/);
-  assert.match(source, /data-video-source="\$\{level\.videoMeta\?\.source \|\| 'local'\}"/);
-  assert.match(source, /data-video-task-id="\$\{level\.videoMeta\?\.taskId \|\| ''\}"/);
-  assert.match(source, /data-video-qa="\$\{level\.videoMeta\?\.qa \|\| ''\}"/);
-  assert.match(source, /data-video-audio="\$\{level\.videoMeta\?\.audio \|\| ''\}"/);
+  assert.match(source, /src="\$\{escapeHtml\(videoSource\)\}"/);
+  assert.match(source, /data-video-source="\$\{escapeHtml\(level\.videoMeta\?\.source \|\| 'local'\)\}"/);
+  assert.match(source, /data-video-task-id="\$\{escapeHtml\(level\.videoMeta\?\.taskId \|\| ''\)\}"/);
+  assert.match(source, /data-video-qa="\$\{escapeHtml\(level\.videoMeta\?\.qa \|\| ''\)\}"/);
+  assert.match(source, /data-video-audio="\$\{escapeHtml\(level\.videoMeta\?\.audio \|\| ''\)\}"/);
   assert.match(source, /wordAudioSrcFor\(word\)/);
-  assert.match(html, /script\.js\?v=20260801-desert-decor-v13c/);
+  assert.match(html, /script\.js\?v=20260804-math-apple-uniform-v1/);
 });
 
 test('new paid course table does not bind stale pear and grape videos to levels 11 and 12', () => {
@@ -2477,7 +3128,7 @@ test('map topbar no longer embeds voyage/journey capsule', () => {
   assert.doesNotMatch(source, /class="journey-compact"/);
   assert.doesNotMatch(source, /j-pearl--/);
   assert.match(source, /data-locate-progress/);
-  assert.match(source, /route-ocean[\s\S]*?map-fab-cluster[\s\S]*?map-jump-btn[\s\S]*?map-locate-btn/);
+  assert.match(source, /route-ocean[\s\S]*?map-fab-cluster[\s\S]*?map-music-btn[\s\S]*?map-jump-btn[\s\S]*?map-locate-btn/);
   assert.match(source, /data-current-level=/);
   assert.match(source, /<h1 id="map-title">\$\{activeWorld\.title\}<\/h1>/);
 });
@@ -2540,6 +3191,23 @@ test('map switch entry opens the world picker', () => {
   assert.match(css, /\.map-switch-btn\s*\{[\s\S]*?width:\s*clamp\(2\.75rem,\s*4vw,\s*3rem\)/);
   assert.match(css, /\.map-switch-btn\s*\{[\s\S]*?min-width:\s*44px/);
   assert.match(css, /\.map-switch-hero/);
+  assert.match(css, /\.map-switch-picker-dialog\s*\{[\s\S]*?width:\s*min\(calc\(100% - 2\.5rem\),\s*41rem\)/);
+  assert.doesNotMatch(css, /\.map-switch-picker-dialog\s*\{[\s\S]*?80rem/);
+  assert.match(css, /\.map-switch-picker-card \.map-world-options\s*\{[\s\S]*?grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(min\(100%,\s*10\.4rem\),\s*1fr\)\)/);
+  assert.match(css, /\.map-switch-picker-card \.map-world-option\s*\{[\s\S]*?flex-direction:\s*column[\s\S]*?min-height:\s*16\.8rem/);
+  assert.match(css, /@media\s*\(min-width:\s*700px\)\s*\{[\s\S]*?\.map-switch-picker-card \.map-world-options\s*\{[\s\S]*?grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/);
+  assert.doesNotMatch(css, /\.map-switch-picker-card \.map-world-group--math \.map-world-options/);
+  assert.match(css, /\.map-world-option--math58/);
+  assert.match(css, /\.map-world-option--math912/);
+  assert.match(css, /\.map-world-option\.is-coming-soon\s*\{[\s\S]*?border-style:\s*dashed[\s\S]*?filter:\s*none/);
+  assert.match(css, /\.map-world-option\.is-coming-soon \.map-world-art,\s*\.map-world-option\.is-coming-soon \.map-world-copy\s*\{[\s\S]*?filter:\s*saturate\(0\.48\)\s*brightness\(0\.95\)/);
+  assert.match(css, /\.map-world-option\.is-coming-soon \.map-world-art::before\s*\{[\s\S]*?repeating-linear-gradient[\s\S]*?linear-gradient/);
+  assert.match(css, /\.map-world-soon-badge\s*\{[\s\S]*?top:\s*50%[\s\S]*?left:\s*50%[\s\S]*?min-width:\s*min\(8\.6rem,\s*calc\(100% - 1rem\)\)[\s\S]*?transform:\s*translate\(-50%,\s*-50%\)\s*rotate\(-4deg\)/);
+  assert.match(css, /\.map-switch-picker-card \.map-world-soon-badge\s*\{[\s\S]*?font-size:\s*0\.86rem/);
+  assert.match(css, /\.map-world-option--math \.map-world-art img\s*\{[\s\S]*?object-position:\s*center 50%/);
+  assert.match(css, /\.map-world-option--math58 \.map-world-art img\s*\{[\s\S]*?object-position:\s*center 48%/);
+  assert.match(css, /\.map-world-option--math912 \.map-world-art img\s*\{[\s\S]*?object-position:\s*center 42%/);
+  assert.doesNotMatch(css, /\.map-switch-picker-card \.map-world-option\s*\{[\s\S]*?grid-template-columns:\s*(?:5\.2rem|8\.4rem)/);
   assert.match(css, /\.map-brand\s*\{[^}]*display:\s*flex/);
 });
 
@@ -2664,21 +3332,48 @@ test('mine page removes local data management, cache, and share entries', () => 
 
 test('mine page exposes manual content update check and app checks hot update on every open', () => {
   const source = read('script.js');
+  const worker = read('sw.js');
 
-  // 我的页手动检查内容资源更新，发版更新另走启动居中弹窗
+  // 内容资源更新是全局入口，发版更新另走启动居中弹窗
+  assert.match(source, /function globalUpdateButtonMarkup\(context = 'map'\)/);
+  assert.match(source, /data-global-update/);
+  assert.match(source, /globalUpdateButtonMarkup\(\)/);
+  assert.match(source, /globalUpdateButtonMarkup\('level'\)/);
   assert.match(source, /data-check-update/);
   assert.match(source, /data-check-update-note/);
+  assert.match(source, /data-check-update-state/);
+  assert.match(source, /data-check-update-status="idle"/);
   assert.match(source, /检查内容更新/);
   assert.match(source, /function checkAppUpdate\(\)/);
+  assert.match(source, /function setCheckUpdateFeedback\(status, message\)/);
+  assert.match(source, /document\.querySelectorAll\('\[data-check-update\]'\)/);
+  assert.doesNotMatch(source, /const button = document\.querySelector\('\[data-check-update\]'\)/);
+  assert.match(source, /buttons\.forEach\(\(button\) =>/);
+  assert.match(source, /button\.disabled = status === 'checking'/);
+  assert.match(source, /button\.setAttribute\('aria-busy', String\(status === 'checking'\)\)/);
   // 每次打开应用主动检查热更新，而不是依赖浏览器 24h 间隔的被动检查
   assert.match(source, /serviceWorkerRegistration = registration;\s*\n\s*\/\/[^\n]*\n\s*registration\.update\(\)/);
   // 手动检查的三种状态反馈
+  assert.match(source, /setCheckUpdateFeedback\('checking', '正在检查更新…'\)/);
   assert.match(source, /正在检查更新…/);
   assert.match(source, /当前已是最新版本/);
   assert.match(source, /发现内容更新，点顶部「立即更新」生效/);
   assert.match(source, /网络不可用，请稍后重试/);
+  assert.match(source, /showToast\('正在检查内容更新'\)/);
+  assert.match(source, /finish\('current', '当前已是最新版本'\)/);
+  assert.match(source, /finish\('retry', err && err\.name === 'InvalidStateError'/);
   // 发现新版本仍走既有 banner + 立即更新流程
   assert.match(source, /showAppUpdateReady/);
+  assert.match(source, /function applyAppUpdate\(\)/);
+  assert.match(source, /waitingWorker\.postMessage\(\{ type: 'SKIP_WAITING' \}\)/);
+  assert.match(source, /navigator\.serviceWorker\.addEventListener\('controllerchange'/);
+  assert.match(worker, /event\.data\?\.type === 'SKIP_WAITING'/);
+  assert.match(worker, /self\.skipWaiting\(\)/);
+  assert.match(read('style.css'), /\.setting-check-status\s*\{/);
+  assert.match(read('style.css'), /\.global-update-btn\s*\{/);
+  assert.match(read('style.css'), /\.level-quiz \.global-update-btn\s*\{/);
+  assert.match(read('style.css'), /\.setting-button\[data-check-update-status="checking"\]\s*\{/);
+  assert.match(read('style.css'), /@keyframes\s+check-update-spin/);
 });
 
 test('mine word bank caps chip list behind an expander instead of unbounded growth', () => {
@@ -2801,7 +3496,7 @@ test('jump dialog sources cover 200 levels with left-right segments', () => {
   assert.match(source, /jumpBtn\?\.addEventListener\('click'/);
   assert.match(source, /locateProgress\('auto'\)/);
   // 跳关不写 unlockedThrough / 通关进度
-  assert.match(source, /仅移动地图，不写通关进度/);
+  assert.match(source, /仅移动地图\/切题，不写通关进度/);
   assert.match(css, /\.jump-dialog/);
   assert.match(css, /\.jump-body/);
   assert.match(css, /\.jump-rail/);
@@ -2815,6 +3510,28 @@ test('jump dialog sources cover 200 levels with left-right segments', () => {
   assert.doesNotMatch(css, /\.jump-segment-btn\.is-active\s*,\s*\n?\s*\.jump-segment-btn\.is-current-seg\s*\{/);
   assert.match(css, /\.map-fab-cluster/);
   assert.match(css, /\.map-jump-btn/);
+  assert.match(css, /\.map-music-btn/);
+  assert.match(css, /\.map-music-btn\.is-muted/);
   // 禁 1fr 珠串布局
   assert.doesNotMatch(css, /\.jump-segments\s*\{[^}]*grid-template-columns:\s*repeat\([^)]*1fr/s);
+});
+
+test('map FAB exposes background-music toggle wired to mapMusic preference', () => {
+  const source = read('script.js');
+  const css = read('style.css');
+
+  assert.match(source, /mapMusicOn:\s*'[^']*map-music-icon/);
+  assert.match(source, /mapMusicOff:\s*'[^']*map-music-icon/);
+  assert.match(source, /data-map-music-toggle/);
+  assert.match(source, /function paintMapMusicToggle/);
+  assert.match(source, /if \(key === 'mapMusic'\) paintMapMusicToggle\(\)/);
+  assert.match(source, /setPreference\('mapMusic',\s*state\.preferences\.mapMusic === false\)/);
+  assert.match(source, /aria-label="\$\{state\.preferences\.mapMusic === false \? '打开背景音' : '关闭背景音'\}"/);
+  assert.match(source, /shouldPlayMapAudio\(route = routeFromHash\(\)\)[\s\S]*?return route\.type === 'map' && state\.preferences\.mapMusic/);
+  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn,[\s\S]*?\.map-music-btn\s*\{[\s\S]*?min-width:\s*44px[\s\S]*?min-height:\s*44px/);
+  assert.match(css, /\.map-music-btn\.is-muted\s*\{/);
+  assert.match(css, /\.map-music-btn\.is-muted\s*\{[\s\S]*?(?:#d4533f|#c23a28)/);
+  assert.match(css, /\.map-music-btn\.is-muted::after\s*\{[\s\S]*?content:\s*["']静音["']/);
+  assert.match(css, /@keyframes\s+map-music-muted-nudge/);
+  assert.match(css, /\.map-music-btn svg path\s*\{[\s\S]*?stroke:\s*currentColor/);
 });

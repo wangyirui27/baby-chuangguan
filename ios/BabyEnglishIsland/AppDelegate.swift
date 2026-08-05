@@ -14,4 +14,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     window.makeKeyAndVisible()
     return true
   }
+
+  func application(
+    _ application: UIApplication,
+    handleEventsForBackgroundURLSession identifier: String,
+    completionHandler: @escaping () -> Void
+  ) {
+    AssetPackDownloadManager.backgroundCompletionHandler = completionHandler
+  }
 }

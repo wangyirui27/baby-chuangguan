@@ -149,7 +149,7 @@
       );
       runOnlyForDeploymentPostprocessing = 0;
       shellPath = /bin/sh;
-      shellScript = "set -eu\nAPP_DIR=\"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/www\"\nROOT=\"$SRCROOT/..\"\nrm -rf \"$APP_DIR\"\nmkdir -p \"$APP_DIR\"\ncp \"$ROOT/index.html\" \"$ROOT/script.js\" \"$ROOT/style.css\" \"$ROOT/sw.js\" \"$ROOT/manifest.webmanifest\" \"$ROOT/app-release.json\" \"$APP_DIR/\"\nrsync -a --delete \"$ROOT/assets\" \"$APP_DIR/\"\n";
+      shellScript = "set -eu\nAPP_DIR=\"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/www\"\nROOT=\"$SRCROOT/..\"\n/bin/bash \"$ROOT/tools/pack-app-www.sh\" \"$APP_DIR\"\n";
     };
 /* End PBXShellScriptBuildPhase section */
 

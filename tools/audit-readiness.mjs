@@ -70,10 +70,14 @@ function nativeShellReady() {
   const appDelegateFile = 'ios/BabyEnglishIsland/AppDelegate.swift';
   const viewControllerFile = 'ios/BabyEnglishIsland/ViewController.swift';
   const infoFile = 'ios/BabyEnglishIsland/Info.plist';
-  if (![projectFile, appDelegateFile, viewControllerFile, infoFile].every(fileExists)) return false;
+  const packScriptFile = 'tools/pack-app-www.sh';
+  const assetPackManifestFile = 'asset-packs.json';
+  if (![projectFile, appDelegateFile, viewControllerFile, infoFile, packScriptFile, assetPackManifestFile].every(fileExists)) return false;
 
   const project = readFileSync(join(ROOT, projectFile), 'utf8');
   const viewController = readFileSync(join(ROOT, viewControllerFile), 'utf8');
+  const appDelegate = readFileSync(join(ROOT, appDelegateFile), 'utf8');
+  const packScript = readFileSync(join(ROOT, packScriptFile), 'utf8');
   return [
     'WKWebView',
     'StoreKit',
@@ -83,10 +87,17 @@ function nativeShellReady() {
     'BabyIslandIAPComplete',
     'UIApplication.shared.open',
     'baby_island_map_vip_001',
+    'babyIslandAssetPack',
+    'URLSessionConfiguration.background',
+    'downloadTask(withResumeData:',
+    'window.babyIslandAssetPackEvent',
   ].every((needle) => viewController.includes(needle))
+    && appDelegate.includes('handleEventsForBackgroundURLSession')
+    && appDelegate.includes('AssetPackDownloadManager.backgroundCompletionHandler')
     && project.includes('Copy H5 app')
-    && project.includes('rsync -a --delete')
-    && project.includes('assets');
+    && project.includes('tools/pack-app-www.sh')
+    && packScript.includes('assets/video/free-levels/level-0[1-9]-*.mp4')
+    && packScript.includes('non-seed course video found in bundle');
 }
 
 const nativeReady = nativeShellReady();

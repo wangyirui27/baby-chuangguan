@@ -15,6 +15,16 @@ const PROFILE = {
   auto_pronunciation: 0,
   show_chinese_hints: 1,
   map_world: 'desert',
+  math_attempts: JSON.stringify([
+    {
+      attemptId: 'load-math-1',
+      levelId: 3,
+      targetCount: 3,
+      selectedCount: 3,
+      isCorrect: true,
+      ts: '2026-08-04T10:00:00.000Z',
+    },
+  ]),
 };
 
 function makeClient(responses, calls) {
@@ -75,9 +85,13 @@ test('loadState maps MySQL rows to the existing learning state contract', async 
   assert.deepEqual(state.progressByWorld.desert, { completed: [1, 2], unlockedThrough: 3 });
   assert.deepEqual(state.learningActivity.dates, ['2026-07-20']);
   assert.equal(state.mistakeBook.items[0].updatedAt, '2026-07-20T08:00:00.000Z');
+  assert.equal(state.mathAttempts.length, 1);
+  assert.equal(state.mathAttempts[0].attemptId, 'load-math-1');
+  assert.equal(state.mathAttempts[0].levelId, 3);
+  assert.equal(state.mathAttempts[0].isCorrect, true);
 });
 
-test('saveState writes only existing learning fields inside a transaction', async () => {
+test('saveState writes learning fields and math attempts inside a transaction', async () => {
   const pool = makePool(
     [
       [[PROFILE]],
@@ -89,6 +103,10 @@ test('saveState writes only existing learning fields inside a transaction', asyn
       [[PROFILE]],
       [{ affectedRows: 1 }],
       [[PROFILE]],
+      [{ affectedRows: 1 }],
+      [{ affectedRows: 1 }],
+      [{ affectedRows: 1 }],
+      [{ affectedRows: 1 }],
       [{ affectedRows: 1 }],
       [{ affectedRows: 1 }],
       [{ affectedRows: 1 }],
@@ -112,11 +130,19 @@ test('saveState writes only existing learning fields inside a transaction', asyn
     },
     learningActivity: { dates: ['2026-07-21'] },
     mistakeBook: { items: [] },
+    mathAttempts: [{ attemptId: 'mysql-math', levelId: 2, targetCount: 2, selectedCount: 1, isCorrect: false }],
   });
 
   assert.deepEqual(saved.progressByWorld.desert, { completed: [1, 3], unlockedThrough: 4 });
   assert.deepEqual(pool.calls.filter((call) => call.tx).map((call) => call.tx), ['begin', 'commit', 'release']);
   assert.ok(pool.calls.some((call) => /INSERT INTO baby_profiles/.test(call.sql)));
+  assert.ok(pool.calls.some((call) => /UPDATE baby_profiles SET math_attempts/.test(call.sql)));
+  const mathWrite = pool.calls.find((call) => /UPDATE baby_profiles SET math_attempts/.test(call.sql || ''));
+  assert.ok(mathWrite);
+  const payload = JSON.parse(mathWrite.params[0]);
+  assert.equal(payload[0].attemptId, 'mysql-math');
+  assert.equal(payload[0].levelId, 2);
+  assert.equal(payload[0].isCorrect, false);
   assert.ok(pool.calls.some((call) => /INSERT INTO baby_world_progress/.test(call.sql)));
   assert.ok(pool.calls.some((call) => /INSERT INTO baby_learning_activity/.test(call.sql)));
   assert.ok(pool.calls.some((call) => /SELECT world_id, level_id FROM baby_mistakes/.test(call.sql)));

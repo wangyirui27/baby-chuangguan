@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "app": {
+    "minVersion": "1.0.0",
+    "bundledThroughLevel": 10,
+    "bridge": "babyIslandAssetPack"
+  },
+  "maps": [
+    {
+      "mapId": "ocean",
+      "title": "Magic Ocean",
+      "status": "active",
+      "bundledThroughLevel": 10,
+      "packId": "ocean-levels-011-200",
+      "packVersion": "20260803.1",
+      "downloadUrl": "",
+      "levelVideoUrlTemplate": "",
+      "levels": [],
+      "totalBytes": 0,
+      "sha256": "",
+      "notes": "Fill downloadUrl for full prefetch, or levelVideoUrlTemplate / levels for per-level video download after CDN publish."
+    },
+    {
+      "mapId": "desert",
+      "title": "Desert Wonders",
+      "status": "active",
+      "bundledThroughLevel": 10,
+      "packId": "desert-levels-011-200",
+      "packVersion": "20260803.1",
+      "downloadUrl": "",
+      "levelVideoUrlTemplate": "",
+      "levels": [],
+      "totalBytes": 0,
+      "sha256": "",
+      "notes": "The app shell can show and control this pack; publish the CDN pack and per-level video URLs before enabling download."
+    },
+    {
+      "mapId": "castle",
+      "title": "Magic Castle",
+      "status": "coming-soon",
+      "bundledThroughLevel": 0,
+      "packId": "",
+      "packVersion": "",
+      "downloadUrl": "",
+      "levelVideoUrlTemplate": "",
+      "levels": [],
+      "totalBytes": 0,
+      "sha256": "",
+      "notes": "Coming soon."
+    }
+  ]
+}

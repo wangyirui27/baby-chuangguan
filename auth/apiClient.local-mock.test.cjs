@@ -131,6 +131,7 @@ test('learning API methods use relative /api/learning paths', async () => {
   await babyIslandApi.saveLearningPreferences({ mapWorld: 'ocean' });
   await babyIslandApi.recordQuizAttempt({ worldId: 'ocean', levelId: 1 });
   await babyIslandApi.sendSupportFeedback({ message: '这个按钮点了没有反应' });
+  await babyIslandApi.generateMathCoachPlan({ levelId: 2, targetCount: 2, isCorrect: false });
 
   assert.deepEqual(calls.map((call) => `${call.options.method} ${call.url}`), [
     'GET /api/learning/state',
@@ -138,5 +139,25 @@ test('learning API methods use relative /api/learning paths', async () => {
     'PATCH /api/learning/preferences',
     'POST /api/learning/quiz-attempts',
     'POST /api/learning/support-feedback',
+    'POST /api/learning/math-coach',
   ]);
+});
+
+test('local mock fallback: math coach returns a safe local-template plan', async () => {
+  const { babyIslandApi } = loadApiClient();
+  const plan = await babyIslandApi.generateMathCoachPlan({
+    levelId: 4,
+    targetCount: 4,
+    isCorrect: false,
+    attempts: [
+      { levelId: 4, targetCount: 4, selectedCount: 3, isCorrect: false },
+      { levelId: 4, targetCount: 4, selectedCount: 5, isCorrect: false },
+    ],
+  });
+
+  assert.equal(plan.provider, 'local-template');
+  assert.equal(plan.variantMode, 'easier');
+  assert.equal(plan.feedbackText, '换成两盘，再找4个。');
+  assert.equal(plan.recommendation.levelId, 4);
+  assert.equal(plan.recommendation.reason, 'repeat-current');
 });

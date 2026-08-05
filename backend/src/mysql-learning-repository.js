@@ -18,6 +18,7 @@ const PROFILE_COLUMNS = [
   'auto_pronunciation',
   'show_chinese_hints',
   'map_world',
+  'math_attempts',
 ];
 
 function mysqlConfigError(message, code = 'MYSQL_NOT_CONFIGURED') {
@@ -203,6 +204,10 @@ class MysqlLearningRepository {
     const safeSnapshot = normalizeLearningSnapshot(snapshot);
     await this.withTransaction(async (connection) => {
       const profile = await this.ensureProfile(user, safeSnapshot.profile, connection);
+      await connection.execute(
+        'UPDATE baby_profiles SET math_attempts = ? WHERE id = ?',
+        [JSON.stringify(safeSnapshot.mathAttempts), profile.id],
+      );
 
       for (const worldId of WORLD_IDS) {
         const progress = safeSnapshot.progressByWorld[worldId];
