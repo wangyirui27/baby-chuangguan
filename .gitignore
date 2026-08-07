@@ -8,8 +8,13 @@ node_modules/
 !.env.example
 
 # ─── Runtime data (generated JSON) ──────────────────
+# Local user/session fixtures (never commit real user PII dumps)
 data/*.json
 !data/.gitkeep
+# Course catalog + workbench map are product artifacts (allowlist)
+!data/content-catalog.json
+!data/workbench-level-video-map.json
+!data/README.md
 
 # ─── Build output ─────────────────────────────────
 dist/
@@ -121,6 +126,10 @@ DerivedData/
 **/*.before-*
 **/*-before-*
 assets/video/free-levels/*.before*
+assets/video/free-levels/*.bak
+assets/video/free-levels/*.before-workbench*
+assets/video/desert-levels/*.before*
+assets/video/desert-levels/*.bak
 assets/video/free-levels-libtv-downloads/
 assets/video/free-levels-libtv-preview/
 assets/video/paid-levels/

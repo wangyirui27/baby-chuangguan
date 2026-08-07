@@ -111,6 +111,7 @@ class MysqlLearningRepository {
   constructor(options = {}) {
     this.pool = options.pool || null;
     this.poolOptions = options;
+    this._schemaReady = false;
   }
 
   getPool() {
@@ -118,7 +119,37 @@ class MysqlLearningRepository {
     return this.pool;
   }
 
+  /** 对齐生产 RDS：缺 math_attempts 时自动补列（幂等） */
+  async ensureSchema(client = this.getPool()) {
+    if (this._schemaReady) return;
+    // 注入 mock pool 的单测不跑 information_schema（避免消耗 mock 响应队列）
+    if (this.poolOptions.skipEnsureSchema || this.poolOptions.pool) {
+      this._schemaReady = true;
+      return;
+    }
+    try {
+      const rows = await executeRows(
+        client,
+        `SELECT COUNT(*) AS c FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = 'baby_profiles'
+           AND COLUMN_NAME = 'math_attempts'`,
+      );
+      if (!rows[0] || Number(rows[0].c) === 0) {
+        await client.execute('ALTER TABLE baby_profiles ADD COLUMN math_attempts JSON NULL');
+      }
+      this._schemaReady = true;
+    } catch (err) {
+      // 无权限改表时继续；后续 SQL 会报更明确错误
+      this._schemaReady = true;
+      if (err && err.code !== 'ER_DUP_FIELDNAME') {
+        console.warn('[learning/mysql] ensureSchema soft-fail:', err.message || err);
+      }
+    }
+  }
+
   async ensureProfile(user, profilePatch = null, client = this.getPool()) {
+    await this.ensureSchema(client);
     const localUserId = user.id;
     const patch = toProfilePatch(profilePatch);
     const existingRows = await executeRows(

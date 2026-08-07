@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "node --test quiz.test.js ambient-sfx.test.js voice-samples-v2.test.js generate-word-audio-v2.test.js native-shell.test.js auth/apiClient.local-mock.test.cjs backend/src/*.test.js apps/backend/test/*.test.js apps/frontend/tests/api-client.test.cjs",
+    "test": "NODE_ENV=test node --test quiz.test.js ambient-sfx.test.js voice-samples-v2.test.js generate-word-audio-v2.test.js native-shell.test.js auth/apiClient.local-mock.test.cjs backend/src/*.test.js apps/backend/test/*.test.js apps/frontend/tests/api-client.test.cjs",
     "start": "cd backend && npm start",
     "e2e": "node tools/e2e-auth-flow.mjs",
     "e2e:math": "node tools/e2e-math-ai-smoke.mjs",
@@ -15,7 +15,6 @@
     "generate:math-story-theme-audio": "node backend/src/generate-math-story-theme-audio.js",
     "import:math-story-videos": "node backend/src/import-math-story-videos.js",
     "validate:contracts": "node tools/contracts/validate.mjs",
-
     "frontend:dev:mock": "cd apps/frontend && npm run dev:mock",
     "frontend:dev:real": "cd apps/frontend && npm run dev:real",
     "frontend:mock:server": "cd apps/frontend && npm run mock:server",

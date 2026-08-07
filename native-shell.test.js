@@ -101,11 +101,13 @@ test('native pack script keeps only seed videos and runtime map assets', () => {
   assert.match(packScript, /asset-packs\.json/);
   assert.match(packScript, /assets\/video\/free-levels\/level-0\[1-9\]-\*\.mp4/);
   assert.match(packScript, /assets\/video\/free-levels\/level-10-\*\.mp4/);
+  assert.match(packScript, /assets\/video\/desert-levels\/level-00\[1-9\]-\*\.mp4/);
+  assert.match(packScript, /assets\/video\/desert-levels\/level-010-\*\.mp4/);
   assert.match(packScript, /non-seed course video found in bundle/);
   assert.match(packScript, /raw-v2/);
   assert.match(packScript, /candidates/);
   assert.match(packScript, /front-ocean-v1-video/);
-  assert.match(packScript, /basics\(non-video\)\+shell loops\+seed L01-10 in/);
+  assert.match(packScript, /ocean L01-10\+desert L001-010 in/);
   assert.match(packScript, /_dreamina\*/);
   assert.match(packScript, /runtime asset gate OK/);
 });

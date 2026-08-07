@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
-    "test": "node --test src/*.test.js",
+    "test": "NODE_ENV=test node --test src/*.test.js",
     "generate-tts": "node src/generate-tts.js",
     "generate-voice-samples": "node src/generate-voice-samples.js",
     "generate-voice-samples-v2": "node src/generate-voice-samples-v2.js",
@@ -20,6 +20,7 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^16.6.1",
-    "express": "^4.21.0"
+    "express": "^4.21.0",
+    "mysql2": "^3.23.2"
   }
 }

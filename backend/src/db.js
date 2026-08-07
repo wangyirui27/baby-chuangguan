@@ -16,6 +16,127 @@ const USERS_FILE = () => path.join(DATA_DIR, 'users.json');
 const SESSIONS_FILE = () => path.join(DATA_DIR, 'sessions.json');
 const VERIFICATIONS_FILE = () => path.join(DATA_DIR, 'verifications.json');
 
+/** @returns {'json'|'mysql'} */
+function resolveAuthRepository() {
+  // 单测必须隔离到本地 JSON，避免读到 backend/.env 的 mysql 配置拖垮 npm test
+  if (process.env.NODE_ENV === 'test' || process.env.AUTH_FORCE_JSON === '1') {
+    return 'json';
+  }
+  const raw = String(
+    process.env.AUTH_REPOSITORY
+      || process.env.AUTH_BACKEND
+      || '',
+  ).trim().toLowerCase();
+  // 仅显式 AUTH_* 切 mysql；不要因 LEARNING_BACKEND=mysql 隐式改鉴权
+  if (raw === 'mysql' || raw === 'rds') {
+    if (!process.env.MYSQL_HOST) return 'json';
+    return 'mysql';
+  }
+  return 'json';
+}
+
+let _mysqlPool = null;
+function getMysqlPool() {
+  if (_mysqlPool) return _mysqlPool;
+  // lazy require so unit tests without mysql2 still load db.js
+  // eslint-disable-next-line global-require
+  const mysql = require('mysql2/promise');
+  _mysqlPool = mysql.createPool({
+    host: process.env.MYSQL_HOST || '127.0.0.1',
+    port: Number(process.env.MYSQL_PORT || 3306),
+    user: process.env.MYSQL_USER || 'root',
+    password: process.env.MYSQL_PASSWORD || '',
+    database: process.env.MYSQL_DATABASE || 'baby_island',
+    waitForConnections: true,
+    connectionLimit: Number(process.env.MYSQL_CONNECTION_LIMIT || 5),
+    timezone: 'Z',
+  });
+  return _mysqlPool;
+}
+
+async function loadAllFromMysql() {
+  const pool = getMysqlPool();
+  const [userRows] = await pool.query(
+    'SELECT id, normalized_phone, created_at, last_login_at FROM baby_auth_users',
+  );
+  const [sessionRows] = await pool.query(
+    'SELECT token_hash, user_id, created_at, expires_at, revoked FROM baby_auth_sessions',
+  );
+  const [verRows] = await pool.query(
+    'SELECT id, phone_hash, code_hash, expires_at, attempts, used, created_at FROM baby_auth_verifications',
+  );
+  users.clear();
+  sessions.clear();
+  verifications.clear();
+  for (const row of userRows) {
+    users.set(row.id, {
+      id: row.id,
+      normalizedPhone: row.normalized_phone,
+      createdAt: row.created_at,
+      lastLoginAt: row.last_login_at,
+    });
+  }
+  for (const row of sessionRows) {
+    sessions.set(row.token_hash, {
+      id: row.token_hash,
+      tokenHash: row.token_hash,
+      userId: row.user_id,
+      createdAt: row.created_at,
+      expiresAt: row.expires_at,
+      revoked: Boolean(row.revoked),
+    });
+  }
+  for (const row of verRows) {
+    verifications.set(row.id, {
+      id: row.id,
+      phoneHash: row.phone_hash,
+      codeHash: row.code_hash,
+      expiresAt: row.expires_at,
+      attempts: Number(row.attempts) || 0,
+      used: Boolean(row.used),
+      createdAt: row.created_at,
+    });
+  }
+}
+
+async function saveAllToMysql() {
+  const pool = getMysqlPool();
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    await conn.query('DELETE FROM baby_auth_verifications');
+    await conn.query('DELETE FROM baby_auth_sessions');
+    await conn.query('DELETE FROM baby_auth_users');
+    for (const u of users.values()) {
+      await conn.execute(
+        `INSERT INTO baby_auth_users (id, normalized_phone, created_at, last_login_at)
+         VALUES (?, ?, ?, ?)`,
+        [u.id, u.normalizedPhone, u.createdAt, u.lastLoginAt],
+      );
+    }
+    for (const s of sessions.values()) {
+      await conn.execute(
+        `INSERT INTO baby_auth_sessions (token_hash, user_id, created_at, expires_at, revoked)
+         VALUES (?, ?, ?, ?, ?)`,
+        [s.tokenHash, s.userId, s.createdAt, s.expiresAt, s.revoked ? 1 : 0],
+      );
+    }
+    for (const v of verifications.values()) {
+      await conn.execute(
+        `INSERT INTO baby_auth_verifications (id, phone_hash, code_hash, expires_at, attempts, used, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [v.id, v.phoneHash, v.codeHash, v.expiresAt, v.attempts || 0, v.used ? 1 : 0, v.createdAt],
+      );
+    }
+    await conn.commit();
+  } catch (err) {
+    try { await conn.rollback(); } catch (_) {}
+    throw err;
+  } finally {
+    conn.release();
+  }
+}
+
 /**
  * 设置数据目录（用于测试隔离）
  * @param {string} dir
@@ -195,12 +316,51 @@ function loadAll() {
 }
 
 /**
- * 保存所有数据到磁盘（幂等）
+ * 异步加载：mysql 模式从 RDS 灌进内存 Map；json 模式同 loadAll。
+ * @returns {Promise<'json'|'mysql'>}
+ */
+async function loadAllAsync() {
+  ensureDataDir();
+  if (resolveAuthRepository() === 'mysql') {
+    await loadAllFromMysql();
+    // 本地 JSON 镜像一份，便于排障与回退
+    try {
+      saveMap(USERS_FILE(), users);
+      saveMap(SESSIONS_FILE(), sessions);
+      saveMap(VERIFICATIONS_FILE(), verifications);
+    } catch (_) {}
+    return 'mysql';
+  }
+  loadAll();
+  return 'json';
+}
+
+/**
+ * 保存所有数据到磁盘（幂等）；mysql 模式同时刷 RDS。
  */
 function saveAll() {
   saveMap(USERS_FILE(), users);
   saveMap(SESSIONS_FILE(), sessions);
   saveMap(VERIFICATIONS_FILE(), verifications);
+  if (resolveAuthRepository() === 'mysql') {
+    // fire-and-forget；失败打日志，不阻断请求路径
+    saveAllToMysql().catch((err) => {
+      console.error('[DB] MySQL auth save failed:', err && err.message ? err.message : err);
+    });
+  }
+}
+
+/**
+ * 测试/关服：等待 mysql 刷盘完成
+ * @returns {Promise<void>}
+ */
+async function flushAsync() {
+  saveMap(USERS_FILE(), users);
+  saveMap(SESSIONS_FILE(), sessions);
+  saveMap(VERIFICATIONS_FILE(), verifications);
+  if (resolveAuthRepository() === 'mysql') {
+    await saveAllToMysql();
+  }
 }
 
 /**
@@ -229,11 +389,14 @@ module.exports = {
 
   // 持久化
   loadAll,
+  loadAllAsync,
   saveAll,
+  flushAsync,
   clearAll,
   scheduleSave,
   setDataDir,
   getDataDir,
+  resolveAuthRepository,
 
   // 常量
   DATA_DIR: getDataDir,

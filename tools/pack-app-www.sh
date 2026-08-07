@@ -97,9 +97,13 @@ copy_file "assets/egypt-map/cutouts/characters/libtv/camel-idle-expressive-v6.we
 copy_file "assets/egypt-map/cutouts/characters/libtv/camel-walk-alpha-v2.mov"
 copy_file "assets/egypt-map/cutouts/characters/libtv/camel-walk-alpha-v2.webm"
 
-# 课程种子视频 L01–L10 only（其余课程 mp4 不进包）
+# 课程种子视频 only（其余课程 mp4 不进包；L11+ 走 asset-packs OSS）
+# 海岛 ocean free L01–L10
 copy_glob "assets/video/free-levels/level-0[1-9]-*.mp4"
 copy_glob "assets/video/free-levels/level-10-*.mp4"
+# 沙漠 desert free L001–L010（包内定稿，与 script.js DESERT_FREE_LEVEL_VIDEOS 对齐）
+copy_glob "assets/video/desert-levels/level-00[1-9]-*.mp4"
+copy_glob "assets/video/desert-levels/level-010-*.mp4"
 
 # brand pack guard
 if [[ -d "$ROOT/assets/brand" ]]; then
@@ -126,16 +130,25 @@ if [[ -d "$ROOT/auth" ]]; then
   rsync -a --delete "$ROOT/auth/" "$OUT/auth/" --exclude 'node_modules' --exclude '*.test.*' || true
 fi
 
-# seed course videos present
+# seed course videos present (ocean + desert free 10)
 for level in 01 02 03 04 05 06 07 08 09 10; do
   if ! find "$OUT/assets/video/free-levels" -maxdepth 1 -type f -name "level-${level}-*.mp4" 2>/dev/null | grep -q .; then
-    echo "[pack-app-www] FAIL: seed video level-${level} missing in bundle" >&2
+    echo "[pack-app-www] FAIL: ocean seed video level-${level} missing in bundle" >&2
+    exit 8
+  fi
+done
+for level in 001 002 003 004 005 006 007 008 009 010; do
+  if ! find "$OUT/assets/video/desert-levels" -maxdepth 1 -type f -name "level-${level}-*.mp4" 2>/dev/null | grep -q .; then
+    echo "[pack-app-www] FAIL: desert seed video level-${level} missing in bundle" >&2
     exit 8
   fi
 done
 
-# fail if non-seed course video leaked
-if find "$OUT/assets/video" -type f 2>/dev/null | grep -Ev '/free-levels/level-(0[1-9]|10)-[^/]+\.mp4$' | head -1 | grep -q .; then
+# fail if non-seed course video leaked (only free ocean L01-10 + desert L001-010 allowed)
+if find "$OUT/assets/video" -type f 2>/dev/null \
+  | grep -Ev '/free-levels/level-(0[1-9]|10)-[^/]+\.mp4$' \
+  | grep -Ev '/desert-levels/level-(00[1-9]|010)-[^/]+\.mp4$' \
+  | head -1 | grep -q .; then
   echo "[pack-app-www] FAIL: non-seed course video found in bundle" >&2
   exit 3
 fi
@@ -185,27 +198,27 @@ for m in re.finditer(r"url\(([^)]+)\)", blob):
     if u.startswith("assets/"):
         refs.add(u.split("?")[0])
 
-# Course teaching videos under free-levels/paid are allowed missing beyond seeds;
+# Course teaching videos under free/desert/paid are allowed missing beyond seeds;
 # only check non-course-video runtime basics (+ shell loops already copied).
 def is_course_teaching_video(rel: str) -> bool:
     if not rel.startswith("assets/video/"):
         return False
-    # seed free-levels are required and checked separately
-    if "/free-levels/level-" in rel:
-        return True
-    if "/paid-levels/" in rel:
-        return True
     return True
+
+def seed_required(rel: str) -> bool:
+    """Ocean free L1-10 and desert free L1-10 must ship in the bundle."""
+    m = re.search(r"/free-levels/level-(\d+)-", rel)
+    if m:
+        return int(m.group(1)) <= 10
+    m = re.search(r"/desert-levels/level-(\d+)-", rel)
+    if m:
+        return int(m.group(1)) <= 10
+    return False
 
 missing = []
 for rel in sorted(refs):
     if is_course_teaching_video(rel):
-        # only require L01-10 if referenced
-        if "/free-levels/level-" in rel:
-            m = re.search(r"level-(\d+)-", rel)
-            if m and int(m.group(1)) > 10:
-                continue
-        else:
+        if not seed_required(rel):
             continue
     src = root / rel
     dst = out / rel
@@ -234,4 +247,4 @@ PY
 
 echo "[pack-app-www] OK -> $OUT"
 du -sh "$OUT" "$OUT/assets" 2>/dev/null || true
-echo "[pack-app-www] basics(non-video)+shell loops+seed L01-10 in; drafts/raw/course-library out"
+echo "[pack-app-www] basics(non-video)+shell loops+ocean L01-10+desert L001-010 in; L11+ OSS/asset-packs; drafts/raw out"

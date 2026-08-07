@@ -73,7 +73,7 @@ test('first ten free starter levels stay fixed for conversion', () => {
     assert.equal(level.topic, 'Free Starter · 免费体验');
     assert.equal(level.options[level.correct], correctWord);
     assert.deepEqual(level.options, options);
-    assert.equal(level.videoSrc, `assets/video/free-levels/level-${String(index + 1).padStart(2, '0')}-${correctWord}.mp4?v=20260720-map-switch-cards-v13`);
+    assert.equal(level.videoSrc, `assets/video/free-levels/level-${String(index + 1).padStart(2, '0')}-${correctWord}.mp4?v=20260807-workbench-island-final`);
     assert.equal(questionPromptText(level), `小朋友，视频里学到的单词，哪一个是${zhTitle}的意思？`);
   });
 });
@@ -601,7 +601,7 @@ test('H5 app shell registers a minimal offline cache', () => {
     if (!clean) continue;
     assert.ok(fs.existsSync(path.join(__dirname, clean)), `service worker cached file must exist: ${match[1]}`);
   }
-  assert.match(worker, /auth\/apiClient\.js\?v=20260801-desert-decor-v13c/);
+  assert.match(worker, /auth\/apiClient\.js\?v=20260807-backend-fix-v1/);
   assert.doesNotMatch(worker, /sms-login|babyIslandApi/);
   assert.doesNotMatch(worker, /assets\/audio\/sfx\/(?:correct|wrong)\.mp3/);
 });
@@ -922,7 +922,7 @@ test('native VIP payment success callback activates and persists VIP state', () 
   });
 
   const source = read('script.js');
-  assert.match(source, /function completeVipPurchase\(\)/);
+  assert.match(source, /function completeVipPurchase\(/);
   assert.match(source, /state\.preferences = activateVipPreferences\(state\.preferences\)/);
   assert.match(source, /localStorage\.setItem\(APP_PREFERENCES_KEY, JSON\.stringify\(state\.preferences\)\)/);
   assert.match(source, /closePaywallDialog\(\)/);
@@ -982,7 +982,7 @@ test('map course exposes two hundred preschool English levels', () => {
     question: 'Which word means 奶奶?',
     options: ['grandma', 'mom', 'grandpa', 'dad'],
     correct: 0,
-    videoSrc: 'assets/video/free-levels/level-03-grandma.mp4?v=20260720-map-switch-cards-v13',
+    videoSrc: 'assets/video/free-levels/level-03-grandma.mp4?v=20260807-workbench-island-final',
     videoMeta: {
       source: 'libtv',
       taskId: '20260718163203980876515',
@@ -1550,7 +1550,17 @@ test('asset pack status model drives iPad map download UI', () => {
   assert.equal(manifest.app.bridge, 'babyIslandAssetPack');
   assert.equal(manifest.app.bundledThroughLevel, 10);
   assert.equal(manifest.maps[0].levelVideoUrlTemplate, '');
-  assert.deepEqual(manifest.maps[0].levels, []);
+  // workbench 定稿 1:1 后，L11–200 用 levels[] 精确下载 URL（含 multi 定稿文件名）
+  assert.equal(manifest.maps[0].mapId, 'ocean');
+  assert.equal(manifest.maps[0].levels.length, 190);
+  assert.equal(manifest.maps[0].levels[0].levelId, 11);
+  assert.equal(manifest.maps[0].levels[189].levelId, 200);
+  assert.match(String(manifest.maps[0].levels[0].downloadUrl || ''), /level-011-apple\.mp4$/);
+  const desertMap = manifest.maps.find((m) => m.mapId === 'desert');
+  assert.ok(desertMap);
+  assert.equal(desertMap.levels.length, 190);
+  const desert107 = desertMap.levelMedia.find((x) => x.levelId === 107);
+  assert.ok(String(desert107?.ossKey || '').includes('five-pencils_2'), desert107?.ossKey);
   assert.equal(notInstalledPlayable.text, '已可玩 10/200 关');
   assert.equal(downloadingPlayable.text, '已可玩 10/200 关');
   assert.equal(downloadingPlayableWithReadyLevel.text, '已可玩 11/200 关');
@@ -2855,15 +2865,15 @@ test('first ten free levels use local 15s videos and Natasha word MP3s', () => {
     const videoPath = path.join(__dirname, 'assets', 'video', 'free-levels', videoName);
     const wordPath = path.join(__dirname, 'assets', 'audio', 'words', `${word}.mp3`);
     assert.ok(fs.existsSync(videoPath), `${videoName} must exist`);
-    assert.ok(fs.statSync(videoPath).size > 6_000_000, `${videoName} must be the LibTV scene video, not the old card placeholder`);
+    assert.ok(fs.statSync(videoPath).size > 2_000_000, `${videoName} must be a real workbench-final scene video, not a tiny placeholder`);
     assert.ok(fs.existsSync(wordPath), `${word}.mp3 must exist`);
     assert.ok(fs.statSync(wordPath).size > 1_000, `${word}.mp3 must have audio data`);
     assert.ok(source.includes(`videoSrc: \`assets/video/free-levels/${videoName}?v=\${FREE_LEVEL_VIDEO_VERSION}\``));
-    assert.ok(worker.includes(`assets/video/free-levels/${videoName}?v=20260720-map-switch-cards-v13`));
+    assert.ok(worker.includes(`assets/video/free-levels/${videoName}?v=20260807-workbench-island-final`));
     assert.ok(worker.includes(`assets/audio/words/${word}.mp3`), `${word}.mp3 must be available offline for quiz option playback`);
   });
 
-  assert.match(source, /FREE_LEVEL_VIDEO_VERSION = '20260720-map-switch-cards-v13'/);
+  assert.match(source, /FREE_LEVEL_VIDEO_VERSION = '20260807-workbench-island-final'/);
   assert.doesNotMatch(source, /interactive-examples\.mdn\.mozilla\.net|flower\.mp4|flowerVideoUrl/);
   assert.match(source, /src="\$\{escapeHtml\(videoSource\)\}"/);
   assert.match(source, /data-video-source="\$\{escapeHtml\(level\.videoMeta\?\.source \|\| 'local'\)\}"/);
@@ -3503,11 +3513,11 @@ test('front-end forced login gate + account runtime for learning sync', () => {
   assert.match(source, /hydrateLearningStateFromBackend/);
   assert.match(source, /function openPaywallDialog/);
   assert.match(source, /paywall-dialog/);
-  assert.match(html, /auth\/apiClient\.js\?v=20260801-desert-decor-v13c/);
+  assert.match(html, /auth\/apiClient\.js\?v=20260807-backend-fix-v1/);
   assert.doesNotMatch(html, /data-access-dialog/);
   assert.match(css, /\.login-dialog/);
   assert.doesNotMatch(css, /sms-login|data-kind="login"|logout-button|setting-row-logout|profile-login-button|access-hero\.login/);
-  assert.match(worker, /auth\/apiClient\.js\?v=20260801-desert-decor-v13c/);
+  assert.match(worker, /auth\/apiClient\.js\?v=20260807-backend-fix-v1/);
   assert.doesNotMatch(worker, /babyIslandApi|sms-login/);
 });
 
@@ -4221,3 +4231,49 @@ test('math story jump dialog uses distinct story chips and window player', () =>
   assert.match(css, /--math-story-vid-max-h/);
   assert.match(css, /object-fit:\s*cover/);
 });
+
+test('workbench selected videoPath maps 1:1 to desert+ocean levels', () => {
+  const mapPath = path.join(__dirname, 'data', 'workbench-level-video-map.json');
+  const catPath = path.join(__dirname, 'data', 'content-catalog.json');
+  assert.ok(fs.existsSync(mapPath), 'workbench-level-video-map.json must exist');
+  const map = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
+  const cat = JSON.parse(fs.readFileSync(catPath, 'utf8'));
+  assert.match(String(map.rule || ''), /当前选中|videoPath|定稿/);
+  for (const mapId of ['desert', 'ocean']) {
+    const block = map.maps[mapId];
+    assert.equal(block.levelCount, 200, `${mapId} must have 200 levels`);
+    assert.deepEqual(block.missingLevels, [], `${mapId} must not miss levels`);
+    const seen = new Set();
+    for (const row of block.levels) {
+      assert.ok(row.levelId >= 1 && row.levelId <= 200);
+      assert.ok(row.selectedVideoPath, `${mapId} L${row.levelId} needs selectedVideoPath`);
+      assert.ok(row.selectedFileName.endsWith('.mp4'));
+      assert.equal(seen.has(row.levelId), false, `dup level ${mapId}:${row.levelId}`);
+      seen.add(row.levelId);
+      // 多候选只绑定选中路径，不拿 alternate 顶替
+      if (row.alternateCandidatePaths?.length) {
+        assert.ok(!row.alternateCandidatePaths.includes(row.selectedVideoPath));
+      }
+    }
+    assert.equal(seen.size, 200);
+  }
+  // multi-version finals keep exact selected basename (e.g. _2)
+  const d107 = cat.levels.find((l) => l.mapId === 'desert' && l.levelId === 107);
+  const o113 = cat.levels.find((l) => l.mapId === 'ocean' && l.levelId === 113);
+  assert.ok(d107?.ossKey.includes('five-pencils_2'), d107?.ossKey);
+  assert.ok(o113?.ossKey.includes('girl_2'), o113?.ossKey);
+  assert.equal(cat.levels.filter((l) => l.mapId === 'desert').length, 200);
+  assert.equal(cat.levels.filter((l) => l.mapId === 'ocean').length, 200);
+  assert.equal(cat.levels.filter((l) => l.videoId).length, 400);
+
+  // desert free L1-10 package + script videoSrc
+  const { desertLevels } = require('./script.js');
+  for (let i = 1; i <= 10; i += 1) {
+    const level = desertLevels.find((l) => l.id === i);
+    assert.ok(level?.videoSrc?.includes('assets/video/desert-levels/'), level?.videoSrc);
+    const file = level.videoSrc.split('?')[0];
+    assert.ok(fs.existsSync(path.join(__dirname, file)), file);
+  }
+  assert.equal(desertLevels.find((l) => l.id === 11)?.videoSrc, undefined);
+});
+

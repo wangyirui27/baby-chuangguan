@@ -92,15 +92,12 @@
       if (contentType.indexOf('application/json') !== -1) {
         return res.json().then(function (data) {
           if (!res.ok) {
-            // 尝试本地 mock 兜底（即使后端返回了 JSON 错误体，也要检查 mock）
-            var fallback = tryLocalMock(method, path, body);
-            if (fallback) {
-              if (fallback.error) throw fallback.error;
-              return fallback.data;
-            }
-            var err = new Error(data.error || '请求失败');
-            err.code = data.code || res.status;
+            // 真后端返回了 JSON 业务错误：绝不 mock 成成功（避免短信失败却显示已发送）
+            var err = new Error((data && data.error) || '请求失败');
+            err.code = (data && data.code) || res.status;
             err.status = res.status;
+            if (data && data.aliyunCode) err.aliyunCode = data.aliyunCode;
+            if (data && data.smsFallback) err.smsFallback = data.smsFallback;
             throw err;
           }
           // res.ok === true：确保后端返回了有效数据体（防御：永不返回空 data）
@@ -114,11 +111,13 @@
         });
       }
       if (!res.ok) {
-        // 非 JSON 错误：尝试本地 mock 兜底（处理 Vite preview / file:// 等没有 API 反代的环境）
-        var fallback = tryLocalMock(method, path, body);
-        if (fallback) {
-          if (fallback.error) throw fallback.error;
-          return Promise.resolve(fallback.data);
+        // 非 JSON 错误：仅离线预览（无 API_BASE）才 mock；壳注入了 apiBase 则原样失败
+        if (canUseLocalMock()) {
+          var fallback = tryLocalMock(method, path, body);
+          if (fallback) {
+            if (fallback.error) throw fallback.error;
+            return Promise.resolve(fallback.data);
+          }
         }
         var err2 = new Error('请求失败');
         err2.code = res.status;
@@ -128,10 +127,12 @@
       return res.text().then(function (t) { return { _raw: t }; });
     }, function (err) {
       // 网络错误 / file:// 等：尝试本地 mock 兜底
-      var fallback = tryLocalMock(method, path, body);
-      if (fallback) {
-        if (fallback.error) throw fallback.error;
-        return Promise.resolve(fallback.data);
+      if (canUseLocalMock()) {
+        var fallback = tryLocalMock(method, path, body);
+        if (fallback) {
+          if (fallback.error) throw fallback.error;
+          return Promise.resolve(fallback.data);
+        }
       }
       throw err;
     });
@@ -142,17 +143,27 @@
   //   - Vite preview (端口 4173) 不带 /api 反代，fetch 返回 501 HTML
   //   - file:// 打开 index.html，fetch 跨协议失败
   //   - 后端未启动
+  // 禁止：
+  //   - 壳注入了 BABY_ISLAND_API_BASE / setApiBase 非空
+  //   - 后端已返回 JSON 错误体（短信失败等）
   // 本地兜底：任意 11 位手机号 + 任意 4–6 位验证码即可登录（不依赖后端）
-  // send-code：直接返回成功（不实际发送短信）
-  // session：有 token 返回成功，否则 isLoggedIn=false
-  // logout：返回成功
-  // 不实现：真实短信、速率限制、token 过期等（那是后端职责）
-  // 返回 { data, error } 结构，与真实后端 HTTP 错误对齐：
-  //   - 成功：data 为响应体，error 为 null
-  //   - 失败：data 为 null，error 为 Error 对象（带 code/status）
-  // apiRequest 会自动识别并 resolve(data) / reject(error)，与真实后端行为一致。
+  // send-code：直接返回成功（不实际发送短信）——仅 canUseLocalMock 时
 
   var _MOCK_TOKEN_PREFIX = 'local-mock-';
+
+  function canUseLocalMock() {
+    try {
+      if (typeof window !== 'undefined' && window.BABY_ISLAND_DISABLE_LOCAL_MOCK === true) {
+        return false;
+      }
+    } catch (_) { /* noop */ }
+    // 原生壳 / 显式 API 根地址：禁止 mock，暴露真实后端错误
+    if (API_BASE) return false;
+    try {
+      if (typeof window !== 'undefined' && window.BABY_ISLAND_API_BASE) return false;
+    } catch (_) { /* noop */ }
+    return true;
+  }
 
   function mockRandomToken() {
     return _MOCK_TOKEN_PREFIX + Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -417,6 +428,28 @@
     return apiRequest('POST', '/api/learning/math-coach', payload);
   }
 
+  function getEntitlements() {
+    return apiRequest('GET', '/api/me/entitlements');
+  }
+
+  /** IAP 成功后上报服务端权益账本 */
+  function claimVipEntitlement(payload) {
+    return apiRequest('POST', '/api/me/entitlements/vip', payload || {});
+  }
+
+  function submitRankingScore(payload) {
+    return apiRequest('POST', '/api/me/ranking', payload || {});
+  }
+
+  function loadRankings(query) {
+    var q = query || {};
+    var params = [];
+    if (q.windowDays != null) params.push('windowDays=' + encodeURIComponent(q.windowDays));
+    if (q.limit != null) params.push('limit=' + encodeURIComponent(q.limit));
+    var qs = params.length ? ('?' + params.join('&')) : '';
+    return apiRequest('GET', '/api/rankings' + qs);
+  }
+
   // ─── 全局导出 ────────────────────────────────
 
   window.babyIslandApi = {
@@ -433,10 +466,15 @@
     recordQuizAttempt: recordQuizAttempt,
     sendSupportFeedback: sendSupportFeedback,
     generateMathCoachPlan: generateMathCoachPlan,
+    getEntitlements: getEntitlements,
+    claimVipEntitlement: claimVipEntitlement,
+    submitRankingScore: submitRankingScore,
+    loadRankings: loadRankings,
     getToken: getToken,
     clearToken: clearToken,
     isFileProtocol: isFileProtocol,
     // 测试用
     _resetDevCode: function () { _lastDevCode = null; },
+    _canUseLocalMock: canUseLocalMock,
   };
 })();

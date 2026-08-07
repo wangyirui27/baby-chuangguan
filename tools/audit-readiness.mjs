@@ -168,6 +168,63 @@ function teamIdConfigured() {
   }
 }
 
+function assetPackRemoteCoverage() {
+  try {
+    const manifest = JSON.parse(readFileSync(join(ROOT, 'asset-packs.json'), 'utf8'));
+    const maps = Array.isArray(manifest.maps) ? manifest.maps : [];
+    const out = {};
+    for (const mapId of ['ocean', 'desert']) {
+      const pack = maps.find((m) => m && m.mapId === mapId) || {};
+      const listed = Array.isArray(pack.levels) ? pack.levels : [];
+      const byId = new Map(
+        listed
+          .filter((row) => row && Number(row.levelId) > 0 && String(row.downloadUrl || '').trim())
+          .map((row) => [Number(row.levelId), String(row.downloadUrl).trim()]),
+      );
+      const missingRemote = [];
+      let realOss = 0;
+      let placeholder = 0;
+      for (let id = 11; id <= 200; id += 1) {
+        const url = byId.get(id);
+        if (!url) {
+          missingRemote.push(id);
+          continue;
+        }
+        if (/cdn\.example|example\.hirota|localhost|127\.0\.0\.1/i.test(url)) placeholder += 1;
+        if (/baobao-chuangguan\.oss|aliyuncs\.com|oss-cn-/i.test(url)) realOss += 1;
+      }
+      out[mapId] = {
+        listed: byId.size,
+        missingRemote11to200: missingRemote.length,
+        realOssUrls: realOss,
+        placeholderUrls: placeholder,
+      };
+    }
+    return out;
+  } catch {
+    return {
+      ocean: { listed: 0, missingRemote11to200: 190, realOssUrls: 0, placeholderUrls: 0 },
+      desert: { listed: 0, missingRemote11to200: 190, realOssUrls: 0, placeholderUrls: 0 },
+    };
+  }
+}
+
+const remoteCoverage = assetPackRemoteCoverage();
+const desertSeedMissing = [];
+for (let id = 1; id <= 10; id += 1) {
+  // filenames come from DESERT_FREE_LEVEL_VIDEOS in script; existence via glob
+  const pad = String(id).padStart(3, '0');
+  const dir = join(ROOT, 'assets/video/desert-levels');
+  try {
+    const found = require('node:fs')
+      .readdirSync(dir)
+      .some((name) => name.startsWith(`level-${pad}-`) && name.endsWith('.mp4') && !name.includes('.before'));
+    if (!found) desertSeedMissing.push(id);
+  } catch {
+    desertSeedMissing.push(id);
+  }
+}
+
 const hardFailures = [
   ...(JSON.stringify(firstTen) !== JSON.stringify(expectedFirstTen) ? ['前 10 关设定被改动。'] : []),
   ...(levels.length !== 200 ? [`当前只有 ${levels.length} 关，不是 200 关。`] : []),
@@ -176,16 +233,27 @@ const hardFailures = [
     : []),
   ...(missingWordAudio.length ? [`缺少 ${missingWordAudio.length} 个单词音频。`] : []),
   ...(missingFirstTenVideos.length ? [`前 10 关缺少 ${missingFirstTenVideos.length} 个视频。`] : []),
+  ...(desertSeedMissing.length ? [`沙漠前 10 关包内视频缺 ${desertSeedMissing.length} 个。`] : []),
   ...(nonNounTopicLevels.length ? [`仍有 ${nonNounTopicLevels.length} 关属于颜色/数字/动作，不是高频名词关。`] : []),
   ...(nonNounWordLevels.length ? [`仍有 ${nonNounWordLevels.length} 个非名词词条：${nonNounWordLevels.map((level) => `${level.id}:${level.title}`).join(', ')}。`] : []),
   ...(staleHundredMentions().map((file) => `${file} 仍有 100 levels 文档残留。`)),
 ];
 
+const remoteGaps = [];
+for (const mapId of ['ocean', 'desert']) {
+  const c = remoteCoverage[mapId] || {};
+  if ((c.missingRemote11to200 || 0) > 0) {
+    remoteGaps.push(`${mapId} L11–200 清单缺 downloadUrl ${c.missingRemote11to200} 条（不挡种子 TF）。`);
+  } else if ((c.placeholderUrls || 0) > 0) {
+    remoteGaps.push(`${mapId} L11–200 仍有 ${c.placeholderUrls} 条占位 CDN（不挡种子 TF）。`);
+  }
+}
+
 const gaps = [
   ...(!nativeReady ? ['未发现可检查的 iOS 原生壳，VIP 内购和发版更新仍只是 H5 桥预留。'] : []),
   ...(!nativeBuildReady ? ['未安装完整 Xcode 或 xcode-select 未指向 Xcode，无法编译验证 iOS 原生包。'] : []),
   ...(!appRelease.updateUrl ? ['app-release.json 没有 App Store updateUrl，更新弹窗无法直达商店。'] : []),
-  ...(levels.filter((level) => !level.videoSrc).length ? [`${levels.filter((level) => !level.videoSrc).length} 关还没有课程视频。`] : []),
+  ...remoteGaps,
   ...(missingQuestionAudioBeyondSeed > 0
     ? [`全量题语音仍缺 ${missingQuestionAudioBeyondSeed} 个（不挡缩小范围 TestFlight 内测）。`]
     : []),
@@ -205,6 +273,8 @@ const result = {
     missingQuestionAudioFirstTen: missingQuestionAudioFirstTen.length,
     missingWordAudio: missingWordAudio.length,
     missingFirstTenVideos: missingFirstTenVideos.length,
+    desertSeedMissing: desertSeedMissing.length,
+    remoteCourseVideos: remoteCoverage,
     nonNounWords: nonNounWordLevels.length,
     nativeShellReady: nativeReady,
     nativeBuildToolReady: nativeBuildReady,

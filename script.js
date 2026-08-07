@@ -222,7 +222,22 @@ const LEVEL_VIDEO_LOADING_LOTTIE_URL = 'assets/lottie/level-video-loading.json';
   playVoice();
 })();
 
-const FREE_LEVEL_VIDEO_VERSION = '20260720-map-switch-cards-v13';
+// 海洋前10关包内片：与 workbench baby-island-levels-v1 当前选中定稿同步后的缓存戳
+const FREE_LEVEL_VIDEO_VERSION = '20260807-workbench-island-final';
+// 沙漠前10关包内片：workbench baby-desert-levels-v1 当前选中定稿
+const DESERT_FREE_LEVEL_VIDEO_VERSION = '20260807-workbench-desert-final';
+const DESERT_FREE_LEVEL_VIDEOS = {
+  1: 'level-001-good-morning.mp4',
+  2: 'level-002-how-are-you.mp4',
+  3: 'level-003-see-you-later.mp4',
+  4: 'level-004-good-night.mp4',
+  5: 'level-005-have-fun.mp4',
+  6: 'level-006-goodbye.mp4',
+  7: 'level-007-thank-you.mp4',
+  8: 'level-008-you-re-welcome.mp4',
+  9: 'level-009-excuse-me.mp4',
+  10: 'level-010-i-m-sorry.mp4',
+};
 const WORD_AUDIO_MANIFEST_VERSION = '20260801-desert-natural-dialogue-v1';
 const VIP_PRODUCT_ID = 'baby_island_map_vip_001';
 const paidAccessMessage = `第 ${FREE_LEVEL_COUNT + 1} 关起是会员关卡，后续课程内容会随更新开放。`;
@@ -365,12 +380,19 @@ function buildLevelsFromUnits(units, overrides = {}, titleFor = (word) => word.r
 const levels = buildLevelsFromUnits(courseUnits, lessonOverrides)
   .map((level) => ({ ...level, worldId: 'ocean', itemType: 'word' }));
 const desertLevels = buildLevelsFromUnits(desertPhraseUnits, {}, (phrase) => phrase)
-  .map((level) => ({
-    ...level,
-    worldId: 'desert',
-    itemType: 'expression',
-    question: `Which English line means ${level.zhTitle}?`,
-  }));
+  .map((level) => {
+    const freeVideo = DESERT_FREE_LEVEL_VIDEOS[level.id];
+    return {
+      ...level,
+      worldId: 'desert',
+      itemType: 'expression',
+      question: `Which English line means ${level.zhTitle}?`,
+      // 前10关包内定稿；11+ 走 asset-packs levelMedia（workbench 当前选中一一对应）
+      ...(freeVideo
+        ? { videoSrc: `assets/video/desert-levels/${freeVideo}?v=${DESERT_FREE_LEVEL_VIDEO_VERSION}` }
+        : {}),
+    };
+  });
 
 const MATH_COUNT_WORDS = ['0 个', '1 个', '2 个', '3 个', '4 个', '5 个', '6 个', '7 个', '8 个', '9 个', '10 个'];
 const MATH_MAX_COUNT = 10;
@@ -3460,6 +3482,19 @@ if (typeof document !== 'undefined') {
     if (!api?.checkSession || !api?.loadLearningState) return Promise.resolve(false);
     return api.checkSession().then((session) => {
       if (!session?.isLoggedIn) return false;
+      // 服务端 VIP 账本 → 本地 preferences
+      if (session.user && session.user.hasFullAccess === true) {
+        state.preferences = activateVipPreferences(state.preferences);
+        try { localStorage.setItem(APP_PREFERENCES_KEY, JSON.stringify(state.preferences)); } catch {}
+      } else if (api.getEntitlements) {
+        api.getEntitlements().then((ent) => {
+          if (ent && ent.hasFullAccess) {
+            state.preferences = activateVipPreferences(state.preferences);
+            try { localStorage.setItem(APP_PREFERENCES_KEY, JSON.stringify(state.preferences)); } catch {}
+            render();
+          }
+        }).catch(() => {});
+      }
       return api.loadLearningState().then((remote) => {
         learningSyncReady = true;
         return remote;
@@ -5344,12 +5379,25 @@ if (typeof document !== 'undefined') {
     }
   }
 
-  function completeVipPurchase() {
+  function completeVipPurchase(meta) {
     state.preferences = activateVipPreferences(state.preferences);
     try { localStorage.setItem(APP_PREFERENCES_KEY, JSON.stringify(state.preferences)); } catch {}
     closePaywallDialog();
     showToast('本地图权益已生效');
     render();
+    // 登录态下同步服务端权益账本（无 App Store 验票前仍写入 hash 便于运维对账）
+    try {
+      const api = learningApi();
+      if (api && api.claimVipEntitlement && api.getToken && api.getToken()) {
+        const payload = (meta && typeof meta === 'object') ? meta : {};
+        api.claimVipEntitlement({
+          productId: payload.productId || (typeof VIP_PRODUCT_ID !== 'undefined' ? VIP_PRODUCT_ID : 'vip_map_unlock'),
+          platform: payload.platform || (window.webkit ? 'ios' : 'web'),
+          source: payload.source || 'iap',
+          receipt: payload.receipt || payload.transactionId || null,
+        }).catch(function () { /* 本地已生效；服务端失败不挡 UI */ });
+      }
+    } catch (_) { /* noop */ }
     return true;
   }
 

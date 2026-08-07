@@ -6,6 +6,11 @@ const path = require('path');
 // 支持从仓库根目录启动：优先 backend/.env，再回退 cwd/.env
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 dotenv.config();
+// 可选 MySQL 覆盖文件（gitignore）
+dotenv.config({
+  path: path.join(__dirname, '..', '.env.mysql.local'),
+  override: true,
+});
 
 const express = require('express');
 const cors = require('cors');
@@ -14,14 +19,17 @@ const db = require('./db');
 const authRouter = require('./auth');
 const { createLearningRouter, localMathCoachPlan } = require('./learning');
 const { createMathCoachProvider } = require('./math-coach-ai');
+const { createLearningRepositoryFromEnv } = require('./learning-repository-factory');
 const entitlements = require('./entitlements');
 const smsEvents = require('./sms-events');
 const contentCatalog = require('./content-catalog');
 const adminRouter = require('./admin-router');
+const { createMeRouter, createRankingsRouter } = require('./me-router');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const mathCoach = createMathCoachProvider({ fallback: localMathCoachPlan });
+const learningBackend = createLearningRepositoryFromEnv();
 
 // ─── CORS 配置 ──────────────────────────────────────
 // 支持 null origin (file:// 场景) 和可配置 origin 白名单
@@ -83,7 +91,13 @@ app.use(express.static(path.resolve(__dirname, '..', '..')));
 
 // ─── 健康检查 ──────────────────────────────────────
 app.get('/api/health', (_req, res) => {
-  res.status(200).json({ status: 'ok' });
+  res.status(200).json({
+    status: 'ok',
+    learningBackend: learningBackend.kind,
+    learningConfigured: Boolean(learningBackend.repository),
+    smsProvider: process.env.SMS_PROVIDER || 'development',
+    nodeEnv: process.env.NODE_ENV || 'development',
+  });
 });
 
 // 向后兼容
@@ -98,9 +112,14 @@ app.use('/api/auth', authRouter);
 // math-coach: default = local rules (streak → easier/harder). Remote LLM only if
 // MATH_COACH_AI_ENABLED=1 and a key are set; any failure falls back to localMathCoachPlan.
 app.use('/api/learning', createLearningRouter({
+  repository: learningBackend.repository,
   requireAuth: authRouter.requireAuth,
   mathCoach,
 }));
+
+// ─── 登录用户权益 / 公开排行 ──────────────────────
+app.use('/api/me', createMeRouter({ requireAuth: authRouter.requireAuth }));
+app.use('/api/rankings', createRankingsRouter());
 
 // ─── 运维后台 API + 页面入口 ──────────────────────
 app.use('/api/admin', adminRouter);
@@ -115,45 +134,64 @@ app.use((_req, res) => {
 
 // ─── 启动 ──────────────────────────────────────────
 function start() {
-  // 从磁盘加载持久化数据
-  db.loadAll();
-  entitlements.loadAll();
-  smsEvents.load();
-  contentCatalog.load();
+  // 鉴权：json 本地文件 或 mysql(RDS) → 内存 Map
+  const boot = Promise.resolve()
+    .then(() => (typeof db.loadAllAsync === 'function' ? db.loadAllAsync() : (db.loadAll(), 'json')))
+    .then((authBackend) => {
+      entitlements.loadAll();
+      smsEvents.load();
+      contentCatalog.load();
 
-  const server = app.listen(PORT, () => {
-    const mode = process.env.NODE_ENV || 'development';
-    console.log(`[INFO] Server listening on http://localhost:${PORT} (${mode})`);
-    console.log(`[INFO] SMS provider: ${process.env.SMS_PROVIDER || 'development'}`);
-    console.log(
-      `[INFO] Math coach AI: ${mathCoach.config.enabled ? `on (${mathCoach.config.model})` : 'off → local-template'}`,
-    );
-    console.log(`[INFO] Admin console: http://localhost:${PORT}/admin/`);
-    console.log(
-      `[INFO] Admin token: ${process.env.ADMIN_TOKEN ? 'configured' : 'MISSING (set ADMIN_TOKEN)'}`,
-    );
-  });
+      const server = app.listen(PORT, () => {
+        const mode = process.env.NODE_ENV || 'development';
+        console.log(`[INFO] Server listening on http://localhost:${PORT} (${mode})`);
+        console.log(`[INFO] Auth repository: ${authBackend}`);
+        console.log(`[INFO] SMS provider: ${process.env.SMS_PROVIDER || 'development'}`);
+        console.log(
+          `[INFO] Learning backend: ${learningBackend.kind}` +
+            (learningBackend.repository ? '' : ' (not configured)') +
+            (learningBackend.reason ? ` — ${learningBackend.reason}` : ''),
+        );
+        console.log(
+          `[INFO] Math coach AI: ${mathCoach.config.enabled ? `on (${mathCoach.config.model})` : 'off → local-template'}`,
+        );
+        console.log(`[INFO] Admin console: http://localhost:${PORT}/admin/`);
+        console.log(
+          `[INFO] Admin token: ${process.env.ADMIN_TOKEN ? 'configured' : 'MISSING (set ADMIN_TOKEN)'}`,
+        );
+      });
 
-  // 优雅关闭：保存数据到磁盘
-  const shutdown = (signal) => {
-    console.log(`\n[INFO] Received ${signal}, shutting down gracefully...`);
-    server.close(() => {
-      db.saveAll();
-      process.exit(0);
-    });
-    // 强制退出超时
-    setTimeout(() => {
-      console.error('[FATAL] Forced shutdown after timeout');
+      // 优雅关闭：保存数据到磁盘 / RDS
+      const shutdown = (signal) => {
+        console.log(`\n[INFO] Received ${signal}, shutting down gracefully...`);
+        server.close(async () => {
+          try {
+            if (typeof db.flushAsync === 'function') await db.flushAsync();
+            else db.saveAll();
+          } catch (err) {
+            console.error('[DB] flush on shutdown failed:', err && err.message ? err.message : err);
+          }
+          process.exit(0);
+        });
+        setTimeout(() => {
+          console.error('[FATAL] Forced shutdown after timeout');
+          process.exit(1);
+        }, 5000);
+      };
+
+      process.on('SIGINT', () => shutdown('SIGINT'));
+      process.on('SIGTERM', () => shutdown('SIGTERM'));
+    })
+    .catch((err) => {
+      console.error('[FATAL] Boot failed:', err && err.message ? err.message : err);
       process.exit(1);
-    }, 5000);
-  };
+    });
 
-  process.on('SIGINT', () => shutdown('SIGINT'));
-  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  return boot;
 }
 
 // 导出 app 供测试使用（测试时不会自动启动）
-module.exports = { app, corsOrigin, start };
+module.exports = { app, corsOrigin, start, learningBackend };
 
 // 如果直接运行，自动启动
 if (require.main === module) {

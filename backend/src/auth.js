@@ -11,10 +11,72 @@ const router = express.Router();
 const crypto = require('crypto');
 
 const db = require('./db');
-const { createSmsProvider, maskPhone } = require('./sms-provider');
+const { createSmsProvider, maskPhone, DevelopmentSmsProvider } = require('./sms-provider');
 const { ipLimiter } = require('./security');
 const { isVirtualLoginCode } = require('./virtual-login');
 const smsEvents = require('./sms-events');
+const entitlements = require('./entitlements');
+
+function userHasFullAccess(userId) {
+  try {
+    return entitlements.getVipEntitlement(userId).vipActive === true;
+  } catch (_) {
+    return false;
+  }
+}
+
+function publicUser(user) {
+  return {
+    id: user.id,
+    normalizedPhone: user.normalizedPhone,
+    createdAt: user.createdAt,
+    lastLoginAt: user.lastLoginAt,
+    isLoggedIn: true,
+    hasFullAccess: userHasFullAccess(user.id),
+  };
+}
+
+/** 是否允许阿里云失败时开发态回落终端验证码（生产/staging 永不） */
+function allowSmsDevFallback() {
+  const env = process.env.NODE_ENV || 'development';
+  if (env === 'production' || env === 'staging') return false;
+  if (process.env.SMS_DEV_FALLBACK === '0') return false;
+  // 默认 development 开启：真发被流控时仍可本地联调闭环
+  return process.env.SMS_DEV_FALLBACK !== '0';
+}
+
+function mapSmsSendError(err) {
+  const aliyunCode = err && err.aliyunCode ? String(err.aliyunCode) : '';
+  if (
+    aliyunCode === 'isv.BUSINESS_LIMIT_CONTROL' ||
+    aliyunCode === 'isv.DAY_LIMIT_CONTROL' ||
+    aliyunCode === 'isv.MONTH_LIMIT_CONTROL' ||
+    aliyunCode === 'isv.MOBILE_COUNT_OVER_LIMIT' ||
+    aliyunCode === 'Throttling.User' ||
+    aliyunCode === 'Throttling.Api'
+  ) {
+    return {
+      status: 429,
+      error: '发送太频繁，请稍后再试',
+      code: 'SMS_RATE_LIMITED',
+      aliyunCode,
+    };
+  }
+  if (err && err.code === 'SMS_UNAVAILABLE') {
+    return {
+      status: 503,
+      error: '短信服务暂不可用，请稍后再试',
+      code: 'SMS_UNAVAILABLE',
+      aliyunCode: aliyunCode || undefined,
+    };
+  }
+  return {
+    status: 500,
+    error: '发送验证码失败',
+    code: 'SEND_FAILED',
+    aliyunCode: aliyunCode || undefined,
+  };
+}
 
 // ─── 限流配置 ──────────────────────────────────────
 const RATE_LIMIT = {
@@ -163,37 +225,70 @@ router.post('/send-code', ipLimiter.middleware(), async (req, res) => {
     db.verifications.set(vKey, verification);
     db.scheduleSave();
 
+    let usedProvider = getSmsProvider().kind || process.env.SMS_PROVIDER || 'unknown';
+    let smsFallback = null;
     try {
       await getSmsProvider().send(normalizedPhone, code);
       smsEvents.record({
         phone: normalizedPhone,
         ok: true,
-        provider: (getSmsProvider().kind || process.env.SMS_PROVIDER || 'unknown'),
+        provider: usedProvider,
       });
     } catch (sendErr) {
-      // 发送失败则回滚本条验证码，避免占用冷却/限流配额
-      db.verifications.delete(vKey);
-      db.scheduleSave();
-      smsEvents.record({
-        phone: normalizedPhone,
-        ok: false,
-        provider: (smsProvider && smsProvider.kind) || process.env.SMS_PROVIDER || 'unknown',
-        errorCode: sendErr.code || 'SEND_FAILED',
-        errorMessage: sendErr.message || String(sendErr),
-      });
-      throw sendErr;
+      const primaryKind = (getSmsProvider() && getSmsProvider().kind) || process.env.SMS_PROVIDER || 'unknown';
+      const canFallback =
+        allowSmsDevFallback() &&
+        primaryKind === 'aliyun';
+
+      if (canFallback) {
+        // 开发态：阿里云流控/失败时回落终端打印验证码，保留 verification 以便真实 verify-code 路径
+        console.warn(
+          `[AUTH] send-code: aliyun failed (${sendErr.aliyunCode || sendErr.code || 'ERR'}), ` +
+            'dev fallback → terminal code',
+        );
+        const dev = new DevelopmentSmsProvider();
+        await dev.send(normalizedPhone, code);
+        usedProvider = 'development';
+        smsFallback = {
+          from: 'aliyun',
+          reason: sendErr.aliyunCode || sendErr.code || 'SEND_FAILED',
+        };
+        smsEvents.record({
+          phone: normalizedPhone,
+          ok: true,
+          provider: 'development',
+          errorCode: sendErr.aliyunCode || sendErr.code || null,
+          errorMessage: `fallback after aliyun: ${sendErr.message || ''}`.slice(0, 200),
+        });
+      } else {
+        // 发送失败则回滚本条验证码，避免占用冷却/限流配额
+        db.verifications.delete(vKey);
+        db.scheduleSave();
+        smsEvents.record({
+          phone: normalizedPhone,
+          ok: false,
+          provider: primaryKind,
+          errorCode: sendErr.aliyunCode || sendErr.code || 'SEND_FAILED',
+          errorMessage: sendErr.message || String(sendErr),
+        });
+        throw sendErr;
+      }
     }
 
-    console.log(`[AUTH] send-code: ${maskPhone(normalizedPhone)} — code sent`);
+    console.log(`[AUTH] send-code: ${maskPhone(normalizedPhone)} — code sent via ${usedProvider}`);
 
-    // 仅当 development 环境 + development provider 时返回 debugCode 用于前端UI
-    const isDevMode =
-      (process.env.NODE_ENV || 'development') === 'development' &&
-      (process.env.SMS_PROVIDER || 'development') === 'development';
+    // 开发态返回 debugCode：development provider，或阿里云失败后的 dev fallback
+    const isDevMode = (process.env.NODE_ENV || 'development') === 'development';
+    const exposeDebugCode =
+      isDevMode &&
+      (usedProvider === 'development' || smsFallback);
 
-    const response = { success: true };
-    if (isDevMode) {
+    const response = { success: true, provider: usedProvider };
+    if (exposeDebugCode) {
       response.debugCode = code;
+    }
+    if (smsFallback) {
+      response.smsFallback = smsFallback;
     }
     return res.json(response);
   } catch (err) {
@@ -218,7 +313,12 @@ router.post('/send-code', ipLimiter.middleware(), async (req, res) => {
       });
     }
     console.error('[AUTH] send-code error');
-    return res.status(500).json({ error: '发送验证码失败', code: 'SEND_FAILED' });
+    const mapped = mapSmsSendError(err);
+    const body = { error: mapped.error, code: mapped.code };
+    if (mapped.aliyunCode && (process.env.NODE_ENV || 'development') !== 'production') {
+      body.aliyunCode = mapped.aliyunCode;
+    }
+    return res.status(mapped.status).json(body);
   }
 });
 
@@ -364,28 +464,14 @@ function issueLoginSession(res, normalizedPhone, phoneHash, now) {
 
   return res.json({
     token: rawToken,
-    user: {
-      id: user.id,
-      normalizedPhone: user.normalizedPhone,
-      createdAt: user.createdAt,
-      lastLoginAt: user.lastLoginAt,
-      isLoggedIn: true,
-      hasFullAccess: false,
-    },
+    user: publicUser(user),
   });
 }
 
 // ─── 3. GET /api/auth/session ──────────────────
 router.get('/session', requireAuth, (req, res) => {
   return res.json({
-    user: {
-      id: req.user.id,
-      normalizedPhone: req.user.normalizedPhone,
-      createdAt: req.user.createdAt,
-      lastLoginAt: req.user.lastLoginAt,
-      isLoggedIn: true,
-      hasFullAccess: false,
-    },
+    user: publicUser(req.user),
   });
 });
 
