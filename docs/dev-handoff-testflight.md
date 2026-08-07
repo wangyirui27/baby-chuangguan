@@ -110,7 +110,9 @@ xcodebuild -exportArchive \
 - [ ] 构建处理完成（Processing → Ready to Test）
 - [ ] 内测组 + 测试员邮箱
 - [ ] （可选）IAP 商品 `baby_island_map_vip_001` — 见 `docs/iap-product-ids.md`；未建商品时只测免费段
-- [ ] （建议）隐私政策 / 用户协议公网 HTTPS
+- [ ] （建议）隐私政策 / 用户协议公网 HTTPS  
+  仓库内静态页：`docs/hosted-legal-pages/`（privacy / terms / children-privacy）  
+  部署到任意静态托管后，把 URL 填进 ASC App 隐私与「我的」外链（若产品改为外链）
 
 ---
 
