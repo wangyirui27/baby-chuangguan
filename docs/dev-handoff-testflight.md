@@ -1,7 +1,7 @@
 # 开发人员交接：嗨洛塔 TestFlight 打包
 
 更新：2026-08-07  
-仓库：`https://github.com/wangyirui27/baby-chuangguan`  
+仓库：`https://github.com/wangyirui27/baby-chuangguan` · 分支 `main`  
 产品名：**嗨洛塔** · Bundle ID：`com.baobaoenglish.island` · 版本 **1.0.1 (3)**
 
 ---
@@ -10,145 +10,79 @@
 
 | 交付 | 说明 |
 |------|------|
-| TestFlight 构建 | Archive → App Store Connect 上传 |
-| 内测组可装 | ASC 处理完构建后加入测试员 |
-| （可选）填 apiBase | 若甲方已给生产 HTTPS API，写入 `shell-config.json` 再 Archive |
-
-**不要求**你做：生产后端部署、RDS/短信运维、Android、上架商店审核文案（除非另约）。
+| TestFlight 构建 | Archive → App Store Connect → 内测组可装 |
+| 内容验收 | 海岛/沙漠 **前 10 关**离线可玩；**L11+** 联网可播 OSS 课视频 |
+| （可选）登录联调 | 仅当产品给了生产 `apiBase` |
 
 ---
 
-## 本机前置
-
-1. macOS + **完整 Xcode**（不是仅 Command Line Tools）
-2. Apple Developer Program 账号，Xcode → Settings → Accounts 登录
-3. 自动签名可用（钥匙串有 Apple Development/Distribution 证书）
-4. Node.js 18+（跑测试与 pack）
+## 5 分钟上手
 
 ```bash
 git clone https://github.com/wangyirui27/baby-chuangguan.git
-cd baby-chuangguan
-npm ci   # 或 npm install
-npm test
-bash tools/pack-app-www.sh /tmp/hirota-www-check
-# 期望：tests 全绿；pack 含 ocean L01–10 + desert L001–010；runtime asset gate OK
-node tools/audit-readiness.mjs
-# 期望：testflightContentReady=true，hardFailures=[]
-```
+cd baby-chuangguan && git pull
+# 本机完整 Xcode（非仅 CLT）
+xcode-select -p   # 应含 Xcode.app
+npm test          # 应 379 pass
+node tools/audit-readiness.mjs   # testflightContentReady: true
 
----
+# 一键（推荐）
+DEVELOPMENT_TEAM=你的TeamID bash tools/ship-testflight.sh --upload
 
-## 签名与 Team（必做）
-
-1. 复制并填写 Team：
-
-```bash
-cp ios/Config/Team.xcconfig.example ios/Config/Team.xcconfig
-# 编辑：DEVELOPMENT_TEAM = 你的10位TeamID
-```
-
-2. 同步 `ios/ExportOptions-TestFlight.plist` 里的 `teamID`（勿留 `YOUR_TEAM_ID`）。
-
-3. 打开工程：
-
-```bash
+# 或 GUI
 open ios/BabyEnglishIsland.xcodeproj
-# 或
-bash tools/ship-testflight.sh --open
+# Signing & Capabilities → Team
+# Product → Archive → Distribute App → App Store Connect → Upload
 ```
 
-Signing & Capabilities：Team 选对、勾选 Automatically manage signing。
+Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（含海岛+沙漠前 10 关 mp4 + `asset-packs.json`）。
 
 ---
 
-## apiBase（看甲方要求）
+## 关键文件
 
-文件：`ios/BabyEnglishIsland/shell-config.json`
-
-| 场景 | 填法 |
+| 路径 | 作用 |
 |------|------|
-| 只测壳 + 前 10 关本地内容（海岛+沙漠） | 可保持 `""` |
-| 真登录 / 短信 / 云同步 | `"apiBase": "https://api.example.com"` **无尾斜杠** |
-
-原生会注入 `window.BABY_ISLAND_API_BASE`；H5 `auth/apiClient.js` 读取。
-
----
-
-## 一键 Archive + 导出上传包
-
-```bash
-# 已装 Xcode 且填好 Team 后：
-DEVELOPMENT_TEAM=XXXXXXXXXX bash tools/ship-testflight.sh --upload
-```
-
-或手动：
-
-```bash
-bash tools/pack-app-www.sh /tmp/hirota-www-check
-# Xcode 工程 build phase 也会跑 pack；确认 ios 目标 www 已更新
-cd ios
-xcodebuild -project BabyEnglishIsland.xcodeproj \
-  -scheme BabyEnglishIsland \
-  -configuration Release \
-  -destination 'generic/platform=iOS' \
-  -archivePath build/BabyEnglishIsland.xcarchive \
-  archive
-# 先把 ExportOptions-TestFlight.plist 的 teamID 换成真 Team
-xcodebuild -exportArchive \
-  -archivePath build/BabyEnglishIsland.xcarchive \
-  -exportPath build/export \
-  -exportOptionsPlist ExportOptions-TestFlight.plist
-```
-
-上传：Xcode Organizer / Transporter / `xcrun altool`（ASC API Key）。
+| `ios/BabyEnglishIsland.xcodeproj` | Xcode 工程 |
+| `ios/Config/Team.xcconfig` | `DEVELOPMENT_TEAM=`（本地填，勿泄密） |
+| `ios/Config/Shared.xcconfig` | 版本 1.0.1 / build 3 / Bundle ID |
+| `ios/BabyEnglishIsland/shell-config.json` | `apiBase`（内容内测可空） |
+| `ios/ExportOptions-TestFlight.plist` | TF 导出（teamID 由 ship 脚本写入） |
+| `tools/ship-testflight.sh` | check / archive / upload / open |
+| `tools/pack-app-www.sh` | 打运行时 www |
+| `asset-packs.json` | L11–200 OSS URL |
+| `docs/testflight-checklist.md` | A/B/C/D 门禁 |
 
 ---
 
-## App Store Connect 检查表
+## 签名与 ASC
 
-- [ ] App 记录存在，Bundle `com.baobaoenglish.island`
-- [ ] 显示名：嗨洛塔
-- [ ] 构建处理完成（Processing → Ready to Test）
-- [ ] 内测组 + 测试员邮箱
-- [ ] （可选）IAP 商品 `baby_island_map_vip_001` — 见 `docs/iap-product-ids.md`；未建商品时只测免费段
-- [ ] （建议）隐私政策 / 用户协议公网 HTTPS  
-  仓库内静态页：`docs/hosted-legal-pages/`
+1. Xcode → Settings → Accounts 登录付费 Apple Developer  
+2. Team ID → `DEVELOPMENT_TEAM` 或 Signing 面板  
+3. ASC 若无 App：新建 iOS，Bundle `com.baobaoenglish.island`，名 **嗨洛塔**  
+4. 上传后处理 5–30 分钟 → 加内测组 / 外测合规
 
 ---
 
-## 包内内容边界（已知设计）
+## 内容与网络
 
-- **进包**：非视频 runtime + **海岛 L01–L10** + **沙漠 L001–L010** 课程 mp4 + 数学桌面运行时（wood-digit **v7**）
-- **不进包**：L11–200 课视频（走 `asset-packs.json` → OSS 公网直链）、LibTV 中间态、营销模板
-- **OSS 已上**（甲方侧 2026-08-07）：  
-  `https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/{desert,ocean}/…`  
-  清单已写入仓库根 `asset-packs.json`（无 `cdn.example` 占位）
-- RDS `baby_content_videos` 仅 **BLOB 备份**，**不是**播放 CDN
-
-验收冒烟：`docs/testflight-smoke.md`  
-工程对照：`docs/testflight-checklist.md`
+- **包内**：海岛 `assets/video/free-levels/level-01…10` + 沙漠 `assets/video/desert-levels/level-001…010`  
+- **OSS**（需网络）：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/{desert|ocean}/…`  
+- **apiBase 空**：不阻塞内容内测；登录/云存进度不可用  
+- **禁止**把影关 `api.modelisms.com` 填进嗨洛塔 `apiBase`
 
 ---
 
-## 密钥与配置（勿提交）
+## 本机环境说明（给协作）
 
-| 文件 | 说明 |
-|------|------|
-| `backend/.env` | **本地/生产密钥**，已 gitignore |
-| `backend/.env.example` | 变量清单模板 |
-| `ios/Config/Team.xcconfig` | 可本地填 Team；不要把别人的 Team 误提交进公共 fork |
-| `data/*.json` 用户会话 | 本地用户/会话 gitignore；**`data/content-catalog.json` 可提交**（课视频目录） |
-
-生产后端部署、阿里云短信、MySQL 学习库 **不在本次 TF 打包必做范围**；有域名后再填 apiBase 重打一版即可。
+交付机可能只有 Command Line Tools → **无法 Archive**。请用装了完整 Xcode 的 Mac 按上文发船。  
+内容门禁与 OSS 清单已在 `main` 推送完成。
 
 ---
 
-## 出问题先跑
+## 验收口令
 
-```bash
-npm test
-bash tools/pack-app-www.sh /tmp/hirota-www-check
-node tools/audit-readiness.mjs
-security find-identity -v -p codesigning   # 应有 Apple Distribution
-xcodebuild -version
-```
+- 启动显示 **嗨洛塔**，不是英语岛  
+- 海岛 L1–10、沙漠 L1–10 无网可进课视频  
+- 开任意 L11+ 且有网：课视频从 OSS 加载可播  
+- 设置/关于：版本 **1.0.1 (3)**（以实际上传 build 为准）
