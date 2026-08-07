@@ -9,7 +9,15 @@
  * Aliyun credentials via env (see .env.example).
  */
 
-require('dotenv').config();
+// Prefer monorepo root backend/.env (shared with legacy backend + 影关 SMS keys)
+const path = require('path');
+const fs = require('fs');
+const dotenv = require('dotenv');
+const monorepoEnv = path.resolve(__dirname, '../../../backend/.env');
+const localEnv = path.resolve(__dirname, '../../.env');
+if (fs.existsSync(monorepoEnv)) dotenv.config({ path: monorepoEnv });
+else if (fs.existsSync(localEnv)) dotenv.config({ path: localEnv });
+else dotenv.config();
 
 const { createApp } = require('./app');
 const { MemoryAuthRepository } = require('./repository/memory-auth-repository');

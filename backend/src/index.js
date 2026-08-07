@@ -2,16 +2,22 @@
 // 静态文件 + API 同端口，支持 file:// 降级
 
 const dotenv = require('dotenv');
+const path = require('path');
+// 支持从仓库根目录启动：优先 backend/.env，再回退 cwd/.env
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 dotenv.config();
 
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const path = require('path');
 const db = require('./db');
 const authRouter = require('./auth');
 const { createLearningRouter, localMathCoachPlan } = require('./learning');
 const { createMathCoachProvider } = require('./math-coach-ai');
+const entitlements = require('./entitlements');
+const smsEvents = require('./sms-events');
+const contentCatalog = require('./content-catalog');
+const adminRouter = require('./admin-router');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -96,6 +102,12 @@ app.use('/api/learning', createLearningRouter({
   mathCoach,
 }));
 
+// ─── 运维后台 API + 页面入口 ──────────────────────
+app.use('/api/admin', adminRouter);
+app.get(['/admin', '/admin/'], (_req, res) => {
+  res.sendFile(path.resolve(__dirname, '..', '..', 'admin', 'index.html'));
+});
+
 // ─── 404 兜底 ──────────────────────────────────────
 app.use((_req, res) => {
   res.status(404).json({ error: 'Not found', code: 'NOT_FOUND' });
@@ -105,6 +117,9 @@ app.use((_req, res) => {
 function start() {
   // 从磁盘加载持久化数据
   db.loadAll();
+  entitlements.loadAll();
+  smsEvents.load();
+  contentCatalog.load();
 
   const server = app.listen(PORT, () => {
     const mode = process.env.NODE_ENV || 'development';
@@ -112,6 +127,10 @@ function start() {
     console.log(`[INFO] SMS provider: ${process.env.SMS_PROVIDER || 'development'}`);
     console.log(
       `[INFO] Math coach AI: ${mathCoach.config.enabled ? `on (${mathCoach.config.model})` : 'off → local-template'}`,
+    );
+    console.log(`[INFO] Admin console: http://localhost:${PORT}/admin/`);
+    console.log(
+      `[INFO] Admin token: ${process.env.ADMIN_TOKEN ? 'configured' : 'MISSING (set ADMIN_TOKEN)'}`,
     );
   });
 

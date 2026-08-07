@@ -16,9 +16,132 @@
       "downloadUrl": "",
       "levelVideoUrlTemplate": "",
       "levels": [],
-      "totalBytes": 0,
+      "levelMedia": [
+        {
+          "levelId": 1,
+          "title": "Mom",
+          "slug": "mom",
+          "ossKey": "assets/video/free-levels/level-01-mom.mp4",
+          "downloadUrl": "https://cdn.example.hirota.test/assets/video/free-levels/level-01-mom.mp4",
+          "bytesTotal": 9738494,
+          "sha256": "",
+          "status": "published"
+        },
+        {
+          "levelId": 2,
+          "title": "Dad",
+          "slug": "dad",
+          "ossKey": "assets/video/free-levels/level-02-dad.mp4",
+          "downloadUrl": "https://cdn.example.hirota.test/assets/video/free-levels/level-02-dad.mp4",
+          "bytesTotal": 9299380,
+          "sha256": "",
+          "status": "published"
+        },
+        {
+          "levelId": 3,
+          "title": "Grandma",
+          "slug": "grandma",
+          "ossKey": "assets/video/free-levels/level-03-grandma.mp4",
+          "downloadUrl": "https://cdn.example.hirota.test/assets/video/free-levels/level-03-grandma.mp4",
+          "bytesTotal": 9663120,
+          "sha256": "",
+          "status": "published"
+        },
+        {
+          "levelId": 4,
+          "title": "Grandpa",
+          "slug": "grandpa",
+          "ossKey": "assets/video/free-levels/level-04-grandpa.mp4",
+          "downloadUrl": "https://cdn.example.hirota.test/assets/video/free-levels/level-04-grandpa.mp4",
+          "bytesTotal": 9129099,
+          "sha256": "",
+          "status": "published"
+        },
+        {
+          "levelId": 5,
+          "title": "Hand",
+          "slug": "hand",
+          "ossKey": "assets/video/free-levels/level-05-hand.mp4",
+          "downloadUrl": "https://cdn.example.hirota.test/assets/video/free-levels/level-05-hand.mp4",
+          "bytesTotal": 8412802,
+          "sha256": "",
+          "status": "published"
+        },
+        {
+          "levelId": 6,
+          "title": "Rice",
+          "slug": "rice",
+          "ossKey": "assets/video/free-levels/level-06-rice.mp4",
+          "downloadUrl": "https://cdn.example.hirota.test/assets/video/free-levels/level-06-rice.mp4",
+          "bytesTotal": 9115509,
+          "sha256": "",
+          "status": "published"
+        },
+        {
+          "levelId": 7,
+          "title": "Water",
+          "slug": "water",
+          "ossKey": "assets/video/free-levels/level-07-water.mp4",
+          "downloadUrl": "https://cdn.example.hirota.test/assets/video/free-levels/level-07-water.mp4",
+          "bytesTotal": 8787839,
+          "sha256": "",
+          "status": "published"
+        },
+        {
+          "levelId": 8,
+          "title": "Car",
+          "slug": "car",
+          "ossKey": "assets/video/free-levels/level-08-car.mp4",
+          "downloadUrl": "https://cdn.example.hirota.test/assets/video/free-levels/level-08-car.mp4",
+          "bytesTotal": 8503620,
+          "sha256": "",
+          "status": "published"
+        },
+        {
+          "levelId": 9,
+          "title": "Dog",
+          "slug": "dog",
+          "ossKey": "assets/video/free-levels/level-09-dog.mp4",
+          "downloadUrl": "https://cdn.example.hirota.test/assets/video/free-levels/level-09-dog.mp4",
+          "bytesTotal": 8334279,
+          "sha256": "",
+          "status": "published"
+        },
+        {
+          "levelId": 10,
+          "title": "Book",
+          "slug": "book",
+          "ossKey": "assets/video/free-levels/level-10-book.mp4",
+          "downloadUrl": "https://cdn.example.hirota.test/assets/video/free-levels/level-10-book.mp4",
+          "bytesTotal": 9181746,
+          "sha256": "",
+          "status": "published"
+        },
+        {
+          "levelId": 11,
+          "title": "Pear",
+          "slug": "pear",
+          "ossKey": "assets/video/paid-levels/level-11-pear.mp4",
+          "downloadUrl": "https://cdn.example.hirota.test/assets/video/paid-levels/level-11-pear.mp4",
+          "bytesTotal": 7618405,
+          "sha256": "",
+          "status": "published"
+        },
+        {
+          "levelId": 12,
+          "title": "Grape",
+          "slug": "grape",
+          "ossKey": "assets/video/paid-levels/level-12-grape.mp4",
+          "downloadUrl": "https://cdn.example.hirota.test/assets/video/paid-levels/level-12-grape.mp4",
+          "bytesTotal": 6962814,
+          "sha256": "",
+          "status": "published"
+        }
+      ],
+      "totalBytes": 14581219,
       "sha256": "",
-      "notes": "Fill downloadUrl for full prefetch, or levelVideoUrlTemplate / levels for per-level video download after CDN publish."
+      "notes": "英语海洋地图；前 10 关包内视频，11+ 走 OSS/CDN。",
+      "publishedAt": "2026-08-06T06:45:04.274Z"
     },
     {
       "mapId": "desert",
@@ -30,9 +153,11 @@
       "downloadUrl": "",
       "levelVideoUrlTemplate": "",
       "levels": [],
+      "levelMedia": [],
       "totalBytes": 0,
       "sha256": "",
-      "notes": "The app shell can show and control this pack; publish the CDN pack and per-level video URLs before enabling download."
+      "notes": "沙漠短语地图；课视频按绑定写入 levels[]。",
+      "publishedAt": "2026-08-06T06:45:04.274Z"
     },
     {
       "mapId": "castle",
@@ -44,9 +169,12 @@
       "downloadUrl": "",
       "levelVideoUrlTemplate": "",
       "levels": [],
+      "levelMedia": [],
       "totalBytes": 0,
       "sha256": "",
-      "notes": "Coming soon."
+      "notes": "Coming soon.",
+      "publishedAt": "2026-08-06T06:45:04.274Z"
     }
-  ]
+  ],
+  "contentCatalogUpdatedAt": "2026-08-06T06:45:04.273Z"
 }

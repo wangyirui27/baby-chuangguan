@@ -27,6 +27,9 @@ test('iOS shell implements the H5 purchase and release-update bridges', () => {
   assert.match(viewController, /contentController\.add\(WeakScriptMessageHandler\(self\), name: "babyIslandAssetPack"\)/);
   assert.match(viewController, /contentController\.addUserScript\(Self\.appMetadataScript\(\)\)/);
   assert.match(viewController, /window\.BABY_ISLAND_APP_VERSION/);
+  assert.match(viewController, /window\.BABY_ISLAND_API_BASE/);
+  assert.match(viewController, /shellConfigApiBase/);
+  assert.match(viewController, /babyIslandApi\.setApiBase/);
   assert.doesNotMatch(viewController, /contentController\.add\(self, name:/);
   assert.match(viewController, /final class AssetPackDownloadManager/);
   assert.match(viewController, /URLSessionConfiguration\.background/);
@@ -53,7 +56,43 @@ test('iOS shell implements the H5 purchase and release-update bridges', () => {
   assert.match(viewController, /window\.babyIslandIAPComplete/);
   assert.match(project, /Copy H5 app/);
   assert.match(project, /tools\/pack-app-www\.sh/);
-  assert.doesNotMatch(project, /rsync -a --delete "\\\$ROOT\/assets/);
+  assert.match(project, /Assets\.xcassets/);
+  assert.match(project, /PrivacyInfo\.xcprivacy/);
+  assert.match(project, /shell-config\.json/);
+  assert.match(project, /ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon/);
+  assert.match(project, /MARKETING_VERSION = 1\.0\.1/);
+  assert.doesNotMatch(project, /rsync -a --delete "\$ROOT\/assets/);
+});
+
+test('iOS ship kit has icon, privacy, launch, team config, export options', () => {
+  assert.ok(exists('ios/BabyEnglishIsland/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png'));
+  assert.ok(exists('ios/BabyEnglishIsland/Assets.xcassets/LaunchLogo.imageset/LaunchLogo.png'));
+  assert.ok(exists('ios/BabyEnglishIsland/PrivacyInfo.xcprivacy'));
+  assert.ok(exists('ios/BabyEnglishIsland/shell-config.json'));
+  assert.ok(exists('ios/Config/Team.xcconfig'));
+  assert.ok(exists('ios/Config/Team.xcconfig.example'));
+  assert.ok(exists('ios/Config/Shared.xcconfig'));
+  assert.ok(exists('ios/ExportOptions-TestFlight.plist'));
+  assert.ok(exists('docs/testflight-checklist.md'));
+  assert.ok(exists('docs/iap-product-ids.md'));
+  assert.ok(exists('docs/testflight-smoke.md'));
+
+  const info = read('ios/BabyEnglishIsland/Info.plist');
+  assert.match(info, /嗨洛塔/);
+  assert.match(info, /UILaunchScreen/);
+  assert.match(info, /ITSAppUsesNonExemptEncryption/);
+
+  const shellConfig = JSON.parse(read('ios/BabyEnglishIsland/shell-config.json'));
+  assert.equal(typeof shellConfig.apiBase, 'string');
+  assert.equal(shellConfig.iapProductIds.mapVip, 'baby_island_map_vip_001');
+
+  const apiClient = read('auth/apiClient.js');
+  assert.match(apiClient, /BABY_ISLAND_API_BASE/);
+  assert.match(apiClient, /setApiBase\(window\.BABY_ISLAND_API_BASE\)/);
+
+  const release = JSON.parse(read('app-release.json'));
+  assert.equal(release.latestVersion, '1.0.1');
+  assert.match(release.updateUrl, /term=%E5%97%A8%E6%B4%9B%E5%A1%94/);
 });
 
 test('native pack script keeps only seed videos and runtime map assets', () => {
@@ -66,16 +105,23 @@ test('native pack script keeps only seed videos and runtime map assets', () => {
   assert.match(packScript, /raw-v2/);
   assert.match(packScript, /candidates/);
   assert.match(packScript, /front-ocean-v1-video/);
-  assert.match(packScript, /seed videos included; downloadable map packs excluded/);
+  assert.match(packScript, /basics\(non-video\)\+shell loops\+seed L01-10 in/);
+  assert.match(packScript, /_dreamina\*/);
+  assert.match(packScript, /runtime asset gate OK/);
 });
 
 test('release audit tracks whether the iOS shell can be build-verified', () => {
   const audit = read('tools/audit-readiness.mjs');
 
-  assert.match(audit, /execFileSync\('xcodebuild', \['-version'\]/);
+  assert.match(audit, /execFileSync\('xcodebuild',\s*\['-version'\]/);
   assert.match(audit, /nativeBuildToolReady/);
   assert.match(audit, /tools\/pack-app-www\.sh/);
   assert.match(audit, /babyIslandAssetPack/);
   assert.match(audit, /URLSessionConfiguration\.background/);
   assert.match(audit, /无法编译验证 iOS 原生包/);
+  assert.match(audit, /"babyIslandAssetPackEvent"/);
+  assert.match(audit, /missingQuestionAudioFirstTen/);
+  assert.match(audit, /BABY_ISLAND_API_BASE/);
+  assert.match(audit, /shell-config\.json/);
+  assert.match(audit, /testflightContentReady/);
 });

@@ -150,6 +150,7 @@ npm start
 #### 1. 选择供应商
 
 - **阿里云**：代码已接入（`SMS_PROVIDER=aliyun`）
+- **复用影关**：签名/模板/AK 与 movie-game（影关）同一阿里云 Dysms 账号（签名「墨斗曲线」、模板 `SMS_325310062`）；本地填 `backend/.env`，`apps/backend` 自动读同一文件
 
 #### 2. 配置阿里云短信（你需要在控制台完成的部分）
 

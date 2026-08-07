@@ -1,0 +1,7 @@
+// Shared target settings. Team ID comes from Team.xcconfig when present.
+#include? "Team.xcconfig"
+
+// Marketing version aligned with app-release.json latestVersion for TestFlight.
+MARKETING_VERSION = 1.0.1
+CURRENT_PROJECT_VERSION = 2
+PRODUCT_BUNDLE_IDENTIFIER = com.baobaoenglish.island

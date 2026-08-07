@@ -14,6 +14,7 @@ const db = require('./db');
 const { createSmsProvider, maskPhone } = require('./sms-provider');
 const { ipLimiter } = require('./security');
 const { isVirtualLoginCode } = require('./virtual-login');
+const smsEvents = require('./sms-events');
 
 // ─── 限流配置 ──────────────────────────────────────
 const RATE_LIMIT = {
@@ -75,6 +76,10 @@ function requireAuth(req, res, next) {
   if (!user) {
     db.sessions.delete(tokenHash);
     return res.status(401).json({ error: '用户不存在', code: 'USER_NOT_FOUND' });
+  }
+
+  if (user.status === 'banned') {
+    return res.status(403).json({ error: '账号已停用', code: 'USER_BANNED' });
   }
 
   req.session = session;
@@ -160,10 +165,22 @@ router.post('/send-code', ipLimiter.middleware(), async (req, res) => {
 
     try {
       await getSmsProvider().send(normalizedPhone, code);
+      smsEvents.record({
+        phone: normalizedPhone,
+        ok: true,
+        provider: (getSmsProvider().kind || process.env.SMS_PROVIDER || 'unknown'),
+      });
     } catch (sendErr) {
       // 发送失败则回滚本条验证码，避免占用冷却/限流配额
       db.verifications.delete(vKey);
       db.scheduleSave();
+      smsEvents.record({
+        phone: normalizedPhone,
+        ok: false,
+        provider: (smsProvider && smsProvider.kind) || process.env.SMS_PROVIDER || 'unknown',
+        errorCode: sendErr.code || 'SEND_FAILED',
+        errorMessage: sendErr.message || String(sendErr),
+      });
       throw sendErr;
     }
 
@@ -302,6 +319,9 @@ function issueLoginSession(res, normalizedPhone, phoneHash, now) {
 
   let user;
   if (existingUser) {
+    if (existingUser.status === 'banned') {
+      return res.status(403).json({ error: '账号已停用', code: 'USER_BANNED' });
+    }
     user = existingUser;
     user.lastLoginAt = new Date(now).toISOString();
     db.scheduleSave();
@@ -309,6 +329,7 @@ function issueLoginSession(res, normalizedPhone, phoneHash, now) {
     user = {
       id: db.uid(),
       normalizedPhone,
+      status: 'active',
       createdAt: new Date(now).toISOString(),
       lastLoginAt: new Date(now).toISOString(),
     };

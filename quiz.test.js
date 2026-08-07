@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { MAP_WORLDS, MATH_ATTEMPT_KEY, MATH_ATTEMPT_SCHEMA_VERSION, activateVipPreferences, adaptMathLevel, addLearningActivityDay, appendMathAttempt, applyQuizAnswer, assetPackHasDownloadSource, assetPackLevelDownloadQueue, assetPackLevelVideoUrl, assetPackPlayableSummary, assetPackSummary, buildLearningDataExport, buildLocalRankings, buildMapJumpSegments, buildMathParentReport, buildMathVariant, calendarDays, canForceReleaseUpdate, canRegisterServiceWorker, compareAppVersions, completedLearningMinutes, completionUnlockText, curriculumAlignmentForTopic, desertLandmarkImage, desertLevels, englishZoneProgress, formatActivityDate, generateMathVariant, getLevelAccess, islandStyleId, learningDays, learningReport, learningStreak, levelVideoDownloadLabel, levelVideoStateKey, levels, levelsForMapWorld, mathLevels, mathVoiceFeedback, membershipSummary, mergeMathAttempts, networkStatusText, nextMathPathRecommendation, normalizeAssetPackStates, normalizeLevelVideoStates, normalizeMapWorldId, normalizeMathAttempts, normalizeWorldProgress, notificationStatusText, normalizeChildProfile, normalizeLearningActivity, normalizeMistakeBook, normalizeProgress, parseRouteHash, profileAvatarText, questionPromptText, rankingScore, recordMistake, releaseUpdateInfo, requestReleaseUpdate, requestVipPurchase, requestVipRestore, resolveMathContinueLevel, resolveMistake, routePoint, segmentContainingLevel, levelsInJumpSegment, supportFeedbackText, summarizeMathSkill, validateSupportMessage, wordButtonDisabled } = require('./script.js');
+const { TEMP_LOCAL_FULL_ACCESS, LOCAL_QA_UNLOCK_KEY, isTempLocalUnlockEnabled, MAP_WORLDS, MATH_ATTEMPT_KEY, MATH_ATTEMPT_SCHEMA_VERSION, MATH_SKILL_LABELS, ENGLISH_ATTEMPT_KEY, ENGLISH_ATTEMPT_SCHEMA_VERSION, ACCURACY_SERIES_DAYS, activateVipPreferences, adaptMathLevel, addLearningActivityDay, appendMathAttempt, appendEnglishAttempt, accuracySparklineMarkup, accuracySparklinePoints, accuracySubjectFromWorldId, applyQuizAnswer, assetPackHasDownloadSource, assetPackLevelDownloadQueue, assetPackLevelVideoUrl, assetPackPlayableSummary, assetPackSummary, buildAccuracyOverview, buildDailyAccuracySeries, buildLearningDataExport, buildLocalRankings, buildMapJumpSegments, buildMathLevels, buildMathParentReport, buildMathVariant, calendarDays, canForceReleaseUpdate, canRegisterServiceWorker, collectAccuracyAttempts, compareAppVersions, completedLearningMinutes, completionUnlockText, curriculumAlignmentForTopic, desertLandmarkImage, desertLevels, englishZoneProgress, formatActivityDate, generateMathVariant, getLevelAccess, islandStyleId, learningDays, learningReport, learningStreak, levelVideoDownloadLabel, levelVideoStateKey, levels, levelsForMapWorld, mathCurriculumSpec, mathLevels, mathQuestionAudioRelativePath, mathQuestionAudioSlug, MATH_STORY_WAYPOINTS, MATH_STORY_THEME_AUDIO_VERSION, DISPLAY_LEVEL_COUNT, pendingMathStoryWaypoints, firstPendingMathStoryWaypoint, markMathStoryCleared, mathStoryWaypointById, mathJumpEntriesForSegment, isMathStoryCleared, mathStoryVideoSrc, mathStoryThemeAudioSrc, collectMathStoryThemeUtterances, normalizeMathStoryCleared, mathQuestionCountKey, collectMathQuestionUtterances, mathVoiceFeedback, mergeEnglishAttempts, mergeMathAttempts, networkStatusText, nextMathPathRecommendation, normalizeAssetPackStates, normalizeEnglishAttempts, normalizeLevelVideoStates, normalizeMapWorldId, normalizeMathAttempts, normalizeWorldProgress, notificationStatusText, normalizeChildProfile, normalizeLearningActivity, normalizeMistakeBook, normalizeProgress, parseRouteHash, profileAvatarText, questionPromptText, rankingScore, recordMistake, releaseUpdateInfo, requestReleaseUpdate, requestVipPurchase, requestVipRestore, resolveMathContinueLevel, resolveMathLevelStep, resolveMistake, routePoint, segmentContainingLevel, levelsInJumpSegment, supportFeedbackText, summarizeAttemptBucket, summarizeMathSkill, validateSupportMessage, wordButtonDisabled } = require('./script.js');
 
 const read = (file) => fs.readFileSync(path.join(__dirname, file), 'utf8');
 const mapAudioTargets = () => [...levels, ...desertLevels].map((level) => ({
@@ -152,6 +152,43 @@ test('ranking page inserts the current child from local progress', () => {
 
 test('ranking and mine layouts collapse to one column on phone width', () => {
   const css = read('style.css');
+  const script = read('script.js');
+  assert.ok(css.includes('.math-sequence-ref'));
+  assert.ok(css.includes('.math-sequence-rail'));
+  assert.ok(css.includes('.math-sequence-slot'));
+  assert.ok(css.includes('.math-sequence-slot-well'));
+  assert.ok(css.includes('.math-sequence-slot-fill'));
+  assert.match(script, /setSequenceSlotPreview/);
+  assert.match(script, /clearSequenceSlotPreview/);
+  assert.match(script, /is-slot-preview/);
+  assert.doesNotMatch(script, /math-sequence-slot-ghost/);
+  assert.doesNotMatch(script, /math-sequence-slot-pad/);
+  assert.doesNotMatch(script, /mathWoodDigitMarkup\('q'/);
+  assert.ok(css.includes('.math-wood-digit'));
+  assert.match(css, /\.math-choice--numeral-only/);
+  assert.match(script, /math-choice--numeral-only/);
+  assert.match(script, /math-choice--wood-digit/);
+  assert.match(script, /math-choice--seq-piece/);
+  assert.match(script, /data-math-seq-slot/);
+  assert.match(script, /bindSeqPiecePointer/);
+  assert.match(script, /placeSequencePiece/);
+  assert.match(script, /mathWoodDigitMarkup\(/);
+  assert.match(script, /wood-digits\/wood-digit-/);
+  assert.match(script, /math-q-compose-drag/);
+  assert.match(script, /wood-digit-\$\{key\}-v7\.webp/);
+  assert.match(script, /is-wood-blocks/);
+  assert.doesNotMatch(script, /math-sequence-kicker/);
+  assert.doesNotMatch(script, /math-sequence-hint/);
+  assert.doesNotMatch(script, /把下面的木数字拖进空位/);
+  assert.match(script, /numeralOnly \? '' :/);
+  // sequence pure wood digits: no duplicate under-label
+  assert.match(script, /const numeralOnly = format === 'sequence'/);
+  assert.match(css, /data-math-format=\"sequence\"\] \.math-question-card/);
+  assert.match(css, /max-width:\s*min\(6\.6rem/);
+  assert.match(css, /\.math-sequence-slot\.is-preview/);
+  assert.match(css, /is-slot-preview/);
+  assert.doesNotMatch(css, /\.math-sequence-slot-ghost/);
+  assert.doesNotMatch(css, /\.math-sequence-slot-pad/);
 
   assert.match(css, /@media \(max-width: 899px\)\s*\{[\s\S]*?\.ranking-layout,\s*\n\s*\.mine-layout\s*\{[\s\S]*?grid-template-columns:\s*1fr/);
   assert.match(css, /@media \(max-width: 899px\)\s*\{[\s\S]*?\.ranking-stats\s*\{[\s\S]*?flex-wrap:\s*wrap/);
@@ -234,8 +271,8 @@ test('unknown hash routes show a branded not-found screen instead of silently fa
   assert.match(source, /navigate\('map'\)/);
   assert.match(css, /\.not-found-view\s*\{[\s\S]*?place-items:\s*center/);
   assert.match(css, /\.not-found-icon\s*\{[\s\S]*?border-radius:\s*50%/);
-  assert.match(html, /style\.css\?v=20260804-math-apple-uniform-v1/);
-  assert.match(html, /script\.js\?v=20260804-math-apple-uniform-v1/);
+  assert.match(html, /style\.css\?v=20260807-math-take-pool-no-blob-v1/);
+  assert.match(html, /script\.js\?v=20260807-math-take-pool-no-blob-v1/);
 });
 
 test('app shell exposes child-safe network status for offline use', () => {
@@ -411,7 +448,7 @@ test('mine page exposes app info, privacy and terms pages', () => {
   assert.match(source, /data-nav-route="support"/);
   assert.match(source, /function renderInfoPage\(page\)/);
   assert.match(source, /返回我的/);
-  assert.match(source, /type === 'info' \|\| type === 'support' \? 'mine'/);
+  assert.match(source, /type === 'info' \|\| type === 'support' \|\| type === 'accuracy' \? 'mine'/);
   assert.match(source, /家长查看数据使用说明/);
   assert.match(source, /关卡顺序与使用边界/);
   assert.match(source, /当前不收集账号信息。/);
@@ -522,17 +559,17 @@ test('H5 app shell registers a minimal offline cache', () => {
   const source = read('script.js');
   const worker = read('sw.js');
 
-  assert.match(html, /style\.css\?v=20260804-math-apple-uniform-v1/);
-  assert.match(html, /script\.js\?v=20260804-math-apple-uniform-v1/);
+  assert.match(html, /style\.css\?v=20260807-math-take-pool-no-blob-v1/);
+  assert.match(html, /script\.js\?v=20260807-math-take-pool-no-blob-v1/);
   assert.match(source, /function registerServiceWorker\(\)/);
   assert.match(source, /navigator\.serviceWorker\.register\('\.\/sw\.js(\?[^']*)?'\)/);
   assert.match(source, /canRegisterServiceWorker\(location\.protocol\)/);
   assert.match(source, /registration\.addEventListener\('updatefound'/);
   assert.match(source, /worker\.state === 'installed' && navigator\.serviceWorker\.controller/);
-  assert.match(worker, /CACHE_NAME = 'baby-island-shell-20260804-math-apple-uniform-v1'/);
+  assert.match(worker, /CACHE_NAME = 'baby-island-shell-20260807-math-take-pool-no-blob-v1'/);
   assert.match(worker, /APP_SHELL = \[/);
-  assert.match(worker, /style\.css\?v=20260804-math-apple-uniform-v1/);
-  assert.match(worker, /script\.js\?v=20260804-math-apple-uniform-v1/);
+  assert.match(worker, /style\.css\?v=20260807-math-take-pool-no-blob-v1/);
+  assert.match(worker, /script\.js\?v=20260807-math-take-pool-no-blob-v1/);
   assert.match(worker, /assets\/ocean\/front-ocean-bg-v2-libtv\.webp\?v=20260720-clean-ocean-v1/);
   assert.match(worker, /assets\/ocean\/front-ocean-loop-v4-libtv-seamless-clouds\.mp4\?v=20260719-handpainted-libtv-v1/);
   assert.match(worker, /assets\/ocean\/seagull-fly\.webp\?v=20260720-libtv-flap-v1/);
@@ -618,8 +655,13 @@ test('frontend production build carries the root static app shell', () => {
   requiredRuntimeAssets.forEach((name) => {
     assert.match(copyScript, new RegExp(`'${name.replace('.', '\\.')}'`));
   });
-  assert.match(copyScript, /fs\.cpSync\(src, dest, \{ recursive: true, force: true \}\)/);
+  assert.match(copyScript, /fs\.cpSync\(src, dest, \{ recursive: true, force: true, filter: copyFilter \}\)/);
+  assert.match(copyScript, /_dreamina/);
+  assert.match(copyScript, /shouldSkipName/);
   assert.match(packScript, /copy_dir "assets\/math-map"/);
+  assert.match(packScript, /非视频的基本运行时素材必须打进 App/);
+  assert.match(packScript, /_dreamina\*/);
+  assert.match(packScript, /runtime asset gate OK/);
   assert.doesNotMatch(copyScript, /'assets'/);
   assert.doesNotMatch(copyScript, /free-levels-libtv-downloads|generated|voice-samples/);
 });
@@ -652,6 +694,66 @@ test('level entry keeps first ten free and gates level eleven as paid', () => {
   assert.equal(getLevelAccess(0, { completed: [], unlockedThrough: 1 }, true), 'missing');
   assert.equal(getLevelAccess(201, { completed: Array.from({ length: 200 }, (_, index) => index + 1), unlockedThrough: 200 }, true), 'missing');
   assert.equal(getLevelAccess(1.5, { completed: [], unlockedThrough: 1 }, true), 'missing');
+});
+
+test('local QA unlock + paid sample videos keep post-free levels testable', () => {
+  assert.equal(TEMP_LOCAL_FULL_ACCESS, true);
+  assert.equal(typeof isTempLocalUnlockEnabled, 'function');
+  const unlockSrc = isTempLocalUnlockEnabled.toString();
+  assert.match(unlockSrc, /localQa/);
+  assert.match(unlockSrc, /LOCAL_QA_UNLOCK_KEY|localStorage/);
+  assert.match(unlockSrc, /capacitor:|file:/);
+  // Node 无 location → 不误开解锁，单元测试保持真实付费墙语义
+  assert.equal(isTempLocalUnlockEnabled(), false);
+
+  const source = fs.readFileSync(path.join(__dirname, 'script.js'), 'utf8');
+  assert.match(source, /allowQuizWithoutVideo/);
+  assert.match(source, /data-skip-to-quiz/);
+  assert.match(source, /本地预览 · 第 \$\{level\.id\} 关暂无视频，可直接答题/);
+  // 废弃 pear/grape 样片不得挂回 11/12（另有专项测试）；本地预览靠无视频直进答题
+  assert.doesNotMatch(source, /lessonOverrides[\s\S]{0,800}level-11-pear\.mp4/);
+});
+
+test('math step arrows escape paid zone leftward instead of trapping on paywall both ways', () => {
+  const freeDone = {
+    completed: Array.from({ length: 10 }, (_, index) => index + 1),
+    unlockedThrough: 11,
+  };
+  // 卡在第 12 关：左键应回到最近可玩免费关 10，而不是在 11 再弹付费
+  const leftFrom12 = resolveMathLevelStep(12, -1, freeDone, false);
+  assert.equal(leftFrom12.action, 'go');
+  assert.equal(leftFrom12.levelId, 10);
+  assert.equal(leftFrom12.skipped, true);
+
+  // 右键仍是会员墙
+  const rightFrom12 = resolveMathLevelStep(12, 1, freeDone, false);
+  assert.equal(rightFrom12.action, 'paid');
+  assert.equal(rightFrom12.levelId, 13);
+
+  // 正常从 10 往右：邻关 11 即会员墙
+  const rightFrom10 = resolveMathLevelStep(10, 1, freeDone, false);
+  assert.equal(rightFrom10.action, 'paid');
+  assert.equal(rightFrom10.levelId, 11);
+
+  // 正常邻关切换
+  const leftFrom10 = resolveMathLevelStep(10, -1, freeDone, false);
+  assert.equal(leftFrom10.action, 'go');
+  assert.equal(leftFrom10.levelId, 9);
+  assert.equal(leftFrom10.skipped, false);
+
+  // VIP 且进度已开到 13：会员区可正常一步一步走
+  const vipProgress = {
+    completed: Array.from({ length: 12 }, (_, index) => index + 1),
+    unlockedThrough: 13,
+  };
+  const vipRight = resolveMathLevelStep(12, 1, vipProgress, true);
+  assert.equal(vipRight.action, 'go');
+  assert.equal(vipRight.levelId, 13);
+
+  // VIP 但进度未开：右键是 locked，不是 paid
+  const vipLocked = resolveMathLevelStep(12, 1, freeDone, true);
+  assert.equal(vipLocked.action, 'locked');
+  assert.equal(vipLocked.levelId, 13);
 });
 
 test('no stamina/energy gate — repeated level entry and retry are never blocked by stamina', () => {
@@ -712,6 +814,10 @@ test('paid levels open a per-map payment panel instead of a notice-only dialog',
   assert.match(paywallFn, /本地图学习卡/);
   assert.match(paywallFn, /购买本地图，解锁本图会员关/);
   assert.doesNotMatch(paywallFn, /开通 VIP|VIP 学习卡/);
+  assert.doesNotMatch(paywallFn, /魔法岛|单词发音练习|答题闯关记录/);
+  assert.match(paywallFn, /内容持续更新/);
+  assert.match(paywallFn, /闯关进度记录/);
+  assert.match(paywallFn, /mapWorld\.chipPrefix|mapLabel/);
   assert.match(paywallFn, /立即支付 ¥99/);
   assert.match(paywallFn, /data-vip-pay/);
   assert.match(paywallFn, /data-vip-restore/);
@@ -820,7 +926,7 @@ test('native VIP payment success callback activates and persists VIP state', () 
   assert.match(source, /state\.preferences = activateVipPreferences\(state\.preferences\)/);
   assert.match(source, /localStorage\.setItem\(APP_PREFERENCES_KEY, JSON\.stringify\(state\.preferences\)\)/);
   assert.match(source, /closePaywallDialog\(\)/);
-  assert.match(source, /showToast\('VIP 已开通，会员权益已生效'\)/);
+  assert.match(source, /showToast\('本地图权益已生效'\)/);
   assert.match(source, /window\.BabyIslandIAPComplete = completeVipPurchase/);
   assert.match(source, /window\.babyIslandIAPComplete = completeVipPurchase/);
 });
@@ -983,10 +1089,142 @@ test('map worlds keep independent progress while castle is coming soon', () => {
   assert.equal(MAP_WORLDS.math.title, '数学小桌');
   assert.equal(MAP_WORLDS.castle.comingSoon, true);
   assert.equal(mathMapLevels[0].itemType, 'count');
+  assert.equal(mathMapLevels[0].skill, 'count');
   assert.equal(mathMapLevels[0].targetCount, 1);
+  assert.equal(mathMapLevels[0].title, '只有一个');
   assert.equal(mathMapLevels[0].options[mathMapLevels[0].correct], '1 个苹果');
   assert.equal(mathMapLevels[0].videoSrc, undefined);
   assert.equal(questionPromptText(mathMapLevels[0]), '小朋友，哪一组是1 个苹果？');
+  assert.equal(mathQuestionCountKey(mathMapLevels[1]), 2);
+  assert.equal(mathQuestionAudioRelativePath(2), 'assets/audio/questions-holly/math-count-2-apple.mp3');
+  assert.equal(questionPromptText({ worldId: 'math', targetCount: 0 }), '小朋友，哪一组是0 个苹果？');
+  // 3-5 岁课表：不能再 200 关死循环「数到 1–5」
+  const mathSkills = new Set(mathMapLevels.map((level) => level.skill));
+  const mathFormats = new Set(mathMapLevels.map((level) => level.math?.format || level.itemType));
+  const mathThemes = new Set(mathMapLevels.map((level) => level.curriculum?.theme).filter(Boolean));
+  const mathMaxDomain = Math.max(...mathMapLevels.map((level) => Number(level.math?.numberMax) || 0));
+  assert.ok(mathSkills.has('count'));
+  assert.ok(mathSkills.has('subitize'));
+  assert.ok(mathSkills.has('numeral'));
+  assert.ok(mathSkills.has('compare'));
+  assert.ok(mathSkills.has('take'));
+  assert.ok(mathSkills.has('compose'));
+  assert.ok(mathSkills.has('sequence'));
+  assert.ok(mathFormats.has('take'));
+  assert.ok(mathFormats.has('compose'));
+  assert.ok(mathFormats.has('most') || mathFormats.has('least'));
+  assert.ok(mathThemes.size >= 8, `expected ≥8 themes, got ${mathThemes.size}`);
+  assert.ok(mathMaxDomain >= 10, `number domain should reach 10, got ${mathMaxDomain}`);
+  assert.equal(buildMathLevels().length, 200);
+  assert.equal(mathCurriculumSpec(1).skill, 'count');
+  assert.equal(mathCurriculumSpec(90).format, 'take');
+  assert.equal(mathCurriculumSpec(120).format, 'compose');
+  assert.ok(MATH_SKILL_LABELS.take);
+  // 取物关：池子 > 目标，正确选项文案仍可读
+  const takeLevel = mathMapLevels.find((level) => level.math?.format === 'take');
+  assert.ok(takeLevel);
+  assert.ok(takeLevel.math.poolCount > takeLevel.targetCount);
+  assert.ok(takeLevel.math.objectKind);
+  assert.ok(takeLevel.math.objectName);
+  assert.match(takeLevel.options[takeLevel.correct], new RegExp(takeLevel.math.objectName));
+  // 多物道具：200 关覆盖苹果/红珠/青珠/橡皮，且渲染写 data-kind
+  const mathCss = read('style.css');
+  const objectKinds = new Set(mathMapLevels.map((level) => level.math?.objectKind).filter(Boolean));
+  assert.ok(objectKinds.has('apple'));
+  assert.ok(objectKinds.has('bead-red'));
+  assert.ok(objectKinds.has('bead-teal'));
+  assert.ok(objectKinds.has('eraser'));
+  assert.ok(mathMapLevels.filter((level) => level.math?.objectKind && level.math.objectKind !== 'apple').length >= 100);
+  assert.equal(mathMapLevels[0].math.objectKind, 'apple');
+  const beadLevel = mathMapLevels.find((level) => level.math?.objectKind === 'bead-red' && (level.math?.format === 'count' || level.math?.format === 'subitize'));
+  assert.ok(beadLevel);
+  assert.match(beadLevel.question, /红珠/);
+  assert.match(mathQuestionAudioSlug(beadLevel), /bead-red/);
+  assert.match(mathQuestionAudioRelativePath(beadLevel), /math-q-count-.*bead-red|math-count-.*bead-red/);
+  assert.match(source, /data-kind="\$\{objectKind\}"/);
+  assert.match(source, /const MATH_OBJECTS =/);
+  assert.match(source, /function mathPickObjectKind\(/);
+  assert.match(mathCss, /data-kind="bead-red"/);
+  assert.match(mathCss, /red-bead-handpaint-depth-v2/);
+  assert.match(mathCss, /teal-bead-handpaint-depth-v2/);
+  assert.match(mathCss, /eraser-handpaint-topdown-v1/);
+  // 分合关：盘内先有 left，拖入凑成 whole（无 +/=、无选项）
+  const composeLevel = mathMapLevels.find((level) => level.math?.format === 'compose');
+  assert.ok(composeLevel);
+  assert.equal(
+    Number(composeLevel.math.leftCount) + Number(composeLevel.targetCount),
+    Number(composeLevel.math.whole),
+  );
+  assert.match(composeLevel.question, /已经有.*再拖进来.*凑成/);
+  assert.doesNotMatch(composeLevel.question, /[+=]/);
+  assert.doesNotMatch(composeLevel.question, /还差几个|合成/);
+  assert.ok(Number(composeLevel.math.poolCount) >= Number(composeLevel.targetCount));
+  assert.equal(Array.isArray(composeLevel.math.groups) ? composeLevel.math.groups.length : -1, 0);
+  assert.match(source, /data-math-compose/);
+  assert.match(source, /data-math-compose-item/);
+  assert.match(source, /data-math-compose-plate/);
+  assert.match(source, /bindComposeItemPointer/);
+  assert.match(source, /scheduleComposeAutoSubmit|composePlateTotal/);
+  assert.match(source, /runComposeDragDemo/);
+  assert.doesNotMatch(source, /math-compose-op/);
+  assert.doesNotMatch(source, /math-compose-unknown/);
+  // CSS 仅保留 legacy 隐藏钩；JS 不再产出这些节点
+  assert.doesNotMatch(source, /class=\\"math-compose-total/);
+  assert.match(mathCss, /\.math-compose-board/);
+  assert.match(mathCss, /\.math-compose-plate-disk/);
+  assert.match(mathCss, /\.math-compose-item/);
+  assert.doesNotMatch(mathCss, /\.math-compose-op\s*\{/);
+  assert.doesNotMatch(mathCss, /\.math-compose-unknown\s*\{/);
+  // .math-compose-total 允许仅作 display:none 残留钩
+  assert.match(source, /function mathQuestionAudioSrcFor\(/);
+  assert.match(source, /function mathQuestionAudioSlug\(/);
+  assert.match(source, /function collectMathQuestionUtterances\(/);
+  assert.match(source, /function speakMathQuestion\(/);
+  assert.match(source, /data-listen-question/);
+  assert.match(source, /math-sequence-ref/);
+  assert.match(source, /requestAnimationFrame\(\(\) => \{\s*if \(quizState === 'answering'\) speakMathQuestion\(/);
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/audio/questions-holly/math-count-2-apple.mp3')));
+  // 169 数序：语音 slug 不能再误绑成 count-N 苹果
+  const seq169 = mathMapLevels.find((level) => level.id === 169);
+  assert.ok(seq169);
+  assert.equal(seq169.math?.format, 'sequence');
+  assert.match(mathQuestionAudioSlug(seq169), /^seq-(next|prev)-\d+$/);
+  assert.match(mathQuestionAudioRelativePath(seq169), /math-q-seq-/);
+  assert.doesNotMatch(mathQuestionAudioRelativePath(seq169), /math-count-\d+-apple/);
+  // 正式课表 166–185：数序主线全部进正式关，木积木 v7 资产齐全
+  const formalSeq = mathMapLevels.filter((level) => level.id >= 166 && level.id <= 185);
+  assert.equal(formalSeq.length, 20);
+  formalSeq.forEach((level) => {
+    assert.equal(level.math?.format, 'sequence', `L${level.id} format`);
+    assert.equal(level.skill, 'sequence', `L${level.id} skill`);
+    assert.ok(Number(level.math?.sequenceAnchor) >= 1 && Number(level.math?.sequenceAnchor) <= 8, `L${level.id} anchor`);
+    assert.ok(['next', 'prev'].includes(level.math?.sequenceDirection), `L${level.id} dir`);
+    assert.ok(fs.existsSync(path.join(__dirname, mathQuestionAudioRelativePath(level).split('?')[0])), `L${level.id} audio`);
+  });
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach((n) => {
+    assert.ok(
+      fs.existsSync(path.join(__dirname, `assets/math-map/quiz/wood-digits/wood-digit-${n}-v7.webp`)),
+      `wood digit ${n}`,
+    );
+  });
+  assert.ok(fs.existsSync(path.join(__dirname, 'assets/math-map/quiz/wood-digits/wood-digit-q-v7.webp')));
+  assert.match(source, /mathWoodDigitMarkup/);
+  assert.match(source, /data-math-seq-slot/);
+  assert.match(source, /math-choice--wood-digit/);
+  // take 语音与 count 苹果模板分离
+  assert.match(mathQuestionAudioRelativePath(takeLevel), /math-q-take-/);
+  const mathManifest = JSON.parse(read('assets/audio/questions-holly/math-question-audio-manifest.json'));
+  assert.equal(mathManifest.speaker, 'zh_female_peiqi_uranus_bigtts');
+  const count2Entry = mathManifest.entries.find((entry) => entry.count === 2 || entry.slug === 'count-2-apple');
+  assert.ok(count2Entry);
+  assert.equal(count2Entry.text, '小朋友，哪一组是2 个苹果？');
+  const utterances = collectMathQuestionUtterances(mathMapLevels);
+  assert.ok(utterances.length >= 40, `expected broad prompt set, got ${utterances.length}`);
+  assert.ok(utterances.some((u) => u.slug.startsWith('seq-')));
+  assert.ok(utterances.some((u) => u.slug.startsWith('take-')));
+  assert.ok(utterances.some((u) => u.slug.startsWith('compose-')));
+  assert.ok(utterances.some((u) => u.slug.includes('bead-red')));
+  assert.ok(utterances.some((u) => u.slug.includes('eraser')));
   assert.match(source, /state\.progressByWorld\[nextWorldId\]/);
   assert.match(source, /JSON\.stringify\(state\.progressByWorld\)/);
   assert.match(source, /英语区/);
@@ -1187,6 +1425,9 @@ test('math AI planning interfaces use a backend coach with local fallback', () =
   assert.equal(mathVoiceFeedback('wrong-easier', { targetCount: 2 }).provider, 'local-template');
   assert.equal(report.mastery, '建议陪练');
   assert.match(report.reasonText || '', /连续错了|正确率偏低|巩固|继续练/);
+  assert.ok(Array.isArray(report.skillBreakdown));
+  assert.ok(report.skillBreakdown.some((row) => row.skill === 'count'));
+  assert.equal(report.skillLabel, '点数');
   assert.equal(exported.mathAiReport.totalAttempts, 2);
   assert.match(read('auth/apiClient.js'), /function generateMathCoachPlan\(payload\)/);
 });
@@ -1199,7 +1440,7 @@ test('math AI runtime is current-page local logic with no frontend AI secret', (
   assert.match(source, /mathAttempts:\s*normalizeMathAttempts\(state\.mathAttempts\)/);
   assert.match(source, /mathCoachPlans:\s*\{\}/);
   assert.match(source, /state\.mathAttempts = mergeMathAttempts\(state\.mathAttempts,\s*remote\.mathAttempts\)/);
-  assert.match(source, /recordLocalMathAttempt\(level, selectedIndex, result\.correct,\s*endedAt - startedAt\)/);
+  assert.match(source, /recordLocalMathAttempt\(\s*level,\s*(?:isTake \|\| isCompose \? level\.correct : selectedIndex|isTake \? level\.correct : selectedIndex|selectedIndex),\s*result\.correct,\s*endedAt - startedAt/);
   assert.match(source, /delete state\.mathCoachPlans\[level\.id\]/);
   assert.match(source, /requestMathCoachPlan\(level,\s*attempt\)/);
   assert.match(source, /api\.generateMathCoachPlan\(mathCoachPayload\(level,\s*attempt\)\)/);
@@ -1209,14 +1450,22 @@ test('math AI runtime is current-page local logic with no frontend AI secret', (
   assert.match(source, /bindInlineMathQuestion\(inlineMathPanel,\s*mathLevelForCoachPlan\(currentLevel\)\)/);
   assert.match(source, /function speakMathVoiceFeedback\(feedbackText,\s*forceCorrect\)/);
   assert.match(source, /function playMathCoachFeedbackTone\(kind\)/);
-  assert.match(source, /Intentional MVP: audio is correct\/wrong local MP3 only/);
+  assert.match(source, /function speakMathQuestion\(/);
+  assert.match(source, /MATH_QUESTION_AUDIO_VERSION = '20260806-math-q-compose-drag-v1'/);
+  assert.match(source, /mathQuestionAudioSrcFor\(level\)/);
+  assert.match(source, /requestAnimationFrame\(\(\) => \{\s*if \(quizState === 'answering'\) speakMathQuestion\(\)/);
   assert.match(source, /const src = MATH_COACH_FEEDBACK_AUDIO_SRC\[normalized\]/);
-  assert.match(source, /const mathCoachAudio = new Audio\(src\);/);
-  assert.match(source, /state\.preferences\.autoPronunciation === false/);
+  assert.match(source, /const mathCoachAudio = new Audio\(src\)/);
   assert.match(source, /mapMusic\.volume = MAP_MUSIC_DUCK_VOLUME/);
-  assert.match(source, /if \(quizState === 'correct'\) speakMathVoiceFeedback\(plan\.feedbackText,\s*true\)/);
+  // Math correct/wrong SFX = island feedback-holly MP3, play immediately (not after coach).
+  assert.match(source, /playMathCoachFeedbackTone\('correct'\);\s*celebrate\(\);/);
+  assert.match(source, /playMathCoachFeedbackTone\('wrong'\);/);
+  assert.match(source, /function bindInlineMathQuestion\([\s\S]*?function celebrate\(\)[\s\S]*?__CORRECT_CELEBRATION_LOTTIE_DATA[\s\S]*?celebrate\(\);/);
+  assert.match(source, /function mathQuestionTableMarkup\([\s\S]*?data-celebration[\s\S]*?data-celebration-lottie/);
   assert.match(source, /mathVoiceFeedback\(shouldRefreshEasier \? 'wrong-easier' : 'wrong'/);
-  assert.match(source, /if \(detail\) detail\.textContent = plan\.feedbackText;[\s\S]*?speakMathVoiceFeedback\(plan\.feedbackText,\s*false\)/);
+  assert.match(source, /if \(detail\) detail\.textContent = plan\.feedbackText;/);
+  assert.doesNotMatch(source, /if \(quizState === 'correct'\) speakMathVoiceFeedback\(plan\.feedbackText,\s*true\)/);
+  assert.doesNotMatch(source, /speakMathVoiceFeedback\(plan\.feedbackText,\s*false\)/);
   assert.match(source, /setTimeout\(\(\) => \{[\s\S]*?coachPlanPromise\.then\(\(plan\) => \{[\s\S]*?const plannedMode = plan\?\.variantMode/);
   assert.match(source, /function generateMathVariant\(level,\s*context = \{\}\)/);
   assert.match(source, /function buildMathParentReport\(log = \[\]\)/);
@@ -1559,8 +1808,14 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
   assert.match(css, /\.current \.node-icon\s*\{[\s\S]*?animation:\s*play-button-pop/);
   assert.match(css, /\.map-topbar\s*\{/);
   assert.match(css, /\.map-pack-btn/);
-  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn,[\s\S]*?\.map-music-btn\s*\{[\s\S]*?width:\s*3rem[\s\S]*?height:\s*3rem[\s\S]*?min-width:\s*44px[\s\S]*?min-height:\s*44px/);
-  assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?\.map-locate-btn,[\s\S]*?\.map-jump-btn,[\s\S]*?\.map-music-btn\s*\{[^}]*width:\s*2\.75rem[^}]*height:\s*2\.75rem/);
+  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn,[\s\S]*?\.map-music-btn\s*\{[\s\S]*?min-width:\s*44px[\s\S]*?min-height:\s*44px/);
+  assert.match(css, /\.map-fab-label\s*\{/);
+  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn,[\s\S]*?\.map-music-btn\s*\{[\s\S]*?border-radius:\s*999px/);
+  assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn,[\s\S]*?\.map-music-btn\s*\{[\s\S]*?width:\s*3rem[\s\S]*?height:\s*3rem/);
+  assert.match(css, /\.map-fab-label\s*\{[\s\S]*?border-radius:\s*999px[\s\S]*?position:\s*absolute|[\s\S]*?position:\s*absolute[\s\S]*?border-radius:\s*999px/);
+  assert.match(script, /class="map-fab-label">背景音乐</);
+  assert.match(script, /class="map-fab-label">跳关</);
+  assert.match(script, /class="map-fab-label">定位</);
   assert.match(css, /\.map-locate-btn svg circle\s*\{[\s\S]*?fill:\s*var\(--focus\)/);
   assert.match(css, /\.resource-strip\s*\{/);
   assert.match(css, /\.route-scroll\s*\{[\s\S]*?overflow-x:\s*auto/);
@@ -1586,6 +1841,10 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
   assert.match(css, /\.math-map-decor\s*\{[\s\S]*?pointer-events:\s*none/);
   assert.match(css, /ruler-handpaint-depth-v2\.webp\?v=20260804-math-handpaint-v2/);
   assert.match(css, /pencil-handpaint-depth-v2\.webp\?v=20260804-math-handpaint-v2/);
+  assert.match(css, /eraser-handpaint-topdown-v1\.webp\?v=20260806-math-q-compose-drag/);
+  assert.match(css, /\.math-map-prop--eraser\s*\{[\s\S]*?top:\s*25\.5%[\s\S]*?left:\s*5\.2%[\s\S]*?transform:\s*rotate\(28deg\)/);
+  assert.match(css, /math-map-prop--eraser/);
+  assert.match(script, /math-map-prop--eraser/);
   assert.match(css, /pencil-kid-figure-handpaint-v1\.webp\?v=20260804-math-covers-v1/);
   assert.match(css, /plus-tile-handpaint-depth-v3\.webp\?v=20260804-math-handpaint-v2/);
   assert.match(css, /equal-tile-handpaint-depth-v3\.webp\?v=20260804-math-handpaint-v2/);
@@ -1598,6 +1857,9 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
   const mathPlateBlock = css.match(/\n\s{2}\.math-plate\s*\{[^}]*\}/)?.[0] || '';
   const mathTableBlock = css.match(/\n  \.math-table\s*\{[^}]*\}/)?.[0] || '';
   const mathQuestionCardBlock = css.match(/\n  \.math-question-card\s*\{[^}]*\}/)?.[0] || '';
+  assert.match(script, /math-question-prompt/);
+  assert.match(script, /math-question-prompt[\s\S]*?question-text[\s\S]*?listen-question-btn/);
+  assert.match(css, /\.math-question-prompt\s*\{[\s\S]*?inline-flex/);
   const mathChoiceBlock = css.match(/\n  \.math-choice\s*\{[^}]*\}/)?.[0] || '';
   const mathAppleDropStart = css.indexOf('@keyframes math-apple-drop-in');
   const mathAppleShadowStart = css.indexOf('@keyframes math-apple-shadow-drop-in', mathAppleDropStart);
@@ -1612,25 +1874,85 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
   assert.match(mathPlateBlock, /isolation:\s*isolate/);
   assert.match(mathPlateBlock, /overflow:\s*visible/);
   assert.match(mathPlateBlock, /aspect-ratio:\s*1/);
+  assert.match(mathPlateBlock, /width:\s*min\(100%,\s*clamp\(8\.1rem,\s*23vh,\s*10\.8rem\)\)/);
   assert.match(mathPlateBlock, /border-radius:\s*50%/);
-  assert.match(mathObjectSetBlock, /display:\s*flex/);
-  assert.match(mathObjectSetBlock, /position:\s*relative/);
+  assert.match(mathObjectSetBlock, /position:\s*absolute/);
+  assert.match(mathObjectSetBlock, /inset:\s*13%/);
   assert.match(mathObjectSetBlock, /z-index:\s*1/);
-  assert.match(mathObjectSetBlock, /flex-wrap:\s*wrap/);
-  assert.match(mathObjectSetBlock, /justify-content:\s*center/);
-  assert.match(mathObjectSetBlock, /align-content:\s*center/);
-  assert.match(mathObjectSetBlock, /width:\s*108%/);
   assert.match(mathObjectSetBlock, /max-width:\s*none/);
-  assert.match(mathObjectBlock, /width:\s*var\(--math-object-size,\s*clamp\(2\.35rem,\s*6\.4vh,\s*3\.2rem\)\)/);
-  assert.match(mathObjectBlock, /max-width:\s*none/);
-  assert.match(script, /class="math-object-set" data-count=/);
-  // 苹果统一尺寸：禁止按 data-count 改 --math-object-size
+  assert.match(mathObjectBlock, /width:\s*var\(--math-object-size,\s*clamp\(2\.55rem,\s*7\.2vh,\s*3\.55rem\)\)/);
+  assert.match(mathObjectBlock, /translate:\s*-50%\s*-50%/);
+  assert.match(mathObjectBlock, /max-width:\s*38%/);
+  // 骰子落点（:has + nth-child），禁止再 flex 换行掉出盘压标签
+  assert.match(css, /\.math-object-set:has\(> \.math-object:nth-child\(5\):last-child\)/);
+  assert.match(css, /\.math-choice-label\s*\{[\s\S]*?z-index:\s*4/);
+  assert.match(css, /transform-origin:\s*50%\s*40%/);
+  assert.match(script, /class="math-object-set"[^>]*data-count=/);
+  // 苹果统一尺寸：禁止按 data-count 1–5 改 --math-object-size；6–10 允许整体缩小以塞进盘
   assert.doesNotMatch(css, /\.math-object-set\[data-count="1"\]\s*\{[^}]*--math-object-size/);
   assert.doesNotMatch(css, /\.math-object-set\[data-count="2"\]\s*\{[^}]*--math-object-size/);
   assert.doesNotMatch(css, /\.math-object-set\[data-count="3"\]\s*\{[^}]*--math-object-size/);
   assert.doesNotMatch(css, /\.math-object-set\[data-count="4"\]\s*\{[^}]*--math-object-size/);
   assert.doesNotMatch(css, /\.math-object-set\[data-count="5"\]/);
-  assert.doesNotMatch(css, /\.math-object-set\[data-count="6"\]/);
+  assert.match(css, /\.math-object-set\[data-count="6"\]/);
+  assert.match(css, /\.math-object-set\[data-count="10"\]/);
+  assert.match(css, /\.math-take-board/);
+  // 取物：关掉盘内苹果的 max-width/translate，否则按钮内苹果缩成细条/白圈
+  assert.match(css, /\.math-take-item\s+\.math-object\s*\{[\s\S]*?translate:\s*none[\s\S]*?max-width:\s*none/);
+  assert.match(css, /\.math-take-item\s*\{[\s\S]*?min-width:\s*56px[\s\S]*?min-height:\s*56px/);
+  assert.match(css, /\.math-take-item\s*\{[\s\S]*?width:\s*clamp\(4\.6rem,\s*11\.5vh,\s*5\.9rem\)/);
+  // 跟手幽灵：比池内大 + 弹起态
+  assert.match(css, /\.math-take-ghost\s*\{[\s\S]*?min-width:\s*112px[\s\S]*?min-height:\s*112px/);
+  assert.match(css, /\.math-take-ghost\.is-lifted/);
+  assert.match(script, /TAKE_GHOST_SCALE\s*=\s*1\.5/);
+  assert.match(script, /TAKE_GHOST_MIN_PX\s*=\s*112/);
+  assert.match(script, /classList\.add\('is-lifted'\)/);
+  assert.match(script, /ghostSize\s*\/\s*2/);
+  // 取物拖拽：桌上苹果 + 俯视手绘藤篮（单层）+ 幽灵 + touch-action:none（不是两个框）
+  assert.match(css, /\.math-take-basket/);
+  assert.match(css, /\.math-take-basket-art/);
+  assert.match(css, /\.math-take-basket-stage/);
+  assert.match(css, /\.math-take-basket-back/);
+  assert.match(css, /\.math-take-basket-mouth/);
+  assert.match(css, /\.math-take-basket-hint/);
+  assert.match(css, /\.math-take-ghost/);
+  assert.match(css, /\.math-take-item\s*\{[\s\S]*?touch-action:\s*none/);
+  // 俯视口居中落果，不再前缘下沉
+  assert.match(css, /\.math-take-basket \.math-take-item\s*\{[\s\S]*?transform:\s*none/);
+  assert.match(script, /data-math-take-basket-items/);
+  assert.match(script, /math-take-basket-art/);
+  assert.match(script, /basket-handpaint-topdown-v1\.webp/);
+  assert.match(script, /data-basket-view="topdown"/);
+  assert.match(script, /math-take-basket-stage/);
+  assert.match(script, /function bindTakeItemPointer\(/);
+  assert.match(script, /function placeTakeItem\(/);
+  assert.match(script, /math-take-ghost/);
+  assert.match(script, /已取出 \$\{count\} \$\{obj\.measure\}，要找 \$\{target\} \$\{obj\.measure\}/);
+  // 禁侧视前后唇分层资产（俯视单层）
+  assert.doesNotMatch(script, /basket-handpaint-empty-v1\.webp/);
+  assert.doesNotMatch(script, /basket-handpaint-front-v1\.webp/);
+  assert.doesNotMatch(script, /math-take-basket-front/);
+  // 篮内果禁止青环贴纸感
+  assert.match(css, /\.math-take-basket \.math-take-item\.is-selected[\s\S]*?outline:\s*0/);
+  // 禁止纯 CSS 假编织篮零件
+  assert.doesNotMatch(script, /math-take-basket-handle/);
+  assert.doesNotMatch(script, /math-take-basket-rim/);
+  assert.doesNotMatch(script, /math-take-basket-bowl/);
+  assert.doesNotMatch(css, /\.math-take-basket-handle\s*\{/);
+  assert.doesNotMatch(css, /\.math-take-basket-rim\s*\{/);
+  assert.doesNotMatch(css, /\.math-take-basket-bowl\s*\{/);
+  // 答题时藏中间关卡胶囊，避免挡题干
+  assert.match(css, /map-game-active:has\(\[data-math-inline-question\] \.math-quiz\) \.math-level-switch-indicator/);
+  // 禁止双框点选隐喻
+  assert.doesNotMatch(script, /苹果在这里/);
+  assert.doesNotMatch(script, /拖到这里/);
+  assert.doesNotMatch(css, /\.math-take-zone-label/);
+  // 取物左池禁大椭圆软垫/脏阴影块（道具直接落桌面格子）
+  assert.match(css, /\.math-take-pool\s*\{[\s\S]*?background:\s*transparent/);
+  assert.match(css, /\.math-take-pool::before\s*\{[\s\S]*?(?:content:\s*none|display:\s*none)/);
+  assert.doesNotMatch(css, /\.math-take-pool::before\s*\{[\s\S]*?radial-gradient\(ellipse at 50% 40%,\s*rgba\(196,\s*150,\s*88/);
+  assert.doesNotMatch(css, /\.math-take-pool\s*\{[\s\S]*?radial-gradient\(ellipse 72% 48%/);
+  assert.match(css, /\.math-compose-ref/);
   assert.doesNotMatch(script, /math-empty-mark/);
   assert.doesNotMatch(css, /\.math-empty-mark/);
   assert.match(mathTableBlock, /background:\s*transparent/);
@@ -1686,27 +2008,41 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
   assert.doesNotMatch(css, /\.math-level-rail\b/);
   assert.doesNotMatch(css, /is-math-rail-active/);
   assert.match(css, /\.math-map-play-area\s*\{[\s\S]*?left:\s*clamp\(3rem,\s*7cqw,\s*7rem\)/);
-  assert.match(script, /aria-label="当前第 \$\{currentLevel\.id\} 关，共 \$\{DISPLAY_LEVEL_COUNT\} 关"/);
+  assert.match(script, /当前第 \$\{currentLevel\.id\} 关，共 \$\{DISPLAY_LEVEL_COUNT\} 关/);
   assert.match(script, /mathMapTransition === 'drop' \? ' is-changing' : ''/);
+  assert.match(script, /aria-label=\"\$\{escapeHtml\(mathLevelSwitchAria\)\}\"/);
+  assert.match(script, /必经小片子/);
+  assert.match(script, /is-story-stop/);
   assert.match(script, /<strong><span>第 \$\{currentLevel\.id\}<\/span><small>\/ \$\{DISPLAY_LEVEL_COUNT\} 关<\/small><\/strong>/);
   assert.match(script, /function showInlineMathLevel[\s\S]*?renderMap\(\);\s*if \(message\) showMapMessage\(message\)/);
   assert.doesNotMatch(script, /已切到第/);
   assert.match(script, /data-math-inline-question/);
   assert.match(script, /data-math-step="-1"/);
   assert.match(script, /data-math-step="1"/);
+  assert.match(script, /math-level-step-icon/);
+  assert.match(script, /stroke-linecap="round"/);
+  assert.match(script, /stroke-linejoin="round"/);
+  assert.match(css, /\.math-level-step-icon/);
+  assert.doesNotMatch(css, /\.math-level-step::before/);
   assert.match(script, /bindInlineMathQuestion\(inlineMathPanel,\s*mathLevelForCoachPlan\(currentLevel\)\)/);
   assert.match(script, /playMathAppleDropSounds\(inlineMathPanel\)/);
   assert.match(script, /mathMapTransition:\s*''/);
   assert.match(script, /function showInlineMathLevel\(levelId,\s*message = '',\s*transition = ''\)/);
-  assert.match(script, /function transitionToInlineMathLevel[\s\S]*?classList\.add\('is-switching-out'\)[\s\S]*?showInlineMathLevel\(nextId,[\s\S]*?'drop'\)/);
-  assert.match(script, /stepButtons\.forEach[\s\S]*?transitionToInlineMathLevel\(level\.id \+ Number\(button\.dataset\.mathStep\),\s*button\)/);
-  assert.match(script, /window\.matchMedia\('\(prefers-reduced-motion: reduce\)'\)\.matches/);
+    assert.match(script, /function transitionToInlineMathLevel[\s\S]*?classList\.add\('is-switching-out'\)[\s\S]*?showInlineMathLevel\(nextId,[\s\S]*?'drop'\)/);
+    assert.match(script, /function resolveMathLevelStep\(/);
+    assert.match(script, /resolveMathLevelStep\(/);
+    assert.match(script, /已回到可玩的第/);
+    // 数学跳关：会员关直接付费墙，不把人扔进会员关题面
+    assert.match(script, /onDepart:[\s\S]*?currentMapTheme === 'math'[\s\S]*?getLevelAccess\(levelId[\s\S]*?openPaywallDialog\(levelId/);
+    assert.match(script, /stepButtons\.forEach[\s\S]*?transitionToInlineMathLevel\(level\.id \+ Number\(button\.dataset\.mathStep\),\s*button\)/);
+    assert.match(script, /window\.matchMedia\('\(prefers-reduced-motion: reduce\)'\)\.matches/);
   assert.match(script, /route\.type === 'level'[\s\S]*?state\.preferences\.mapWorld === 'math'[\s\S]*?history\.replaceState\(null,\s*'',\s*'#map'\)/);
   assert.match(css, /\.math-inline-header\s*\{[\s\S]*?display:\s*none/);
-  assert.match(css, /\.math-level-step\s*\{[\s\S]*?position:\s*absolute/);
+  assert.match(css, /\.math-level-step\s*\{[\s\S]*?position:\s*relative/);
   assert.match(css, /\.math-level-step\s*\{[\s\S]*?border:\s*2px solid rgba\(110,\s*70,\s*24,\s*0\.55\)[\s\S]*?background:\s*rgba\(255,\s*248,\s*220,\s*0\.98\)/);
-  assert.match(css, /\.math-level-step--prev\s*\{[\s\S]*?left:\s*clamp/);
-  assert.match(css, /\.math-level-step--next\s*\{[\s\S]*?right:\s*clamp/);
+  assert.match(css, /\.math-inline-panel\s*\{[\s\S]*?grid-template-areas:[\s\S]*?prev header next[\s\S]*?prev layout next/);
+  assert.match(css, /\.math-level-step--prev\s*\{[\s\S]*?grid-area:\s*prev/);
+  assert.match(css, /\.math-level-step--next\s*\{[\s\S]*?grid-area:\s*next/);
   assert.match(css, /\.math-inline-panel\.is-switching-out \.math-table\s*\{[\s\S]*?opacity:\s*0/);
   assert.match(script, /--math-object-delay:\$\{objectIndex\+\+ \* 190\}ms/);
   assert.match(css, /\.math-inline-panel\.is-dropping-in \.math-object\s*\{[\s\S]*?will-change:\s*transform,\s*opacity/);
@@ -1730,6 +2066,11 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
   assert.match(css, /@keyframes math-level-number-pop/);
   assert.match(css, /@media \(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.math-level-switch-indicator\.is-changing/);
   assert.match(css, /\.math-map-play-area\s*\{[\s\S]*?position:\s*absolute/);
+  // ✓ 确认钮必须抬离底栏：play-area bottom 用 --bottom-tabs-space，禁止再写死小 inset
+  assert.match(css, /--bottom-tabs-space:\s*calc\(var\(--bottom-tabs-height\)\s*\+\s*0\.7rem\)/);
+  assert.match(css, /\.math-map-play-area\s*\{[\s\S]*?bottom:\s*calc\(var\(--bottom-tabs-space\)\s*\+\s*env\(safe-area-inset-bottom/);
+  assert.doesNotMatch(css, /\.math-map-play-area\s*\{[\s\S]{0,280}?bottom:\s*clamp\(2\.6rem/);
+  assert.match(css, /\.math-inline-panel\s+\.quiz-footer\s*\{[\s\S]*?z-index:\s*8/);
   assert.match(css, /\.route-ocean\[data-map-theme="math"\] \.route-scroll\s*\{[\s\S]*?overflow-x:\s*hidden[\s\S]*?scrollbar-width:\s*none/);
   assert.match(css, /\.route-ocean\[data-map-theme="math"\] \.route-scroll::-webkit-scrollbar\s*\{[\s\S]*?display:\s*none/);
   assert.match(css, /\.route-ocean\[data-map-theme="math"\] \.boat-dock\s*\{[\s\S]*?display:\s*none/);
@@ -1824,13 +2165,16 @@ test('tablet CSS contracts cover landscape, portrait, safe areas, and touch size
   assert.match(worker, /assets\/egypt-map\/cutouts\/decor\/runtime-v2\/43-foot-trail-lr\.webp\?v=20260801-desert-decor-v13c/);
   assert.match(worker, /assets\/egypt-map\/cutouts\/decor\/runtime-v2\/43b-foot-trail-lr\.webp\?v=20260801-desert-decor-v13c/);
   assert.match(worker, /assets\/egypt-map\/cutouts\/decor\/runtime-v2\/39-scarab-stone\.webp\?v=20260801-desert-decor-v13c/);
-  assert.match(worker, /baby-island-shell-20260804-math-apple-uniform-v1/);
+  assert.match(worker, /baby-island-shell-20260807-math-take-pool-no-blob-v1/);
   assert.match(worker, /assets\/math-map\/covers\/math-desk-cover-v1\.webp\?v=20260804-math-covers-v1/);
   assert.match(worker, /assets\/math-map\/covers\/math-garden-cover-v1\.webp\?v=20260804-math-covers-v1/);
   assert.match(worker, /assets\/math-map\/covers\/math-star-tower-cover-v1\.webp\?v=20260804-math-covers-v1/);
   assert.match(worker, /assets\/audio\/math-map-bgm\.mp3\?v=20260804-math-bgm-v2/);
   assert.match(worker, /assets\/math-map\/quiz\/apple-handpaint-depth-v2\.webp\?v=20260804-math-quiz-props-v1/);
   assert.match(worker, /assets\/math-map\/quiz\/plate-handpaint-depth-v1\.webp\?v=20260804-math-quiz-props-v1/);
+  assert.match(worker, /assets\/math-map\/quiz\/basket-handpaint-topdown-v1\.webp\?v=20260807-math-take-pool-no-blob-v1/);
+  assert.doesNotMatch(worker, /basket-handpaint-empty-v1\.webp/);
+  assert.doesNotMatch(worker, /basket-handpaint-front-v1\.webp/);
   assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/01-cactus-cluster.webp')));
   assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/13-acacia-sapling.webp')));
   assert.ok(fs.existsSync(path.join(__dirname, 'assets/egypt-map/cutouts/decor/runtime-v2/17-broken-clay-pot.webp')));
@@ -2045,8 +2389,8 @@ test('map FAB cluster: locate + jump beside, absolute in route-ocean', () => {
   assert.match(script, /map-fab-cluster/);
 
   // 5) ::after label shows "第 N 关" text (base); immersive map hides it
-  assert.match(css, /\.map-locate-btn::after\s*\{[^}]*?content:\s*\"第[\s\S]*?关\"/);
-  assert.match(css, /\.map-game-active\s+\.map-locate-btn::after\s*\{[^}]*?display:\s*none/);
+  assert.match(script, /class=\"map-fab-label\">定位</);
+  assert.doesNotMatch(css, /\.map-locate-btn::after\s*\{[^}]*content:\s*[\"']第/);
 
   // 6) Hit area ≥44px preserved on FABs
   assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn,[\s\S]*?\.map-music-btn\s*\{[^}]*?min-width:\s*44px[^}]*?min-height:\s*44px/);
@@ -2056,8 +2400,8 @@ test('map FAB cluster: locate + jump beside, absolute in route-ocean', () => {
   assert.match(script, /aria-label=\"回到第/);
   assert.match(script, /title=\"回到当前最新进度/);
   assert.match(script, /aria-label=\"跳关，仅移动地图到某一关/);
-  assert.match(script, /关闭背景音/);
-  assert.match(script, /打开背景音/);
+  assert.match(script, /关闭背景音乐/);
+  assert.match(script, /打开背景音乐/);
 });
 
 test('map asset pack HUD lives in topbar and exposes live progress outside dialog', () => {
@@ -2488,11 +2832,14 @@ test('quiz and math AI feedback use local MP3 instead of Chinese system TTS', ()
   assert.match(source, /playFileAudio\(feedback, FEEDBACK_AUDIO_SRC\.wrong, FEEDBACK_AUDIO_VOLUME\)/);
   assert.match(source, /function speakMathVoiceFeedback\(feedbackText,\s*forceCorrect\)/);
   assert.match(source, /return playMathCoachFeedbackTone\(isCorrect \? 'correct' : 'wrong'\)/);
+  // Math path mirrors island: immediate correct/wrong MP3 on judge, not delayed coach voice.
+  assert.match(source, /playMathCoachFeedbackTone\('correct'\);\s*celebrate\(\);/);
+  assert.match(source, /playMathCoachFeedbackTone\('wrong'\);/);
   assert.match(source, /\}, 2600\)/);
   assert.match(source, /\}, 3400\)/);
   assert.doesNotMatch(source, /function speakChinese|SpeechSynthesisUtterance\(text\)|speakChinese\(/);
   assert.doesNotMatch(source, /new SpeechSynthesisUtterance\(message\)|window\.speechSynthesis\.speak\(mathUtterance\)/);
-  assert.match(html, /script\.js\?v=20260804-math-apple-uniform-v1/);
+  assert.match(html, /script\.js\?v=20260807-math-take-pool-no-blob-v1/);
   assert.match(worker, /assets\/audio\/feedback-holly\/correct\.mp3\?v=20260804-peiqi-feedback-v3/);
   assert.match(worker, /assets\/audio\/feedback-holly\/wrong\.mp3\?v=20260804-peiqi-feedback-v3/);
 });
@@ -2524,7 +2871,7 @@ test('first ten free levels use local 15s videos and Natasha word MP3s', () => {
   assert.match(source, /data-video-qa="\$\{escapeHtml\(level\.videoMeta\?\.qa \|\| ''\)\}"/);
   assert.match(source, /data-video-audio="\$\{escapeHtml\(level\.videoMeta\?\.audio \|\| ''\)\}"/);
   assert.match(source, /wordAudioSrcFor\(word\)/);
-  assert.match(html, /script\.js\?v=20260804-math-apple-uniform-v1/);
+  assert.match(html, /script\.js\?v=20260807-math-take-pool-no-blob-v1/);
 });
 
 test('new paid course table does not bind stale pear and grape videos to levels 11 and 12', () => {
@@ -3178,7 +3525,7 @@ test('map topbar responsive structure without voyage capsule', () => {
   assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?\.map-game-active \.level-name\s*\{[\s\S]*?top:\s*64%/);
   assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?\.map-game-active \.word-audio-button\s*\{[\s\S]*?width:\s*3rem/);
   assert.match(css, /@media\s*\(orientation:\s*portrait\)[\s\S]*?\.map-game-active \.map-fab-cluster\s*\{[\s\S]*?bottom:\s*calc\(var\(--bottom-tabs-height\) \+ max\(0\.75rem, env\(safe-area-inset-bottom\)\)\)/);
-  assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?map-locate-btn::after[\s\S]*?display:\s*none/);
+  assert.match(css, /@media\s*\(max-width:\s*480px\)[\s\S]*?\.map-fab-label\s*\{[^}]*font-size:\s*0\.56rem/);
   assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)/);
 });
 
@@ -3211,7 +3558,30 @@ test('map switch entry opens the world picker', () => {
   assert.match(css, /\.map-world-option--math912/);
   assert.match(css, /\.map-world-option\.is-coming-soon\s*\{[\s\S]*?border-style:\s*dashed[\s\S]*?filter:\s*none/);
   assert.match(css, /\.map-world-option\.is-coming-soon \.map-world-art,\s*\.map-world-option\.is-coming-soon \.map-world-copy\s*\{[\s\S]*?filter:\s*saturate\(0\.48\)\s*brightness\(0\.95\)/);
-  assert.match(css, /\.map-world-option\.is-coming-soon \.map-world-art::before\s*\{[\s\S]*?repeating-linear-gradient[\s\S]*?linear-gradient/);
+  assert.match(css, /\.map-world-option\.is-coming-soon \.map-world-art::before\s*\{[^}]*background:\s*rgba\(46,\s*38,\s*68,\s*0\.32\)[^}]*\}/);
+  // 选择冒险世界弹窗：禁止多层渐变，统一单色块（只扫规则块本身，不跨文件）
+  const mapSwitchFlatBlocks = [
+    css.match(/\.map-zone-tab\[aria-selected="true"\]\s*\{[^}]*\}/)?.[0] ?? '',
+    css.match(/\.map-world-option--ocean\s*\{[^}]*\}/)?.[0] ?? '',
+    css.match(/\.map-world-option--desert\s*\{[^}]*\}/)?.[0] ?? '',
+    css.match(/\.map-world-option--math\s*\{[^}]*\}/)?.[0] ?? '',
+    css.match(/\.map-world-option--math58\s*\{[^}]*\}/)?.[0] ?? '',
+    css.match(/\.map-world-option--math912\s*\{[^}]*\}/)?.[0] ?? '',
+    css.match(/\.map-world-option--castle\s*\{[^}]*\}/)?.[0] ?? '',
+    css.match(/\.map-world-recommend\s*\{[^}]*\}/)?.[0] ?? '',
+    css.match(/\.map-world-playing\s*\{[^}]*\}/)?.[0] ?? '',
+    css.match(/\.map-world-check\s*\{[^}]*\}/)?.[0] ?? '',
+    css.match(/\.map-world-progress\s*>\s*span\s*\{[^}]*\}/)?.[0] ?? '',
+    css.match(/\.map-world-option\.is-active \.map-world-progress\s*>\s*span\s*\{[^}]*\}/)?.[0] ?? '',
+    css.match(/\.map-world-soon-badge\s*\{[^}]*\}/)?.[0] ?? '',
+    css.match(/\.map-world-option\.is-coming-soon \.map-world-art::before\s*\{[^}]*\}/)?.[0] ?? '',
+    css.match(/\.map-world-art-placeholder\s*\{[^}]*\}/)?.[0] ?? '',
+    css.match(/\.map-world-art-placeholder--math\s*\{[^}]*\}/)?.[0] ?? '',
+  ];
+  mapSwitchFlatBlocks.forEach((block, index) => {
+    assert.ok(block, `map-switch flat style block ${index} must exist`);
+    assert.doesNotMatch(block, /gradient/i, `map-switch style block ${index} must not use gradient`);
+  });
   assert.match(css, /\.map-world-soon-badge\s*\{[\s\S]*?top:\s*50%[\s\S]*?left:\s*50%[\s\S]*?min-width:\s*min\(8\.6rem,\s*calc\(100% - 1rem\)\)[\s\S]*?transform:\s*translate\(-50%,\s*-50%\)\s*rotate\(-4deg\)/);
   assert.match(css, /\.map-switch-picker-card \.map-world-soon-badge\s*\{[\s\S]*?font-size:\s*0\.86rem/);
   assert.match(css, /\.map-world-option--math \.map-world-art img\s*\{[\s\S]*?object-position:\s*center 50%/);
@@ -3266,7 +3636,7 @@ test('mine page settings are real app switches with persisted preferences', () =
   assert.doesNotMatch(source, /data-open-login|data-nav-route="account"|data-nav-route="calendar"|data-nav-route="reminders"|data-nav-route="mistakes"/);
   assert.match(source, /待复习/);
   assert.doesNotMatch(source, /function renderMistakes\(\)|data-open-mistake-clear|data-clear-mistakes|错题本已清空/);
-  assert.match(source, /type === 'info' \|\| type === 'support' \? 'mine'/);
+  assert.match(source, /type === 'info' \|\| type === 'support' \|\| type === 'accuracy' \? 'mine'/);
 
   assert.match(css, /\.setting-row-control\s*\{[\s\S]*?display:\s*block[\s\S]*?padding:\s*0/);
   assert.match(css, /\.setting-switch\s*\{[\s\S]*?min-width:\s*52px[\s\S]*?height:\s*28px[\s\S]*?border:\s*2\.5px solid var\(--border\)[\s\S]*?box-shadow:\s*inset 0 2px 4px rgba\(114, 93, 66, 0\.15\)/);
@@ -3281,46 +3651,29 @@ test('mine page settings are real app switches with persisted preferences', () =
   assert.match(source, /data-nav-route="about"/);
 });
 
-test('mine page shows map entitlement status without VIP upgrade CTA', () => {
-  const free = membershipSummary({ vipActive: false });
-  const vip = membershipSummary({ vipActive: true });
+test('mine page has no membership entitlement card or VIP upgrade CTA', () => {
   const source = read('script.js');
-  const css = read('style.css');
-  const mineFn = source.match(/function renderMine\(\)[\s\S]*?function renderSupport/)?.[0] ?? '';
+  const mineFn = source.match(/function renderMine\(\)[\s\S]*?function renderAccuracy/)?.[0] ?? '';
 
-  assert.equal(free.status, 'free');
-  assert.equal(free.title, '免费体验中');
-  assert.equal(free.count, '10');
-  assert.equal(free.action, '');
-  assert.match(free.note, /按本地图购买|地图内/);
-  assert.equal(vip.status, 'vip');
-  assert.equal(vip.title, '本地图已开通');
-  assert.equal(vip.count, '200');
-  assert.equal(vip.countLabel, '规划关卡');
-  assert.equal(vip.action, '');
-  assert.match(vip.note, /新地图需单独购买/);
-
-  assert.match(source, /vipActive:\s*saved\?\.vipActive === true/);
+  assert.match(source, /vipActive:\s*(?:isTempLocalUnlockEnabled\(\)\s*\|\|\s*)?saved\?\.vipActive === true/);
   assert.match(source, /getLevelAccess\(route\.id, state\.progress, state\.preferences\.vipActive === true\)/);
-  assert.match(source, /membershipSummary\(state\.preferences\)/);
-  assert.match(source, /data-membership-status="\$\{membership\.status\}"/);
-  assert.match(source, /membership-card is-\$\{membership\.status\}/);
-  assert.match(source, /本地图会员权益已生效；第 \$\{FREE_LEVEL_COUNT \+ 1\}-\$\{DISPLAY_LEVEL_COUNT\} 关会随课程内容更新开放。新地图需单独购买。/);
-  // 「我的」不再放统一开通 VIP；付费只在地图遇到会员关时弹出
+  // 「我的」不展示体验版/本地图权益卡；付费只在地图点会员关时弹出
+  assert.doesNotMatch(mineFn, /membership-card/);
+  assert.doesNotMatch(mineFn, /data-membership-status/);
+  assert.doesNotMatch(mineFn, /membershipSummary/);
+  assert.doesNotMatch(mineFn, /免费体验中|体验版|本地图已开通|免费关卡/);
+  assert.doesNotMatch(source, /function membershipSummary/);
   assert.doesNotMatch(mineFn, /data-open-vip-paywall/);
   assert.doesNotMatch(mineFn, /开通 VIP/);
   assert.doesNotMatch(mineFn, /membership-upgrade-button/);
   assert.doesNotMatch(mineFn, /membershipAction/);
   assert.doesNotMatch(source, /openPaywallDialog\(FREE_LEVEL_COUNT \+ 1, vipButton\)/);
-  assert.match(css, /\.membership-card\s*\{/);
-  assert.match(css, /\.membership-card\.is-free\s*\{/);
-  assert.match(css, /\.membership-card\.is-vip\s*\{/);
 });
 
 test('mine page branding is HiRota, not English Island', () => {
   const source = read('script.js');
   const css = read('style.css');
-  const mineFn = source.match(/function renderMine\(\)[\s\S]*?function renderSupport/)?.[0] ?? '';
+  const mineFn = source.match(/function renderMine\(\)[\s\S]*?function renderAccuracy/)?.[0] ?? '';
   const about = source.match(/about:\s*\{[\s\S]*?\},\s*\};/)?.[0] ?? '';
   const supportFn = source.match(/function renderSupport\(\)[\s\S]*?function renderInfoPage/)?.[0] ?? '';
   const notFoundFn = source.match(/function renderNotFound\(\)[\s\S]*?function setActiveTab/)?.[0] ?? '';
@@ -3371,6 +3724,108 @@ test('english zone progress aggregates ocean and desert for parent overview', ()
   assert.ok(summary.learnedWords.length >= 1);
 });
 
+test('accuracy overview builds daily series and subject totals from attempts', () => {
+  const dayMs = 24 * 60 * 60 * 1000;
+  const today = new Date('2026-08-05T12:00:00.000Z');
+  const mathAttempts = [
+    { attemptId: 'm1', levelId: 1, targetCount: 3, selectedCount: 3, isCorrect: true, ts: Date.parse('2026-08-05T08:00:00.000Z'), mode: 'same', skill: 'count-to-5' },
+    { attemptId: 'm2', levelId: 2, targetCount: 4, selectedCount: 2, isCorrect: false, ts: Date.parse('2026-08-05T09:00:00.000Z'), mode: 'same', skill: 'count-to-5' },
+    { attemptId: 'm3', levelId: 3, targetCount: 5, selectedCount: 5, isCorrect: true, ts: Date.parse('2026-08-04T10:00:00.000Z'), mode: 'same', skill: 'subitize' },
+  ];
+  const englishAttempts = [
+    { attemptId: 'e1', worldId: 'ocean', levelId: 1, selected: 'hi', correct: 'hi', isCorrect: true, ts: Date.parse('2026-08-05T07:00:00.000Z') },
+    { attemptId: 'e2', worldId: 'desert', levelId: 2, selected: 'cat', correct: 'dog', isCorrect: false, ts: Date.parse('2026-08-03T11:00:00.000Z') },
+  ];
+
+  assert.equal(accuracySubjectFromWorldId('math'), 'math');
+  assert.equal(accuracySubjectFromWorldId('ocean'), 'english');
+  assert.equal(ACCURACY_SERIES_DAYS, 14);
+  assert.equal(ENGLISH_ATTEMPT_SCHEMA_VERSION, 1);
+  assert.match(ENGLISH_ATTEMPT_KEY, /english-attempts/);
+
+  const merged = appendEnglishAttempt([], {
+    attemptId: 'e3',
+    worldId: 'ocean',
+    levelId: 4,
+    selected: 'apple',
+    correct: 'apple',
+    isCorrect: true,
+    ts: Date.now(),
+  });
+  assert.equal(normalizeEnglishAttempts(merged).length, 1);
+  assert.equal(mergeEnglishAttempts(merged, englishAttempts).length, 3);
+
+  const overview = buildAccuracyOverview(mathAttempts, englishAttempts, { days: 5, today });
+  assert.equal(overview.total, 5);
+  assert.equal(overview.correct, 3);
+  assert.equal(overview.wrong, 2);
+  assert.equal(overview.accuracy, 60);
+  assert.equal(overview.errorRate, 40);
+  assert.equal(overview.math.total, 3);
+  assert.equal(overview.english.total, 2);
+  assert.equal(overview.series.length, 5);
+
+  const todayRow = overview.series.find((row) => row.date === '2026-08-05');
+  assert.equal(todayRow.total, 3);
+  assert.equal(todayRow.correct, 2);
+  assert.equal(todayRow.accuracy, 67);
+
+  const points = accuracySparklinePoints(overview.series, 280, 120, 14);
+  assert.ok(points.line);
+  assert.ok(points.dots.length >= 2);
+  assert.match(accuracySparklineMarkup(overview.series), /accuracy-chart-svg|accuracy-chart-line/);
+
+  const allAttempts = collectAccuracyAttempts(mathAttempts, englishAttempts);
+  assert.equal(allAttempts.length, 5);
+  assert.ok(allAttempts.every((item) => item.subject === 'math' || item.subject === 'english'));
+  assert.equal(buildDailyAccuracySeries(allAttempts, { days: 3, today }).length, 3);
+  // silence unused var lint-style
+  assert.ok(dayMs > 0);
+});
+
+test('mine cards open dedicated accuracy analysis page', () => {
+  const source = read('script.js');
+  const css = read('style.css');
+  const mineFn = source.slice(source.indexOf('function renderMine'), source.indexOf('function renderAccuracy'));
+  const accuracyFn = source.slice(source.indexOf('function renderAccuracy'), source.indexOf('function renderSupport'));
+
+  assert.deepEqual(parseRouteHash('#accuracy'), { type: 'accuracy' });
+  assert.match(source, /hash === 'ranking' \|\| hash === 'mine' \|\| hash === 'support' \|\| hash === 'accuracy'/);
+  assert.match(source, /else if \(route\.type === 'accuracy'\) \{\s*renderAccuracy\(\);/);
+  assert.match(source, /type === 'accuracy' \? 'mine'/);
+  assert.match(source, /const hideBottomTabs = route\.type === 'accuracy'/);
+  assert.match(source, /bottomTabs\.hidden = hideBottomTabs/);
+  assert.match(source, /appShell\.classList\.toggle\('detail-shell', hideBottomTabs\)/);
+  assert.match(source, /ENGLISH_ATTEMPT_KEY/);
+  assert.match(source, /recordLocalEnglishAttempt/);
+  assert.match(source, /function buildAccuracyOverview/);
+  assert.match(source, /function accuracySparklineMarkup/);
+
+  assert.match(mineFn, /data-nav-route="accuracy"/);
+  assert.match(mineFn, /答题正确率/);
+  assert.match(mineFn, /查看分析/);
+  assert.match(mineFn, /正确率分析/);
+  assert.match(mineFn, /accuracy-entry-card/);
+
+  assert.match(accuracyFn, /答题正确率分析/);
+  assert.match(accuracyFn, /近\$\{overview\.days\}天正确率曲线/);
+  assert.match(accuracyFn, /每日明细/);
+  assert.match(accuracyFn, /accuracy-day-list/);
+  assert.match(accuracyFn, /access-dialog-close/);
+  assert.match(accuracyFn, /accuracy-close/);
+  assert.match(accuracyFn, /data-nav-route="mine"/);
+  assert.match(accuracyFn, /aria-label="关闭，返回我的"/);
+  assert.doesNotMatch(accuracyFn, /accuracy-back/);
+  assert.doesNotMatch(accuracyFn, /secondary-button accuracy-back|>返回我的</);
+  assert.match(css, /\.accuracy-close\s*\{/);
+  assert.match(css, /\.accuracy-header\s*\{[\s\S]*?position:\s*relative/);
+
+  assert.match(css, /\.accuracy-entry-card\s*\{/);
+  assert.match(css, /\.accuracy-chart-svg\s*\{/);
+  assert.match(css, /\.accuracy-day-row\s*\{/);
+  assert.match(css, /min-height:\s*44px/);
+});
+
 test('mine page removes local data management, cache, and share entries', () => {
   const source = read('script.js');
   const exported = buildLearningDataExport(
@@ -3402,11 +3857,15 @@ test('mine page exposes manual content update check and app checks hot update on
   const source = read('script.js');
   const worker = read('sw.js');
 
-  // 内容资源更新是全局入口，发版更新另走启动居中弹窗
-  assert.match(source, /function globalUpdateButtonMarkup\(context = 'map'\)/);
+  // 内容资源更新是全局入口（地图顶栏 + 我的页），答题页不挂入口；发版更新另走启动居中弹窗
+  assert.match(source, /function globalUpdateButtonMarkup\(\)/);
   assert.match(source, /data-global-update/);
   assert.match(source, /globalUpdateButtonMarkup\(\)/);
-  assert.match(source, /globalUpdateButtonMarkup\('level'\)/);
+  assert.doesNotMatch(source, /globalUpdateButtonMarkup\('level'\)/);
+  assert.doesNotMatch(source, /global-update-btn--level/);
+  // level-quiz topbar: back + level pill + status only — no content-update chip
+  assert.match(source, /class="view level-quiz"[\s\S]*?<nav class="topbar">[\s\S]*?data-detail-state[\s\S]*?<\/nav>/);
+  assert.doesNotMatch(source, /class="view level-quiz"[\s\S]{0,900}data-global-update/);
   assert.match(source, /data-check-update/);
   assert.match(source, /data-check-update-note/);
   assert.match(source, /data-check-update-state/);
@@ -3439,7 +3898,7 @@ test('mine page exposes manual content update check and app checks hot update on
   assert.match(worker, /self\.skipWaiting\(\)/);
   assert.match(read('style.css'), /\.setting-check-status\s*\{/);
   assert.match(read('style.css'), /\.global-update-btn\s*\{/);
-  assert.match(read('style.css'), /\.level-quiz \.global-update-btn\s*\{/);
+  assert.doesNotMatch(read('style.css'), /\.level-quiz \.global-update-btn/);
   assert.match(read('style.css'), /\.setting-button\[data-check-update-status="checking"\]\s*\{/);
   assert.match(read('style.css'), /@keyframes\s+check-update-spin/);
 });
@@ -3539,6 +3998,39 @@ test('map jump segments are every 20 levels with two-step copy', () => {
   assert.ok(inFirst.every((lv) => lv.id >= 1 && lv.id <= 20));
 });
 
+
+test('math jump dialog marks cleared vs uncleared levels', () => {
+  const source = fs.readFileSync(path.join(__dirname, 'script.js'), 'utf8');
+  const css = fs.readFileSync(path.join(__dirname, 'style.css'), 'utf8');
+  const { MAP_JUMP_COPY } = require('./script.js');
+
+  assert.equal(MAP_JUMP_COPY.cleared, '已通关');
+  assert.equal(MAP_JUMP_COPY.uncleared, '未通关');
+  assert.equal(MAP_JUMP_COPY.clearedCount, '已通');
+
+  // 数学跳关强制 passMarkMode=cleared，并传入 completedIds
+  assert.match(source, /passMarkMode:\s*currentMapTheme\s*===\s*'math'\s*\?\s*'cleared'\s*:\s*'default'/);
+  assert.match(source, /completedIds:\s*state\.progress\.completed/);
+  assert.match(source, /mapWorld:\s*currentMapTheme/);
+  assert.match(source, /data-jump-cleared=/);
+  assert.match(source, /data-jump-pass=/);
+  assert.match(source, /isLevelCleared/);
+  assert.match(source, /segmentClearCount/);
+  // 当前关也保留通关标注
+  assert.match(source, /MAP_JUMP_COPY\.current\} · \$\{pass\}/);
+  // 未通关标签
+  assert.match(source, /MAP_JUMP_COPY\.uncleared/);
+  assert.match(css, /\.jump-level-btn\.is-cleared/);
+  assert.match(css, /\.jump-level-btn\.is-uncleared/);
+  assert.match(css, /data-jump-pass=\"cleared\"/);
+  assert.match(css, /data-jump-pass=\"uncleared\"/);
+  assert.match(css, /\.jump-pass-mark/);
+  assert.match(css, /\.jump-pass-check/);
+  assert.match(source, /jump-pass-check|jumpPassCheckMarkup/);
+  assert.match(source, /jump-pass-mark/);
+  assert.match(source, /jump-meta-sr/);
+});
+
 test('jump dialog sources cover 200 levels with left-right segments', () => {
   const source = fs.readFileSync(path.join(__dirname, 'script.js'), 'utf8');
   const css = fs.readFileSync(path.join(__dirname, 'style.css'), 'utf8');
@@ -3576,6 +4068,11 @@ test('jump dialog sources cover 200 levels with left-right segments', () => {
   assert.match(css, /\.jump-segment-btn\.is-current-seg:not\(\.is-active\)/);
   // 禁：当前段与浏览段共用同一套满高亮（会导致双选中）
   assert.doesNotMatch(css, /\.jump-segment-btn\.is-active\s*,\s*\n?\s*\.jump-segment-btn\.is-current-seg\s*\{/);
+  // 左栏路线段：两行排版 + 足够宽，禁止 small 单行 nowrap 裁切「已通 n/m · 片n」
+  assert.match(css, /\.jump-segment-btn\s*\{[^}]*flex-direction:\s*column/s);
+  assert.match(css, /\.jump-segment-btn\s+small\s*\{[^}]*white-space:\s*normal/s);
+  assert.match(css, /\.jump-rail\s*\{[^}]*flex:\s*0\s+0\s+11rem/s);
+  assert.doesNotMatch(css, /\.jump-rail\s*\{[^}]*flex-basis:\s*7\.6rem/s);
   assert.match(css, /\.map-fab-cluster/);
   assert.match(css, /\.map-jump-btn/);
   assert.match(css, /\.map-music-btn/);
@@ -3594,12 +4091,133 @@ test('map FAB exposes background-music toggle wired to mapMusic preference', () 
   assert.match(source, /function paintMapMusicToggle/);
   assert.match(source, /if \(key === 'mapMusic'\) paintMapMusicToggle\(\)/);
   assert.match(source, /setPreference\('mapMusic',\s*state\.preferences\.mapMusic === false\)/);
-  assert.match(source, /aria-label="\$\{state\.preferences\.mapMusic === false \? '打开背景音' : '关闭背景音'\}"/);
+  assert.match(source, /aria-label="\$\{state\.preferences\.mapMusic === false \? '打开背景音乐' : '关闭背景音乐'\}"/);
   assert.match(source, /shouldPlayMapAudio\(route = routeFromHash\(\)\)[\s\S]*?return route\.type === 'map' && state\.preferences\.mapMusic/);
   assert.match(css, /\.map-locate-btn,[\s\S]*?\.map-jump-btn,[\s\S]*?\.map-music-btn\s*\{[\s\S]*?min-width:\s*44px[\s\S]*?min-height:\s*44px/);
   assert.match(css, /\.map-music-btn\.is-muted\s*\{/);
   assert.match(css, /\.map-music-btn\.is-muted\s*\{[\s\S]*?(?:#d4533f|#c23a28)/);
-  assert.match(css, /\.map-music-btn\.is-muted::after\s*\{[\s\S]*?content:\s*["']静音["']/);
+  assert.match(source, /class="map-fab-label">背景音乐</);
+  assert.match(source, /class="map-fab-label">跳关</);
+  assert.match(source, /class="map-fab-label">定位</);
+  assert.doesNotMatch(css, /content:\s*["']静音["']/);
   assert.match(css, /@keyframes\s+map-music-muted-nudge/);
   assert.match(css, /\.map-music-btn svg path\s*\{[\s\S]*?stroke:\s*currentColor/);
+});
+
+test('math quiz reuses island hand-tap lottie tip API', () => {
+  const script = fs.readFileSync(path.join(__dirname, 'script.js'), 'utf8');
+  const css = fs.readFileSync(path.join(__dirname, 'style.css'), 'utf8');
+  assert.match(script, /function armMathQuizHints\s*\(/);
+  assert.match(script, /function showGlobalHintAt\s*\(/);
+  assert.match(script, /window\.__HAND_TAP_LOTTIE_DATA/);
+  assert.match(script, /armMathQuizHints\(root, level/);
+  assert.match(script, /math-hint-selection/);
+  assert.match(script, /is-drag-demo/);
+  assert.match(script, /runTakeDragDemo|format === 'take'/);
+  assert.match(css, /\.hint-hand\s*\{[\s\S]*?z-index:\s*80/);
+  assert.match(css, /\.hint-hand\.is-drag-demo/);
+});
+
+test('math story waypoints: 31 only for math map gates, not level ids', () => {
+  assert.equal(MATH_STORY_WAYPOINTS.length, 31);
+  const ids = MATH_STORY_WAYPOINTS.map((w) => w.id);
+  assert.equal(new Set(ids).size, 31);
+  const slugs = MATH_STORY_WAYPOINTS.map((w) => w.videoSlug);
+  assert.equal(new Set(slugs).size, 31);
+  for (const wp of MATH_STORY_WAYPOINTS) {
+    assert.ok(Number.isInteger(wp.beforeLevel) && wp.beforeLevel >= 1 && wp.beforeLevel <= DISPLAY_LEVEL_COUNT);
+    assert.match(wp.videoSlug, /^level-\d{3}-/);
+    assert.ok(String(wp.themeSpoken || '').trim());
+    assert.ok(String(wp.title || '').trim());
+  }
+  // 0–10 外形记忆标题（禁旧空盘课名）
+  const byId = Object.fromEntries(MATH_STORY_WAYPOINTS.map((w) => [w.id, w]));
+  assert.equal(byId['num-00'].title, '圆圈的零');
+  assert.equal(byId['num-01'].title, '竖立的一');
+  assert.equal(byId['num-05'].title, '钩子的五');
+  assert.equal(byId['num-10'].title, '一和零');
+  assert.ok(!MATH_STORY_WAYPOINTS.some((w) => /空盘/.test(w.title)));
+  // 0–10 自我介绍台词（片内+入口主题音）
+  assert.match(byId['num-00'].themeSpoken, /我是零/);
+  assert.match(byId['num-06'].themeSpoken, /大圆在下面/);
+  assert.match(byId['num-09'].themeSpoken, /大圆在上面/);
+  assert.match(byId['num-10'].themeSpoken, /我们是十/);
+  // 第 1 关前：0 与 1 两段数字介绍
+  const l1 = pendingMathStoryWaypoints(1, []);
+  assert.deepEqual(l1.map((w) => w.id), ['num-00', 'num-01']);
+  const afterZero = pendingMathStoryWaypoints(1, ['num-00']);
+  assert.deepEqual(afterZero.map((w) => w.id), ['num-01']);
+  assert.equal(firstPendingMathStoryWaypoint(1, ['num-00', 'num-01']), null);
+  // renderMap 冷启动必须能从 pending 填 mathActiveStoryId（不能只靠 showInlineMathLevel）
+  const scriptSrc = fs.readFileSync(path.join(__dirname, 'script.js'), 'utf8');
+  assert.match(scriptSrc, /冷启动\/直进 #map 不会走 showInlineMathLevel/);
+  assert.match(scriptSrc, /firstPendingMathStoryWaypoint\(focusedLevelId/);
+  // 不算关卡：cleared 不影响 DISPLAY_LEVEL_COUNT
+  assert.equal(DISPLAY_LEVEL_COUNT, 200);
+  assert.equal(mathLevels.length, 200);
+  // 标记 cleared 可累积
+  const marked = markMathStoryCleared(['num-00'], 'num-01');
+  assert.deepEqual(marked, ['num-00', 'num-01']);
+  // 素材路径
+  const wp = mathStoryWaypointById('ep-01');
+  assert.match(mathStoryVideoSrc(wp), /level-001-roll-call\.mp4/);
+  assert.match(mathStoryThemeAudioSrc(wp), /ep-01\.mp3/);
+  assert.match(mathStoryThemeAudioSrc(wp), /story-theme-v9-ep20-finish-ten/);
+  const utterances = collectMathStoryThemeUtterances();
+  assert.equal(utterances.length, 31);
+  assert.match(utterances.find((u) => u.id === 'num-00').text, /我是零/);
+  assert.match(utterances.find((u) => u.id === 'ep-02').text, /全亮/);
+  assert.match(utterances.find((u) => u.id === 'ep-20').text, /终点是十|到啦/);
+});
+
+test('math story jump dialog uses distinct story chips and window player', () => {
+  const source = fs.readFileSync(path.join(__dirname, 'script.js'), 'utf8');
+  const css = fs.readFileSync(path.join(__dirname, 'style.css'), 'utf8');
+
+  // 段内交错：片子在对应 beforeLevel 关卡之前
+  const entries = mathJumpEntriesForSegment(1, 3);
+  assert.ok(entries.some((e) => e.kind === 'story' && e.id === 'num-00'));
+  assert.ok(entries.some((e) => e.kind === 'story' && e.id === 'num-01'));
+  assert.ok(entries.some((e) => e.kind === 'story' && e.id === 'num-02'));
+  assert.equal(entries.findIndex((e) => e.kind === 'story' && e.id === 'num-00')
+    < entries.findIndex((e) => e.kind === 'level' && e.id === 1), true);
+  assert.equal(entries.filter((e) => e.kind === 'level').length, 3);
+
+  assert.equal(isMathStoryCleared(['ep-01'], 'ep-01'), true);
+  assert.equal(isMathStoryCleared([], 'ep-01'), false);
+
+  // 跳关：数学世界插片子 + 独立出发
+  assert.match(source, /function mathJumpEntriesForSegment/);
+  assert.match(source, /includeStories/);
+  assert.match(source, /jump-story-btn/);
+  assert.match(source, /data-jump-story=/);
+  assert.match(source, /onDepartStory/);
+  assert.match(source, /mathForcedStoryId/);
+  assert.match(source, /jump-dialog--math-stories/);
+  assert.match(source, /看片子/);
+
+  // 主界面：桌面直铺 + 单行主题文案（无四行同义堆叠）
+  assert.match(source, /math-story-window/);
+  assert.match(source, /math-story-window--desk/);
+  assert.match(source, /math-story-window--one-line/);
+  assert.match(source, /math-story-scrim/);
+  assert.match(source, /aria-label="小片子：/);
+  assert.match(source, /data-math-story-theme-line/);
+  assert.match(source, /math-story-phase-sr/);
+  assert.doesNotMatch(source, /math-story-window-badge/);
+  assert.doesNotMatch(source, /math-story-window-cap/);
+  assert.doesNotMatch(source, /看完再进第/);
+  assert.match(css, /\.math-story-window/);
+  assert.match(css, /\.math-story-scrim\s*\{[^}]*display:\s*none/);
+  assert.match(css, /:has\(\[data-math-story-stop\]\) \.math-level-switch-indicator/);
+  assert.match(css, /\.math-story-phase-sr/);
+  assert.match(css, /\.jump-story-btn/);
+  assert.match(css, /\.jump-story-play/);
+  assert.match(css, /\.jump-story-title/);
+  assert.match(css, /#2a1c0e/);
+  assert.match(source, /jump-story-title/);
+  assert.match(source, /jumpPassCheckMarkup|jump-pass-check/);
+  assert.match(css, /width: min\(68rem/);
+  assert.match(css, /--math-story-vid-max-h/);
+  assert.match(css, /object-fit:\s*cover/);
 });

@@ -282,12 +282,20 @@
   // ─── 公开 API ────────────────────────────────
 
   function setApiBase(url) {
-    API_BASE = url;
+    // Native shell / TestFlight injects absolute HTTPS origin (no trailing slash).
+    API_BASE = String(url || '').replace(/\/+$/, '');
   }
 
   function getApiBase() {
     return API_BASE;
   }
+
+  // Apply shell-injected base as soon as this module evaluates (WKUserScript may set it earlier).
+  try {
+    if (typeof window !== 'undefined' && window.BABY_ISLAND_API_BASE) {
+      setApiBase(window.BABY_ISLAND_API_BASE);
+    }
+  } catch (_) { /* noop */ }
 
   /** 获取最近一次开发模式后端返回的验证码 */
   function getLastDevCode() {

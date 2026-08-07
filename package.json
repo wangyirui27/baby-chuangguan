@@ -11,6 +11,9 @@
     "audit:release": "node tools/audit-readiness.mjs --strict",
     "generate:contracts": "node tools/contracts/generate.mjs",
     "generate:question-audio": "node backend/src/generate-question-audio-v2.js",
+    "generate:math-question-audio": "node backend/src/generate-math-question-audio.js",
+    "generate:math-story-theme-audio": "node backend/src/generate-math-story-theme-audio.js",
+    "import:math-story-videos": "node backend/src/import-math-story-videos.js",
     "validate:contracts": "node tools/contracts/validate.mjs",
 
     "frontend:dev:mock": "cd apps/frontend && npm run dev:mock",

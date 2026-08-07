@@ -1,0 +1,8 @@
+{
+  "apiBase": "",
+  "displayName": "嗨洛塔",
+  "bundleNote": "Set apiBase to production HTTPS origin before TestFlight (no trailing slash), e.g. https://api.example.com",
+  "iapProductIds": {
+    "mapVip": "baby_island_map_vip_001"
+  }
+}

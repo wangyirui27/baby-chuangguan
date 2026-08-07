@@ -108,6 +108,34 @@ function curriculumAlignmentForTopic(topic) {
 }
 
 const FREE_LEVEL_COUNT = 10;
+/** TEMP local QA unlock (2026-08-05): 本地预览可进 11–200，不扣费。上线前改 false。
+ *  生效：localhost / 127.0.0.1 / file|capacitor|app 协议 / ?localQa=1 / localStorage 开关。
+ *  例外：?vip-paid11 / ?localVip=0 仍走真实付费墙（给 e2e/自测保留）。
+ */
+const TEMP_LOCAL_FULL_ACCESS = true;
+const LOCAL_QA_UNLOCK_KEY = 'baby-island-local-qa-unlock-v1';
+function isTempLocalUnlockEnabled() {
+  if (TEMP_LOCAL_FULL_ACCESS !== true) return false;
+  try {
+    if (typeof location === 'undefined' || !location) return false;
+    const q = new URLSearchParams(String(location.search || ''));
+    if (q.has('vip-paid11') || q.get('localVip') === '0') return false;
+    if (q.get('localQa') === '1' || q.get('localQa') === 'true') return true;
+    try {
+      if (typeof localStorage !== 'undefined' && localStorage.getItem(LOCAL_QA_UNLOCK_KEY) === '1') return true;
+    } catch (_) {}
+    const host = String(location.hostname || '').toLowerCase();
+    if (host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0' || host === '[::1]') return true;
+    const protocol = String(location.protocol || '').toLowerCase();
+    // file:// / Capacitor 预览 hostname 常为空
+    if (!host && (protocol === 'file:' || protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:')) {
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
 const DISPLAY_LEVEL_COUNT = 200;
 const APP_RELEASE_VERSION = '1.0.0';
 const APP_RELEASE_UPDATE_URL = 'app-release.json';
@@ -344,64 +372,738 @@ const desertLevels = buildLevelsFromUnits(desertPhraseUnits, {}, (phrase) => phr
     question: `Which English line means ${level.zhTitle}?`,
   }));
 
-const MATH_COUNT_WORDS = ['0 个', '1 个', '2 个', '3 个', '4 个', '5 个'];
+const MATH_COUNT_WORDS = ['0 个', '1 个', '2 个', '3 个', '4 个', '5 个', '6 个', '7 个', '8 个', '9 个', '10 个'];
+const MATH_MAX_COUNT = 10;
+const MATH_SKILL_LABELS = {
+  count: '点数',
+  subitize: '感数',
+  numeral: '认数字',
+  compare: '比多少',
+  take: '按数取物',
+  compose: '分与合',
+  sequence: '数序',
+  review: '阶段复习',
+};
+const MATH_FORMATS = new Set(['count', 'subitize', 'numeral', 'most', 'least', 'take', 'compose', 'sequence']);
 
-function mathCountLabel(count) {
-  return `${MATH_COUNT_WORDS[count] || `${count} 个`}苹果`;
+/** 答题道具（handpaint 资源，非 emoji） */
+const MATH_OBJECTS = {
+  apple: {
+    kind: 'apple',
+    name: '苹果',
+    measure: '个',
+    asset: 'assets/math-map/quiz/apple-handpaint-depth-v2.webp',
+  },
+  'bead-red': {
+    kind: 'bead-red',
+    name: '红珠',
+    measure: '颗',
+    asset: 'assets/math-map/props/red-bead-handpaint-depth-v2.webp',
+  },
+  'bead-teal': {
+    kind: 'bead-teal',
+    name: '青珠',
+    measure: '颗',
+    asset: 'assets/math-map/props/teal-bead-handpaint-depth-v2.webp',
+  },
+  eraser: {
+    kind: 'eraser',
+    name: '橡皮',
+    measure: '块',
+    asset: 'assets/math-map/props/eraser-handpaint-topdown-v1.webp',
+  },
+};
+const MATH_OBJECT_KIND_ORDER = Object.freeze(['apple', 'bead-red', 'bead-teal', 'eraser']);
+/** 数序：即梦 handpaint 俯视数字形状木积木（复古木质轮廓；同高；每种数字独立颜色） */
+const MATH_WOOD_DIGIT_VERSION = '20260806-math-q-compose-drag';
+
+/** 数轴珠色（与木数字分色一致，避免全棕同色） */
+const MATH_WOOD_DIGIT_RAIL_HUE = {
+  0: 'cream',
+  1: 'coral',
+  2: 'orange',
+  3: 'yellow',
+  4: 'lime',
+  5: 'teal',
+  6: 'sky',
+  7: 'indigo',
+  8: 'purple',
+  9: 'rose',
+  10: 'peach',
+};
+
+function mathWoodDigitSrc(token) {
+  const raw = String(token ?? '').trim();
+  if (raw === '?' || raw.toLowerCase() === 'q') {
+    return `assets/math-map/quiz/wood-digits/wood-digit-q-v7.webp?v=${MATH_WOOD_DIGIT_VERSION}`;
+  }
+  const key = Math.max(0, Math.min(10, Number(raw) || 0));
+  return `assets/math-map/quiz/wood-digits/wood-digit-${key}-v7.webp?v=${MATH_WOOD_DIGIT_VERSION}`;
 }
 
-function mathChoiceCountsForLevel(levelId) {
-  const targetCount = ((levelId - 1) % 5) + 1;
-  const candidates = [
+function mathSequenceRailHue(n) {
+  const key = Math.max(0, Math.min(10, Number(n) || 0));
+  return MATH_WOOD_DIGIT_RAIL_HUE[key] || 'cream';
+}
+
+function mathWoodDigitMarkup(token, extraClass = '') {
+  const raw = String(token ?? '').trim();
+  const label = raw === 'q' || raw === 'ask' ? '?' : (raw || '?');
+  const cls = ['math-wood-digit', extraClass].filter(Boolean).join(' ');
+  return `<span class="${cls}" data-n="${escapeHtml(label)}" aria-hidden="true"><img class="math-wood-digit-img" src="${mathWoodDigitSrc(label)}" alt="" draggable="false" decoding="async"></span>`;
+}
+
+function resolveMathObject(kindOrLevel) {
+  if (kindOrLevel && typeof kindOrLevel === 'object') {
+    const fromMath = kindOrLevel.math?.objectKind || kindOrLevel.objectKind;
+    if (fromMath && MATH_OBJECTS[fromMath]) return MATH_OBJECTS[fromMath];
+    const byName = Object.values(MATH_OBJECTS).find((item) => item.name === kindOrLevel.math?.objectName);
+    if (byName) return byName;
+    return MATH_OBJECTS.apple;
+  }
+  const key = String(kindOrLevel || 'apple');
+  return MATH_OBJECTS[key] || MATH_OBJECTS.apple;
+}
+
+/** 稳定按关卡+技能轮换；前 10 关固定苹果打底。 */
+function mathPickObjectKind(levelId, skill = 'count') {
+  const id = Math.max(1, Math.round(Number(levelId) || 1));
+  if (id <= 10) return 'apple';
+  const skillKey = String(skill || 'count');
+  const bias = {
+    count: 0,
+    subitize: 1,
+    numeral: 3,
+    compare: 2,
+    most: 2,
+    least: 2,
+    take: 1,
+    compose: 0,
+    sequence: 2,
+    review: 0,
+  }[skillKey] || 0;
+  return MATH_OBJECT_KIND_ORDER[(id + bias) % MATH_OBJECT_KIND_ORDER.length];
+}
+
+function mathObjectUnitPhrase(count, objectRef = 'apple') {
+  const obj = resolveMathObject(objectRef);
+  const n = Math.max(0, Math.min(MATH_MAX_COUNT, Math.round(Number(count) || 0)));
+  return `${n} ${obj.measure}${obj.name}`;
+}
+
+function mathApplyObjectCopy(text, objectRef = 'apple') {
+  const obj = resolveMathObject(objectRef);
+  if (text == null) return text;
+  return String(text)
+    .replaceAll('个苹果', `${obj.measure}${obj.name}`)
+    .replaceAll('苹果', obj.name);
+}
+
+function mathCountLabel(count, objectRef = 'apple') {
+  return mathObjectUnitPhrase(count, objectRef);
+}
+
+function mathNumeralLabel(count) {
+  const n = Math.max(0, Math.min(MATH_MAX_COUNT, Math.round(Number(count) || 0)));
+  return String(n);
+}
+
+function mathClampCount(value, maxN = MATH_MAX_COUNT) {
+  const max = Math.max(1, Math.min(MATH_MAX_COUNT, Number(maxN) || MATH_MAX_COUNT));
+  return Math.max(0, Math.min(max, Math.round(Number(value) || 0)));
+}
+
+function mathPermuteThree(values, seed) {
+  const items = values.slice(0, 3);
+  while (items.length < 3) items.push(items[items.length - 1] ?? 0);
+  const perms = [
+    [0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0],
+  ];
+  const perm = perms[Math.abs(Number(seed) || 0) % perms.length];
+  return perm.map((index) => items[index]);
+}
+
+function mathDistractorPool(targetCount, numberMax) {
+  const maxN = Math.max(1, Math.min(MATH_MAX_COUNT, Number(numberMax) || 5));
+  const target = mathClampCount(targetCount, maxN);
+  const pool = [];
+  for (let count = 0; count <= maxN; count += 1) {
+    if (count !== target) pool.push(count);
+  }
+  return { maxN, target, pool };
+}
+
+function mathChoiceCountsForLevel(levelId, targetCount = ((levelId - 1) % 5) + 1, numberMax = 5, mode = 'same') {
+  const { maxN, target, pool } = mathDistractorPool(targetCount, numberMax);
+  if (!pool.length) return [target, Math.max(0, target - 1), Math.min(maxN, target + 1)];
+
+  const byFar = [...pool].sort((a, b) => Math.abs(b - target) - Math.abs(a - target) || a - b);
+  const byNear = [...pool].sort((a, b) => Math.abs(a - target) - Math.abs(b - target) || a - b);
+  let distractors;
+  if (mode === 'easier') {
+    distractors = byFar.slice(0, 2);
+  } else if (mode === 'harder') {
+    distractors = byNear.slice(0, 2);
+  } else {
+    distractors = levelId % 2 === 0 ? [byNear[0], byFar[0]] : [byFar[0], byNear[0]];
+  }
+  distractors = [...new Set(distractors.filter((count) => count !== target))];
+  for (const count of byNear) {
+    if (distractors.length >= 2) break;
+    if (!distractors.includes(count)) distractors.push(count);
+  }
+  while (distractors.length < 2) {
+    const fill = pool.find((count) => !distractors.includes(count));
+    if (fill === undefined) break;
+    distractors.push(fill);
+  }
+  return mathPermuteThree([target, distractors[0], distractors[1]], levelId + (mode === 'easier' ? 2 : mode === 'harder' ? 1 : 0));
+}
+
+function mathCurriculumSpec(id) {
+  // 8 段螺旋：技能 × 数域 × 题型，避免 200 关只循环 1–5 点数
+  if (id <= 25) {
+    const targetCount = ((id - 1) % 3) + 1;
+    return {
+      skill: 'count',
+      format: 'count',
+      numberMax: 3,
+      targetCount,
+      title: id === 1 ? '只有一个' : `数到 ${targetCount}`,
+      zhTitle: '数量感知',
+      theme: '点数 1-3',
+      guidance: `一个一个点，找出${mathCountLabel(targetCount)}。`,
+      question: `哪一组是${mathCountLabel(targetCount)}？`,
+      pepUnits: ['人教版一年级上册 准备课 数一数'],
+    };
+  }
+  if (id <= 45) {
+    const targetCount = ((id - 1) % 5) + 1;
+    const subitize = id % 2 === 0 && targetCount <= 4;
+    return {
+      skill: subitize ? 'subitize' : 'count',
+      format: subitize ? 'subitize' : 'count',
+      numberMax: 5,
+      targetCount,
+      title: subitize ? `一眼看出 ${targetCount}` : `数到 ${targetCount}`,
+      zhTitle: subitize ? '感数' : '数量感知',
+      theme: '点数与感数 1-5',
+      guidance: subitize
+        ? `先整体看一看，哪一盘是${mathCountLabel(targetCount)}？`
+        : `看清桌面，找出${mathCountLabel(targetCount)}。`,
+      question: subitize
+        ? `哪一盘是${mathCountLabel(targetCount)}？`
+        : `哪一组是${mathCountLabel(targetCount)}？`,
+      pepUnits: ['人教版一年级上册 准备课 数一数'],
+    };
+  }
+  if (id <= 65) {
+    const targetCount = ((id - 1) % 5) + 1;
+    return {
+      skill: 'numeral',
+      format: 'numeral',
+      numberMax: 5,
+      targetCount,
+      title: `认识 ${targetCount}`,
+      zhTitle: '数字认识',
+      theme: '数字与数量 1-5',
+      guidance: `看到数字 ${targetCount}，找出一样多的苹果。`,
+      question: `哪一盘是 ${targetCount} 个？`,
+      pepUnits: ['人教版一年级上册 1-5 的认识'],
+    };
+  }
+  if (id <= 85) {
+    const numberMax = 5;
+    const most = id % 2 === 1;
+    const counts = mathChoiceCountsForLevel(id, ((id - 1) % 5) + 1, numberMax, 'same');
+    const targetCount = most ? Math.max(...counts) : Math.min(...counts);
+    return {
+      skill: 'compare',
+      format: most ? 'most' : 'least',
+      numberMax,
+      targetCount,
+      choiceCounts: counts,
+      title: most ? '哪盘最多' : '哪盘最少',
+      zhTitle: '比较数量',
+      theme: '比多少 1-5',
+      guidance: most ? '三盘比一比，找出苹果最多的一盘。' : '三盘比一比，找出苹果最少的一盘。',
+      question: most ? '哪一盘苹果最多？' : '哪一盘苹果最少？',
+      pepUnits: ['人教版一年级上册 比多少'],
+    };
+  }
+  if (id <= 110) {
+    const targetCount = ((id - 1) % 5) + 1;
+    const poolCount = Math.min(8, targetCount + 2 + (id % 2));
+    return {
+      skill: 'take',
+      format: 'take',
+      numberMax: 5,
+      targetCount,
+      poolCount,
+      title: `取出 ${targetCount} 个`,
+      zhTitle: '按数取物',
+      theme: '听指令取物 1-5',
+      guidance: `把苹果拖进右边篮子，取出 ${targetCount} 个。`,
+      question: `请取出 ${targetCount} 个苹果，拖进篮子。`,
+      pepUnits: ['人教版一年级上册 准备课 数一数'],
+    };
+  }
+  if (id <= 140) {
+    const wholes = [3, 4, 5, 5, 4, 3];
+    const whole = wholes[(id - 111) % wholes.length];
+    const leftCount = 1 + ((id - 111) % Math.max(1, whole - 1));
+    const rightCount = whole - leftCount;
+    return {
+      skill: 'compose',
+      format: 'compose',
+      numberMax: 5,
+      targetCount: rightCount,
+      leftCount,
+      whole,
+      title: `${whole} 的分与合`,
+      zhTitle: '数的组成',
+      theme: '5 以内分与合',
+      guidance: `盘子里已经有 ${leftCount} 个了，再拖进来，凑成 ${whole} 个。`,
+      question: `盘子里已经有 ${leftCount} 个了，再拖进来，凑成 ${whole} 个吧`,
+      pepUnits: ['人教版一年级上册 分与合'],
+    };
+  }
+  if (id <= 165) {
+    const numberMax = id <= 150 ? 8 : 10;
+    const targetCount = 1 + ((id - 141) % numberMax);
+    const roll = id % 3;
+    if (roll === 0) {
+      return {
+        skill: 'numeral',
+        format: 'numeral',
+        numberMax,
+        targetCount,
+        title: `大数 ${targetCount}`,
+        zhTitle: '数字认识',
+        theme: '扩展到 10',
+        guidance: `找出数字 ${targetCount} 对应的一盘。`,
+        question: `哪一盘是 ${targetCount} 个？`,
+        pepUnits: ['人教版一年级上册 6-10 的认识'],
+      };
+    }
+    if (roll === 1) {
+      const counts = mathChoiceCountsForLevel(id, targetCount, numberMax, 'same');
+      const most = id % 2 === 0;
+      const answer = most ? Math.max(...counts) : Math.min(...counts);
+      return {
+        skill: 'compare',
+        format: most ? 'most' : 'least',
+        numberMax,
+        targetCount: answer,
+        choiceCounts: counts,
+        title: most ? '大数比多' : '大数比少',
+        zhTitle: '比较数量',
+        theme: '扩展到 10',
+        guidance: most ? '数一数，哪盘最多？' : '数一数，哪盘最少？',
+        question: most ? '哪一盘苹果最多？' : '哪一盘苹果最少？',
+        pepUnits: ['人教版一年级上册 比多少'],
+      };
+    }
+    return {
+      skill: 'count',
+      format: 'count',
+      numberMax,
+      targetCount,
+      title: `数到 ${targetCount}`,
+      zhTitle: '数量感知',
+      theme: '扩展到 10',
+      guidance: `仔细数，找出${mathCountLabel(targetCount)}。`,
+      question: `哪一组是${mathCountLabel(targetCount)}？`,
+      pepUnits: ['人教版一年级上册 6-10 的认识'],
+    };
+  }
+  if (id <= 185) {
+    const numberMax = 10;
+    const anchor = 1 + ((id - 166) % 8);
+    const askNext = id % 2 === 0;
+    const targetCount = askNext ? anchor + 1 : Math.max(1, anchor - 1);
+    return {
+      skill: 'sequence',
+      format: 'sequence',
+      numberMax,
+      targetCount,
+      sequenceAnchor: anchor,
+      sequenceDirection: askNext ? 'next' : 'prev',
+      title: askNext ? `${anchor} 的后面` : `${anchor} 的前面`,
+      zhTitle: '数序',
+      theme: '前后与数序',
+      guidance: askNext
+        ? `${anchor} 的后面是几？`
+        : `${anchor} 的前面是几？`,
+      question: askNext
+        ? `${anchor} 的后面是几？`
+        : `${anchor} 的前面是几？`,
+      pepUnits: ['人教版一年级上册 序数'],
+    };
+  }
+  // 186-200 总复习：轮转已学技能
+  const reviewSkills = ['count', 'numeral', 'compare', 'take', 'compose', 'sequence', 'subitize'];
+  const skill = reviewSkills[(id - 186) % reviewSkills.length];
+  const numberMax = 10;
+  const targetCount = 1 + ((id - 1) % 8);
+  if (skill === 'take') {
+    return {
+      skill: 'review',
+      format: 'take',
+      numberMax,
+      targetCount: Math.min(5, targetCount),
+      poolCount: Math.min(10, Math.min(5, targetCount) + 3),
+      title: '复习·取物',
+      zhTitle: '阶段复习',
+      theme: '混合复习',
+      guidance: `复习：取出 ${Math.min(5, targetCount)} 个苹果，拖进篮子。`,
+      question: `请取出 ${Math.min(5, targetCount)} 个苹果，拖进篮子。`,
+      pepUnits: ['3-5岁数感综合'],
+    };
+  }
+  if (skill === 'compose') {
+    const whole = Math.min(5, 3 + (id % 3));
+    const leftCount = 1 + (id % (whole - 1));
+    return {
+      skill: 'review',
+      format: 'compose',
+      numberMax: 5,
+      targetCount: whole - leftCount,
+      leftCount,
+      whole,
+      title: '复习·分合',
+      zhTitle: '阶段复习',
+      theme: '混合复习',
+      guidance: `复习：盘子里已经有 ${leftCount} 个了，再拖进来，凑成 ${whole} 个。`,
+      question: `盘子里已经有 ${leftCount} 个了，再拖进来，凑成 ${whole} 个吧`,
+      pepUnits: ['3-5岁数感综合'],
+    };
+  }
+  if (skill === 'compare') {
+    const counts = mathChoiceCountsForLevel(id, targetCount, 8, 'same');
+    const most = id % 2 === 0;
+    return {
+      skill: 'review',
+      format: most ? 'most' : 'least',
+      numberMax: 8,
+      targetCount: most ? Math.max(...counts) : Math.min(...counts),
+      choiceCounts: counts,
+      title: most ? '复习·最多' : '复习·最少',
+      zhTitle: '阶段复习',
+      theme: '混合复习',
+      guidance: most ? '复习：哪盘最多？' : '复习：哪盘最少？',
+      question: most ? '哪一盘苹果最多？' : '哪一盘苹果最少？',
+      pepUnits: ['3-5岁数感综合'],
+    };
+  }
+  if (skill === 'sequence') {
+    const anchor = Math.min(9, targetCount);
+    return {
+      skill: 'review',
+      format: 'sequence',
+      numberMax,
+      targetCount: anchor + 1,
+      sequenceAnchor: anchor,
+      sequenceDirection: 'next',
+      title: '复习·数序',
+      zhTitle: '阶段复习',
+      theme: '混合复习',
+      guidance: `复习：${anchor} 的后面是几？`,
+      question: `${anchor} 的后面是几？`,
+      pepUnits: ['3-5岁数感综合'],
+    };
+  }
+  if (skill === 'numeral') {
+    return {
+      skill: 'review',
+      format: 'numeral',
+      numberMax: 8,
+      targetCount: Math.min(8, targetCount),
+      title: '复习·认数',
+      zhTitle: '阶段复习',
+      theme: '混合复习',
+      guidance: `复习：找出 ${Math.min(8, targetCount)} 个。`,
+      question: `哪一盘是 ${Math.min(8, targetCount)} 个？`,
+      pepUnits: ['3-5岁数感综合'],
+    };
+  }
+  return {
+    skill: 'review',
+    format: skill === 'subitize' ? 'subitize' : 'count',
+    numberMax: 8,
+    targetCount: Math.min(8, targetCount),
+    title: skill === 'subitize' ? '复习·感数' : '复习·点数',
+    zhTitle: '阶段复习',
+    theme: '混合复习',
+    guidance: `复习：找出${mathCountLabel(Math.min(8, targetCount))}。`,
+    question: `哪一组是${mathCountLabel(Math.min(8, targetCount))}？`,
+    pepUnits: ['3-5岁数感综合'],
+  };
+}
+
+function mathOptionLabel(count, format, objectRef = 'apple') {
+  if (format === 'numeral' || format === 'sequence') {
+    return mathNumeralLabel(count);
+  }
+  return mathCountLabel(count, objectRef);
+}
+
+function mathBuildGroups(levelId, counts, format, mode = 'same', objectRef = 'apple') {
+  return counts.map((count, optionIndex) => ({
+    id: `math-${levelId}-${mode}-${optionIndex}`,
+    count,
+    label: mathOptionLabel(count, format, objectRef),
+  }));
+}
+
+function mathAssembleLevel(id, spec, mode = 'same') {
+  const format = MATH_FORMATS.has(spec.format) ? spec.format : 'count';
+  const skill = String(spec.skill || format);
+  const objectKind = mathPickObjectKind(id, skill === 'review' ? format : skill);
+  const object = resolveMathObject(objectKind);
+  const numberMax = Math.max(1, Math.min(MATH_MAX_COUNT, Number(spec.numberMax) || 5));
+  let targetCount = mathClampCount(spec.targetCount, numberMax);
+  let choiceCounts;
+  let correct;
+  let options;
+  let poolCount = Math.max(targetCount, Math.min(MATH_MAX_COUNT, Number(spec.poolCount) || targetCount));
+  const leftCount = mathClampCount(spec.leftCount ?? 0, numberMax);
+  const whole = mathClampCount(spec.whole ?? (leftCount + targetCount), numberMax);
+
+  if (format === 'take') {
+    if (mode === 'easier') poolCount = Math.min(MATH_MAX_COUNT, targetCount + 1);
+    if (mode === 'harder') poolCount = Math.min(MATH_MAX_COUNT, Math.max(poolCount, targetCount + 3));
+    choiceCounts = [];
+    correct = 0;
+    options = [mathCountLabel(targetCount, objectKind)];
+  } else if (format === 'most' || format === 'least') {
+    choiceCounts = Array.isArray(spec.choiceCounts) && mode === 'same'
+      ? spec.choiceCounts.map((count) => mathClampCount(count, numberMax))
+      : mathChoiceCountsForLevel(id, targetCount || 1, numberMax, mode);
+    choiceCounts = [...new Set(choiceCounts)].slice(0, 3);
+    while (choiceCounts.length < 3) {
+      const fill = mathClampCount(choiceCounts.length, numberMax);
+      if (!choiceCounts.includes(fill)) choiceCounts.push(fill);
+      else choiceCounts.push(mathClampCount(fill + 1, numberMax));
+    }
+    targetCount = format === 'most' ? Math.max(...choiceCounts) : Math.min(...choiceCounts);
+    // 保证唯一最值，避免双最多
+    const extreme = targetCount;
+    const extremeIdx = choiceCounts.indexOf(extreme);
+    choiceCounts = choiceCounts.map((count, index) => {
+      if (index === extremeIdx) return extreme;
+      if (count === extreme) {
+        const bump = format === 'most' ? extreme - 1 : extreme + 1;
+        return mathClampCount(bump, numberMax);
+      }
+      return count;
+    });
+    if (mode !== 'same') choiceCounts = mathPermuteThree(choiceCounts, id + (mode === 'easier' ? 3 : 5));
+    correct = choiceCounts.indexOf(format === 'most' ? Math.max(...choiceCounts) : Math.min(...choiceCounts));
+    targetCount = choiceCounts[correct];
+    options = choiceCounts.map((count) => mathOptionLabel(count, format, objectKind));
+  } else if (format === 'compose') {
+    const right = mathClampCount(whole - leftCount, numberMax);
+    targetCount = right;
+    // 拖入凑满：旁侧散落珠 = 还差数 + 2～3 个干扰，不再出选择题
+    const freePool = Math.min(
+      MATH_MAX_COUNT,
+      Math.max(right + 2, Math.min(numberMax, right + 3), 3),
+    );
+    poolCount = freePool;
+    choiceCounts = [right];
+    correct = 0;
+    options = [mathOptionLabel(right, format, objectKind)];
+  } else if (format === 'sequence') {
+    choiceCounts = mathChoiceCountsForLevel(id, targetCount, numberMax, mode);
+    correct = choiceCounts.indexOf(targetCount);
+    if (correct < 0) {
+      choiceCounts[0] = targetCount;
+      correct = 0;
+    }
+    options = choiceCounts.map((count) => mathOptionLabel(count, format, objectKind));
+  } else {
+    // count / subitize / numeral
+    choiceCounts = mathChoiceCountsForLevel(id, targetCount, numberMax, mode);
+    correct = choiceCounts.indexOf(targetCount);
+    if (correct < 0) {
+      choiceCounts[0] = targetCount;
+      correct = 0;
+    }
+    options = choiceCounts.map((count) => mathOptionLabel(count, format, objectKind));
+  }
+
+  const groups = format === 'take' || format === 'compose' ? [] : mathBuildGroups(id, choiceCounts, format, mode, objectKind);
+  return {
+    id,
+    title: spec.title,
+    zhTitle: spec.zhTitle,
+    topic: id <= FREE_LEVEL_COUNT ? `${spec.theme} · 免费体验` : `${spec.theme} · 会员练习`,
+    curriculum: {
+      standard: '3-5岁数学启蒙',
+      claim: '覆盖数感核心：点数、感数、认数、比多少、取物、分与合、数序，为一年级 10 以内数打基础',
+      alignment: 'core',
+      theme: spec.theme,
+      pepUnits: Array.isArray(spec.pepUnits) ? spec.pepUnits : ['3-5岁数感'],
+    },
+    duration: '2 分钟',
+    guidance: mathApplyObjectCopy(spec.guidance, objectKind),
+    question: mathApplyObjectCopy(spec.question, objectKind),
+    options,
+    correct,
+    worldId: 'math',
+    itemType: format === 'count' || format === 'subitize' ? 'count' : format,
+    skill,
     targetCount,
-    targetCount === 1 ? 0 : targetCount - 1,
-    targetCount === 5 ? 3 : targetCount + 1,
-    targetCount <= 3 ? targetCount + 2 : targetCount - 2,
-  ].filter((count) => count >= 0 && count <= 5);
-  const counts = [...new Set(candidates)].slice(0, 3);
-  const shift = (levelId - 1) % counts.length;
-  return counts.slice(shift).concat(counts.slice(0, shift));
+    numberMax,
+    math: {
+      objectKind,
+      objectName: object.name,
+      objectMeasure: object.measure,
+      format,
+      skill,
+      numberMax,
+      adaptiveMode: mode,
+      leftCount: format === 'compose' ? leftCount : undefined,
+      whole: format === 'compose' ? whole : undefined,
+      poolCount: format === 'take' || format === 'compose' ? poolCount : undefined,
+      sequenceAnchor: format === 'sequence' ? Number(spec.sequenceAnchor) || targetCount : undefined,
+      sequenceDirection: format === 'sequence' ? (spec.sequenceDirection || 'next') : undefined,
+      groups,
+      labelMode: format === 'numeral' || format === 'sequence' ? 'numeral' : 'count',
+    },
+  };
 }
 
 function buildMathLevels(totalLevels = DISPLAY_LEVEL_COUNT) {
   return Array.from({ length: totalLevels }, (_, index) => {
     const id = index + 1;
-    const targetCount = ((id - 1) % 5) + 1;
-    const choiceCounts = mathChoiceCountsForLevel(id);
-    const correct = choiceCounts.indexOf(targetCount);
-    return {
-      id,
-      title: id === 1 ? '只有一个' : `数到 ${targetCount}`,
-      zhTitle: '数量感知',
-      topic: id <= FREE_LEVEL_COUNT ? '数学启蒙 · 免费体验' : '数学启蒙 · 会员练习',
-      curriculum: {
-        standard: '3-5岁数学启蒙',
-        claim: '为人教版一年级数学“数一数”和10以内数认知打基础',
-        alignment: 'core',
-        theme: '数量感知',
-        pepUnits: ['人教版一年级上册 准备课 数一数'],
-      },
-      duration: '2 分钟',
-      guidance: `看清桌面，找出${mathCountLabel(targetCount)}的一组。`,
-      question: `哪一组是${mathCountLabel(targetCount)}？`,
-      options: choiceCounts.map(mathCountLabel),
-      correct,
-      worldId: 'math',
-      itemType: 'count',
-      targetCount,
-      math: {
-        objectName: '苹果',
-        groups: choiceCounts.map((count, optionIndex) => ({
-          id: `math-${id}-${optionIndex}`,
-          count,
-          label: mathCountLabel(count),
-        })),
-      },
-    };
+    return mathAssembleLevel(id, mathCurriculumSpec(id), 'same');
   });
 }
 
 const mathLevels = buildMathLevels();
+
+/** 数学地图专属：桌子小把戏 + 数字0–10。不算关卡号，挂在 beforeLevel 之前的必经路点。 */
+const MATH_STORY_VIDEO_VERSION = '20260807-table-tricks-qualified-31';
+const MATH_STORY_THEME_AUDIO_VERSION = '20260807-story-theme-v9-ep20-finish-ten';
+const MATH_STORY_CLEARED_KEY = 'baby-island-math-story-cleared-v1';
+
+const MATH_STORY_WAYPOINTS = Object.freeze([
+  // —— 数字字形介绍 0–10（拟人外形+自我介绍台词，对齐螺旋数域入口）——
+  { id: 'num-00', kind: 'number-intro', beforeLevel: 1, order: 10, title: '圆圈的零', themeSpoken: '嗨，我是零，圆圆，中间小洞', videoSlug: 'level-021-num-zero', sense: 'zero' },
+  { id: 'num-01', kind: 'number-intro', beforeLevel: 1, order: 20, title: '竖立的一', themeSpoken: '嗨，我是一，直直站高高', videoSlug: 'level-022-num-one', sense: 'one' },
+  { id: 'num-02', kind: 'number-intro', beforeLevel: 2, order: 10, title: '弯曲的二', themeSpoken: '嗨，我是二，上弯下平', videoSlug: 'level-023-num-two', sense: 'two' },
+  { id: 'num-03', kind: 'number-intro', beforeLevel: 3, order: 10, title: '两弯的三', themeSpoken: '嗨，我是三，两道弯弯', videoSlug: 'level-024-num-three', sense: 'three' },
+  { id: 'ep-05', kind: 'table-trick', beforeLevel: 6, order: 10, title: '一个也很了不起', themeSpoken: '就我一个，也很棒', videoSlug: 'level-005-one-left', sense: 'one-pride' },
+  { id: 'ep-01', kind: 'table-trick', beforeLevel: 10, order: 10, title: '点三个苹果站整齐', themeSpoken: '到，到，整齐啦', videoSlug: 'level-001-roll-call', sense: 'one-to-one' },
+  { id: 'ep-03', kind: 'table-trick', beforeLevel: 14, order: 10, title: '眼睛一下看出两个', themeSpoken: '两个，是我，还有你，一对', videoSlug: 'level-003-two-together', sense: 'subitize-2' },
+  { id: 'ep-04', kind: 'table-trick', beforeLevel: 18, order: 10, title: '三个秒排成队', themeSpoken: '我们是三个，还是三个', videoSlug: 'level-004-three-line', sense: 'subitize-3' },
+  { id: 'ep-06', kind: 'table-trick', beforeLevel: 22, order: 10, title: '拉长了还是一样多', themeSpoken: '变多了？还是三个', videoSlug: 'level-006-stretch', sense: 'conservation' },
+  { id: 'num-04', kind: 'number-intro', beforeLevel: 26, order: 10, title: '开门的四', themeSpoken: '嗨，我是四，开口加一竖', videoSlug: 'level-025-num-four', sense: 'four' },
+  { id: 'ep-02', kind: 'table-trick', beforeLevel: 28, order: 10, title: '四个珠子全点亮', themeSpoken: '一，二，三，四，全亮啦', videoSlug: 'level-002-light-up', sense: 'full-count' },
+  { id: 'num-05', kind: 'number-intro', beforeLevel: 30, order: 10, title: '钩子的五', themeSpoken: '嗨，我是五，平顶圆肚', videoSlug: 'level-026-num-five', sense: 'five' },
+  { id: 'ep-12', kind: 'table-trick', beforeLevel: 34, order: 10, title: '五来了小队更大', themeSpoken: '一二三四五', videoSlug: 'level-012-five-arrive', sense: 'five-team' },
+  { id: 'ep-08', kind: 'table-trick', beforeLevel: 40, order: 10, title: '偷偷少了一个', themeSpoken: '少了一个，又齐啦', videoSlug: 'level-008-one-missing', sense: 'missing-one' },
+  { id: 'ep-11', kind: 'table-trick', beforeLevel: 46, order: 10, title: '三的召集令', themeSpoken: '只要三个，三个到齐', videoSlug: 'level-011-summon-three', sense: 'numeral-3' },
+  { id: 'ep-09', kind: 'table-trick', beforeLevel: 66, order: 10, title: '一样多也可以很帅', themeSpoken: '一二三，一样多', videoSlug: 'level-009-same-many', sense: 'equal' },
+  { id: 'ep-07', kind: 'table-trick', beforeLevel: 70, order: 10, title: '哪边沉下去', themeSpoken: '这边多，沉下去了', videoSlug: 'level-007-sink-side', sense: 'compare' },
+  { id: 'ep-10', kind: 'table-trick', beforeLevel: 78, order: 10, title: '谁排第一眼最长', themeSpoken: '一样多', videoSlug: 'level-010-first-glance', sense: 'order-length' },
+  { id: 'ep-13', kind: 'table-trick', beforeLevel: 86, order: 10, title: '篮子只要两个', themeSpoken: '只要两个，耶两个', videoSlug: 'level-013-basket-two', sense: 'take-2' },
+  { id: 'ep-14', kind: 'table-trick', beforeLevel: 96, order: 10, title: '再请三个进来', themeSpoken: '三个满员', videoSlug: 'level-014-invite-three-more', sense: 'add-3' },
+  { id: 'ep-15', kind: 'table-trick', beforeLevel: 106, order: 10, title: '刚好四个关门打烊', themeSpoken: '刚好四个', videoSlug: 'level-015-exactly-four', sense: 'exactly-4' },
+  { id: 'ep-16', kind: 'table-trick', beforeLevel: 111, order: 10, title: '盘子还差一点点', themeSpoken: '还差点，满啦', videoSlug: 'level-016-plate-gap', sense: 'how-many-more' },
+  { id: 'ep-17', kind: 'table-trick', beforeLevel: 126, order: 10, title: '五个可合可分', themeSpoken: '五个手拉手，又是五个', videoSlug: 'level-017-five-teams', sense: 'compose-5' },
+  { id: 'num-06', kind: 'number-intro', beforeLevel: 141, order: 10, title: '旋涡的六', themeSpoken: '嗨，我是六，大圆在下面', videoSlug: 'level-027-num-six', sense: 'six' },
+  { id: 'num-07', kind: 'number-intro', beforeLevel: 145, order: 10, title: '拐角的七', themeSpoken: '嗨，我是七，横一笔斜一脚', videoSlug: 'level-028-num-seven', sense: 'seven' },
+  { id: 'num-08', kind: 'number-intro', beforeLevel: 149, order: 10, title: '雪人的八', themeSpoken: '嗨，我是八，上圆下圆', videoSlug: 'level-029-num-eight', sense: 'eight' },
+  { id: 'num-09', kind: 'number-intro', beforeLevel: 153, order: 10, title: '气球的九', themeSpoken: '嗨，我是九，大圆在上面', videoSlug: 'level-030-num-nine', sense: 'nine' },
+  { id: 'num-10', kind: 'number-intro', beforeLevel: 157, order: 10, title: '一和零', themeSpoken: '我是一，我是零，我们是十，手拉手', videoSlug: 'level-031-num-ten', sense: 'ten' },
+  { id: 'ep-18', kind: 'table-trick', beforeLevel: 161, order: 10, title: '十才是大餐盘', themeSpoken: '十个满啦', videoSlug: 'level-018-ten-feast', sense: 'ten-feast' },
+  { id: 'ep-19', kind: 'table-trick', beforeLevel: 166, order: 10, title: '四的后面是谁', themeSpoken: '后面是谁，我是五', videoSlug: 'level-019-four-backdoor', sense: 'sequence-next' },
+  { id: 'ep-20', kind: 'table-trick', beforeLevel: 180, order: 10, title: '终点是十', themeSpoken: '到啦，终点是十', videoSlug: 'level-020-little-parade', sense: '1-to-10' },
+]);
+
+function normalizeMathStoryCleared(value) {
+  const known = new Set(MATH_STORY_WAYPOINTS.map((wp) => wp.id));
+  const raw = Array.isArray(value) ? value : [];
+  const out = [];
+  raw.forEach((id) => {
+    const key = String(id || '').trim();
+    if (known.has(key) && !out.includes(key)) out.push(key);
+  });
+  return out;
+}
+
+function markMathStoryCleared(cleared, waypointId) {
+  const id = String(waypointId || '').trim();
+  if (!id) return normalizeMathStoryCleared(cleared);
+  return normalizeMathStoryCleared([...(Array.isArray(cleared) ? cleared : []), id]);
+}
+
+function mathStoryWaypointsForLevel(levelId) {
+  const id = Number(levelId);
+  if (!Number.isInteger(id) || id < 1 || id > DISPLAY_LEVEL_COUNT) return [];
+  return MATH_STORY_WAYPOINTS
+    .filter((wp) => Number(wp.beforeLevel) === id)
+    .slice()
+    .sort((a, b) => (a.order - b.order) || String(a.id).localeCompare(String(b.id)));
+}
+
+function pendingMathStoryWaypoints(levelId, cleared) {
+  const done = new Set(normalizeMathStoryCleared(cleared));
+  return mathStoryWaypointsForLevel(levelId).filter((wp) => !done.has(wp.id));
+}
+
+function firstPendingMathStoryWaypoint(levelId, cleared) {
+  return pendingMathStoryWaypoints(levelId, cleared)[0] || null;
+}
+
+function mathStoryWaypointById(waypointId) {
+  const id = String(waypointId || '').trim();
+  return MATH_STORY_WAYPOINTS.find((wp) => wp.id === id) || null;
+}
+
+/** 跳关弹窗用：段内「片子 → 关卡」交错（片子挂在 beforeLevel 前） */
+function mathJumpEntriesForSegment(start, end) {
+  const lo = Math.max(1, Math.min(DISPLAY_LEVEL_COUNT, Number(start) || 1));
+  const hi = Math.max(lo, Math.min(DISPLAY_LEVEL_COUNT, Number(end) || lo));
+  const out = [];
+  for (let id = lo; id <= hi; id += 1) {
+    mathStoryWaypointsForLevel(id).forEach((wp) => {
+      out.push({ kind: 'story', id: wp.id, beforeLevel: id, waypoint: wp });
+    });
+    out.push({ kind: 'level', id });
+  }
+  return out;
+}
+
+function isMathStoryCleared(cleared, waypointId) {
+  const id = String(waypointId || '').trim();
+  if (!id) return false;
+  return normalizeMathStoryCleared(cleared).includes(id);
+}
+
+function mathStoryVideoSrc(waypoint) {
+  const slug = String(waypoint?.videoSlug || '').trim();
+  if (!slug) return '';
+  return `assets/video/math-story/${slug}.mp4?v=${MATH_STORY_VIDEO_VERSION}`;
+}
+
+function mathStoryThemeAudioSrc(waypoint) {
+  const id = String(waypoint?.id || '').trim();
+  if (!id) return '';
+  return `assets/audio/math-story-theme/${id}.mp3?v=${MATH_STORY_THEME_AUDIO_VERSION}`;
+}
+
+function collectMathStoryThemeUtterances(list = MATH_STORY_WAYPOINTS) {
+  return list.map((wp) => ({
+    id: wp.id,
+    text: String(wp.themeSpoken || wp.title || '').trim(),
+    file: `assets/audio/math-story-theme/${wp.id}.mp3`,
+  })).filter((entry) => entry.id && entry.text);
+}
+
 
 const MATH_ATTEMPT_KEY = 'baby-island-math-attempts-v1';
 const MATH_ATTEMPT_LIMIT = 80;
@@ -453,10 +1155,10 @@ function mergeMathAttempts(localLog, remoteLog, limit = MATH_ATTEMPT_LIMIT) {
 }
 
 function summarizeMathSkill(log, options = {}) {
-  const skill = String(options.skill || 'count');
+  const skillFilter = options.skill == null ? null : String(options.skill);
   const windowSize = Math.max(1, Number(options.window) || 6);
   const entries = normalizeMathAttempts(log, 500)
-    .filter((entry) => entry.skill === skill)
+    .filter((entry) => !skillFilter || entry.skill === skillFilter)
     .filter((entry) => !Number.isInteger(options.levelId) || entry.levelId === options.levelId)
     .slice(-windowSize);
   let correctStreak = 0;
@@ -471,6 +1173,7 @@ function summarizeMathSkill(log, options = {}) {
     }
   }
   const correct = entries.filter((entry) => entry.isCorrect).length;
+  const skill = skillFilter || entries.at(-1)?.skill || 'count';
   return {
     skill,
     total: entries.length,
@@ -485,59 +1188,36 @@ function summarizeMathSkill(log, options = {}) {
 function buildMathVariant(level, mode = 'same') {
   const safeMode = ['easier', 'same', 'harder'].includes(mode) ? mode : 'same';
   const levelId = Number(level?.id) || 1;
-  const targetCount = Math.max(0, Math.min(5, Number(level?.targetCount) || 1));
-  const fullPool = [0, 1, 2, 3, 4, 5];
-  let counts;
-  if (safeMode === 'easier') {
-    // 固定 3 选 1：降难度只拉开干扰距离，不减选项数
-    const far = fullPool
-      .filter((count) => count !== targetCount)
-      .sort((a, b) => Math.abs(b - targetCount) - Math.abs(a - targetCount) || a - b);
-    counts = [targetCount, far[0], far[1]];
-  } else if (safeMode === 'harder') {
-    // 固定 3 选 1：升难度用更近的干扰项
-    const near = fullPool
-      .filter((count) => count !== targetCount)
-      .sort((a, b) => Math.abs(a - targetCount) - Math.abs(b - targetCount) || a - b);
-    counts = [targetCount, near[0], near[1]];
-  } else {
-    counts = Array.isArray(level?.math?.groups) && level.math.groups.length
+  const baseSpec = {
+    ...mathCurriculumSpec(levelId),
+    skill: level?.skill || level?.math?.skill || mathCurriculumSpec(levelId).skill,
+    format: level?.math?.format || level?.itemType || mathCurriculumSpec(levelId).format,
+    numberMax: level?.numberMax || level?.math?.numberMax || mathCurriculumSpec(levelId).numberMax,
+    targetCount: level?.targetCount,
+    poolCount: level?.math?.poolCount,
+    leftCount: level?.math?.leftCount,
+    whole: level?.math?.whole,
+    choiceCounts: Array.isArray(level?.math?.groups)
       ? level.math.groups.map((group) => Number(group.count))
-      : mathChoiceCountsForLevel(levelId);
-  }
-  counts = [...new Set(counts.filter((count) => Number.isInteger(count) && count >= 0 && count <= 5))];
-  if (!counts.includes(targetCount)) counts.unshift(targetCount);
-  fullPool.forEach((count) => {
-    if (counts.length >= 3) return;
-    if (!counts.includes(count)) counts.push(count);
-  });
-  counts = counts.slice(0, 3);
-  if (safeMode !== 'same') {
-    const shiftSeed = safeMode === 'easier' ? 2 : 1;
-    const shift = (levelId - 1 + shiftSeed) % counts.length;
-    counts = counts.slice(shift).concat(counts.slice(0, shift));
-  }
-  const correct = counts.indexOf(targetCount);
-  return {
-    ...level,
-    options: counts.map(mathCountLabel),
-    correct,
-    math: {
-      ...(level?.math || {}),
-      adaptiveMode: safeMode,
-      groups: counts.map((count, optionIndex) => ({
-        id: `math-${levelId}-${safeMode}-${optionIndex}`,
-        count,
-        label: mathCountLabel(count),
-      })),
-    },
+      : undefined,
+    sequenceAnchor: level?.math?.sequenceAnchor,
+    sequenceDirection: level?.math?.sequenceDirection,
+    title: level?.title,
+    zhTitle: level?.zhTitle,
+    theme: level?.curriculum?.theme,
+    guidance: level?.guidance,
+    question: level?.question,
+    pepUnits: level?.curriculum?.pepUnits,
   };
+  return mathAssembleLevel(levelId, baseSpec, safeMode);
 }
 
 function adaptMathLevel(level, log = []) {
-  const sameLevel = summarizeMathSkill(log, { levelId: Number(level?.id), window: 4 });
+  const levelId = Number(level?.id);
+  const skillName = String(level?.skill || level?.math?.skill || 'count');
+  const sameLevel = summarizeMathSkill(log, { levelId, window: 4 });
   if (sameLevel.wrongStreak >= 2) return buildMathVariant(level, 'easier');
-  const skill = summarizeMathSkill(log, { window: 6 });
+  const skill = summarizeMathSkill(log, { skill: skillName, window: 6 });
   return buildMathVariant(level, skill.correctStreak >= 3 ? 'harder' : 'same');
 }
 
@@ -548,11 +1228,32 @@ function generateMathVariant(level, context = {}) {
 function mathVoiceFeedback(kind, context = {}) {
   const mode = String(kind || '');
   const count = Number(context.targetCount) || 1;
-  const text = mode === 'correct'
-    ? '答对啦！'
-    : mode === 'wrong-easier'
-      ? `选项拉开了，再找${mathCountLabel(count)}。`
-      : '再数一数，从左往右数。';
+  const whole = Number(context.whole) || count;
+  const format = String(context.format || context.skill || 'count');
+  const objectRef = context.objectKind || context.objectName || 'apple';
+  const obj = resolveMathObject(objectRef);
+  let text;
+  if (mode === 'correct') {
+    text = '答对啦！';
+  } else if (mode === 'wrong-easier') {
+    if (format === 'take') text = `慢一点，再取出 ${count} ${obj.measure}${obj.name}拖进篮子。`;
+    else if (format === 'compose') text = `慢一点，再拖进来，凑成 ${whole} 个。`;
+    else if (format === 'most' || format === 'least' || format === 'compare') text = '选项更明显了，再比一比。';
+    else if (format === 'sequence') text = '再想一想前后是谁。';
+    else text = `选项拉开了，再找${mathCountLabel(count, objectRef)}。`;
+  } else if (format === 'take') {
+    text = `再数一数，拖够 ${count} ${obj.measure}进篮子就好。`;
+  } else if (format === 'compose') {
+    text = `再数一数，拖进来凑成 ${whole} 个就好。`;
+  } else if (format === 'most') {
+    text = '一盘一盘比，找出最多的。';
+  } else if (format === 'least') {
+    text = '一盘一盘比，找出最少的。';
+  } else if (format === 'sequence') {
+    text = '顺着数一数，前后是谁。';
+  } else {
+    text = '再数一数，从左往右数。';
+  }
   return { provider: 'local-template', kind: mode || 'wrong', text };
 }
 
@@ -606,6 +1307,28 @@ function buildMathParentReport(log = []) {
   const summary = summarizeMathSkill(attempts, { window: Math.min(20, Math.max(1, attempts.length || 1)) });
   const accuracy = summary.accuracy === null ? null : Math.round(summary.accuracy * 100);
   const recommendation = nextMathPathRecommendation(attempts, attempts.at(-1)?.levelId || 1);
+  const skillStats = new Map();
+  attempts.forEach((entry) => {
+    const key = String(entry.skill || 'count');
+    const row = skillStats.get(key) || { skill: key, total: 0, correct: 0 };
+    row.total += 1;
+    if (entry.isCorrect) row.correct += 1;
+    skillStats.set(key, row);
+  });
+  const skillBreakdown = [...skillStats.values()]
+    .map((row) => ({
+      skill: row.skill,
+      label: MATH_SKILL_LABELS[row.skill] || row.skill,
+      total: row.total,
+      correct: row.correct,
+      accuracy: row.total ? Math.round((row.correct / row.total) * 100) : null,
+    }))
+    .sort((a, b) => b.total - a.total || a.skill.localeCompare(b.skill));
+  const themes = new Set(
+    attempts
+      .map((entry) => mathLevels.find((level) => level.id === entry.levelId)?.curriculum?.theme)
+      .filter(Boolean),
+  );
   return {
     totalAttempts: attempts.length,
     correct: attempts.filter((entry) => entry.isCorrect).length,
@@ -614,8 +1337,219 @@ function buildMathParentReport(log = []) {
     recommendation,
     reasonText: recommendation.reasonText || '',
     skill: summary.skill,
+    skillLabel: MATH_SKILL_LABELS[summary.skill] || summary.skill,
+    skillBreakdown,
+    themeCount: themes.size,
     window: summary.total,
   };
+}
+
+const ENGLISH_ATTEMPT_KEY = 'baby-island-english-attempts-v1';
+const ENGLISH_ATTEMPT_LIMIT = 200;
+const ENGLISH_ATTEMPT_SCHEMA_VERSION = 1;
+const ACCURACY_SERIES_DAYS = 14;
+
+function normalizeEnglishAttempts(value, limit = ENGLISH_ATTEMPT_LIMIT) {
+  const entries = Array.isArray(value) ? value : [];
+  const safeLimit = Math.max(1, Number(limit) || ENGLISH_ATTEMPT_LIMIT);
+  return entries.map((entry) => {
+    const ts = Number(entry?.ts);
+    const levelId = Number(entry?.levelId);
+    const worldId = entry?.worldId === 'desert' ? 'desert' : 'ocean';
+    if (!Number.isFinite(ts) || ts <= 0) return null;
+    if (!Number.isInteger(levelId) || levelId < 1 || levelId > 200) return null;
+    return {
+      attemptId: String(entry?.attemptId || `en-${worldId}-${levelId}-${ts}`).slice(0, 80),
+      schemaVersion: ENGLISH_ATTEMPT_SCHEMA_VERSION,
+      ts,
+      worldId,
+      levelId,
+      selected: String(entry?.selected || '').slice(0, 40),
+      correct: String(entry?.correct || '').slice(0, 40),
+      isCorrect: entry?.isCorrect === true,
+    };
+  }).filter(Boolean).slice(-safeLimit);
+}
+
+function appendEnglishAttempt(log, attempt, limit = ENGLISH_ATTEMPT_LIMIT) {
+  return normalizeEnglishAttempts([...(Array.isArray(log) ? log : []), attempt], limit);
+}
+
+function mergeEnglishAttempts(localLog = [], remoteLog = [], limit = ENGLISH_ATTEMPT_LIMIT) {
+  const byId = new Map();
+  [...normalizeEnglishAttempts(localLog, limit * 2), ...normalizeEnglishAttempts(remoteLog, limit * 2)]
+    .forEach((entry) => {
+      const prev = byId.get(entry.attemptId);
+      if (!prev || entry.ts >= prev.ts) byId.set(entry.attemptId, entry);
+    });
+  return [...byId.values()].sort((a, b) => a.ts - b.ts).slice(-Math.max(1, Number(limit) || ENGLISH_ATTEMPT_LIMIT));
+}
+
+function accuracySubjectFromWorldId(worldId) {
+  if (worldId === 'math') return 'math';
+  if (worldId === 'ocean' || worldId === 'desert') return 'english';
+  return 'other';
+}
+
+function collectAccuracyAttempts(mathAttempts = [], englishAttempts = []) {
+  const mathRows = normalizeMathAttempts(mathAttempts, 500).map((entry) => ({
+    ts: entry.ts,
+    isCorrect: entry.isCorrect === true,
+    subject: 'math',
+    worldId: 'math',
+    levelId: entry.levelId,
+  }));
+  const englishRows = normalizeEnglishAttempts(englishAttempts, 500).map((entry) => ({
+    ts: entry.ts,
+    isCorrect: entry.isCorrect === true,
+    subject: 'english',
+    worldId: entry.worldId,
+    levelId: entry.levelId,
+  }));
+  return [...mathRows, ...englishRows].sort((a, b) => a.ts - b.ts || a.levelId - b.levelId);
+}
+
+function summarizeAttemptBucket(rows = []) {
+  const total = rows.length;
+  const correct = rows.filter((row) => row.isCorrect).length;
+  const wrong = total - correct;
+  return {
+    total,
+    correct,
+    wrong,
+    accuracy: total ? Math.round((correct / total) * 100) : null,
+    errorRate: total ? Math.round((wrong / total) * 100) : null,
+  };
+}
+
+function buildDailyAccuracySeries(attempts = [], options = {}) {
+  const days = Math.min(31, Math.max(1, Number(options.days) || ACCURACY_SERIES_DAYS));
+  const subject = options.subject === 'math' || options.subject === 'english' ? options.subject : 'all';
+  const base = options.today instanceof Date ? new Date(options.today) : new Date(options.today || Date.now());
+  if (Number.isNaN(base.getTime())) return [];
+  base.setHours(0, 0, 0, 0);
+
+  const filtered = (Array.isArray(attempts) ? attempts : []).filter((row) => {
+    if (subject === 'all') return true;
+    return row.subject === subject;
+  });
+  const byDate = new Map();
+  filtered.forEach((row) => {
+    const day = formatActivityDate(new Date(row.ts));
+    if (!day) return;
+    const list = byDate.get(day) || [];
+    list.push(row);
+    byDate.set(day, list);
+  });
+
+  return Array.from({ length: days }, (_, index) => {
+    const date = new Date(base);
+    date.setDate(base.getDate() - (days - index - 1));
+    const value = formatActivityDate(date);
+    const summary = summarizeAttemptBucket(byDate.get(value) || []);
+    return {
+      date: value,
+      label: `${date.getMonth() + 1}/${date.getDate()}`,
+      day: String(date.getDate()),
+      today: index === days - 1,
+      ...summary,
+    };
+  });
+}
+
+function buildAccuracyOverview(mathAttempts = [], englishAttempts = [], options = {}) {
+  const attempts = collectAccuracyAttempts(mathAttempts, englishAttempts);
+  const days = Math.min(31, Math.max(1, Number(options.days) || ACCURACY_SERIES_DAYS));
+  const today = options.today;
+  const overall = summarizeAttemptBucket(attempts);
+  const math = summarizeAttemptBucket(attempts.filter((row) => row.subject === 'math'));
+  const english = summarizeAttemptBucket(attempts.filter((row) => row.subject === 'english'));
+  const series = buildDailyAccuracySeries(attempts, { days, subject: 'all', today });
+  const mathSeries = buildDailyAccuracySeries(attempts, { days, subject: 'math', today });
+  const englishSeries = buildDailyAccuracySeries(attempts, { days, subject: 'english', today });
+  const activeDays = series.filter((row) => row.total > 0).length;
+  const recent = summarizeAttemptBucket(
+    attempts.filter((row) => {
+      const day = formatActivityDate(new Date(row.ts));
+      return series.some((slot) => slot.date === day);
+    }),
+  );
+  return {
+    ...overall,
+    activeDays,
+    recent,
+    series,
+    math,
+    english,
+    bySubject: {
+      math: { ...math, series: mathSeries },
+      english: { ...english, series: englishSeries },
+    },
+    days,
+    windowDays: days,
+  };
+}
+
+function accuracySparklinePoints(series = [], width = 280, height = 88, padding = 12) {
+  const plotted = (Array.isArray(series) ? series : [])
+    .map((row, index) => ({ row, index }))
+    .filter((item) => item.row.total > 0 && item.row.accuracy !== null);
+  if (!plotted.length) return { line: '', dots: [], bars: [] };
+  const n = series.length || 1;
+  const innerW = Math.max(1, width - padding * 2);
+  const innerH = Math.max(1, height - padding * 2);
+  const xAt = (index) => padding + (n === 1 ? innerW / 2 : (index / (n - 1)) * innerW);
+  const yAt = (accuracy) => padding + innerH - (Math.max(0, Math.min(100, accuracy)) / 100) * innerH;
+  const line = plotted.map((item, i) => {
+    const x = xAt(item.index).toFixed(1);
+    const y = yAt(item.row.accuracy).toFixed(1);
+    return `${i === 0 ? 'M' : 'L'}${x} ${y}`;
+  }).join(' ');
+  const maxTotal = Math.max(1, ...series.map((row) => row.total || 0));
+  const barW = Math.max(4, Math.min(14, innerW / n * 0.55));
+  const bars = series.map((row, index) => {
+    const h = row.total ? (row.total / maxTotal) * (innerH * 0.28) : 0;
+    const x = xAt(index) - barW / 2;
+    const y = height - padding - h;
+    return {
+      x: Number(x.toFixed(1)),
+      y: Number(y.toFixed(1)),
+      width: Number(barW.toFixed(1)),
+      height: Number(h.toFixed(1)),
+      total: row.total,
+    };
+  });
+  const dots = plotted.map((item) => ({
+    x: Number(xAt(item.index).toFixed(1)),
+    y: Number(yAt(item.row.accuracy).toFixed(1)),
+    accuracy: item.row.accuracy,
+    date: item.row.date,
+  }));
+  return { line, dots, bars };
+}
+
+function accuracySparklineMarkup(series = [], options = {}) {
+  const width = Number(options.width) || 280;
+  const height = Number(options.height) || 96;
+  const points = accuracySparklinePoints(series, width, height, 14);
+  if (!points.line) {
+    return `<div class="accuracy-chart-empty" role="img" aria-label="暂无正确率曲线">先答几题，这里会出现正确率曲线</div>`;
+  }
+  const bars = points.bars.map((bar) => (
+    bar.height > 0
+      ? `<rect class="accuracy-chart-bar" x="${bar.x}" y="${bar.y}" width="${bar.width}" height="${bar.height}" rx="2"></rect>`
+      : ''
+  )).join('');
+  const dots = points.dots.map((dot) => (
+    `<circle class="accuracy-chart-dot" cx="${dot.x}" cy="${dot.y}" r="3.5" aria-hidden="true"></circle>`
+  )).join('');
+  return `
+    <svg class="accuracy-chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="近${series.length}天正确率曲线">
+      <line class="accuracy-chart-grid" x1="14" y1="${(height / 2).toFixed(1)}" x2="${width - 14}" y2="${(height / 2).toFixed(1)}"></line>
+      ${bars}
+      <path class="accuracy-chart-line" d="${points.line}" fill="none"></path>
+      ${dots}
+    </svg>`;
 }
 
 const DESERT_LANDMARK_IMAGES = [
@@ -925,29 +1859,6 @@ function profileAvatarText(name) {
   return Array.from(String(name || '').trim()).slice(0, 2).join('') || '宝';
 }
 
-function membershipSummary(preferences = {}) {
-  const isVip = preferences?.vipActive === true;
-  return isVip ? {
-    isVip,
-    status: 'vip',
-    badge: '本地图',
-    title: '本地图已开通',
-    note: `本地图会员权益已生效；第 ${FREE_LEVEL_COUNT + 1}-${DISPLAY_LEVEL_COUNT} 关会随课程内容更新开放。新地图需单独购买。`,
-    count: String(DISPLAY_LEVEL_COUNT),
-    countLabel: '规划关卡',
-    action: '',
-  } : {
-    isVip,
-    status: 'free',
-    badge: '体验版',
-    title: '免费体验中',
-    note: `前 ${FREE_LEVEL_COUNT} 关免费体验。后续关卡在地图内按本地图购买，不在「我的」统一开通。`,
-    count: String(FREE_LEVEL_COUNT),
-    countLabel: '免费关卡',
-    action: '',
-  };
-}
-
 function addLearningActivityDay(activity, date = new Date()) {
   const day = formatActivityDate(date);
   const current = normalizeLearningActivity(activity);
@@ -1112,9 +2023,63 @@ function resolveMistake(book, levelId) {
 
 function getLevelAccess(levelId, progress, isVip = false) {
   if (!Number.isInteger(levelId) || levelId < 1 || levelId > DISPLAY_LEVEL_COUNT) return 'missing';
+  if (isTempLocalUnlockEnabled()) return 'allowed';
   if (levelId > FREE_LEVEL_COUNT && !isVip) return 'paid';
   if (levelId > progress.unlockedThrough) return 'locked';
   return 'allowed';
+}
+
+/**
+ * 数学左右切关：沿方向找最近可玩关，避免跳到会员关后左右都弹付费出不去。
+ * 仅在该方向已无任何 allowed 关、且挡墙是 paid 时才返回 paid（弹付费墙）。
+ */
+function resolveMathLevelStep(fromId, delta, progress, isVip = false, maxLevel = DISPLAY_LEVEL_COUNT) {
+  const from = Number(fromId);
+  const step = Number(delta);
+  if (!Number.isInteger(from) || !Number.isInteger(step) || step === 0) {
+    return { action: 'noop', levelId: from };
+  }
+  const start = from + (step > 0 ? 1 : -1);
+  if (start < 1 || start > maxLevel) {
+    return { action: 'noop', levelId: from };
+  }
+
+  let firstBarrier = null;
+  if (step > 0) {
+    for (let id = start; id <= maxLevel; id += 1) {
+      const access = getLevelAccess(id, progress, isVip);
+      if (access === 'allowed') {
+        return {
+          action: 'go',
+          levelId: id,
+          skipped: id !== start,
+          fromId: from,
+        };
+      }
+      if (!firstBarrier) firstBarrier = { access, levelId: id };
+    }
+  } else {
+    for (let id = start; id >= 1; id -= 1) {
+      const access = getLevelAccess(id, progress, isVip);
+      if (access === 'allowed') {
+        return {
+          action: 'go',
+          levelId: id,
+          skipped: id !== start,
+          fromId: from,
+        };
+      }
+      if (!firstBarrier) firstBarrier = { access, levelId: id };
+    }
+  }
+
+  if (firstBarrier?.access === 'paid') {
+    return { action: 'paid', levelId: firstBarrier.levelId, fromId: from };
+  }
+  if (firstBarrier?.access === 'locked') {
+    return { action: 'locked', levelId: firstBarrier.levelId, fromId: from };
+  }
+  return { action: 'noop', levelId: from };
 }
 
 function completionUnlockText(level, progress, isVip = false, allLevels = levels) {
@@ -1780,19 +2745,159 @@ function parseRouteHash(hashValue) {
   const levelMatch = hash.match(/^level-(\d+)$/);
   if (levelMatch) return { type: 'level', id: Number(levelMatch[1]) };
 
-  if (hash === 'ranking' || hash === 'mine' || hash === 'support') return { type: hash };
+  if (hash === 'ranking' || hash === 'mine' || hash === 'support' || hash === 'accuracy') return { type: hash };
   if (['privacy', 'terms', 'about'].includes(hash)) return { type: 'info', page: hash };
   return { type: 'not-found', hash };
 }
 
 function questionPromptText(level) {
-  if (level?.worldId === 'math' || level?.itemType === 'count') {
-    return `小朋友，哪一组是${mathCountLabel(Number(level?.targetCount) || 1)}？`;
+  if (level?.worldId === 'math' || level?.itemType === 'count' || level?.math) {
+    const custom = String(level?.question || '').trim();
+    if (custom) {
+      const bare = custom.replace(/^小朋友[，,]\s*/, '');
+      return bare.startsWith('小朋友') ? bare : `小朋友，${bare}`;
+    }
+    const raw = Number(level?.targetCount);
+    const count = Number.isFinite(raw) ? raw : 1;
+    return `小朋友，哪一组是${mathCountLabel(count, level)}？`;
   }
   if (level?.worldId === 'desert' || level?.itemType === 'expression') {
     return `小朋友，视频里的英语，哪一句是在说「${level.zhTitle}」？`;
   }
   return `小朋友，视频里学到的单词，哪一个是${level.zhTitle}的意思？`;
+}
+
+/** Legacy clamp for count-0..5 apple MP3 file names only. Prefer mathQuestionAudioSlug. */
+function mathQuestionCountKey(levelOrCount) {
+  const raw = typeof levelOrCount === 'object' && levelOrCount
+    ? Number(levelOrCount.targetCount)
+    : Number(levelOrCount);
+  if (!Number.isFinite(raw)) return 1;
+  return Math.max(0, Math.min(5, Math.round(raw)));
+}
+
+/** Stable audio slug per skill format + numbers + object kind. */
+function mathQuestionAudioSlug(levelOrCount) {
+  if (typeof levelOrCount !== 'object' || !levelOrCount) {
+    const n = mathQuestionCountKey(levelOrCount);
+    return `count-${n}-apple`;
+  }
+  const level = levelOrCount;
+  const format = String(level.math?.format || level.itemType || 'count');
+  const rawN = Number(level.targetCount);
+  const count = Number.isFinite(rawN) ? Math.max(0, Math.min(10, Math.round(rawN))) : 1;
+  const objectKind = resolveMathObject(level.math?.objectKind || level.objectKind || 'apple').kind;
+
+  if (format === 'take') return `take-${count}-${objectKind}`;
+  if (format === 'most') return `most-${objectKind}`;
+  if (format === 'least') return `least-${objectKind}`;
+  if (format === 'compose') {
+    const left = Math.max(0, Math.min(10, Math.round(Number(level.math?.leftCount) || 0)));
+    const whole = Math.max(1, Math.min(10, Math.round(Number(level.math?.whole) || (left + count))));
+    return `compose-l${left}-w${whole}`;
+  }
+  if (format === 'sequence') {
+    const anchor = Math.max(1, Math.min(10, Math.round(Number(level.math?.sequenceAnchor) || count)));
+    const dir = level.math?.sequenceDirection === 'prev' ? 'prev' : 'next';
+    return `seq-${dir}-${anchor}`;
+  }
+  if (format === 'numeral') return `numeral-${count}`;
+  // count / subitize / fallback — slug includes object kind
+  return `count-${count}-${objectKind}`;
+}
+
+/**
+ * Relative MP3 path for a math stem.
+ * count-0..5 keep legacy `math-count-N-apple.mp3`; everything else uses `math-q-<slug>.mp3`.
+ */
+function mathQuestionAudioRelativePath(levelOrCount) {
+  const slug = mathQuestionAudioSlug(levelOrCount);
+  const legacy = /^count-([0-5])-apple$/.exec(slug);
+  if (legacy) {
+    return `assets/audio/questions-holly/math-count-${legacy[1]}-apple.mp3`;
+  }
+  return `assets/audio/questions-holly/math-q-${slug}.mp3`;
+}
+
+/** Collect unique { slug, text } for baking / audit (base 200 + adaptive number domain × objects). */
+function collectMathQuestionUtterances(levelsList = mathLevels) {
+  const bySlug = new Map();
+  const put = (levelLike) => {
+    const slug = mathQuestionAudioSlug(levelLike);
+    const text = questionPromptText(levelLike);
+    if (!slug || !text) return;
+    if (!bySlug.has(slug)) bySlug.set(slug, text);
+  };
+
+  (Array.isArray(levelsList) ? levelsList : []).forEach((level) => put(level));
+
+  for (const objectKind of MATH_OBJECT_KIND_ORDER) {
+    for (let n = 0; n <= 10; n += 1) {
+      put({ worldId: 'math', itemType: 'count', targetCount: n, math: { format: 'count', objectKind }, question: `哪一组是${mathCountLabel(n, objectKind)}？` });
+      put({ worldId: 'math', itemType: 'subitize', targetCount: n, math: { format: 'subitize', objectKind }, question: `哪一组是${mathCountLabel(n, objectKind)}？` });
+      if (objectKind === 'apple') {
+        put({ worldId: 'math', itemType: 'numeral', targetCount: n, math: { format: 'numeral', objectKind }, question: `哪一盘是 ${n} 个？` });
+      }
+      if (n >= 1) {
+        const obj = resolveMathObject(objectKind);
+        put({
+          worldId: 'math',
+          itemType: 'take',
+          targetCount: n,
+          math: { format: 'take', poolCount: n + 2, objectKind },
+          question: `请取出 ${n} ${obj.measure}${obj.name}，拖进篮子。`,
+        });
+      }
+    }
+    put({
+      worldId: 'math',
+      itemType: 'compare',
+      targetCount: 3,
+      math: { format: 'most', objectKind },
+      question: `哪一盘${resolveMathObject(objectKind).name}最多？`,
+    });
+    put({
+      worldId: 'math',
+      itemType: 'compare',
+      targetCount: 1,
+      math: { format: 'least', objectKind },
+      question: `哪一盘${resolveMathObject(objectKind).name}最少？`,
+    });
+  }
+
+  for (let n = 1; n <= 10; n += 1) {
+    put({
+      worldId: 'math',
+      itemType: 'sequence',
+      targetCount: Math.min(10, n + 1),
+      math: { format: 'sequence', sequenceAnchor: n, sequenceDirection: 'next', numberMax: 10 },
+      question: `${n} 的后面是几？`,
+    });
+    put({
+      worldId: 'math',
+      itemType: 'sequence',
+      targetCount: Math.max(1, n - 1),
+      math: { format: 'sequence', sequenceAnchor: n, sequenceDirection: 'prev', numberMax: 10 },
+      question: `${n} 的前面是几？`,
+    });
+  }
+
+  for (let whole = 2; whole <= 10; whole += 1) {
+    for (let left = 1; left < whole; left += 1) {
+      put({
+        worldId: 'math',
+        itemType: 'compose',
+        targetCount: whole - left,
+        math: { format: 'compose', leftCount: left, whole },
+        // 与课表/UI 一致：拖入凑满，禁「还要几个 / 和几合成」
+        question: `盘子里已经有 ${left} 个了，再拖进来，凑成 ${whole} 个吧`,
+      });
+    }
+  }
+
+  return Array.from(bySlug.entries())
+    .map(([slug, text]) => ({ slug, text }))
+    .sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
 function requestVipPurchase(levelId, runtime = globalThis) {
@@ -1840,6 +2945,9 @@ const MAP_JUMP_COPY = {
   arrived: '已到达',
   back: '返回路线段',
   current: '当前',
+  cleared: '已通关',
+  uncleared: '未通关',
+  clearedCount: '已通',
   totalLevels: DISPLAY_LEVEL_COUNT,
 };
 
@@ -1873,7 +2981,7 @@ function levelsInJumpSegment(levelsList, segment) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { MAP_WORLDS, MAP_JUMP_COPY, MAP_JUMP_SEGMENT_SIZE, MATH_ATTEMPT_KEY, MATH_ATTEMPT_SCHEMA_VERSION, CURRICULUM_ALIGNMENT_BY_TOPIC, adaptMathLevel, appendMathAttempt, assetPackHasDownloadSource, assetPackLevelDownloadQueue, assetPackLevelVideoUrl, assetPackPlayableSummary, assetPackSummary, buildMapJumpSegments, buildMathParentReport, buildMathVariant, curriculumAlignmentForTopic, segmentContainingLevel, levelsInJumpSegment, activateVipPreferences, addLearningActivityDay, applyQuizAnswer, buildLearningDataExport, buildLocalRankings, calendarDays, canForceReleaseUpdate, canRegisterServiceWorker, compareAppVersions, completedLearningMinutes, completionUnlockText, desertLandmarkImage, desertLevels, englishZoneProgress, formatActivityDate, generateMathVariant, getLevelAccess, islandStyleId, learningDays, learningReport, learningStreak, levelVideoDownloadLabel, levelVideoStateKey, levels, levelsForMapWorld, mathLevels, mathVoiceFeedback, membershipSummary, mergeMathAttempts, networkStatusText, nextMathPathRecommendation, normalizeAssetPackStates, normalizeLevelVideoStates, normalizeMapWorldId, normalizeMathAttempts, normalizeWorldProgress, notificationStatusText, normalizeChildProfile, normalizeLearningActivity, normalizeMistakeBook, normalizeProgress, parseRouteHash, profileAvatarText, questionPromptText, rankingScore, recordMistake, releaseUpdateInfo, requestReleaseUpdate, requestVipPurchase, requestVipRestore, resolveMathContinueLevel, resolveMistake, routePoint, summarizeMathSkill, supportFeedbackText, validateSupportMessage, wordButtonDisabled };
+  module.exports = { DISPLAY_LEVEL_COUNT, MATH_STORY_VIDEO_VERSION, MATH_STORY_THEME_AUDIO_VERSION, collectMathStoryThemeUtterances, mathStoryThemeAudioSrc, mathStoryVideoSrc, mathStoryWaypointById, firstPendingMathStoryWaypoint, pendingMathStoryWaypoints, mathStoryWaypointsForLevel, mathJumpEntriesForSegment, isMathStoryCleared, markMathStoryCleared, normalizeMathStoryCleared, MATH_STORY_CLEARED_KEY, MATH_STORY_WAYPOINTS, TEMP_LOCAL_FULL_ACCESS, LOCAL_QA_UNLOCK_KEY, isTempLocalUnlockEnabled, MAP_WORLDS, MAP_JUMP_COPY, MAP_JUMP_SEGMENT_SIZE, MATH_ATTEMPT_KEY, MATH_ATTEMPT_SCHEMA_VERSION, MATH_SKILL_LABELS, ENGLISH_ATTEMPT_KEY, ENGLISH_ATTEMPT_SCHEMA_VERSION, ACCURACY_SERIES_DAYS, CURRICULUM_ALIGNMENT_BY_TOPIC, adaptMathLevel, appendMathAttempt, appendEnglishAttempt, accuracySparklineMarkup, accuracySparklinePoints, accuracySubjectFromWorldId, assetPackHasDownloadSource, assetPackLevelDownloadQueue, assetPackLevelVideoUrl, assetPackPlayableSummary, assetPackSummary, buildAccuracyOverview, buildDailyAccuracySeries, buildMapJumpSegments, buildMathLevels, buildMathParentReport, buildMathVariant, collectAccuracyAttempts, curriculumAlignmentForTopic, segmentContainingLevel, levelsInJumpSegment, activateVipPreferences, addLearningActivityDay, applyQuizAnswer, buildLearningDataExport, buildLocalRankings, calendarDays, canForceReleaseUpdate, canRegisterServiceWorker, compareAppVersions, completedLearningMinutes, completionUnlockText, desertLandmarkImage, desertLevels, englishZoneProgress, formatActivityDate, generateMathVariant, getLevelAccess, islandStyleId, learningDays, learningReport, learningStreak, levelVideoDownloadLabel, levelVideoStateKey, levels, levelsForMapWorld, mathCurriculumSpec, mathLevels, MATH_OBJECTS, MATH_OBJECT_KIND_ORDER, resolveMathObject, mathPickObjectKind, mathCountLabel, mathApplyObjectCopy, mathQuestionAudioRelativePath, mathQuestionAudioSlug, mathQuestionCountKey, collectMathQuestionUtterances, mathVoiceFeedback, mergeEnglishAttempts, mergeMathAttempts, networkStatusText, nextMathPathRecommendation, normalizeAssetPackStates, normalizeEnglishAttempts, normalizeLevelVideoStates, normalizeMapWorldId, normalizeMathAttempts, normalizeWorldProgress, notificationStatusText, normalizeChildProfile, normalizeLearningActivity, normalizeMistakeBook, normalizeProgress, parseRouteHash, profileAvatarText, questionPromptText, rankingScore, recordMistake, releaseUpdateInfo, requestReleaseUpdate, requestVipPurchase, requestVipRestore, resolveMathContinueLevel, resolveMathLevelStep, resolveMistake, routePoint, summarizeAttemptBucket, summarizeMathSkill, supportFeedbackText, validateSupportMessage, wordButtonDisabled };
 }
 
 if (typeof document !== 'undefined') {
@@ -1979,12 +3087,14 @@ if (typeof document !== 'undefined') {
   let assetPackStates = normalizeAssetPackStates(null);
   let levelVideoStates = normalizeLevelVideoStates(null);
   let mathAttempts = normalizeMathAttempts(null);
+  let englishAttempts = normalizeEnglishAttempts(null);
   try { previewProgressByWorld = normalizeWorldProgress(JSON.parse(localStorage.getItem(PREVIEW_PROGRESS_KEY)), levels.length); } catch {}
   try { learningActivity = normalizeLearningActivity(JSON.parse(localStorage.getItem(LEARNING_ACTIVITY_KEY))); } catch {}
   try { mistakeBook = normalizeMistakeBook(JSON.parse(localStorage.getItem(MISTAKE_BOOK_KEY)), levels); } catch {}
   try { assetPackStates = normalizeAssetPackStates(JSON.parse(localStorage.getItem(ASSET_PACK_STORAGE_KEY))); } catch {}
   try { levelVideoStates = normalizeLevelVideoStates(JSON.parse(localStorage.getItem(LEVEL_VIDEO_STORAGE_KEY))); } catch {}
   try { mathAttempts = normalizeMathAttempts(JSON.parse(localStorage.getItem(MATH_ATTEMPT_KEY))); } catch {}
+  try { englishAttempts = normalizeEnglishAttempts(JSON.parse(localStorage.getItem(ENGLISH_ATTEMPT_KEY))); } catch {}
   function loadAppPreferences() {
     try {
       const saved = JSON.parse(localStorage.getItem(APP_PREFERENCES_KEY));
@@ -1997,13 +3107,20 @@ if (typeof document !== 'undefined') {
         mapWorld: normalizeMapWorldId(saved?.mapWorld),
         childName: profile.childName,
         childAge: profile.childAge,
-        vipActive: saved?.vipActive === true,
+        vipActive: isTempLocalUnlockEnabled() || saved?.vipActive === true,
       };
     } catch {
-      return { ...defaultPreferences };
+      const fallback = { ...defaultPreferences };
+      if (isTempLocalUnlockEnabled()) fallback.vipActive = true;
+      return fallback;
     }
   }
   const preferences = loadAppPreferences();
+  if (isTempLocalUnlockEnabled()) {
+    preferences.vipActive = true;
+    try { localStorage.setItem(LOCAL_QA_UNLOCK_KEY, '1'); } catch (_) {}
+    try { localStorage.setItem(APP_PREFERENCES_KEY, JSON.stringify(preferences)); } catch (_) {}
+  }
   const state = {
     progressByWorld: previewProgressByWorld,
     progress: previewProgressByWorld[preferences.mapWorld],
@@ -2013,9 +3130,16 @@ if (typeof document !== 'undefined') {
     assetPacks: assetPackStates,
     levelVideos: levelVideoStates,
     mathAttempts,
+    englishAttempts,
     mathCoachPlans: {},
     mathMapLevelId: null,
     mathMapTransition: '',
+    mathActiveStoryId: null,
+    /** 跳关/重看：强制播指定片子（覆盖「仅未看才播」） */
+    mathForcedStoryId: null,
+    mathStoryCleared: normalizeMathStoryCleared((() => {
+      try { return JSON.parse(localStorage.getItem(MATH_STORY_CLEARED_KEY)); } catch { return []; }
+    })()),
     messageTimer: null,
   };
   let learningSyncTimer = 0;
@@ -2040,6 +3164,8 @@ if (typeof document !== 'undefined') {
       learningActivity: normalizeLearningActivity(state.learningActivity),
       mistakeBook: normalizeMistakeBook(state.mistakeBook, activeWorldLevels()),
       mathAttempts: normalizeMathAttempts(state.mathAttempts),
+      englishAttempts: normalizeEnglishAttempts(state.englishAttempts),
+      mathStoryCleared: normalizeMathStoryCleared(state.mathStoryCleared),
     };
   }
 
@@ -2049,24 +3175,50 @@ if (typeof document !== 'undefined') {
     try { localStorage.setItem(APP_PREFERENCES_KEY, JSON.stringify(state.preferences)); } catch {}
     try { localStorage.setItem(MISTAKE_BOOK_KEY, JSON.stringify(state.mistakeBook)); } catch {}
     try { localStorage.setItem(MATH_ATTEMPT_KEY, JSON.stringify(state.mathAttempts)); } catch {}
+    try { localStorage.setItem(ENGLISH_ATTEMPT_KEY, JSON.stringify(state.englishAttempts)); } catch {}
+    try { localStorage.setItem(MATH_STORY_CLEARED_KEY, JSON.stringify(normalizeMathStoryCleared(state.mathStoryCleared))); } catch {}
   }
 
-  function recordLocalMathAttempt(level, selectedIndex, isCorrect, responseMs = null) {
+  function recordLocalEnglishAttempt(level, selectedWord, correctWord, isCorrect) {
+    const now = Date.now();
+    const worldId = level?.worldId === 'desert' || state.preferences.mapWorld === 'desert' ? 'desert' : 'ocean';
+    const attempt = {
+      attemptId: `en-${worldId}-${level.id}-${now}-${Math.random().toString(36).slice(2, 8)}`,
+      ts: now,
+      worldId,
+      levelId: level.id,
+      selected: String(selectedWord || ''),
+      correct: String(correctWord || ''),
+      isCorrect: isCorrect === true,
+    };
+    state.englishAttempts = appendEnglishAttempt(state.englishAttempts, attempt);
+    try { localStorage.setItem(ENGLISH_ATTEMPT_KEY, JSON.stringify(state.englishAttempts)); } catch {}
+    return attempt;
+  }
+
+  function recordLocalMathAttempt(level, selectedIndex, isCorrect, responseMs = null, extra = {}) {
     const now = Date.now();
     const selectedGroup = level?.math?.groups?.[selectedIndex] || {};
+    const selectedCount = Number.isFinite(Number(extra.selectedCount))
+      ? Number(extra.selectedCount)
+      : selectedGroup.count;
+    const selected = extra.selected != null
+      ? String(extra.selected)
+      : (level.options?.[selectedIndex] ?? '');
     const attempt = {
       attemptId: `math-${level.id}-${now}-${Math.random().toString(36).slice(2, 8)}`,
       ts: now,
       worldId: 'math',
       levelId: level.id,
-      skill: level.itemType || 'count',
+      skill: level.skill || level.math?.skill || level.itemType || 'count',
       targetCount: level.targetCount,
-      selected: level.options[selectedIndex],
-      selectedCount: selectedGroup.count,
-      correct: level.options[level.correct],
+      selected,
+      selectedCount: Number.isFinite(Number(selectedCount)) ? Number(selectedCount) : null,
+      correct: level.options?.[level.correct] ?? mathCountLabel(level.targetCount, level),
       isCorrect,
       mode: level.math?.adaptiveMode || 'same',
       responseMs,
+      format: level.math?.format || level.itemType || 'count',
     };
     state.mathAttempts = appendMathAttempt(state.mathAttempts, attempt);
     delete state.mathCoachPlans[level.id];
@@ -2077,11 +3229,12 @@ if (typeof document !== 'undefined') {
   function mathCoachPayload(level, attempt) {
     return {
       levelId: level.id,
-      skill: level.itemType || 'count',
+      skill: level.skill || level.math?.skill || level.itemType || 'count',
       targetCount: level.targetCount,
       selectedCount: attempt?.selectedCount ?? null,
       isCorrect: attempt?.isCorrect === true,
       responseMs: attempt?.responseMs ?? null,
+      format: level.math?.format || level.itemType || 'count',
       attempts: normalizeMathAttempts(state.mathAttempts).slice(-20),
     };
   }
@@ -2094,7 +3247,11 @@ if (typeof document !== 'undefined') {
       variantMode,
       feedbackText: mathVoiceFeedback(
         attempt?.isCorrect ? 'correct' : variantMode === 'easier' ? 'wrong-easier' : 'wrong',
-        { targetCount: level.targetCount },
+        {
+          targetCount: level.targetCount,
+          format: level.math?.format || level.itemType || 'count',
+          objectKind: level.math?.objectKind,
+        },
       ).text,
       recommendation: nextMathPathRecommendation(state.mathAttempts, level.id),
     };
@@ -2118,8 +3275,9 @@ if (typeof document !== 'undefined') {
   }
 
   function speakMathVoiceFeedback(feedbackText, forceCorrect) {
-    // Intentional MVP: audio is correct/wrong local MP3 only.
-    // Dynamic feedbackText is shown in the banner; do not restore system Chinese TTS.
+    // Correct/wrong feedback stays local Peiqi MP3 only.
+    // Question stems use prebaked Peiqi math-count-N-apple MP3 via speakMathQuestion.
+    // Dynamic feedbackText is banner-only; do not restore system Chinese TTS.
     const message = String(feedbackText || '').trim().slice(0, 80);
     if (!message || state.preferences.autoPronunciation === false) return false;
     const isCorrect = typeof forceCorrect === 'boolean'
@@ -2130,7 +3288,7 @@ if (typeof document !== 'undefined') {
 
   function playMathCoachFeedbackTone(kind) {
     // MATH_VOICE_FEEDBACK_MODE = 'correct-wrong-mp3'
-    if (state.preferences.autoPronunciation === false) return false;
+    // Same island quiz SFX (feedback-holly correct/wrong). Always play — not gated by autoPronunciation.
     try {
       mathFeedbackSpeechToken += 1;
       const token = mathFeedbackSpeechToken;
@@ -2266,6 +3424,11 @@ if (typeof document !== 'undefined') {
       items: [...normalizeMistakeBook(remote.mistakeBook, activeWorldLevels()).items, ...state.mistakeBook.items],
     }, activeWorldLevels());
     state.mathAttempts = mergeMathAttempts(state.mathAttempts, remote.mathAttempts);
+    state.englishAttempts = mergeEnglishAttempts(state.englishAttempts, remote.englishAttempts);
+    state.mathStoryCleared = normalizeMathStoryCleared([
+      ...normalizeMathStoryCleared(state.mathStoryCleared),
+      ...normalizeMathStoryCleared(remote.mathStoryCleared),
+    ]);
     persistLearningStateLocal();
     applyPreferences();
     return true;
@@ -2365,6 +3528,7 @@ if (typeof document !== 'undefined') {
   let levelVideoLoadingDataPromise = null;
   let promptedReleaseVersion = '';
   const QUESTION_AUDIO_VERSION = '20260719-question-200-nouns-v2';
+  const MATH_QUESTION_AUDIO_VERSION = '20260806-math-q-compose-drag-v1';
   const FEEDBACK_AUDIO_VERSION = '20260804-peiqi-feedback-v3';
   const FEEDBACK_AUDIO_SRC = {
     correct: `assets/audio/feedback-holly/correct.mp3?v=${FEEDBACK_AUDIO_VERSION}`,
@@ -2400,8 +3564,15 @@ if (typeof document !== 'undefined') {
   }
 
   function questionAudioSrcFor(level) {
+    if (level?.worldId === 'math' || level?.itemType === 'count') {
+      return mathQuestionAudioSrcFor(level);
+    }
     const slug = level.title.toLowerCase().replace(/\s+/g, '-');
     return `assets/audio/questions-holly/level-${String(level.id).padStart(2, '0')}-${slug}.mp3?v=${QUESTION_AUDIO_VERSION}`;
+  }
+
+  function mathQuestionAudioSrcFor(levelOrCount) {
+    return `${mathQuestionAudioRelativePath(levelOrCount)}?v=${MATH_QUESTION_AUDIO_VERSION}`;
   }
 
   function loadWordAudioManifest() {
@@ -2616,9 +3787,9 @@ if (typeof document !== 'undefined') {
     const on = state.preferences.mapMusic !== false;
     button.classList.toggle('is-muted', !on);
     button.setAttribute('aria-pressed', on ? 'true' : 'false');
-    button.setAttribute('aria-label', on ? '关闭背景音' : '打开背景音');
-    button.title = on ? '关闭背景音' : '打开背景音';
-    button.innerHTML = on ? icons.mapMusicOn : icons.mapMusicOff;
+    button.setAttribute('aria-label', on ? '关闭背景音乐' : '打开背景音乐');
+    button.title = on ? '关闭背景音乐' : '打开背景音乐';
+    button.innerHTML = `${on ? icons.mapMusicOn : icons.mapMusicOff}<span class="map-fab-label">背景音乐</span>`;
   }
 
   function setPreference(key, value) {
@@ -3031,10 +4202,9 @@ if (typeof document !== 'undefined') {
       </button>`;
   }
 
-  function globalUpdateButtonMarkup(context = 'map') {
-    const contextClass = context === 'level' ? ' global-update-btn--level' : '';
+  function globalUpdateButtonMarkup() {
     return `
-      <button class="map-pack-btn global-update-btn${contextClass}" type="button" data-check-update data-global-update data-check-update-status="idle" aria-busy="false" aria-label="检查内容更新" title="检查内容更新">
+      <button class="map-pack-btn global-update-btn" type="button" data-check-update data-global-update data-check-update-status="idle" aria-busy="false" aria-label="检查内容更新" title="检查内容更新">
         <span class="map-pack-progress-ring global-update-ring" aria-hidden="true"><span class="map-pack-progress-core">${icons.mapSwitch}</span></span>
         <span class="map-pack-status-copy global-update-copy"><strong>内容更新</strong><small data-check-update-note>检查课程资源</small></span>
         <span class="global-update-state" data-check-update-state aria-hidden="true">检查</span>
@@ -3951,6 +5121,10 @@ if (typeof document !== 'undefined') {
   }
 
   function levelStatus(id) {
+    if (isTempLocalUnlockEnabled()) {
+      if (state.progress.completed.includes(id)) return 'completed';
+      return 'current';
+    }
     if (id > FREE_LEVEL_COUNT && state.preferences.vipActive !== true) return 'premium';
     if (state.progress.completed.includes(id)) return 'completed';
     if (id <= state.progress.unlockedThrough) return 'current';
@@ -4027,6 +5201,17 @@ if (typeof document !== 'undefined') {
   function showInlineMathLevel(levelId, message = '', transition = '') {
     state.mathMapLevelId = normalizeMathMapLevelId(levelId, state.progress.unlockedThrough);
     state.mathMapTransition = transition;
+    // 必经小片子：到关先播主题再放视频，不算关卡号
+    // 跳关点「片」可强制重看（mathForcedStoryId）
+    const forcedId = String(state.mathForcedStoryId || '').trim();
+    state.mathForcedStoryId = null;
+    const forced = forcedId ? mathStoryWaypointById(forcedId) : null;
+    if (forced && Number(forced.beforeLevel) === Number(state.mathMapLevelId)) {
+      state.mathActiveStoryId = forced.id;
+    } else {
+      const pendingStory = firstPendingMathStoryWaypoint(state.mathMapLevelId, state.mathStoryCleared);
+      state.mathActiveStoryId = pendingStory ? pendingStory.id : null;
+    }
     if (routeFromHash().type !== 'map') {
       history.replaceState(null, '', '#map');
     }
@@ -4073,6 +5258,10 @@ if (typeof document !== 'undefined') {
       ? '通过 App Store 安全支付 · 完成后本地图权益立即生效'
       : '正式 iPad 包会打开 App Store 支付，当前预览不会扣费';
 
+    // 全局通用文案：各图共用模板，仅套餐名插入当前地图
+    const mapWorld = MAP_WORLDS[normalizeMapWorldId(state.preferences?.mapWorld)] || MAP_WORLDS.ocean;
+    const mapLabel = mapWorld.chipPrefix || mapWorld.title || '本地图';
+
     paywallDialog = document.createElement('dialog');
     paywallDialog.className = 'map-switch-dialog paywall-dialog';
     paywallDialog.setAttribute('role', 'dialog');
@@ -4089,18 +5278,18 @@ if (typeof document !== 'undefined') {
       '</div>',
       '<div class="paywall-copy">',
       '<p class="paywall-eyebrow">本地图学习卡</p>',
-      `<h2 id="paywall-title">购买本地图，解锁本图会员关</h2>`,
-      `<p>前 ${FREE_LEVEL_COUNT} 关已免费体验，购买后获得本地图会员关卡权益；后续课程内容更新后自动开放。新地图需单独购买。</p>`,
+      '<h2 id="paywall-title">购买本地图，解锁本图会员关</h2>',
+      `<p>前 ${FREE_LEVEL_COUNT} 关免费体验。购买后解锁本图第 ${FREE_LEVEL_COUNT + 1}-${DISPLAY_LEVEL_COUNT} 关会员关卡权益；后续课程内容更新后自动开放。新地图需单独购买。</p>`,
       '</div>',
       '<section class="vip-plan" aria-label="本地图套餐">',
-      `<div><strong>${DISPLAY_LEVEL_COUNT} 座魔法岛 · 本地图权益</strong><small>第 ${FREE_LEVEL_COUNT + 1}-${DISPLAY_LEVEL_COUNT} 关为会员关卡 · 后续新地图独立发售</small></div>`,
+      `<div><strong>${mapLabel} · 本地图权益</strong><small>第 ${FREE_LEVEL_COUNT + 1}-${DISPLAY_LEVEL_COUNT} 关会员权益 · 后续新地图独立发售</small></div>`,
       '<span class="vip-price">¥99<small>买断本地图</small></span>',
       '</section>',
       '<div class="vip-benefits" aria-label="本地图权益">',
       `<span class="vip-benefit"><svg class="vip-benefit-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4"/><path d="M6 5c4-2.2 8 2.2 12 0v8.5c-4 2.2-8-2.2-12 0"/></svg>第 ${FREE_LEVEL_COUNT + 1}-${DISPLAY_LEVEL_COUNT} 关</span>`,
       '<span class="vip-benefit"><svg class="vip-benefit-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="m10 8.8 4.8 3.2-4.8 3.2z"/></svg>会员关卡权益</span>',
-      '<span class="vip-benefit"><svg class="vip-benefit-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l4.5 3.8V6.2L7 10H4z"/><path d="M15.5 9.2c1.8 1.5 1.8 4.1 0 5.6"/></svg>单词发音练习</span>',
-      '<span class="vip-benefit"><svg class="vip-benefit-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="m8.4 12.3 2.4 2.4 4.8-5.2"/></svg>答题闯关记录</span>',
+      '<span class="vip-benefit"><svg class="vip-benefit-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h10"/></svg>内容持续更新</span>',
+      '<span class="vip-benefit"><svg class="vip-benefit-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="m8.4 12.3 2.4 2.4 4.8-5.2"/></svg>闯关进度记录</span>',
       '</div>',
       '<button class="access-primary-button vip-pay-button" type="button" data-vip-pay>',
       '<span>立即支付 ¥99</span></button>',
@@ -4159,7 +5348,7 @@ if (typeof document !== 'undefined') {
     state.preferences = activateVipPreferences(state.preferences);
     try { localStorage.setItem(APP_PREFERENCES_KEY, JSON.stringify(state.preferences)); } catch {}
     closePaywallDialog();
-    showToast('VIP 已开通，会员权益已生效');
+    showToast('本地图权益已生效');
     render();
     return true;
   }
@@ -4183,7 +5372,8 @@ if (typeof document !== 'undefined') {
   /**
      * 跳关：左右布局 — 左路线段(10段/200关) · 右关卡网格
      * 仅移动地图/定位，不写通关进度。无数字输入跳关。
-     * options: { levels, currentLevelId, unlockedThrough, onDepart, trigger }
+     * 数学图：段内交错插入「小片子」路点（样式与普通关不同，可重看）。
+     * options: { levels, currentLevelId, unlockedThrough, onDepart, onDepartStory, mapWorld, trigger }
      */
     function openMapJumpDialog(options = {}) {
       const worldLevels = Array.isArray(options.levels) && options.levels.length
@@ -4197,7 +5387,29 @@ if (typeof document !== 'undefined') {
       const currentLevelId = Number(options.currentLevelId) || 1;
       const unlockedThrough = Number(options.unlockedThrough) || 0;
       const onDepart = typeof options.onDepart === 'function' ? options.onDepart : null;
+      const onDepartStory = typeof options.onDepartStory === 'function' ? options.onDepartStory : null;
       const trigger = options.trigger || null;
+      // 数学区：必须一眼分出已通关 / 未通关（「当前」不能盖住通关态）
+      const mapWorld = String(options.mapWorld || '').trim();
+      const includeStories = mapWorld === 'math';
+      const passMarkMode = options.passMarkMode
+        || (mapWorld === 'math' ? 'cleared' : 'default');
+      const completedIdSet = new Set(
+        (Array.isArray(options.completedIds)
+          ? options.completedIds
+          : (state.progress && state.progress.completed) || []
+        )
+          .map((id) => Number(id))
+          .filter((id) => Number.isFinite(id) && id > 0),
+      );
+      const storyClearedSet = new Set(
+        normalizeMathStoryCleared(
+          Array.isArray(options.mathStoryCleared)
+            ? options.mathStoryCleared
+            : state.mathStoryCleared,
+        ),
+      );
+      const activeStoryId = String(state.mathActiveStoryId || '').trim();
 
       if (mapJumpDialog && mapJumpDialog.open) {
         mapJumpDialog.close();
@@ -4205,7 +5417,14 @@ if (typeof document !== 'undefined') {
 
       const segments = buildMapJumpSegments(total, MAP_JUMP_SEGMENT_SIZE);
       let activeSegment = segmentContainingLevel(currentLevelId, segments) || segments[0];
-      let selectedLevelId = currentLevelId;
+      // 选中态：普通关 or 小片子
+      let selected = includeStories && activeStoryId && mathStoryWaypointById(activeStoryId)
+        ? {
+            kind: 'story',
+            storyId: activeStoryId,
+            levelId: Number(mathStoryWaypointById(activeStoryId).beforeLevel) || currentLevelId,
+          }
+        : { kind: 'level', storyId: null, levelId: currentLevelId };
 
       // 保证每段都能点到号：缺数据时用占位关补齐 id
       const levelsById = new Map(worldLevels.map((lv) => [Number(lv.id), lv]));
@@ -4220,6 +5439,7 @@ if (typeof document !== 'undefined') {
 
       const dialog = document.createElement('dialog');
       dialog.className = 'map-switch-dialog jump-dialog';
+      if (includeStories) dialog.classList.add('jump-dialog--math-stories');
       dialog.setAttribute('aria-labelledby', 'jump-dialog-title');
       dialog.innerHTML = `
         <form method="dialog" class="map-switch-card jump-card access-card cream-panel" data-jump-card>
@@ -4263,28 +5483,78 @@ if (typeof document !== 'undefined') {
       const departBtn = dialog.querySelector('[data-jump-depart]');
       const subEl = dialog.querySelector('[data-jump-sub]');
 
-      function statusText(st) {
-        if (st === 'completed') return '已通关';
+      function isLevelCleared(levelId) {
+        return completedIdSet.has(Number(levelId));
+      }
+
+      function segmentClearCount(seg) {
+        let n = 0;
+        for (let id = seg.start; id <= seg.end; id += 1) {
+          if (isLevelCleared(id)) n += 1;
+        }
+        return n;
+      }
+
+      function segmentStoryCount(seg) {
+        if (!includeStories) return 0;
+        return mathJumpEntriesForSegment(seg.start, seg.end)
+          .filter((entry) => entry.kind === 'story').length;
+      }
+
+      function statusText(st, levelId) {
+        if (passMarkMode === 'cleared') {
+          if (st === 'completed' || isLevelCleared(levelId)) return MAP_JUMP_COPY.cleared;
+          if (st === 'premium') return `${MAP_JUMP_COPY.uncleared}·会员`;
+          return MAP_JUMP_COPY.uncleared;
+        }
+        if (st === 'completed') return MAP_JUMP_COPY.cleared;
         if (st === 'available' || st === 'current') return '可前往';
         if (st === 'premium') return '会员';
         return '待解锁';
       }
 
+      function levelMetaLabel(levelId, st, isCur) {
+        const pass = statusText(st, levelId);
+        if (!isCur) return pass;
+        return `${MAP_JUMP_COPY.current} · ${pass}`;
+      }
+
       function renderCurrentPill() {
+        if (!currentEl) return;
+        if (includeStories && activeStoryId) {
+          const wp = mathStoryWaypointById(activeStoryId);
+          if (wp) {
+            currentEl.textContent = `当前：小片子 · ${wp.title}`;
+            return;
+          }
+        }
         const lv = levelsById.get(currentLevelId);
         const title = lv && lv.title ? ` · ${lv.title}` : '';
-        if (currentEl) currentEl.textContent = `当前：第 ${currentLevelId} 关${title}`;
+        currentEl.textContent = `当前：第 ${currentLevelId} 关${title}`;
       }
 
       function updateDepartCta() {
         if (!departBtn) return;
-        const id = Number(selectedLevelId) || 0;
+        if (selected.kind === 'story') {
+          const wp = mathStoryWaypointById(selected.storyId);
+          departBtn.disabled = !wp;
+          if (!wp) {
+            departBtn.textContent = MAP_JUMP_COPY.depart;
+            return;
+          }
+          const watching = activeStoryId && activeStoryId === wp.id;
+          departBtn.textContent = watching
+            ? '正在看片子'
+            : (storyClearedSet.has(wp.id) ? `重看 · ${wp.title}` : `看片子 · ${wp.title}`);
+          return;
+        }
+        const id = Number(selected.levelId) || 0;
         departBtn.disabled = !id;
         if (!id) {
           departBtn.textContent = MAP_JUMP_COPY.depart;
           return;
         }
-        departBtn.textContent = id === currentLevelId
+        departBtn.textContent = id === currentLevelId && !activeStoryId
           ? MAP_JUMP_COPY.arrived
           : `${MAP_JUMP_COPY.depart} ${id}`;
       }
@@ -4294,16 +5564,31 @@ if (typeof document !== 'undefined') {
         segmentsEl.innerHTML = segments.map((seg) => {
           const isActive = activeSegment && seg.id === activeSegment.id;
           const containsCurrent = currentLevelId >= seg.start && currentLevelId <= seg.end;
-          // 右侧文案：当前进度所在段标「进度」，避免与 is-active 双高亮混淆
-          const sideLabel = containsCurrent ? MAP_JUMP_COPY.current : `${seg.end - seg.start + 1} 关`;
+          const segTotal = seg.end - seg.start + 1;
+          const clearedN = segmentClearCount(seg);
+          const storyN = segmentStoryCount(seg);
+          // 数学区：段旁显示「已通 n/m」；其它图仍标当前段 / 关数
+          let sideLabel;
+          if (passMarkMode === 'cleared') {
+            sideLabel = storyN
+              ? `${MAP_JUMP_COPY.clearedCount} ${clearedN}/${segTotal} · 片${storyN}`
+              : `${MAP_JUMP_COPY.clearedCount} ${clearedN}/${segTotal}`;
+          } else {
+            sideLabel = containsCurrent ? MAP_JUMP_COPY.current : `${segTotal} 关`;
+          }
+          const allCleared = clearedN >= segTotal && segTotal > 0;
+          const segAria = passMarkMode === 'cleared'
+            ? `${seg.start}到${seg.end}关，已通关${clearedN}关，未通关${segTotal - clearedN}关${storyN ? `，含${storyN}个小片子` : ''}`
+            : `${seg.start}到${seg.end}关`;
           return `
             <button
               type="button"
-              class="jump-segment-btn${isActive ? ' is-active' : ''}${containsCurrent ? ' is-current-seg' : ''}"
+              class="jump-segment-btn${isActive ? ' is-active' : ''}${containsCurrent ? ' is-current-seg' : ''}${allCleared ? ' is-all-cleared' : ''}"
               data-jump-segment="${seg.id}"
               role="option"
               aria-selected="${isActive ? 'true' : 'false'}"
               aria-current="${containsCurrent ? 'true' : 'false'}"
+              aria-label="${segAria}"
             >
               <strong>${seg.start}–${seg.end}</strong>
               <small>${sideLabel}</small>
@@ -4318,7 +5603,8 @@ if (typeof document !== 'undefined') {
 
 
       function jumpStatus(id) {
-        // 跳关展示用：跟 levelStatus 一致；无则按 unlockedThrough 退化
+        // 通关态优先看 completed；其余跟 levelStatus / unlockedThrough
+        if (isLevelCleared(id)) return 'completed';
         if (typeof levelStatus === 'function') return levelStatus(id);
         if (id === currentLevelId) return 'current';
         if (typeof FREE_LEVEL_COUNT === 'number' && id > FREE_LEVEL_COUNT) return 'premium';
@@ -4326,30 +5612,99 @@ if (typeof document !== 'undefined') {
         return 'locked';
       }
 
+      function jumpPassCheckMarkup() {
+        return `<span class="jump-pass-check" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path fill="currentColor" d="M9.2 16.6 4.8 12.2l1.7-1.7 2.7 2.7 8.3-8.3 1.7 1.7z"/></svg></span>`;
+      }
+
+      function storyButtonMarkup(wp) {
+        const cleared = storyClearedSet.has(wp.id);
+        const isSel = selected.kind === 'story' && selected.storyId === wp.id;
+        const isCur = activeStoryId === wp.id;
+        const kindLabel = wp.kind === 'number-intro' ? '数字片' : '小把戏';
+        const meta = cleared ? '已看' : '未看';
+        const passClass = cleared ? 'is-cleared' : 'is-uncleared';
+        const aria = `小片子 ${wp.title}，${kindLabel}，${meta}`;
+        return `
+            <button
+              type="button"
+              class="jump-level-btn jump-story-btn ${passClass}${isSel ? ' is-selected' : ''}${isCur ? ' is-current' : ''}"
+              data-jump-story="${escapeHtml(wp.id)}"
+              data-jump-level="${wp.beforeLevel}"
+              data-jump-cleared="${cleared ? '1' : '0'}"
+              data-jump-kind="${escapeHtml(wp.kind || 'story')}"
+              role="option"
+              aria-selected="${isSel ? 'true' : 'false'}"
+              aria-label="${escapeHtml(aria)}"
+            >
+              <span class="jump-pass-mark jump-story-mark" aria-hidden="true">
+                <span class="jump-story-play">
+                  <svg viewBox="0 0 24 24" width="16" height="16" focusable="false"><path fill="currentColor" d="M8 5.5v13l11-6.5L8 5.5z"/></svg>
+                </span>
+                ${cleared ? jumpPassCheckMarkup() : ''}
+              </span>
+              <span class="jump-level-copy">
+                <span class="jump-level-title jump-story-title">${escapeHtml(wp.title || '小片子')}</span>
+                <span class="jump-level-meta jump-story-meta jump-meta-sr" data-jump-pass="${cleared ? 'cleared' : 'uncleared'}">${escapeHtml(meta)}</span>
+              </span>
+            </button>
+          `;
+      }
+
+      function levelButtonMarkup(lv) {
+        const st = jumpStatus(lv.id);
+        const cleared = isLevelCleared(lv.id) || st === 'completed';
+        const isSel = selected.kind === 'level' && Number(selected.levelId) === Number(lv.id);
+        const isCur = Number(lv.id) === currentLevelId && !activeStoryId;
+        const meta = levelMetaLabel(lv.id, st, isCur);
+        const passClass = cleared ? 'is-cleared' : 'is-uncleared';
+        const titlePart = lv.title ? ` ${lv.title}` : '';
+        const aria = `第 ${lv.id} 关${titlePart}，${meta}`;
+        return `
+            <button
+              type="button"
+              class="jump-level-btn jump-quiz-btn status-${st} ${passClass}${isSel ? ' is-selected' : ''}${isCur ? ' is-current' : ''}"
+              data-jump-level="${lv.id}"
+              data-jump-cleared="${cleared ? '1' : '0'}"
+              role="option"
+              aria-selected="${isSel ? 'true' : 'false'}"
+              aria-label="${aria}"
+            >
+              <span class="jump-pass-mark" aria-hidden="true">
+                <span class="jump-level-num">${lv.id}</span>
+                ${cleared ? jumpPassCheckMarkup() : ''}
+              </span>
+              <span class="jump-level-copy">
+                <span class="jump-level-title">${lv.title || ''}</span>
+                <span class="jump-level-meta jump-meta-sr" data-jump-pass="${cleared ? 'cleared' : 'uncleared'}">${meta}</span>
+              </span>
+            </button>
+          `;
+      }
+
       function renderLevels(seg) {
         if (!levelsEl || !seg) return;
         if (levelsLabelEl) {
-          levelsLabelEl.textContent = `${seg.start}–${seg.end} 关`;
+          if (passMarkMode === 'cleared') {
+            const c = segmentClearCount(seg);
+            const n = seg.end - seg.start + 1;
+            const storyN = segmentStoryCount(seg);
+            levelsLabelEl.textContent = storyN
+              ? `${seg.start}–${seg.end} 关 · 已通关 ${c}/${n} · 含 ${storyN} 个小片子`
+              : `${seg.start}–${seg.end} 关 · 已通关 ${c}/${n}`;
+          } else {
+            levelsLabelEl.textContent = `${seg.start}–${seg.end} 关`;
+          }
         }
-        const list = levelsForSegment(seg);
-        levelsEl.innerHTML = list.map((lv) => {
-          const st = jumpStatus(lv.id);
-          const isSel = Number(selectedLevelId) === Number(lv.id);
-          const isCur = Number(lv.id) === currentLevelId;
-          return `
-            <button
-              type="button"
-              class="jump-level-btn status-${st}${isSel ? ' is-selected' : ''}${isCur ? ' is-current' : ''}"
-              data-jump-level="${lv.id}"
-              role="option"
-              aria-selected="${isSel ? 'true' : 'false'}"
-            >
-              <span class="jump-level-num">${lv.id}</span>
-              <span class="jump-level-title">${lv.title || ''}</span>
-              <span class="jump-level-meta">${isCur ? MAP_JUMP_COPY.current : statusText(st)}</span>
-            </button>
-          `;
-        }).join('');
+        if (includeStories) {
+          const entries = mathJumpEntriesForSegment(seg.start, seg.end);
+          levelsEl.innerHTML = entries.map((entry) => {
+            if (entry.kind === 'story') return storyButtonMarkup(entry.waypoint);
+            const lv = levelsById.get(entry.id) || { id: entry.id, title: '', word: '' };
+            return levelButtonMarkup(lv);
+          }).join('');
+        } else {
+          levelsEl.innerHTML = levelsForSegment(seg).map((lv) => levelButtonMarkup(lv)).join('');
+        }
         const selectedBtn = levelsEl.querySelector('.jump-level-btn.is-selected');
         if (selectedBtn && typeof selectedBtn.scrollIntoView === 'function') {
           try { selectedBtn.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (_) {}
@@ -4359,7 +5714,7 @@ if (typeof document !== 'undefined') {
       function selectLevel(id) {
         const n = Number(id);
         if (!Number.isFinite(n) || n < 1 || n > total) return false;
-        selectedLevelId = n;
+        selected = { kind: 'level', storyId: null, levelId: n };
         const seg = segmentContainingLevel(n, segments);
         if (seg) activeSegment = seg;
         renderSegments();
@@ -4368,8 +5723,33 @@ if (typeof document !== 'undefined') {
         return true;
       }
 
+      function selectStory(storyId) {
+        const wp = mathStoryWaypointById(storyId);
+        if (!wp) return false;
+        selected = {
+          kind: 'story',
+          storyId: wp.id,
+          levelId: Number(wp.beforeLevel) || 1,
+        };
+        const seg = segmentContainingLevel(selected.levelId, segments);
+        if (seg) activeSegment = seg;
+        renderSegments();
+        renderLevels(activeSegment);
+        updateDepartCta();
+        return true;
+      }
+
       function departSelected() {
-        const id = Number(selectedLevelId);
+        if (selected.kind === 'story') {
+          const wp = mathStoryWaypointById(selected.storyId);
+          if (!wp) return;
+          closeMapJumpDialog();
+          if (onDepartStory) onDepartStory(wp);
+          else if (onDepart) onDepart(wp.beforeLevel);
+          else showToast(`小片子：${wp.title}`);
+          return;
+        }
+        const id = Number(selected.levelId);
         if (!id) return;
         closeMapJumpDialog();
         if (onDepart) onDepart(id);
@@ -4377,8 +5757,17 @@ if (typeof document !== 'undefined') {
       }
 
       renderCurrentPill();
-      selectLevel(currentLevelId);
-      if (subEl) subEl.textContent = `共 ${total} 关 · 左边选段，右边点关，再出发`;
+      if (selected.kind === 'story') selectStory(selected.storyId);
+      else selectLevel(selected.levelId);
+      if (subEl) {
+        if (passMarkMode === 'cleared' && includeStories) {
+          subEl.textContent = `共 ${total} 关 + ${MATH_STORY_WAYPOINTS.length} 小片子 · 片子样式不同 · 可重看`;
+        } else if (passMarkMode === 'cleared') {
+          subEl.textContent = `共 ${total} 关 · 已通关 ${completedIdSet.size} · 每关标注已通关/未通关`;
+        } else {
+          subEl.textContent = `共 ${total} 关 · 左边选段，右边点关，再出发`;
+        }
+      }
 
       dialog.addEventListener('click', (ev) => {
         const closeBtn = ev.target.closest('[data-jump-close]');
@@ -4391,9 +5780,25 @@ if (typeof document !== 'undefined') {
           const seg = segments.find((item) => item.id === segBtn.dataset.jumpSegment);
           if (seg) {
             activeSegment = seg;
-            // 切段时默认选中该段第一关（若当前选中已在该段则保留）
-            if (selectedLevelId < seg.start || selectedLevelId > seg.end) {
-              selectedLevelId = seg.start;
+            // 切段：选中若已在该段则保留；否则落到段首（优先段内第一部片子）
+            const selInSeg = selected.levelId >= seg.start && selected.levelId <= seg.end
+              && (selected.kind === 'level' || selected.kind === 'story');
+            if (!selInSeg) {
+              if (includeStories) {
+                const firstStory = mathJumpEntriesForSegment(seg.start, seg.end)
+                  .find((entry) => entry.kind === 'story');
+                if (firstStory) {
+                  selected = {
+                    kind: 'story',
+                    storyId: firstStory.id,
+                    levelId: firstStory.beforeLevel,
+                  };
+                } else {
+                  selected = { kind: 'level', storyId: null, levelId: seg.start };
+                }
+              } else {
+                selected = { kind: 'level', storyId: null, levelId: seg.start };
+              }
             }
             renderSegments();
             renderLevels(activeSegment);
@@ -4401,8 +5806,15 @@ if (typeof document !== 'undefined') {
           }
           return;
         }
-        const levelBtn = ev.target.closest('[data-jump-level]');
-        if (levelBtn) {
+        const storyBtn = ev.target.closest('[data-jump-story]');
+        if (storyBtn && levelsEl.contains(storyBtn)) {
+          selectStory(storyBtn.getAttribute('data-jump-story'));
+          // 片子：单击即出发（与会员关一触即达一致，孩子少点一步）
+          departSelected();
+          return;
+        }
+        const levelBtn = ev.target.closest('[data-jump-level]:not([data-jump-story])');
+        if (levelBtn && levelsEl.contains(levelBtn)) {
           const targetLevel = Number(levelBtn.dataset.jumpLevel);
           selectLevel(targetLevel);
           if (Number.isFinite(targetLevel) && targetLevel > FREE_LEVEL_COUNT) {
@@ -4440,6 +5852,180 @@ if (typeof document !== 'undefined') {
     }
 
 
+
+  function mathMapStoryPanelMarkup(waypoint, level, transition = '') {
+    const dropClass = transition === 'drop' ? ' is-dropping-in' : '';
+    const themeSrc = mathStoryThemeAudioSrc(waypoint);
+    const videoSrc = mathStoryVideoSrc(waypoint);
+    const safeTitle = escapeHtml(waypoint.title || '小片子');
+    // 单行文案：优先佩奇主题句，没有就用标题——不再叠顶栏/关卡 pill/说明四行同义
+    const lineText = escapeHtml(waypoint.themeSpoken || waypoint.title || '小片子');
+    const alreadySeen = isMathStoryCleared(state.mathStoryCleared, waypoint.id);
+    return `
+            <div class="math-map-play-area math-map-play-area--story" data-math-story-stop data-math-story-id="${escapeHtml(waypoint.id)}" data-resume-level="${level.id}">
+              <div class="math-story-scrim" aria-hidden="true"></div>
+              <section class="math-story-window math-story-panel math-story-window--desk math-story-window--one-line${dropClass}" aria-label="小片子：${safeTitle}">
+                <div class="math-story-video-frame math-story-video-frame--window math-story-video-frame--desk">
+                  <video
+                    class="math-story-video"
+                    data-math-story-video
+                    playsinline
+                    preload="auto"
+                    ${videoSrc ? `src="${escapeHtml(videoSrc)}"` : ''}
+                    aria-label="${safeTitle}"
+                  ></video>
+                  <div class="math-story-video-fallback" data-math-story-fallback hidden>
+                    <p>小片子还在路上</p>
+                  </div>
+                  <p class="math-story-theme-line" data-math-story-theme-line aria-live="polite">${lineText}</p>
+                </div>
+                <!-- 阶段文案仅 a11y/逻辑用，不叠视觉行 -->
+                <span class="math-story-phase-sr" data-math-story-phase aria-live="polite">佩奇讲主题</span>
+                <audio data-math-story-theme preload="auto" ${themeSrc ? `src="${escapeHtml(themeSrc)}"` : ''}></audio>
+                <button class="primary-button math-story-continue" type="button" data-math-story-continue disabled>
+                  ${alreadySeen ? '看完继续' : '继续闯关'}
+                </button>
+              </section>
+            </div>`;
+  }
+
+  function completeMathStoryWaypoint(waypointId, resumeLevelId) {
+    state.mathStoryCleared = markMathStoryCleared(state.mathStoryCleared, waypointId);
+    persistLearningStateLocal();
+    scheduleLearningSync();
+    const levelId = normalizeMathMapLevelId(resumeLevelId, state.progress.unlockedThrough);
+    const nextStory = firstPendingMathStoryWaypoint(levelId, state.mathStoryCleared);
+    if (nextStory) {
+      state.mathActiveStoryId = nextStory.id;
+      state.mathMapLevelId = levelId;
+      state.mathMapTransition = 'drop';
+      renderMap();
+      return;
+    }
+    state.mathActiveStoryId = null;
+    showInlineMathLevel(levelId, '', 'drop');
+  }
+
+  function bindMathStoryStop(root) {
+    if (!root) return;
+    const waypointId = root.getAttribute('data-math-story-id');
+    const resumeLevelId = Number(root.getAttribute('data-resume-level'));
+    const waypoint = mathStoryWaypointById(waypointId);
+    if (!waypoint) return;
+
+    const video = root.querySelector('[data-math-story-video]');
+    const themeAudio = root.querySelector('[data-math-story-theme]');
+    const continueBtn = root.querySelector('[data-math-story-continue]');
+    const phasePill = root.querySelector('[data-math-story-phase]');
+    const fallback = root.querySelector('[data-math-story-fallback]');
+    let finished = false;
+    let themeDone = false;
+
+    const restoreMapMusic = () => {
+      try { mapMusic.volume = currentMapMusicVolume(); } catch (_) {}
+    };
+    const duckMapMusicForStory = () => {
+      try { mapMusic.volume = MAP_MUSIC_DUCK_VOLUME; } catch (_) {}
+    };
+
+    const setPhase = (text) => {
+      if (phasePill) phasePill.textContent = text;
+    };
+
+    const enableContinue = () => {
+      if (!continueBtn) return;
+      continueBtn.disabled = false;
+      continueBtn.classList.add('is-ready');
+    };
+
+    const finishWatchable = () => {
+      setPhase('可以继续啦');
+      enableContinue();
+      restoreMapMusic();
+    };
+
+    const markFinishedAndAdvance = () => {
+      if (finished) return;
+      finished = true;
+      restoreMapMusic();
+      completeMathStoryWaypoint(waypoint.id, resumeLevelId);
+    };
+
+    continueBtn?.addEventListener('click', () => {
+      if (continueBtn.disabled) return;
+      playUiButtonClickSfx();
+      markFinishedAndAdvance();
+    });
+
+    const startVideo = () => {
+      if (!video) {
+        finishWatchable();
+        return;
+      }
+      setPhase('小片子播放中');
+      const playPromise = video.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => {
+          if (fallback) fallback.hidden = false;
+          finishWatchable();
+        });
+      }
+    };
+
+    video?.addEventListener('ended', () => {
+      setPhase('看完啦');
+      enableContinue();
+      // 自动进入下一环，少一次点击
+      window.setTimeout(() => {
+        if (!finished && continueBtn && !continueBtn.disabled) markFinishedAndAdvance();
+      }, 450);
+    });
+    video?.addEventListener('error', () => {
+      if (fallback) fallback.hidden = false;
+      finishWatchable();
+    });
+
+    const startThemeThenVideo = () => {
+      duckMapMusicForStory();
+      setPhase('佩奇讲主题');
+      if (!themeAudio || !themeAudio.getAttribute('src')) {
+        themeDone = true;
+        window.setTimeout(startVideo, 700);
+        return;
+      }
+      const onThemeEnd = () => {
+        if (themeDone) return;
+        themeDone = true;
+        startVideo();
+      };
+      themeAudio.addEventListener('ended', onThemeEnd, { once: true });
+      themeAudio.addEventListener('error', onThemeEnd, { once: true });
+      try {
+        themeAudio.currentTime = 0;
+        const p = themeAudio.play();
+        if (p && typeof p.catch === 'function') p.catch(onThemeEnd);
+      } catch (_) {
+        onThemeEnd();
+      }
+      // 最长等主题 8 秒，避免卡住
+      window.setTimeout(() => {
+        if (!themeDone) onThemeEnd();
+      }, 8000);
+    };
+
+    // 离开本页时恢复 BGM（换关/重渲会拆掉节点）
+    const observer = new MutationObserver(() => {
+      if (!document.body.contains(root)) {
+        restoreMapMusic();
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // 进关即自动：佩奇主题 → 视频
+    window.requestAnimationFrame(() => startThemeThenVideo());
+  }
+
   function mathMapInlinePanelMarkup(level, transition = '') {
     const alreadyCompleted = state.progress.completed.includes(level.id);
     const topicShort = String(level.topic || '').split('·')[0].trim();
@@ -4450,7 +6036,7 @@ if (typeof document !== 'undefined') {
     return `
             <div class="math-map-play-area" data-math-inline-question>
               <section class="math-inline-panel math-quiz${dropClass}" data-math-panel-level="${level.id}" aria-label="当前数学题">
-                <button class="math-level-step math-level-step--prev" type="button" data-math-step="-1" aria-label="${prevId >= 1 ? `切到第 ${prevId} 关` : '已经是第 1 关'}" ${prevId < 1 ? 'disabled' : ''}></button>
+                <button class="math-level-step math-level-step--prev" type="button" data-math-step="-1" aria-label="${prevId >= 1 ? `切到第 ${prevId} 关` : '已经是第 1 关'}" ${prevId < 1 ? 'disabled' : ''}><svg class="math-level-step-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15.35 4.35 7.65 12l7.7 7.65" fill="none" stroke="currentColor" stroke-width="3.85" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                 <header class="math-inline-header">
                   <span class="level-pill">第 ${level.id} 关</span>
                   <strong>${escapeHtml(level.title)}</strong>
@@ -4460,7 +6046,7 @@ if (typeof document !== 'undefined') {
                 <div class="math-layout">
                   ${mathQuestionTableMarkup(questionLevel)}
                 </div>
-                <button class="math-level-step math-level-step--next" type="button" data-math-step="1" aria-label="${nextId <= DISPLAY_LEVEL_COUNT ? `切到第 ${nextId} 关` : '已经是最后一关'}" ${nextId > DISPLAY_LEVEL_COUNT ? 'disabled' : ''}></button>
+                <button class="math-level-step math-level-step--next" type="button" data-math-step="1" aria-label="${nextId <= DISPLAY_LEVEL_COUNT ? `切到第 ${nextId} 关` : '已经是最后一关'}" ${nextId > DISPLAY_LEVEL_COUNT ? 'disabled' : ''}><svg class="math-level-step-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15.35 4.35 7.65 12l7.7 7.65" fill="none" stroke="currentColor" stroke-width="3.85" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
               </section>
             </div>`;
   }
@@ -4486,6 +6072,15 @@ if (typeof document !== 'undefined') {
       : progressLevelId;
     const currentLevel = worldLevels.find((level) => level.id === focusedLevelId) || worldLevels[0] || levels[0];
     const currentMapTheme = activeWorld.theme;
+    // 冷启动/直进 #map 不会走 showInlineMathLevel，须在此补 pending 小片子
+    // （否则 beforeLevel 绑定表形同虚设，直接出题）
+    if (currentMapTheme === 'math' && !String(state.mathActiveStoryId || '').trim()) {
+      const pendingStory = firstPendingMathStoryWaypoint(focusedLevelId, state.mathStoryCleared);
+      state.mathActiveStoryId = pendingStory ? pendingStory.id : null;
+      if (!state.mathMapLevelId) {
+        state.mathMapLevelId = focusedLevelId;
+      }
+    }
     const mathMapTransition = currentMapTheme === 'math' ? state.mathMapTransition : '';
     const currentVehicle = MAP_VEHICLES[currentMapTheme] || MAP_VEHICLES.ocean;
     const stars = completed * 3;
@@ -4544,15 +6139,27 @@ if (typeof document !== 'undefined') {
               <span class="math-map-prop math-map-prop--counter math-map-prop--counter-a"></span>
               <span class="math-map-prop math-map-prop--counter math-map-prop--counter-b"></span>
               <span class="math-map-prop math-map-prop--kid-doodle"></span>
+              <span class="math-map-prop math-map-prop--eraser" aria-hidden="true"></span>
             </div>` : '';
+    const activeMathStory = currentMapTheme === 'math'
+      ? mathStoryWaypointById(state.mathActiveStoryId)
+      : null;
     const mathInlinePanelMarkup = currentMapTheme === 'math'
-      ? mathMapInlinePanelMarkup(currentLevel, mathMapTransition)
+      ? (activeMathStory
+        ? mathMapStoryPanelMarkup(activeMathStory, currentLevel, mathMapTransition)
+        : mathMapInlinePanelMarkup(currentLevel, mathMapTransition))
       : '';
+    // aria / 标题：默认关卡文案保持原契约；故事路点用「必经小片子」覆盖
+    const mathLevelSwitchAria = activeMathStory
+      ? `必经小片子 ${String(activeMathStory.title || '')}，随后第 ${currentLevel.id} 关`
+      : `当前第 ${currentLevel.id} 关，共 ${DISPLAY_LEVEL_COUNT} 关`;
+    const mathLevelSwitchTitle = activeMathStory ? activeMathStory.title : currentLevel.title;
+    const mathLevelSwitchLabel = activeMathStory ? '必经小片子' : '当前关卡';
     const mathLevelIndicatorMarkup = currentMapTheme === 'math' ? `
-        <div class="math-level-switch-indicator${mathMapTransition === 'drop' ? ' is-changing' : ''}" data-math-level-switch-indicator role="status" aria-live="polite" aria-label="当前第 ${currentLevel.id} 关，共 ${DISPLAY_LEVEL_COUNT} 关">
-          <span class="math-level-switch-label">当前关卡</span>
+        <div class="math-level-switch-indicator${mathMapTransition === 'drop' ? ' is-changing' : ''}${activeMathStory ? ' is-story-stop' : ''}" data-math-level-switch-indicator role="status" aria-live="polite" aria-label="${escapeHtml(mathLevelSwitchAria)}">
+          <span class="math-level-switch-label">${mathLevelSwitchLabel}</span>
           <strong><span>第 ${currentLevel.id}</span><small>/ ${DISPLAY_LEVEL_COUNT} 关</small></strong>
-          <span class="math-level-switch-title">${escapeHtml(currentLevel.title)}</span>
+          <span class="math-level-switch-title">${escapeHtml(mathLevelSwitchTitle)}</span>
         </div>` : '';
     const globalUpdateStatusMarkup = currentMapTheme === 'math' ? '' : `
             <div class="map-pack-status-hud" data-global-update-status>
@@ -4608,14 +6215,17 @@ if (typeof document !== 'undefined') {
               <img src="assets/ocean/seagull-fly.webp?v=20260720-libtv-flap-v1" alt="" draggable="false">
             </div>
             <div class="map-fab-cluster" role="group" aria-label="地图工具">
-              <button class="map-music-btn${state.preferences.mapMusic === false ? ' is-muted' : ''}" type="button" data-map-music-toggle role="switch" aria-pressed="${state.preferences.mapMusic !== false}" aria-label="${state.preferences.mapMusic === false ? '打开背景音' : '关闭背景音'}" title="${state.preferences.mapMusic === false ? '打开背景音' : '关闭背景音'}">
+              <button class="map-music-btn${state.preferences.mapMusic === false ? ' is-muted' : ''}" type="button" data-map-music-toggle role="switch" aria-pressed="${state.preferences.mapMusic !== false}" aria-label="${state.preferences.mapMusic === false ? '打开背景音乐' : '关闭背景音乐'}" title="${state.preferences.mapMusic === false ? '打开背景音乐' : '关闭背景音乐'}">
                 ${state.preferences.mapMusic === false ? icons.mapMusicOff : icons.mapMusicOn}
+                <span class="map-fab-label">背景音乐</span>
               </button>
               <button class="map-jump-btn" type="button" data-map-jump aria-label="跳关，仅移动地图到某一关" title="跳关（仅移动地图）">
                 ${icons.jump}
+                <span class="map-fab-label">跳关</span>
               </button>
               <button class="map-locate-btn" type="button" data-locate-progress data-current-level="${progressLevelId}" aria-label="回到第 ${progressLevelId} 关最新进度" title="回到当前最新进度">
                 ${icons.locate}
+                <span class="map-fab-label">定位</span>
               </button>
             </div>
             <div class="route-scroll" data-route-scroll tabindex="0" aria-label="${activeWorld.routeLabel}，左右滑动浏览">
@@ -4680,8 +6290,16 @@ if (typeof document !== 'undefined') {
       });
     });
 
+    const inlineMathStory = main.querySelector('[data-math-story-stop]');
+    if (inlineMathStory && currentMapTheme === 'math') {
+      clearGlobalHintSchedules();
+      hideGlobalHint();
+      bindMathStoryStop(inlineMathStory);
+    }
     const inlineMathPanel = main.querySelector('[data-math-inline-question]');
     if (inlineMathPanel && currentMapTheme === 'math') {
+      clearGlobalHintSchedules();
+      hideGlobalHint();
       bindInlineMathQuestion(inlineMathPanel, mathLevelForCoachPlan(currentLevel));
       playMathAppleDropSounds(inlineMathPanel);
     }
@@ -5184,13 +6802,44 @@ if (typeof document !== 'undefined') {
         levels: worldLevels,
         currentLevelId: currentLevel.id,
         unlockedThrough: state.progress.unlockedThrough,
+        completedIds: state.progress.completed,
+        mathStoryCleared: state.mathStoryCleared,
+        mapWorld: currentMapTheme,
+        passMarkMode: currentMapTheme === 'math' ? 'cleared' : 'default',
         trigger: jumpBtn,
         onDepart: (levelId) => {
           if (currentMapTheme === 'math') {
-            showInlineMathLevel(levelId, `已到达第 ${levelId} 关`, 'drop');
+            // 跳关也走准入：会员关直接付费墙，不把孩子丢进左右都出不去的会员关题面
+            const access = getLevelAccess(levelId, state.progress, state.preferences.vipActive === true);
+            if (access === 'allowed') {
+              showInlineMathLevel(levelId, `已到达第 ${levelId} 关`, 'drop');
+              return;
+            }
+            if (access === 'paid') {
+              showMapMessage(paidAccessMessage);
+              openPaywallDialog(levelId, jumpBtn);
+              return;
+            }
+            showMapMessage(`先完成第 ${state.progress.unlockedThrough} 关，再继续冒险。`);
             return;
           }
           locateToLevelId(levelId, 'auto');
+        },
+        onDepartStory: (waypoint) => {
+          if (currentMapTheme !== 'math' || !waypoint) return;
+          const levelId = Number(waypoint.beforeLevel) || 1;
+          const access = getLevelAccess(levelId, state.progress, state.preferences.vipActive === true);
+          if (access === 'allowed') {
+            state.mathForcedStoryId = waypoint.id;
+            showInlineMathLevel(levelId, `小片子：${waypoint.title}`, 'drop');
+            return;
+          }
+          if (access === 'paid') {
+            showMapMessage(paidAccessMessage);
+            openPaywallDialog(levelId, jumpBtn);
+            return;
+          }
+          showMapMessage(`先完成第 ${state.progress.unlockedThrough} 关，再继续冒险。`);
         },
       });
     });
@@ -5224,35 +6873,582 @@ if (typeof document !== 'undefined') {
     state.messageTimer = setTimeout(() => { message.hidden = true; }, 2600);
   }
 
+  /** 全局引导手（海岛 hand-tap Lottie）— 数学/英语答题共用 */
+  const globalHintHand = {
+    el: null,
+    host: null,
+    anim: null,
+    gen: 0,
+    optionTimer: 0,
+    idleTimer: 0,
+    dragTimer: 0,
+    cleanupFns: [],
+  };
+
+  function clearGlobalHintSchedules() {
+    clearTimeout(globalHintHand.idleTimer);
+    clearInterval(globalHintHand.optionTimer);
+    clearTimeout(globalHintHand.dragTimer);
+    globalHintHand.idleTimer = 0;
+    globalHintHand.optionTimer = 0;
+    globalHintHand.dragTimer = 0;
+    if (globalHintHand.cleanupFns.length) {
+      globalHintHand.cleanupFns.splice(0).forEach((fn) => {
+        try { fn(); } catch (_) {}
+      });
+    }
+    if (globalHintHand.el) {
+      globalHintHand.el.classList.remove('is-drag-demo', 'is-visible');
+    }
+  }
+
+  function ensureGlobalHintHost() {
+    if (typeof document === 'undefined') return null;
+    let el = globalHintHand.el && globalHintHand.el.isConnected
+      ? globalHintHand.el
+      : document.querySelector('[data-global-hint-hand]');
+    if (!el) {
+      el = document.createElement('div');
+      el.className = 'hint-hand';
+      el.setAttribute('data-global-hint-hand', '');
+      el.setAttribute('aria-hidden', 'true');
+      el.hidden = true;
+      el.innerHTML = '<div class="hint-hand-lottie" data-hint-lottie></div>';
+      document.body.appendChild(el);
+    }
+    globalHintHand.el = el;
+    globalHintHand.host = el.querySelector('[data-hint-lottie]');
+    return el;
+  }
+
+  function ensureGlobalHintLottie() {
+    const el = ensureGlobalHintHost();
+    if (!el) return null;
+    if (globalHintHand.anim) return globalHintHand.anim;
+    const lottieApi = window.lottie || window.bodymovin;
+    const data = window.__HAND_TAP_LOTTIE_DATA;
+    if (!lottieApi || !globalHintHand.host || !data) {
+      setTimeout(() => {
+        if (!globalHintHand.anim && globalHintHand.el && !globalHintHand.el.hidden) {
+          ensureGlobalHintLottie();
+        }
+      }, 120);
+      return null;
+    }
+    try {
+      globalHintHand.host.innerHTML = '';
+      globalHintHand.anim = lottieApi.loadAnimation({
+        container: globalHintHand.host,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        animationData: JSON.parse(JSON.stringify(data)),
+      });
+      try { globalHintHand.anim.goToAndPlay(0, true); } catch (_) {
+        try { globalHintHand.anim.play(); } catch (__) {}
+      }
+    } catch (err) {
+      console.warn('[hint-hand] lottie init failed', err);
+      globalHintHand.anim = null;
+    }
+    return globalHintHand.anim;
+  }
+
+  function showGlobalHintAt(target, anchor = { x: 0.62, y: 0.55 }) {
+    if (!target || !target.isConnected) {
+      hideGlobalHint();
+      return;
+    }
+    ensureGlobalHintHost();
+    ensureGlobalHintLottie();
+    const el = globalHintHand.el;
+    if (!el) return;
+    const r = target.getBoundingClientRect();
+    if (r.width < 2 && r.height < 2) {
+      hideGlobalHint();
+      return;
+    }
+    const ax = Number.isFinite(anchor.x) ? anchor.x : 0.62;
+    const ay = Number.isFinite(anchor.y) ? anchor.y : 0.55;
+    el.style.left = `${Math.round(r.left + r.width * ax)}px`;
+    el.style.top = `${Math.round(r.top + r.height * ay)}px`;
+    el.hidden = false;
+    el.classList.add('is-visible');
+    if (globalHintHand.anim) {
+      try { globalHintHand.anim.goToAndPlay(0, true); } catch (_) {}
+    }
+  }
+
+  function hideGlobalHint() {
+    clearTimeout(globalHintHand.dragTimer);
+    globalHintHand.dragTimer = 0;
+    if (!globalHintHand.el) return;
+    globalHintHand.el.hidden = true;
+    globalHintHand.el.classList.remove('is-visible', 'is-drag-demo');
+  }
+
+  function destroyGlobalHintLottie() {
+    clearGlobalHintSchedules();
+    if (globalHintHand.anim) {
+      try { globalHintHand.anim.destroy(); } catch (_) {}
+      globalHintHand.anim = null;
+    }
+    if (globalHintHand.host) globalHintHand.host.innerHTML = '';
+    if (globalHintHand.el) {
+      globalHintHand.el.hidden = true;
+      globalHintHand.el.classList.remove('is-visible', 'is-drag-demo');
+    }
+  }
+
   function removeGlobalHintHand() {
+    destroyGlobalHintLottie();
     document.querySelectorAll('[data-global-hint-hand]').forEach((hand) => hand.remove());
+    globalHintHand.el = null;
+    globalHintHand.host = null;
+    globalHintHand.gen += 1;
+  }
+
+  /**
+   * 数学内联题引导手：点选选项 → 点确认；取物：桌面果 → 拖进篮。
+   * 交互后先藏，空闲再提示。
+   */
+  function armMathQuizHints(root, level, api = {}) {
+    if (!root || typeof document === 'undefined') return () => {};
+    clearGlobalHintSchedules();
+    const gen = ++globalHintHand.gen;
+    const format = level?.math?.format || level?.itemType || 'count';
+    const isLive = () => (
+      gen === globalHintHand.gen
+      && root.isConnected
+      && document.body.classList.contains('map-game-active')
+      && !api.isFinished?.()
+    );
+
+    const getSubmit = () => root.querySelector('[data-submit]');
+    const getChoices = () => Array.from(root.querySelectorAll('[data-math-choice]'));
+    const getPoolItem = () => root.querySelector('[data-math-take-zone="pool"][data-math-take-item]');
+    const getBasket = () => root.querySelector('[data-math-take-basket]');
+    const getComposePoolItem = () => root.querySelector('[data-math-compose-item]:not(.is-selected)');
+    const getComposePlate = () => root.querySelector('[data-math-compose-plate]');
+    function pointSubmit() {
+      if (!isLive()) return;
+      const submit = getSubmit();
+      if (!submit || submit.hidden) {
+        hideGlobalHint();
+        return;
+      }
+      globalHintHand.el?.classList.remove('is-drag-demo');
+      showGlobalHintAt(submit, { x: 0.55, y: 0.55 });
+    }
+
+    function pointChoicesCycle() {
+      if (!isLive()) return;
+      if (api.getSelectedIndex?.() != null || api.hasSelection?.()) {
+        pointSubmit();
+        return;
+      }
+      const choices = getChoices().filter((el) => !el.disabled && el.offsetParent !== null);
+      if (!choices.length) {
+        hideGlobalHint();
+        return;
+      }
+      globalHintHand.el?.classList.remove('is-drag-demo');
+      let idx = 0;
+      const tick = () => {
+        if (!isLive() || api.getSelectedIndex?.() != null || api.hasSelection?.()) {
+          clearInterval(globalHintHand.optionTimer);
+          globalHintHand.optionTimer = 0;
+          if (isLive() && (api.getSelectedIndex?.() != null || api.hasSelection?.())) pointSubmit();
+          return;
+        }
+        // 数序纯数字砖：指中心；其它题略偏右下（对齐手势 tip）
+        const choice = choices[idx % choices.length];
+        const numeralOnly = choice.classList.contains('math-choice--numeral-only');
+        showGlobalHintAt(choice, numeralOnly ? { x: 0.52, y: 0.52 } : { x: 0.58, y: 0.62 });
+        idx += 1;
+      };
+      tick();
+      if (choices.length > 1) {
+        clearInterval(globalHintHand.optionTimer);
+        globalHintHand.optionTimer = setInterval(tick, 1300);
+      }
+    }
+
+    function runTakeDragDemo() {
+      if (!isLive()) return;
+      if (api.hasSelection?.()) {
+        pointSubmit();
+        return;
+      }
+      const apple = getPoolItem();
+      const basket = getBasket();
+      if (!apple || !basket) {
+        hideGlobalHint();
+        return;
+      }
+      const el = ensureGlobalHintHost();
+      if (!el) return;
+      el.classList.add('is-drag-demo');
+      showGlobalHintAt(apple, { x: 0.55, y: 0.55 });
+
+      const stepToBasket = () => {
+        if (!isLive() || api.hasSelection?.()) {
+          el.classList.remove('is-drag-demo');
+          if (isLive() && api.hasSelection?.()) pointSubmit();
+          return;
+        }
+        const br = basket.getBoundingClientRect();
+        el.style.left = `${Math.round(br.left + br.width * 0.5)}px`;
+        el.style.top = `${Math.round(br.top + br.height * 0.48)}px`;
+        globalHintHand.dragTimer = setTimeout(stepBackToApple, 1000);
+      };
+      const stepBackToApple = () => {
+        if (!isLive() || api.hasSelection?.()) {
+          el.classList.remove('is-drag-demo');
+          if (isLive() && api.hasSelection?.()) pointSubmit();
+          return;
+        }
+        showGlobalHintAt(apple, { x: 0.55, y: 0.55 });
+        globalHintHand.dragTimer = setTimeout(stepToBasket, 850);
+      };
+      clearTimeout(globalHintHand.dragTimer);
+      globalHintHand.dragTimer = setTimeout(stepToBasket, 900);
+    }
+
+    function runComposeDragDemo() {
+      if (!isLive()) return;
+      const apple = getComposePoolItem();
+      const plate = getComposePlate();
+      if (!apple || !plate) {
+        hideGlobalHint();
+        return;
+      }
+      const el = ensureGlobalHintHost();
+      if (!el) return;
+      el.classList.add('is-drag-demo');
+      showGlobalHintAt(apple, { x: 0.55, y: 0.55 });
+      const stepToPlate = () => {
+        if (!isLive()) {
+          el.classList.remove('is-drag-demo');
+          return;
+        }
+        const br = plate.getBoundingClientRect();
+        el.style.left = `${Math.round(br.left + br.width * 0.5)}px`;
+        el.style.top = `${Math.round(br.top + br.height * 0.48)}px`;
+        globalHintHand.dragTimer = setTimeout(stepBackToApple, 1000);
+      };
+      const stepBackToApple = () => {
+        if (!isLive()) {
+          el.classList.remove('is-drag-demo');
+          return;
+        }
+        showGlobalHintAt(apple, { x: 0.55, y: 0.55 });
+        globalHintHand.dragTimer = setTimeout(stepToPlate, 850);
+      };
+      clearTimeout(globalHintHand.dragTimer);
+      globalHintHand.dragTimer = setTimeout(stepToPlate, 900);
+    }
+
+    function runSequenceDragDemo() {
+      if (!isLive()) return;
+      if (api.hasSelection?.()) {
+        hideGlobalHint();
+        return;
+      }
+      const piece = getChoices().find((el) => !el.classList.contains('is-used') && el.offsetParent !== null);
+      const slot = root.querySelector('[data-math-seq-slot]');
+      if (!piece || !slot) {
+        pointChoicesCycle();
+        return;
+      }
+      const el = ensureGlobalHintHost();
+      if (!el) return;
+      el.classList.add('is-drag-demo');
+      showGlobalHintAt(piece, { x: 0.52, y: 0.52 });
+      const stepToSlot = () => {
+        if (!isLive() || api.hasSelection?.()) {
+          el.classList.remove('is-drag-demo');
+          hideGlobalHint();
+          return;
+        }
+        const sr = slot.getBoundingClientRect();
+        el.style.left = `${Math.round(sr.left + sr.width * 0.5)}px`;
+        el.style.top = `${Math.round(sr.top + sr.height * 0.5)}px`;
+        globalHintHand.dragTimer = setTimeout(stepBackToPiece, 1000);
+      };
+      const stepBackToPiece = () => {
+        if (!isLive() || api.hasSelection?.()) {
+          el.classList.remove('is-drag-demo');
+          hideGlobalHint();
+          return;
+        }
+        showGlobalHintAt(piece, { x: 0.52, y: 0.52 });
+        globalHintHand.dragTimer = setTimeout(stepToSlot, 850);
+      };
+      clearTimeout(globalHintHand.dragTimer);
+      globalHintHand.dragTimer = setTimeout(stepToSlot, 900);
+    }
+
+    function showTipsNow() {
+      if (!isLive()) return;
+      clearInterval(globalHintHand.optionTimer);
+      globalHintHand.optionTimer = 0;
+      clearTimeout(globalHintHand.dragTimer);
+      globalHintHand.dragTimer = 0;
+      if (api.getSelectedIndex?.() != null || api.hasSelection?.()) {
+        if (format === 'sequence' || format === 'compose') {
+          if (format === 'compose') {
+            runComposeDragDemo();
+            return;
+          }
+          hideGlobalHint();
+          return;
+        }
+        pointSubmit();
+        return;
+      }
+      if (format === 'take') runTakeDragDemo();
+      else if (format === 'compose') runComposeDragDemo();
+      else if (format === 'sequence') runSequenceDragDemo();
+      else pointChoicesCycle();
+    }
+
+    function scheduleTips(delayMs) {
+      clearTimeout(globalHintHand.idleTimer);
+      globalHintHand.idleTimer = setTimeout(showTipsNow, delayMs);
+    }
+
+    const onInteract = () => {
+      if (!isLive()) return;
+      hideGlobalHint();
+      clearInterval(globalHintHand.optionTimer);
+      globalHintHand.optionTimer = 0;
+      clearTimeout(globalHintHand.dragTimer);
+      globalHintHand.dragTimer = 0;
+      globalHintHand.el?.classList.remove('is-drag-demo');
+      // 空闲后再提示
+      scheduleTips(api.getSelectedIndex?.() != null || api.hasSelection?.() ? 2200 : 6500);
+    };
+
+    root.addEventListener('pointerdown', onInteract, { passive: true });
+    // 选中后立刻改指确认钮（不依赖 pointer）
+    const onSelectionSignal = () => {
+      if (!isLive()) return;
+      if (api.getSelectedIndex?.() != null || api.hasSelection?.()) {
+        clearInterval(globalHintHand.optionTimer);
+        globalHintHand.optionTimer = 0;
+        clearTimeout(globalHintHand.dragTimer);
+        globalHintHand.dragTimer = 0;
+        globalHintHand.el?.classList.remove('is-drag-demo');
+        scheduleTips(420);
+      }
+    };
+    root.addEventListener('math-hint-selection', onSelectionSignal);
+
+    globalHintHand.cleanupFns.push(() => {
+      root.removeEventListener('pointerdown', onInteract);
+      root.removeEventListener('math-hint-selection', onSelectionSignal);
+    });
+
+    // 读题后出现：比 coach 语音稍晚
+    scheduleTips(2000);
+
+    return () => {
+      if (gen === globalHintHand.gen) {
+        clearGlobalHintSchedules();
+        hideGlobalHint();
+        globalHintHand.gen += 1;
+      }
+    };
   }
 
   function mathQuestionParts(level) {
+    const format = level.math?.format || level.itemType || 'count';
+    const objectKind = resolveMathObject(level.math?.objectKind || level.objectKind || 'apple').kind;
+    const object = resolveMathObject(objectKind);
     const groups = Array.isArray(level.math?.groups) && level.math.groups.length
       ? level.math.groups
-      : level.options.map((label, index) => ({ id: `math-${level.id}-${index}`, count: index, label }));
-    const targetLabel = level.options[level.correct] || mathCountLabel(level.targetCount || 1);
+      : (level.options || []).map((label, index) => ({ id: `math-${level.id}-${index}`, count: index, label }));
+    const targetLabel = level.options?.[level.correct] || mathCountLabel(level.targetCount || 1, objectKind);
     const questionText = questionPromptText(level);
     let objectIndex = 0;
     const objectMarkup = (count) => {
-      const safeCount = Math.max(0, Math.min(10, Number(count) || 0));
+      const safeCount = Math.max(0, Math.min(MATH_MAX_COUNT, Number(count) || 0));
       if (safeCount === 0) return '';
       return Array.from(
         { length: safeCount },
-        () => `<span class="math-object" style="--math-object-delay:${objectIndex++ * 190}ms" aria-hidden="true"></span>`,
+        () => `<span class="math-object" data-kind="${objectKind}" style="--math-object-delay:${objectIndex++ * 190}ms" aria-hidden="true"></span>`,
       ).join('');
     };
-    const choicesMarkup = groups.map((group, index) => `
-      <button class="math-choice" type="button" data-math-choice="${index}" style="--math-choice-delay:${index * 56}ms" aria-label="${escapeHtml(group.label)}">
-        <span class="math-plate" aria-hidden="true"><span class="math-object-set" data-count="${Math.max(0, Math.min(10, Number(group.count) || 0))}">${objectMarkup(group.count)}</span></span>
-        <span class="math-choice-label">${escapeHtml(group.label)}</span>
+    const plateInner = (count) => `<span class="math-plate" aria-hidden="true"><span class="math-object-set" data-kind="${objectKind}" data-count="${Math.max(0, Math.min(MATH_MAX_COUNT, Number(count) || 0))}">${objectMarkup(count)}</span></span>`;
+
+    if (format === 'take') {
+      const poolCount = Math.max(
+        Number(level.targetCount) || 1,
+        Math.min(MATH_MAX_COUNT, Number(level.math?.poolCount) || ((Number(level.targetCount) || 1) + 2)),
+      );
+      const target = Math.max(0, Math.min(poolCount, Number(level.targetCount) || 1));
+      const takeItems = Array.from({ length: poolCount }, (_, index) => `
+        <button class="math-take-item" type="button" data-math-take-item="${index}" data-math-take-zone="pool" data-kind="${objectKind}" aria-pressed="false" aria-label="${object.name} ${index + 1}，拖进篮子或点一下取出" draggable="false">
+          <span class="math-object" data-kind="${objectKind}" aria-hidden="true"></span>
+        </button>`).join('');
+      return {
+        format: 'take',
+        optionCount: 0,
+        targetLabel,
+        targetCount: target,
+        poolCount,
+        objectKind,
+        questionMarkup: escapeHtml(questionText)
+          .replace(String(level.targetCount || ''), `<strong>${level.targetCount || 1}</strong>`),
+        choicesMarkup: `
+          <div class="math-take-board" data-math-take data-kind="${objectKind}" data-target="${target}">
+            <div class="math-take-stage">
+              <div class="math-take-pool" data-math-take-pool>
+                <div class="math-take-zone-items" data-math-take-pool-items>${takeItems}</div>
+              </div>
+              <div class="math-take-basket" data-math-take-basket data-basket-view="topdown" aria-label="${object.name}篮子，把${object.name}拖进来">
+                <div class="math-take-basket-stage">
+                  <div class="math-take-basket-art" aria-hidden="true">
+                    <img
+                      class="math-take-basket-back"
+                      src="assets/math-map/quiz/basket-handpaint-topdown-v1.webp?v=20260805-math-take-basket-topdown-v3"
+                      alt=""
+                      width="1952"
+                      height="1867"
+                      draggable="false"
+                      decoding="async"
+                    >
+                  </div>
+                  <div class="math-take-basket-mouth">
+                    <div class="math-take-zone-items math-take-basket-items" data-math-take-basket-items></div>
+                  </div>
+                </div>
+                <p class="math-take-basket-hint">放进篮子</p>
+              </div>
+            </div>
+            <p class="math-take-status" data-math-take-status>已取出 0 ${object.measure}，要找 ${target} ${object.measure}</p>
+          </div>`,
+        composeMarkup: '',
+      };
+    }
+
+    if (format === 'compose') {
+      // 3–5 岁操作：盘里先放好 leftCount，从旁侧拖珠进来凑成 whole（无 +/= 与选项）
+      const leftCount = Math.max(0, Math.min(MATH_MAX_COUNT, Number(level.math?.leftCount) || 0));
+      const whole = Math.max(
+        leftCount + 1,
+        Math.min(
+          MATH_MAX_COUNT,
+          Number(level.math?.whole) || (leftCount + (Number(level.targetCount) || 1)),
+        ),
+      );
+      const need = Math.max(1, whole - leftCount);
+      const freePool = Math.max(
+        need,
+        Math.min(MATH_MAX_COUNT, Number(level.math?.poolCount) || (need + 2)),
+      );
+      const fixedItems = Array.from({ length: leftCount }, (_, index) => `
+        <span class="math-compose-fixed" data-math-compose-fixed aria-hidden="true">
+          <span class="math-object" data-kind="${objectKind}" style="--math-object-delay:${index * 90}ms"></span>
+        </span>`).join('');
+      const freeItems = Array.from({ length: freePool }, (_, index) => `
+        <button class="math-compose-item" type="button" data-math-compose-item="${index}" data-math-compose-zone="pool" data-kind="${objectKind}" aria-pressed="false" aria-label="${object.name} ${index + 1}，拖进盘子或点一下放进去" draggable="false">
+          <span class="math-object" data-kind="${objectKind}" aria-hidden="true"></span>
+        </button>`).join('');
+      const qSafe = escapeHtml(questionText)
+        .replace(`已经有 ${leftCount} 个`, `已经有 <strong>${leftCount}</strong> 个`)
+        .replace(`凑成 ${whole} 个`, `凑成 <strong>${whole}</strong> 个`);
+      return {
+        format: 'compose',
+        optionCount: 0,
+        targetLabel: String(whole),
+        targetCount: need,
+        leftCount,
+        whole,
+        poolCount: freePool,
+        objectKind,
+        questionMarkup: qSafe,
+        choicesMarkup: `
+          <div class="math-compose-board" data-math-compose data-kind="${objectKind}" data-left="${leftCount}" data-whole="${whole}">
+            <div class="math-compose-stage">
+              <div class="math-compose-pool" data-math-compose-pool>
+                <div class="math-compose-zone-items" data-math-compose-pool-items>${freeItems}</div>
+              </div>
+              <div class="math-compose-plate" data-math-compose-plate aria-label="大盘子，已经有 ${leftCount} 个，要凑成 ${whole} 个">
+                <div class="math-compose-plate-stage">
+                  <div class="math-compose-plate-disk" aria-hidden="true"></div>
+                  <div class="math-compose-plate-mouth">
+                    <div class="math-compose-zone-items math-compose-plate-items" data-math-compose-plate-items>
+                      ${fixedItems}
+                    </div>
+                  </div>
+                </div>
+                <p class="math-compose-plate-hint">要凑成 ${whole} 个</p>
+              </div>
+            </div>
+            <p class="math-compose-status" data-math-compose-status>已经有 ${leftCount} 个 · 现在一共 ${leftCount} 个 · 要凑成 ${whole} 个</p>
+          </div>`,
+        composeMarkup: '',
+      };
+    }
+
+    const labelMode = level.math?.labelMode || (format === 'numeral' || format === 'sequence' ? 'numeral' : 'count');
+    const choicesMarkup = groups.map((group, index) => {
+      const count = Math.max(0, Math.min(MATH_MAX_COUNT, Number(group.count) || 0));
+      const label = group.label || (labelMode === 'numeral' ? String(count) : mathCountLabel(count, objectKind));
+      const showPlate = format !== 'sequence';
+      // 数序：数字形状木积木本身就是可拖选项，不再叠一层 label
+      const numeralOnly = format === 'sequence';
+      const choiceClass = [
+        'math-choice',
+        numeralOnly ? 'math-choice--numeral math-choice--numeral-only math-choice--wood-digit math-choice--seq-piece' : '',
+        !numeralOnly && labelMode === 'numeral' ? 'is-numeral-label' : '',
+      ].filter(Boolean).join(' ');
+      return `
+      <button class="${choiceClass}" type="button" data-math-choice="${index}" ${numeralOnly ? 'data-math-seq-piece' : ''} style="--math-choice-delay:${index * 56}ms" aria-label="${escapeHtml(label)}">
+        ${showPlate ? plateInner(count) : mathWoodDigitMarkup(count, 'is-choice is-seq-piece')}
+        ${numeralOnly ? '' : `<span class="math-choice-label">${escapeHtml(label)}</span>`}
         <span class="result-badge" aria-hidden="true"></span>
-      </button>`).join('');
+      </button>`;
+    }).join('');
+
+    let composeMarkup = '';
+    if (format === 'sequence') {
+      const anchor = Math.max(1, Math.min(MATH_MAX_COUNT, Number(level.math?.sequenceAnchor) || 1));
+      const dir = level.math?.sequenceDirection === 'prev' ? 'prev' : 'next';
+      const railMax = Math.max(5, Math.min(MATH_MAX_COUNT, Number(level.math?.numberMax) || Math.max(anchor, Number(level.targetCount) || 1)));
+      const askN = dir === 'prev' ? anchor - 1 : anchor + 1;
+      // 1–N 木积木数轴：提问位留空 drop slot；下面三枚木数字拖入/点选填空
+      const rail = Array.from({ length: railMax }, (_, i) => {
+        const n = i + 1;
+        if (n === askN && askN >= 1 && askN <= railMax) {
+          return `<span class="math-sequence-slot is-empty" data-math-seq-slot data-n="${n}" aria-label="空位，把木数字拖进来">
+            <span class="math-sequence-slot-well" aria-hidden="true">
+              <span class="math-sequence-slot-fill" data-math-seq-fill></span>
+            </span>
+          </span>`;
+        }
+        const cls = [
+          'math-sequence-block',
+          n === anchor ? 'is-anchor' : '',
+        ].filter(Boolean).join(' ');
+        return `<span class="${cls}" data-n="${n}">${mathWoodDigitMarkup(n, n === anchor ? 'is-rail is-anchor' : 'is-rail')}</span>`;
+      }).join('');
+      const dirLabel = dir === 'prev' ? '前面' : '后面';
+      const ariaText = `${anchor} 的${dirLabel}是几`;
+      composeMarkup = `
+        <div class="math-sequence-ref" data-math-sequence-dir="${dir}" data-math-seq-board aria-label="${escapeHtml(ariaText)}">
+          <div class="math-sequence-rail is-wood-blocks" aria-hidden="true">${rail}</div>
+        </div>`;
+    }
+
     return {
+      format,
       choicesMarkup,
       optionCount: groups.length,
       targetLabel,
+      composeMarkup,
       questionMarkup: escapeHtml(questionText)
         .replace(String(level.targetCount || ''), `<strong>${level.targetCount || 1}</strong>`),
     };
@@ -5260,12 +7456,26 @@ if (typeof document !== 'undefined') {
 
   function mathQuestionTableMarkup(level) {
     const parts = mathQuestionParts(level);
+    const questionSpoken = questionPromptText(level);
+    const questionAudioSrc = mathQuestionAudioSrcFor(level);
+    const isManip = parts.format === 'take' || parts.format === 'compose';
+    const optionsBlock = isManip
+      ? `<div class="math-options math-options--take math-options--${escapeHtml(parts.format || 'take')}" data-math-options>${parts.choicesMarkup}</div>`
+      : `<div class="math-options math-options--count-${parts.optionCount}" data-math-options>${parts.choicesMarkup}</div>`;
     return `
-          <div class="math-table">
+          <div class="math-table" data-math-format="${escapeHtml(parts.format || 'count')}">
             <div class="math-question-card">
-              <p class="question-text">${parts.questionMarkup}</p>
+              <div class="math-question-prompt">
+                <p class="question-text">${parts.questionMarkup}</p>
+                <div class="question-actions math-question-actions">
+                  <button class="icon-btn listen-question-btn" type="button" data-listen-question aria-label="听题目：${escapeHtml(questionSpoken)}"${questionAudioSrc ? '' : ' disabled'}>
+                    <svg viewBox="0 0 24 24"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>
+                  </button>
+                </div>
+              </div>
+              ${parts.composeMarkup || ''}
             </div>
-            <div class="math-options math-options--count-${parts.optionCount}" data-math-options>${parts.choicesMarkup}</div>
+            ${optionsBlock}
           </div>
           <div class="quiz-footer">
             <button class="submit-btn" type="button" data-submit hidden aria-label="提交答案">
@@ -5275,6 +7485,9 @@ if (typeof document !== 'undefined') {
             <button class="replay-btn" type="button" data-continue-map hidden aria-label="继续下一关">
               <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.3"/><path d="M3 4v5h5"/></svg>
             </button>
+          </div>
+          <div class="celebration" data-celebration hidden aria-hidden="true">
+            <div class="celebration-lottie" data-celebration-lottie></div>
           </div>`;
   }
 
@@ -5283,54 +7496,741 @@ if (typeof document !== 'undefined') {
     const feedback = root.querySelector('[data-feedback]');
     const continueBtn = root.querySelector('[data-continue-map]');
     const submitBtn = root.querySelector('[data-submit]');
+    const listenQuestionBtn = root.querySelector('[data-listen-question]');
+    const celebration = root.querySelector('[data-celebration]');
+    const celebrationLottieHost = celebration?.querySelector('[data-celebration-lottie]');
     const statePill = root.querySelector('[data-detail-state]');
     const stepButtons = root.querySelectorAll('[data-math-step]');
-    if (!optionsBox || !feedback || !continueBtn || !submitBtn) return;
+    const format = level.math?.format || level.itemType || 'count';
+    if (!feedback || !continueBtn || !submitBtn) return;
+    if (format !== 'take' && format !== 'compose' && !optionsBox) return;
     const targetLabel = mathQuestionParts(level).targetLabel;
     let selectedIndex = null;
+    let takeSelected = new Set();
+    let composeSelected = new Set();
+    let composeDrag = null;
+    let composeGhost = null;
+    let composeAutoTimer = 0;
     let quizState = 'answering';
+    let celebrationAnim = null;
     const startedAt = typeof performance !== 'undefined' && typeof performance.now === 'function'
       ? performance.now()
       : Date.now();
     let latestCoachPlan = null;
 
+    const composePoolHost = root.querySelector('[data-math-compose-pool-items]');
+    const composePlateHost = root.querySelector('[data-math-compose-plate-items]');
+    const composePlateZone = root.querySelector('[data-math-compose-plate]');
+    const composePoolZone = root.querySelector('[data-math-compose-pool]');
+    const composeBoard = root.querySelector('[data-math-compose]');
+
+    // Same correct-answer Lottie as island level-quiz celebrate().
+    function ensureCelebrationLottie() {
+      if (celebrationAnim) return celebrationAnim;
+      const lottieApi = window.lottie || window.bodymovin;
+      const data = window.__CORRECT_CELEBRATION_LOTTIE_DATA;
+      if (!lottieApi || !celebrationLottieHost || !data) return null;
+      celebrationLottieHost.innerHTML = '';
+      celebrationAnim = lottieApi.loadAnimation({
+        container: celebrationLottieHost,
+        renderer: 'svg',
+        loop: false,
+        autoplay: false,
+        animationData: JSON.parse(JSON.stringify(data)),
+      });
+      return celebrationAnim;
+    }
+
+    function celebrate() {
+      if (!celebration) return;
+      celebration.hidden = false;
+      const anim = ensureCelebrationLottie();
+      try { anim?.goToAndPlay(0, true); } catch (_) {}
+      setTimeout(() => { celebration.hidden = true; }, 1700);
+    }
+
+    function stopMathQuestionAudio() {
+      if (mathCoachAudioEl) {
+        try {
+          mathCoachAudioEl.pause();
+          mathCoachAudioEl.currentTime = 0;
+        } catch (_) {}
+        mathCoachAudioEl = null;
+      }
+      listenQuestionBtn?.classList.remove('is-playing');
+      mapMusic.volume = currentMapMusicVolume();
+    }
+
+    function speakMathQuestion() {
+      if (state.preferences.autoPronunciation === false) return false;
+      const src = mathQuestionAudioSrcFor(level);
+      if (!src) return false;
+      try {
+        mathFeedbackSpeechToken += 1;
+        const token = mathFeedbackSpeechToken;
+        stopMathQuestionAudio();
+        const audio = new Audio(src);
+        const clear = () => {
+          if (token !== mathFeedbackSpeechToken) return;
+          if (mathCoachAudioEl === audio) mathCoachAudioEl = null;
+          listenQuestionBtn?.classList.remove('is-playing');
+          mapMusic.volume = currentMapMusicVolume();
+        };
+        audio.onended = clear;
+        audio.onerror = clear;
+        audio.volume = QUESTION_AUDIO_VOLUME;
+        mathCoachAudioEl = audio;
+        listenQuestionBtn?.classList.add('is-playing');
+        mapMusic.volume = MAP_MUSIC_DUCK_VOLUME;
+        audio.play().catch(clear);
+        return true;
+      } catch (_) {
+        return false;
+      }
+    }
+
     function selectChoice(index, card) {
-      if (quizState !== 'answering') return;
+      if (quizState !== 'answering' || !optionsBox || !card) return;
+      if (format === 'sequence') {
+        placeSequencePiece(index, card, { autoSubmit: true });
+        return;
+      }
       selectedIndex = index;
       optionsBox.querySelectorAll('.math-choice').forEach((choice) => choice.classList.remove('is-selected'));
       card.classList.add('is-selected');
       submitBtn.hidden = false;
+      try { root.dispatchEvent(new CustomEvent('math-hint-selection')); } catch (_) {}
     }
 
-  function transitionToInlineMathLevel(targetId, trigger) {
-      const nextId = normalizeMathMapLevelId(targetId, level.id);
-      if (nextId === level.id) return;
-      const targetLevel = activeLevelById(nextId);
-      if (!targetLevel) {
-        showMapMessage('没有找到这个关卡。');
-        return;
-      }
-      const access = getLevelAccess(nextId, state.progress, state.preferences.vipActive === true);
-      if (access === 'paid') {
-        showMapMessage(paidAccessMessage);
-        openPaywallDialog(nextId, trigger);
-        return;
-      }
-      if (access === 'locked') {
-        showMapMessage(`先完成第 ${state.progress.unlockedThrough} 关，再继续冒险。`);
-        return;
-      }
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduceMotion) {
-        showInlineMathLevel(nextId);
-        return;
-      }
-      root.querySelector('.math-inline-panel')?.classList.add('is-switching-out');
-      root.querySelectorAll('button:not([disabled])').forEach((button) => { button.disabled = true; });
-      setTimeout(() => {
-        showInlineMathLevel(nextId, '', 'drop');
-      }, 190);
+    const seqSlot = root.querySelector('[data-math-seq-slot]');
+    const seqFill = root.querySelector('[data-math-seq-fill]');
+    let seqDrag = null;
+    let seqGhost = null;
+    let seqPlacedIndex = null;
+
+    function sequenceOptionValue(index) {
+      const groups = Array.isArray(level.groups) ? level.groups : [];
+      const g = groups[index];
+      if (g && g.count != null) return Math.max(0, Math.min(MATH_MAX_COUNT, Number(g.count) || 0));
+      const opt = Array.isArray(level.options) ? level.options[index] : null;
+      const n = Number(opt);
+      return Number.isFinite(n) ? Math.max(0, Math.min(MATH_MAX_COUNT, n)) : 0;
     }
+
+    function clearSequenceSlot() {
+      seqPlacedIndex = null;
+      if (seqFill) seqFill.innerHTML = '';
+      seqSlot?.classList.remove('is-filled', 'is-drop-hover', 'is-correct', 'is-wrong', 'is-preview');
+      seqSlot?.classList.add('is-empty');
+      optionsBox?.querySelectorAll('.math-choice--seq-piece').forEach((el) => {
+        el.classList.remove('is-used', 'is-selected', 'is-dragging');
+        el.hidden = false;
+        el.style.visibility = '';
+      });
+    }
+
+    function placeSequencePiece(index, card, { autoSubmit = true } = {}) {
+      if (quizState !== 'answering' || !seqSlot || !seqFill) {
+        // fallback: normal select
+        selectedIndex = index;
+        optionsBox?.querySelectorAll('.math-choice').forEach((choice) => choice.classList.remove('is-selected'));
+        card?.classList.add('is-selected');
+        submitBtn.hidden = false;
+        return;
+      }
+      const value = sequenceOptionValue(index);
+      selectedIndex = index;
+      seqPlacedIndex = index;
+      optionsBox?.querySelectorAll('.math-choice').forEach((choice) => {
+        choice.classList.remove('is-selected', 'is-used');
+      });
+      if (card) {
+        card.classList.add('is-selected', 'is-used');
+      }
+      seqFill.innerHTML = mathWoodDigitMarkup(value, 'is-slot-fill');
+      seqSlot.classList.remove('is-empty', 'is-drop-hover', 'is-preview');
+      seqSlot.classList.add('is-filled');
+      submitBtn.hidden = true;
+      try { root.dispatchEvent(new CustomEvent('math-hint-selection')); } catch (_) {}
+      if (autoSubmit) {
+        window.setTimeout(() => {
+          if (quizState === 'answering' && selectedIndex === index) submitAnswer();
+        }, 280);
+      }
+    }
+
+    function setSequenceSlotPreview(index) {
+      if (!seqSlot || !seqFill || seqPlacedIndex != null) return;
+      const value = sequenceOptionValue(index);
+      if (!value) {
+        clearSequenceSlotPreview();
+        return;
+      }
+      seqFill.innerHTML = mathWoodDigitMarkup(value, 'is-slot-preview');
+      seqSlot.classList.add('is-drop-hover', 'is-preview');
+      seqSlot.classList.remove('is-empty');
+    }
+
+    function clearSequenceSlotPreview() {
+      if (!seqSlot || !seqFill) return;
+      if (seqPlacedIndex != null) {
+        seqSlot.classList.remove('is-drop-hover', 'is-preview');
+        return;
+      }
+      seqFill.innerHTML = '';
+      seqSlot.classList.remove('is-drop-hover', 'is-preview', 'is-filled');
+      seqSlot.classList.add('is-empty');
+    }
+
+    function endSeqDrag(commit) {
+      if (!seqDrag) return;
+      const piece = seqDrag.piece;
+      const index = seqDrag.index;
+      if (seqGhost) {
+        seqGhost.remove();
+        seqGhost = null;
+      }
+      piece?.classList.remove('is-dragging');
+      if (piece) piece.style.visibility = '';
+      document.body.classList.remove('math-seq-dragging');
+      const overSlot = commit && seqDrag.overSlot;
+      seqDrag = null;
+      if (overSlot && piece) {
+        placeSequencePiece(index, piece, { autoSubmit: true });
+      } else {
+        clearSequenceSlotPreview();
+      }
+    }
+
+    function bindSeqPiecePointer(piece) {
+      if (!piece || !seqSlot) return;
+      piece.addEventListener('pointerdown', (event) => {
+        if (quizState !== 'answering' || event.button != null && event.button !== 0) return;
+        if (piece.classList.contains('is-used')) return;
+        event.preventDefault();
+        const index = Number(piece.getAttribute('data-math-choice'));
+        if (!Number.isFinite(index)) return;
+        try { piece.setPointerCapture(event.pointerId); } catch (_) {}
+        seqDrag = {
+          piece,
+          index,
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          moved: false,
+          overSlot: false,
+        };
+        piece.classList.add('is-dragging');
+        document.body.classList.add('math-seq-dragging');
+        seqGhost = piece.cloneNode(true);
+        seqGhost.classList.add('math-seq-ghost');
+        seqGhost.removeAttribute('data-math-choice');
+        seqGhost.removeAttribute('data-math-seq-piece');
+        seqGhost.style.pointerEvents = 'none';
+        document.body.appendChild(seqGhost);
+        const rect = piece.getBoundingClientRect();
+        seqGhost.style.width = `${rect.width}px`;
+        seqGhost.style.height = `${rect.height}px`;
+        seqGhost.style.left = `${event.clientX - rect.width / 2}px`;
+        seqGhost.style.top = `${event.clientY - rect.height / 2}px`;
+        piece.style.visibility = 'hidden';
+      });
+      piece.addEventListener('pointermove', (event) => {
+        if (!seqDrag || seqDrag.piece !== piece) return;
+        if (seqDrag.pointerId != null && event.pointerId !== seqDrag.pointerId) return;
+        const dx = event.clientX - seqDrag.startX;
+        const dy = event.clientY - seqDrag.startY;
+        if (!seqDrag.moved && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) seqDrag.moved = true;
+        if (seqGhost) {
+          const w = seqGhost.offsetWidth || 64;
+          const h = seqGhost.offsetHeight || 64;
+          seqGhost.style.left = `${event.clientX - w / 2}px`;
+          seqGhost.style.top = `${event.clientY - h / 2}px`;
+        }
+        const slotRect = seqSlot.getBoundingClientRect();
+        const over = event.clientX >= slotRect.left - 12
+          && event.clientX <= slotRect.right + 12
+          && event.clientY >= slotRect.top - 12
+          && event.clientY <= slotRect.bottom + 12;
+        if (over !== seqDrag.overSlot) {
+          seqDrag.overSlot = over;
+          if (over) setSequenceSlotPreview(seqDrag.index);
+          else clearSequenceSlotPreview();
+        }
+      });
+      const finish = (event, commit) => {
+        if (!seqDrag || seqDrag.piece !== piece) return;
+        if (seqDrag.pointerId != null && event.pointerId !== seqDrag.pointerId) return;
+        const wasTap = !seqDrag.moved;
+        const index = seqDrag.index;
+        endSeqDrag(commit && !wasTap);
+        try { piece.releasePointerCapture(event.pointerId); } catch (_) {}
+        if (wasTap && commit) {
+          placeSequencePiece(index, piece, { autoSubmit: true });
+        }
+      };
+      piece.addEventListener('pointerup', (event) => finish(event, true));
+      piece.addEventListener('pointercancel', (event) => finish(event, false));
+    }
+
+    const takePoolHost = root.querySelector('[data-math-take-pool-items]');
+    const takeBasketHost = root.querySelector('[data-math-take-basket-items]');
+    const takeBasketZone = root.querySelector('[data-math-take-basket]');
+    const takePoolZone = root.querySelector('[data-math-take-pool]');
+    const takeBoard = root.querySelector('[data-math-take]');
+    let takeDrag = null;
+    let takeGhost = null;
+
+    function takeTargetCount() {
+      return Number(level.targetCount) || 1;
+    }
+
+    function takeObject() {
+      return resolveMathObject(level.math?.objectKind || level.objectKind || 'apple');
+    }
+
+    function updateTakeStatus() {
+      const status = root.querySelector('[data-math-take-status]');
+      const target = takeTargetCount();
+      const count = takeSelected.size;
+      const obj = takeObject();
+      if (status) {
+        status.textContent = count >= target
+          ? `已取出 ${count} ${obj.measure}，要找 ${target} ${obj.measure} · 点✓确认`
+          : `已取出 ${count} ${obj.measure}，要找 ${target} ${obj.measure}`;
+      }
+      takeBasketZone?.classList.toggle('is-ready', count > 0);
+      takeBasketZone?.classList.toggle('is-full', count >= target);
+      root.querySelectorAll('[data-math-take-item]').forEach((item) => {
+        const idx = Number(item.dataset.mathTakeItem);
+        const on = takeSelected.has(idx);
+        item.classList.toggle('is-selected', on);
+        item.setAttribute('aria-pressed', on ? 'true' : 'false');
+        item.dataset.mathTakeZone = on ? 'basket' : 'pool';
+        item.setAttribute(
+          'aria-label',
+          on ? `${obj.name} ${idx + 1}，在篮子里，拖回或点一下放回` : `${obj.name} ${idx + 1}，拖进篮子或点一下取出`,
+        );
+      });
+      submitBtn.hidden = count === 0;
+      if (count > 0) submitBtn.setAttribute('aria-label', `确认取出 ${count} ${obj.measure}${obj.name}`);
+    }
+
+    function placeTakeItem(item, intoBasket) {
+      if (!item || !takePoolHost || !takeBasketHost) return;
+      const idx = Number(item.dataset.mathTakeItem);
+      if (!Number.isFinite(idx)) return;
+      if (intoBasket) {
+        takeSelected.add(idx);
+        if (item.parentElement !== takeBasketHost) takeBasketHost.appendChild(item);
+      } else {
+        takeSelected.delete(idx);
+        if (item.parentElement !== takePoolHost) takePoolHost.appendChild(item);
+      }
+      item.classList.remove('is-dragging', 'is-wrong', 'is-correct');
+      updateTakeStatus();
+      try { root.dispatchEvent(new CustomEvent('math-hint-selection')); } catch (_) {}
+    }
+
+    function resetTakeBoard() {
+      takeSelected = new Set();
+      root.querySelectorAll('[data-math-take-item]').forEach((item) => {
+        item.classList.remove('is-selected', 'is-wrong', 'is-correct', 'is-dragging');
+        item.setAttribute('aria-pressed', 'false');
+        if (takePoolHost && item.parentElement !== takePoolHost) takePoolHost.appendChild(item);
+      });
+      const takeStatus = root.querySelector('[data-math-take-status]');
+      const obj = takeObject();
+      if (takeStatus) takeStatus.textContent = `已取出 0 ${obj.measure}，要找 ${takeTargetCount()} ${obj.measure}`;
+      takeBasketZone?.classList.remove('is-ready', 'is-full', 'is-drop-hover');
+      takePoolZone?.classList.remove('is-drop-hover');
+      updateTakeStatus();
+    }
+
+    function clearTakeGhost() {
+      if (takeGhost) {
+        takeGhost.remove();
+        takeGhost = null;
+      }
+      root.querySelectorAll('[data-math-take-item].is-dragging').forEach((el) => el.classList.remove('is-dragging'));
+      takeBasketZone?.classList.remove('is-drop-hover');
+      takePoolZone?.classList.remove('is-drop-hover');
+      takeBoard?.classList.remove('is-dragging');
+      document.body.classList.remove('math-take-dragging');
+    }
+
+    function pointInRect(x, y, rect) {
+      return !!rect && x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+    }
+
+    function endTakeDrag(clientX, clientY, cancelled = false) {
+      if (!takeDrag) return;
+      const { item, fromBasket, pointerId, startX, startY, moved } = takeDrag;
+      try { item.releasePointerCapture?.(pointerId); } catch (_) {}
+      clearTakeGhost();
+      takeDrag = null;
+      if (quizState !== 'answering' || cancelled) {
+        placeTakeItem(item, fromBasket);
+        return;
+      }
+      const basketRect = takeBasketZone?.getBoundingClientRect();
+      const poolRect = takePoolZone?.getBoundingClientRect();
+      const overBasket = pointInRect(clientX, clientY, basketRect);
+      const overPool = pointInRect(clientX, clientY, poolRect);
+      if (!moved) {
+        // 轻点：池→篮 / 篮→池
+        placeTakeItem(item, !fromBasket);
+        return;
+      }
+      if (overBasket) placeTakeItem(item, true);
+      else if (overPool) placeTakeItem(item, false);
+      else placeTakeItem(item, fromBasket);
+    }
+
+    function bindTakeItemPointer(item) {
+      item.addEventListener('pointerdown', (event) => {
+        if (quizState !== 'answering') return;
+        if (event.button != null && event.button !== 0) return;
+        if (takeDrag) return;
+        event.preventDefault();
+        const fromBasket = takeSelected.has(Number(item.dataset.mathTakeItem));
+        const rect = item.getBoundingClientRect();
+        takeDrag = {
+          item,
+          fromBasket,
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          offsetX: event.clientX - rect.left,
+          offsetY: event.clientY - rect.top,
+          moved: false,
+        };
+        item.classList.add('is-dragging');
+        takeBoard?.classList.add('is-dragging');
+        document.body.classList.add('math-take-dragging');
+        // 跟手幽灵必须比桌上道具大（按住即放大）；篮内小果也按池尺寸抬升
+        const TAKE_GHOST_SCALE = 1.5;
+        const TAKE_GHOST_MIN_PX = 112;
+        let baseSize = Math.max(rect.width, rect.height);
+        const poolPeer = takePoolHost?.querySelector('.math-take-item:not(.is-dragging)');
+        if (poolPeer) {
+          const pr = poolPeer.getBoundingClientRect();
+          baseSize = Math.max(baseSize, pr.width, pr.height);
+        }
+        const ghostSize = Math.max(Math.round(baseSize * TAKE_GHOST_SCALE), TAKE_GHOST_MIN_PX);
+        takeGhost = item.cloneNode(true);
+        takeGhost.classList.add('math-take-ghost');
+        takeGhost.classList.remove('is-dragging', 'is-selected', 'is-wrong', 'is-correct');
+        takeGhost.removeAttribute('data-math-take-item');
+        takeGhost.removeAttribute('data-math-take-zone');
+        takeGhost.setAttribute('aria-hidden', 'true');
+        // 中心吸在指尖下，放大后不偏手
+        takeDrag.offsetX = ghostSize / 2;
+        takeDrag.offsetY = ghostSize / 2;
+        takeDrag.ghostSize = ghostSize;
+        takeGhost.style.width = `${ghostSize}px`;
+        takeGhost.style.height = `${ghostSize}px`;
+        takeGhost.style.left = `${event.clientX - takeDrag.offsetX}px`;
+        takeGhost.style.top = `${event.clientY - takeDrag.offsetY}px`;
+        document.body.appendChild(takeGhost);
+        // 下一帧弹起，避免克隆瞬间闪原尺寸
+        requestAnimationFrame(() => {
+          takeGhost?.classList.add('is-lifted');
+        });
+        try { item.setPointerCapture(event.pointerId); } catch (_) {}
+      });
+
+      item.addEventListener('pointermove', (event) => {
+        if (!takeDrag || takeDrag.item !== item || takeDrag.pointerId !== event.pointerId) return;
+        const dx = event.clientX - takeDrag.startX;
+        const dy = event.clientY - takeDrag.startY;
+        if (!takeDrag.moved && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) takeDrag.moved = true;
+        if (takeGhost) {
+          takeGhost.style.left = `${event.clientX - takeDrag.offsetX}px`;
+          takeGhost.style.top = `${event.clientY - takeDrag.offsetY}px`;
+        }
+        if (takeDrag.moved) {
+          event.preventDefault();
+          const basketRect = takeBasketZone?.getBoundingClientRect();
+          const poolRect = takePoolZone?.getBoundingClientRect();
+          takeBasketZone?.classList.toggle('is-drop-hover', pointInRect(event.clientX, event.clientY, basketRect));
+          takePoolZone?.classList.toggle('is-drop-hover', pointInRect(event.clientX, event.clientY, poolRect));
+        }
+      });
+
+      item.addEventListener('pointerup', (event) => {
+        if (!takeDrag || takeDrag.item !== item || takeDrag.pointerId !== event.pointerId) return;
+        endTakeDrag(event.clientX, event.clientY, false);
+      });
+
+      item.addEventListener('pointercancel', (event) => {
+        if (!takeDrag || takeDrag.item !== item || takeDrag.pointerId !== event.pointerId) return;
+        endTakeDrag(event.clientX, event.clientY, true);
+      });
+
+      // 禁用原生 click（pointer 已处理轻点），避免双触发
+      item.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      });
+    }
+
+    /* —— 分与合：盘里先有 leftCount，从旁侧拖入凑成 whole —— */
+    function composeObject() {
+      return resolveMathObject(level.math?.objectKind || level.math?.objectName || 'bead-teal');
+    }
+    function composeLeftCount() {
+      return Math.max(0, Math.min(MATH_MAX_COUNT, Number(level.math?.leftCount) || 0));
+    }
+    function composeWholeCount() {
+      const left = composeLeftCount();
+      return Math.max(
+        left + 1,
+        Math.min(
+          MATH_MAX_COUNT,
+          Number(level.math?.whole) || (left + (Number(level.targetCount) || 1)),
+        ),
+      );
+    }
+    function composePlateTotal() {
+      return composeLeftCount() + composeSelected.size;
+    }
+    function clearComposeAuto() {
+      if (composeAutoTimer) {
+        clearTimeout(composeAutoTimer);
+        composeAutoTimer = 0;
+      }
+    }
+    function updateComposeStatus() {
+      const total = composePlateTotal();
+      const left = composeLeftCount();
+      const whole = composeWholeCount();
+      const obj = composeObject();
+      const status = root.querySelector('[data-math-compose-status]');
+      if (status) {
+        if (total > whole) {
+          status.textContent = `太多了（${total} 个）· 拖回去一点，要凑成 ${whole} 个`;
+        } else if (total === whole) {
+          status.textContent = `正好 ${whole} 个！`;
+        } else if (total === left) {
+          status.textContent = `已经有 ${left} 个 · 再拖进来，凑成 ${whole} 个`;
+        } else {
+          status.textContent = `已经有 ${left} 个 · 现在一共 ${total} 个 · 要凑成 ${whole} 个`;
+        }
+      }
+      composePlateZone?.classList.toggle('is-ready', total === whole);
+      composePlateZone?.classList.toggle('is-over', total > whole);
+      composePlateZone?.classList.toggle('is-partial', total > left && total < whole);
+      root.querySelectorAll('[data-math-compose-item]').forEach((el) => {
+        const idx = Number(el.dataset.mathComposeItem);
+        const onPlate = composeSelected.has(idx);
+        el.classList.toggle('is-selected', onPlate);
+        el.setAttribute('aria-pressed', onPlate ? 'true' : 'false');
+        el.dataset.mathComposeZone = onPlate ? 'plate' : 'pool';
+      });
+      clearComposeAuto();
+      if (quizState === 'answering' && total === whole) {
+        composeAutoTimer = window.setTimeout(() => {
+          composeAutoTimer = 0;
+          if (quizState !== 'answering') return;
+          if (composePlateTotal() !== composeWholeCount()) return;
+          submitAnswer();
+        }, 380);
+      }
+    }
+    function placeComposeItem(item, intoPlate) {
+      if (!item || !composePoolHost || !composePlateHost) return;
+      const idx = Number(item.dataset.mathComposeItem);
+      if (!Number.isFinite(idx)) return;
+      if (intoPlate) {
+        composeSelected.add(idx);
+        if (item.parentElement !== composePlateHost) composePlateHost.appendChild(item);
+      } else {
+        composeSelected.delete(idx);
+        if (item.parentElement !== composePoolHost) composePoolHost.appendChild(item);
+      }
+      item.classList.remove('is-dragging', 'is-wrong', 'is-correct');
+      updateComposeStatus();
+      try { root.dispatchEvent(new CustomEvent('math-hint-selection')); } catch (_) {}
+    }
+    function resetComposeBoard() {
+      clearComposeAuto();
+      composeSelected = new Set();
+      root.querySelectorAll('[data-math-compose-item]').forEach((item) => {
+        item.classList.remove('is-selected', 'is-wrong', 'is-correct', 'is-dragging');
+        item.setAttribute('aria-pressed', 'false');
+        if (composePoolHost && item.parentElement !== composePoolHost) composePoolHost.appendChild(item);
+      });
+      composePlateZone?.classList.remove('is-ready', 'is-over', 'is-partial', 'is-drop-hover');
+      composePoolZone?.classList.remove('is-drop-hover');
+      updateComposeStatus();
+    }
+    function clearComposeGhost() {
+      if (composeGhost) {
+        composeGhost.remove();
+        composeGhost = null;
+      }
+      root.querySelectorAll('[data-math-compose-item].is-dragging').forEach((el) => el.classList.remove('is-dragging'));
+      composePlateZone?.classList.remove('is-drop-hover');
+      composePoolZone?.classList.remove('is-drop-hover');
+      composeBoard?.classList.remove('is-dragging');
+      document.body.classList.remove('math-compose-dragging');
+    }
+    function endComposeDrag(clientX, clientY, cancelled = false) {
+      if (!composeDrag) return;
+      const { item, fromPlate, pointerId, moved } = composeDrag;
+      try { item.releasePointerCapture?.(pointerId); } catch (_) {}
+      clearComposeGhost();
+      composeDrag = null;
+      if (quizState !== 'answering' || cancelled) {
+        placeComposeItem(item, fromPlate);
+        return;
+      }
+      const plateRect = composePlateZone?.getBoundingClientRect();
+      const poolRect = composePoolZone?.getBoundingClientRect();
+      const overPlate = pointInRect(clientX, clientY, plateRect);
+      const overPool = pointInRect(clientX, clientY, poolRect);
+      if (!moved) {
+        placeComposeItem(item, !fromPlate);
+        return;
+      }
+      if (overPlate) placeComposeItem(item, true);
+      else if (overPool) placeComposeItem(item, false);
+      else placeComposeItem(item, fromPlate);
+    }
+    function bindComposeItemPointer(item) {
+      item.addEventListener('pointerdown', (event) => {
+        if (quizState !== 'answering') return;
+        if (event.button != null && event.button !== 0) return;
+        if (composeDrag) return;
+        event.preventDefault();
+        const fromPlate = composeSelected.has(Number(item.dataset.mathComposeItem));
+        const rect = item.getBoundingClientRect();
+        composeDrag = {
+          item,
+          fromPlate,
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          offsetX: event.clientX - rect.left,
+          offsetY: event.clientY - rect.top,
+          moved: false,
+        };
+        item.classList.add('is-dragging');
+        composeBoard?.classList.add('is-dragging');
+        document.body.classList.add('math-compose-dragging');
+        const GHOST_SCALE = 1.45;
+        const GHOST_MIN_PX = 104;
+        let baseSize = Math.max(rect.width, rect.height);
+        const poolPeer = composePoolHost?.querySelector('.math-compose-item:not(.is-dragging)');
+        if (poolPeer) {
+          const pr = poolPeer.getBoundingClientRect();
+          baseSize = Math.max(baseSize, pr.width, pr.height);
+        }
+        const ghostSize = Math.max(Math.round(baseSize * GHOST_SCALE), GHOST_MIN_PX);
+        composeGhost = item.cloneNode(true);
+        composeGhost.classList.add('math-compose-ghost');
+        composeGhost.classList.remove('is-dragging', 'is-selected', 'is-wrong', 'is-correct');
+        composeGhost.removeAttribute('data-math-compose-item');
+        composeGhost.removeAttribute('data-math-compose-zone');
+        composeGhost.setAttribute('aria-hidden', 'true');
+        composeDrag.offsetX = ghostSize / 2;
+        composeDrag.offsetY = ghostSize / 2;
+        composeGhost.style.width = `${ghostSize}px`;
+        composeGhost.style.height = `${ghostSize}px`;
+        composeGhost.style.left = `${event.clientX - composeDrag.offsetX}px`;
+        composeGhost.style.top = `${event.clientY - composeDrag.offsetY}px`;
+        document.body.appendChild(composeGhost);
+        requestAnimationFrame(() => {
+          composeGhost?.classList.add('is-lifted');
+        });
+        try { item.setPointerCapture(event.pointerId); } catch (_) {}
+      });
+      item.addEventListener('pointermove', (event) => {
+        if (!composeDrag || composeDrag.item !== item || composeDrag.pointerId !== event.pointerId) return;
+        const dx = event.clientX - composeDrag.startX;
+        const dy = event.clientY - composeDrag.startY;
+        if (!composeDrag.moved && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) composeDrag.moved = true;
+        if (composeGhost) {
+          composeGhost.style.left = `${event.clientX - composeDrag.offsetX}px`;
+          composeGhost.style.top = `${event.clientY - composeDrag.offsetY}px`;
+        }
+        if (composeDrag.moved) {
+          event.preventDefault();
+          const plateRect = composePlateZone?.getBoundingClientRect();
+          const poolRect = composePoolZone?.getBoundingClientRect();
+          composePlateZone?.classList.toggle('is-drop-hover', pointInRect(event.clientX, event.clientY, plateRect));
+          composePoolZone?.classList.toggle('is-drop-hover', pointInRect(event.clientX, event.clientY, poolRect));
+        }
+      });
+      item.addEventListener('pointerup', (event) => {
+        if (!composeDrag || composeDrag.item !== item || composeDrag.pointerId !== event.pointerId) return;
+        endComposeDrag(event.clientX, event.clientY, false);
+      });
+      item.addEventListener('pointercancel', (event) => {
+        if (!composeDrag || composeDrag.item !== item || composeDrag.pointerId !== event.pointerId) return;
+        endComposeDrag(event.clientX, event.clientY, true);
+      });
+      item.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      });
+    }
+    root.querySelectorAll('[data-math-compose-item]').forEach((item) => bindComposeItemPointer(item));
+    if (format === 'compose') updateComposeStatus();
+
+    function transitionToInlineMathLevel(targetId, trigger) {
+        const desiredId = normalizeMathMapLevelId(targetId, level.id);
+        if (desiredId === level.id) return;
+
+        // 目标本身可玩 → 直达（继续/教练跨关）
+        const directAccess = getLevelAccess(desiredId, state.progress, state.preferences.vipActive === true);
+        let nextId = null;
+        let escapeMsg = '';
+        if (directAccess === 'allowed') {
+          nextId = desiredId;
+        } else {
+          // 邻关/不可玩目标：沿方向找最近可玩关；仅该方向全堵且是会员墙才弹付费
+          const delta = desiredId > level.id ? 1 : -1;
+          const decision = resolveMathLevelStep(
+            level.id,
+            delta,
+            state.progress,
+            state.preferences.vipActive === true,
+          );
+          if (decision.action === 'paid') {
+            showMapMessage(paidAccessMessage);
+            openPaywallDialog(decision.levelId, trigger);
+            return;
+          }
+          if (decision.action === 'locked') {
+            showMapMessage(`先完成第 ${state.progress.unlockedThrough} 关，再继续冒险。`);
+            return;
+          }
+          if (decision.action !== 'go') return;
+          nextId = normalizeMathMapLevelId(decision.levelId, level.id);
+          if (nextId === level.id) return;
+          if (decision.skipped && delta < 0) {
+            escapeMsg = `已回到可玩的第 ${nextId} 关`;
+          }
+        }
+
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduceMotion) {
+          showInlineMathLevel(nextId, escapeMsg);
+          return;
+        }
+        const panel = root.querySelector('.math-inline-panel');
+        if (!panel) {
+          showInlineMathLevel(nextId, escapeMsg, 'drop');
+          return;
+        }
+        panel.classList.remove('is-dropping-in');
+        panel.classList.add('is-switching-out');
+        window.setTimeout(() => {
+          showInlineMathLevel(nextId, escapeMsg, 'drop');
+        }, 170);
+      }
 
     function continueInlineMath() {
       const next = resolveMathCoachContinueTarget(latestCoachPlan, level.id)
@@ -5348,16 +8248,39 @@ if (typeof document !== 'undefined') {
     }
 
     function submitAnswer() {
-      if (selectedIndex === null || quizState !== 'answering') return;
+      if (quizState !== 'answering') return;
+      const isTake = format === 'take';
+      const isCompose = format === 'compose';
+      if (!isTake && !isCompose && selectedIndex === null) return;
+      if (isTake && takeSelected.size === 0) return;
+      if (isCompose && composePlateTotal() !== composeWholeCount()) return;
+      clearComposeAuto();
       quizState = 'judging';
       submitBtn.hidden = true;
-      const card = optionsBox.children[selectedIndex];
+      const takeCount = takeSelected.size;
+      const composeTotal = isCompose ? composePlateTotal() : 0;
+      const selectedForJudge = isTake
+        ? (takeCount === Number(level.targetCount) ? level.correct : (level.correct === 0 ? 1 : 0))
+        : isCompose
+          ? (composeTotal === composeWholeCount() ? level.correct : (level.correct === 0 ? 1 : 0))
+          : selectedIndex;
+      const card = isTake || isCompose ? null : optionsBox?.children?.[selectedIndex];
       const worldLevels = activeWorldLevels();
-      const result = applyQuizAnswer(state.progress, level.id, selectedIndex, level.correct, worldLevels.length);
+      const result = applyQuizAnswer(state.progress, level.id, selectedForJudge, level.correct, worldLevels.length);
       const endedAt = typeof performance !== 'undefined' && typeof performance.now === 'function'
         ? performance.now()
         : Date.now();
-      const attempt = recordLocalMathAttempt(level, selectedIndex, result.correct, endedAt - startedAt);
+      const attempt = recordLocalMathAttempt(
+        level,
+        isTake || isCompose ? level.correct : selectedIndex,
+        result.correct,
+        endedAt - startedAt,
+        isTake
+          ? { selectedCount: takeCount, selected: mathCountLabel(takeCount, level) }
+          : isCompose
+            ? { selectedCount: composeTotal, selected: `一共 ${composeTotal}` }
+            : {},
+      );
       const coachPlanPromise = requestMathCoachPlan(level, attempt).then((plan) => {
         latestCoachPlan = rememberMathCoachPlan(level, plan) || plan;
         return latestCoachPlan;
@@ -5366,8 +8289,15 @@ if (typeof document !== 'undefined') {
       if (result.correct) {
         const wasCompleted = state.progress.completed.includes(level.id);
         quizState = 'correct';
-        card.classList.remove('is-selected');
-        card.classList.add('is-correct');
+        if (card) {
+          card.classList.remove('is-selected');
+          card.classList.add('is-correct');
+        }
+        root.querySelectorAll('[data-math-take-item].is-selected').forEach((el) => el.classList.add('is-correct'));
+        root.querySelectorAll('[data-math-compose-item].is-selected').forEach((el) => el.classList.add('is-correct'));
+        composePlateZone?.classList.add('is-correct');
+        seqSlot?.classList.add('is-correct');
+        seqSlot?.classList.remove('is-wrong');
         state.progress = result.progress;
         state.progressByWorld[state.preferences.mapWorld] = state.progress;
         recordLearningActivity();
@@ -5375,7 +8305,11 @@ if (typeof document !== 'undefined') {
         recordQuizAttemptSync({
           worldId: state.preferences.mapWorld,
           levelId: level.id,
-          selected: level.options[selectedIndex],
+          selected: isTake
+            ? mathCountLabel(takeCount, level)
+            : isCompose
+              ? `一共 ${composeTotal}`
+              : level.options[selectedIndex],
           correct: targetLabel,
           isCorrect: true,
         });
@@ -5384,31 +8318,43 @@ if (typeof document !== 'undefined') {
         feedback.hidden = false;
         feedback.className = 'feedback-banner correct';
         feedback.innerHTML = `<span class="fb-mark correct-mark" aria-hidden="true"></span><span class="fb-text">答对啦！<small>${wasCompleted ? '本关已经完成。' : completionUnlockText(level, state.progress, state.preferences.vipActive === true, worldLevels)}</small></span>`;
-        coachPlanPromise.then((plan) => {
-          if (quizState === 'correct') speakMathVoiceFeedback(plan.feedbackText, true);
-        });
+        // Island parity: play correct.mp3 immediately (do not wait for coach plan).
+        playMathCoachFeedbackTone('correct');
+        celebrate();
         continueBtn.hidden = false;
+        try { hideGlobalHint(); clearGlobalHintSchedules(); } catch (_) {}
       } else {
         const nextVariant = adaptMathLevel(level, state.mathAttempts);
         const shouldRefreshEasier = nextVariant.math?.adaptiveMode === 'easier' && level.math?.adaptiveMode !== 'easier';
         recordQuizAttemptSync({
           worldId: state.preferences.mapWorld,
           levelId: level.id,
-          selected: level.options[selectedIndex],
+          selected: isTake
+            ? mathCountLabel(takeCount, level)
+            : isCompose
+              ? `一共 ${composeTotal}`
+              : level.options[selectedIndex],
           correct: targetLabel,
           isCorrect: false,
         });
         scheduleLearningSync();
-        card.classList.remove('is-selected');
-        card.classList.add('is-wrong');
+        if (card) {
+          card.classList.remove('is-selected');
+          card.classList.add('is-wrong');
+        }
+        root.querySelectorAll('[data-math-take-item].is-selected').forEach((el) => el.classList.add('is-wrong'));
+        root.querySelectorAll('[data-math-compose-item].is-selected').forEach((el) => el.classList.add('is-wrong'));
+        composePlateZone?.classList.add('is-wrong');
+        seqSlot?.classList.add('is-wrong');
         feedback.hidden = false;
         feedback.className = 'feedback-banner wrong';
-        feedback.innerHTML = `<span class="fb-mark wrong-mark" aria-hidden="true"></span><span class="fb-text">再数一数。<small>${escapeHtml(mathVoiceFeedback(shouldRefreshEasier ? 'wrong-easier' : 'wrong', { targetCount: level.targetCount }).text)}</small></span>`;
+        feedback.innerHTML = `<span class="fb-mark wrong-mark" aria-hidden="true"></span><span class="fb-text">再数一数。<small>${escapeHtml(mathVoiceFeedback(shouldRefreshEasier ? 'wrong-easier' : 'wrong', { targetCount: level.targetCount, whole: level.math?.whole, format, objectKind: level.math?.objectKind }).text)}</small></span>`;
+        // Island parity: play wrong.mp3 immediately; coach only updates banner text.
+        playMathCoachFeedbackTone('wrong');
         coachPlanPromise.then((plan) => {
           if (quizState !== 'judging') return;
           const detail = feedback.querySelector('.fb-text small');
           if (detail) detail.textContent = plan.feedbackText;
-          speakMathVoiceFeedback(plan.feedbackText, false);
         });
         setTimeout(() => {
           coachPlanPromise.then((plan) => {
@@ -5418,8 +8364,15 @@ if (typeof document !== 'undefined') {
               showInlineMathLevel(level.id, '', 'drop');
               return;
             }
-            card.classList.remove('is-wrong');
+            if (card) card.classList.remove('is-wrong');
             selectedIndex = null;
+            clearTakeGhost();
+            resetTakeBoard();
+            clearComposeGhost();
+            resetComposeBoard();
+            composePlateZone?.classList.remove('is-wrong', 'is-correct', 'is-full', 'is-over');
+            clearSequenceSlot();
+            optionsBox?.querySelectorAll('.math-choice.is-wrong').forEach((el) => el.classList.remove('is-wrong'));
             feedback.hidden = true;
             quizState = 'answering';
           });
@@ -5427,15 +8380,75 @@ if (typeof document !== 'undefined') {
       }
     }
 
-    optionsBox.querySelectorAll('[data-math-choice]').forEach((button) => {
-      button.addEventListener('click', () => selectChoice(Number(button.dataset.mathChoice), button));
+    optionsBox?.querySelectorAll('[data-math-choice]').forEach((button) => {
+      if (button.hasAttribute('data-math-seq-piece')) {
+        bindSeqPiecePointer(button);
+      } else {
+        button.addEventListener('click', () => selectChoice(Number(button.dataset.mathChoice), button));
+      }
     });
-    submitBtn.addEventListener('click', submitAnswer);
+    root.querySelectorAll('[data-math-take-item]').forEach((button) => {
+      bindTakeItemPointer(button);
+    });
+    if (format === 'take') {
+      submitBtn.hidden = true;
+      const takeObj = resolveMathObject(level.math?.objectKind || 'apple');
+      submitBtn.setAttribute('aria-label', `确认取出的${takeObj.name}`);
+      updateTakeStatus();
+    }
+    if (format === 'compose') {
+      submitBtn.hidden = true;
+      submitBtn.setAttribute('aria-label', '拖进来凑满盘子');
+      updateComposeStatus();
+    }
+    if (format === 'sequence') {
+      submitBtn.hidden = true;
+      submitBtn.setAttribute('aria-label', '把木数字拖进空位');
+    }
+    submitBtn.addEventListener('click', () => {
+      stopMathQuestionAudio();
+      submitAnswer();
+    });
     continueBtn.addEventListener('click', continueInlineMath);
+    listenQuestionBtn?.addEventListener('click', () => {
+      if (quizState !== 'answering') return;
+      speakMathQuestion();
+    });
     stepButtons.forEach((button) => {
       button.addEventListener('click', () => {
         transitionToInlineMathLevel(level.id + Number(button.dataset.mathStep), button);
       });
+    });
+    // 3–5 岁不识字：进题自动播佩奇题干（与英语关同口径，预烘焙本地 MP3）
+    requestAnimationFrame(() => {
+      if (quizState === 'answering') speakMathQuestion();
+    });
+
+    // 全局 hand-tap Lottie：点选 / 确认 / 拖拽取物 tips（全数学关）
+    const stopMathHints = armMathQuizHints(root, level, {
+      getSelectedIndex: () => selectedIndex,
+      hasSelection: () => (
+        format === 'take'
+          ? takeSelected.size > 0
+          : format === 'compose'
+            ? composeSelected.size > 0
+            : selectedIndex != null
+      ),
+      isFinished: () => quizState === 'correct' || quizState === 'done',
+    });
+    // 答对后停手
+    const _origCelebrate = celebrate;
+    // wrap via submit path: observe continueBtn visibility
+    const hintDoneObs = new MutationObserver(() => {
+      if (continueBtn && !continueBtn.hidden && quizState !== 'answering') {
+        try { stopMathHints(); } catch (_) {}
+        hideGlobalHint();
+      }
+    });
+    try { hintDoneObs.observe(continueBtn, { attributes: true, attributeFilter: ['hidden'] }); } catch (_) {}
+    globalHintHand.cleanupFns.push(() => {
+      try { hintDoneObs.disconnect(); } catch (_) {}
+      try { stopMathHints(); } catch (_) {}
     });
   }
 
@@ -5464,10 +8477,11 @@ if (typeof document !== 'undefined') {
       : `小朋友，视频里学到的单词，<br>哪一个是 <strong>「${level.zhTitle}」</strong> 的意思？`;
     const topicShort = String(level.topic || '').split('·')[0].trim();
     let videoSource = levelVideoSourceFor(level);
-    if (!videoSource) {
+    if (!videoSource && !isTempLocalUnlockEnabled()) {
       ensureLevelVideoDownload(level);
       videoSource = levelVideoSourceFor(level);
     }
+    const allowQuizWithoutVideo = !videoSource && isTempLocalUnlockEnabled();
     const videoStageMarkup = videoSource ? `
             <div class="video-card">
               <div class="video-frame">
@@ -5480,6 +8494,12 @@ if (typeof document !== 'undefined') {
               </div>
               <p class="video-hint">认真看完，问题马上出现</p>
               <div class="video-progress" aria-hidden="true"><i data-video-progress></i></div>
+            </div>` : allowQuizWithoutVideo ? `
+            <div class="video-card video-card--local-preview" role="status">
+              <div class="video-frame video-frame--local-preview">
+                <p class="video-hint">本地预览 · 第 ${level.id} 关暂无视频，可直接答题</p>
+                <button class="primary-button" type="button" data-skip-to-quiz>开始答题</button>
+              </div>
             </div>` : `
             <div class="video-card video-card--download">
               <div class="video-frame video-frame--download">
@@ -5505,7 +8525,6 @@ if (typeof document !== 'undefined') {
           </button>
           <span class="level-pill" id="detail-title">第 ${level.id} 关 · ${topicShort || level.title}</span>
           <span class="status-pill" data-detail-state>${alreadyCompleted ? '已完成' : '进行中'}</span>
-          ${globalUpdateButtonMarkup('level')}
         </nav>
 
         <section class="stage" data-stage-video aria-label="课程视频">
@@ -5895,8 +8914,10 @@ if (typeof document !== 'undefined') {
         state.progressByWorld[state.preferences.mapWorld] = state.progress;
         state.mistakeBook = resolveMistake(state.mistakeBook, level.id);
         recordLearningActivity();
+        recordLocalEnglishAttempt(level, selectedWord, correctWord, true);
         try { localStorage.setItem(PREVIEW_PROGRESS_KEY, JSON.stringify(state.progressByWorld)); } catch {}
         try { localStorage.setItem(MISTAKE_BOOK_KEY, JSON.stringify(state.mistakeBook)); } catch {}
+        try { localStorage.setItem(ENGLISH_ATTEMPT_KEY, JSON.stringify(state.englishAttempts)); } catch {}
         recordQuizAttemptSync({
           worldId: state.preferences.mapWorld,
           levelId: level.id,
@@ -5925,7 +8946,9 @@ if (typeof document !== 'undefined') {
         }, 2600);
       } else {
         state.mistakeBook = recordMistake(state.mistakeBook, level, level.options[selected]);
+        recordLocalEnglishAttempt(level, selectedWord, correctWord, false);
         try { localStorage.setItem(MISTAKE_BOOK_KEY, JSON.stringify(state.mistakeBook)); } catch {}
+        try { localStorage.setItem(ENGLISH_ATTEMPT_KEY, JSON.stringify(state.englishAttempts)); } catch {}
         recordQuizAttemptSync({
           worldId: state.preferences.mapWorld,
           levelId: level.id,
@@ -6014,6 +9037,11 @@ if (typeof document !== 'undefined') {
         playOverlay.hidden = true;
         showQuizStage();
       });
+    } else if (allowQuizWithoutVideo) {
+      const skipBtn = main.querySelector('[data-skip-to-quiz]');
+      skipBtn?.addEventListener('click', showQuizStage);
+      // 本地预览：无视频直接进答题，不卡下载墙
+      requestAnimationFrame(() => showQuizStage());
     } else {
       ensureLevelVideoDownload(level);
       refreshLevelVideoDownloadPanel(level);
@@ -6203,8 +9231,15 @@ if (typeof document !== 'undefined') {
     const hiddenWordCount = Math.max(0, learnedWords.length - WORD_CHIP_PREVIEW);
     const mistakeCount = state.mistakeBook.items.length;
     const childProfile = normalizeChildProfile(state.preferences);
-    const membership = membershipSummary(state.preferences);
     const mathReport = buildMathParentReport(state.mathAttempts);
+    const accuracyOverview = buildAccuracyOverview(state.mathAttempts, state.englishAttempts, {
+      days: ACCURACY_SERIES_DAYS,
+    });
+    const accuracyText = accuracyOverview.accuracy === null ? '先答几题' : `${accuracyOverview.accuracy}%`;
+    const errorRateText = accuracyOverview.errorRate === null ? '—' : `${accuracyOverview.errorRate}%`;
+    const englishAccuracyText = accuracyOverview.english.accuracy === null
+      ? '先答几题'
+      : `${accuracyOverview.english.accuracy}%`;
     const mathRec = mathReport.recommendation;
     const mathRecLevel = mathLevels.find((level) => level.id === mathRec.levelId) || mathLevels[0];
     const mathAccuracyText = mathReport.accuracy === null ? '先玩几题' : `${mathReport.accuracy}%`;
@@ -6214,6 +9249,14 @@ if (typeof document !== 'undefined') {
           ? `建议再练第 ${mathRec.levelId} 关`
           : `建议挑战第 ${mathRec.levelId} 关`))
       : '完成 3 道数学题后生成建议';
+    const mathSkillChips = (mathReport.skillBreakdown || []).slice(0, 6).map((row) => {
+      const acc = row.accuracy === null ? '—' : `${row.accuracy}%`;
+      return `<span class="math-skill-chip" title="${escapeHtml(row.label)} ${row.correct}/${row.total}">${escapeHtml(row.label)} ${acc}</span>`;
+    }).join('');
+    const mathSkillLine = mathSkillChips
+      ? `<div class="math-skill-breakdown" aria-label="技能掌握">${mathSkillChips}</div>`
+      : '<p class="subject-card-suggest math-skill-empty">覆盖点数、感数、认数字、比多少、取物、分与合、数序</p>';
+    const mathCurriculumNote = '课表 8 段 · 数到 10 · 7 种题型';
     const mathMapProgress = normalizeProgress(state.progressByWorld.math, mathLevels.length || DISPLAY_LEVEL_COUNT);
     const mathCompleted = mathMapProgress.completed.length;
     const mathTotal = mathLevels.length || DISPLAY_LEVEL_COUNT;
@@ -6221,10 +9264,16 @@ if (typeof document !== 'undefined') {
     const englishMapLines = english.maps
       .map((row) => `<li><span>${escapeHtml(row.title)}</span><strong>${row.completed}/${row.total}</strong></li>`)
       .join('');
-    const englishAction = `<button class="primary-button subject-card-cta" type="button" data-open-english-map data-world="${english.continueWorldId}">去英语地图</button>`;
-    const mathAction = mathReport.totalAttempts
-      ? `<button class="primary-button subject-card-cta" type="button" data-open-math-recommended data-level="${mathRec.levelId}">去数学地图</button>`
-      : `<button class="primary-button subject-card-cta" type="button" data-open-math-recommended data-level="${mathRec.levelId || 1}">去数学地图</button>`;
+    const englishAction = `
+      <div class="subject-card-actions">
+        <button class="primary-button subject-card-cta" type="button" data-open-english-map data-world="${english.continueWorldId}">去英语地图</button>
+        <button class="secondary-button subject-card-cta subject-card-analysis" type="button" data-nav-route="accuracy">正确率分析</button>
+      </div>`;
+    const mathAction = `
+      <div class="subject-card-actions">
+        <button class="primary-button subject-card-cta" type="button" data-open-math-recommended data-level="${mathRec.levelId}">去数学地图</button>
+        <button class="secondary-button subject-card-cta subject-card-analysis" type="button" data-nav-route="accuracy">正确率分析</button>
+      </div>`;
     const ageOptions = ['3', '4', '5', '6']
       .map((age) => `<option value="${age}"${age === childProfile.childAge ? ' selected' : ''}>${age} 岁</option>`)
       .join('');
@@ -6250,18 +9299,6 @@ if (typeof document !== 'undefined') {
               <div class="profile-copy"><h2>${escapeHtml(childProfile.childName)}同学</h2><p>${childProfile.childAge} 岁 · 嗨洛塔小小探索家</p></div>
             </div>
 
-            <section class="surface membership-card is-${membership.status}" data-membership-status="${membership.status}" aria-label="地图权益状态">
-              <div class="membership-copy">
-                <span class="membership-badge">${membership.badge}</span>
-                <h2>${membership.title}</h2>
-                <p>${membership.note}</p>
-              </div>
-              <div class="membership-count" aria-label="${membership.countLabel} ${membership.count}">
-                <strong>${membership.count}</strong>
-                <span>${membership.countLabel}</span>
-              </div>
-            </section>
-
             <div class="stats-grid mine-week-stats" aria-label="学习总览">
               <div class="stat-card"><span class="stat-value">${english.activeDays}</span><span class="stat-label">学习天数</span></div>
               <div class="stat-card"><span class="stat-value">${english.learningMinutes}</span><span class="stat-label">英语分钟</span></div>
@@ -6270,6 +9307,15 @@ if (typeof document !== 'undefined') {
               <div class="stat-card"><span class="stat-value">${learnedWords.length}</span><span class="stat-label">已学单词</span></div>
               <div class="stat-card"><span class="stat-value">${mistakeCount}</span><span class="stat-label">待复习</span></div>
             </div>
+
+            <article class="surface accuracy-entry-card" aria-labelledby="accuracy-entry-title">
+              <div class="accuracy-entry-copy">
+                <p class="eyebrow">ACCURACY</p>
+                <h2 id="accuracy-entry-title">答题正确率</h2>
+                <p>近${accuracyOverview.days}天 · 共${accuracyOverview.total}题 · 正确率 ${escapeHtml(accuracyText)} · 错题率 ${escapeHtml(errorRateText)}</p>
+              </div>
+              <button class="secondary-button accuracy-entry-btn" type="button" data-nav-route="accuracy">查看分析</button>
+            </article>
 
             <h2 class="section-title mine-subjects-title">Learning zones <span>学科进度</span></h2>
             <div class="subject-cards" aria-label="学科进度">
@@ -6281,7 +9327,7 @@ if (typeof document !== 'undefined') {
                 <div class="subject-card-metrics" aria-label="英语关键数据">
                   <div><span class="subject-metric-value">${english.completed}/${english.total}</span><span class="subject-metric-label">关卡</span></div>
                   <div><span class="subject-metric-value">${english.progressPercent}%</span><span class="subject-metric-label">完成</span></div>
-                  <div><span class="subject-metric-value">${learnedWords.length}</span><span class="subject-metric-label">单词</span></div>
+                  <div><span class="subject-metric-value">${escapeHtml(englishAccuracyText)}</span><span class="subject-metric-label">正确率</span></div>
                 </div>
                 <div class="progress-row subject-progress-row">
                   <div class="progress-track"><div class="progress-fill" style="width: ${english.progressPercent}%"></div></div>
@@ -6313,7 +9359,8 @@ if (typeof document !== 'undefined') {
                   <div class="progress-track"><div class="progress-fill" style="width: ${mathPercent}%"></div></div>
                   <span class="progress-number">${mathPercent}%</span>
                 </div>
-                <p class="subject-card-mastery">掌握：${escapeHtml(mathReport.mastery)}</p>
+                <p class="subject-card-mastery">掌握：${escapeHtml(mathReport.mastery)} · ${escapeHtml(mathCurriculumNote)}</p>
+                ${mathSkillLine}
                 <p class="subject-card-suggest">${escapeHtml(mathRecText)}${mathRecLevel ? ` · ${escapeHtml(mathRecLevel.title)}` : ''}</p>
                 ${mathAction}
               </article>
@@ -6405,6 +9452,104 @@ if (typeof document !== 'undefined') {
       </section>`;
   }
 
+  function accuracyDayRowsMarkup(series) {
+    const rows = (Array.isArray(series) ? series : []).slice().reverse();
+    if (!rows.length) {
+      return '<li class="accuracy-day-empty">还没有答题记录</li>';
+    }
+    return rows.map((day) => {
+      const accuracyText = day.total > 0 && day.accuracy !== null ? `${day.accuracy}%` : '—';
+      const detail = day.total > 0
+        ? `答 ${day.total} 题 · 对 ${day.correct} · 错 ${day.wrong}`
+        : '当天未答题';
+      const barWidth = day.total > 0 && day.accuracy !== null ? day.accuracy : 0;
+      return `
+        <li class="accuracy-day-row${day.total > 0 ? ' has-data' : ''}">
+          <div class="accuracy-day-meta">
+            <strong>${escapeHtml(day.label)}</strong>
+            <span>${escapeHtml(detail)}</span>
+          </div>
+          <div class="accuracy-day-score" aria-label="正确率 ${escapeHtml(accuracyText)}">
+            <span class="accuracy-day-bar" style="--acc:${barWidth}%"></span>
+            <em>${escapeHtml(accuracyText)}</em>
+          </div>
+        </li>`;
+    }).join('');
+  }
+
+  function accuracySubjectCardMarkup(title, eyebrow, stats) {
+    const accuracyText = stats.accuracy === null ? '先答几题' : `${stats.accuracy}%`;
+    const errorText = stats.errorRate === null ? '—' : `${stats.errorRate}%`;
+    return `
+      <article class="surface accuracy-subject-card">
+        <p class="eyebrow">${escapeHtml(eyebrow)}</p>
+        <h3>${escapeHtml(title)}</h3>
+        <div class="accuracy-subject-metrics" aria-label="${escapeHtml(title)}关键数据">
+          <div><span class="subject-metric-value">${stats.total}</span><span class="subject-metric-label">答题</span></div>
+          <div><span class="subject-metric-value">${escapeHtml(accuracyText)}</span><span class="subject-metric-label">正确率</span></div>
+          <div><span class="subject-metric-value">${escapeHtml(errorText)}</span><span class="subject-metric-label">错题率</span></div>
+        </div>
+      </article>`;
+  }
+
+  function renderAccuracy() {
+    const overview = buildAccuracyOverview(state.mathAttempts, state.englishAttempts, {
+      days: ACCURACY_SERIES_DAYS,
+    });
+    const accuracyText = overview.accuracy === null ? '先答几题' : `${overview.accuracy}%`;
+    const errorRateText = overview.errorRate === null ? '—' : `${overview.errorRate}%`;
+    const activeDays = overview.series.filter((day) => day.total > 0).length;
+    const chart = accuracySparklineMarkup(overview.series);
+    const dayRows = accuracyDayRowsMarkup(overview.series);
+    main.innerHTML = `
+      <section class="view accuracy-view" aria-labelledby="accuracy-title">
+        <div class="accuracy-layout">
+          <header class="accuracy-header">
+            <button class="access-dialog-close accuracy-close" type="button" data-nav-route="mine" aria-label="关闭，返回我的">
+              <svg aria-hidden="true" viewBox="0 0 32 32"><path d="m9 9 14 14M23 9 9 23"/></svg>
+            </button>
+            <p class="eyebrow">ACCURACY TREND</p>
+            <h1 id="accuracy-title">答题正确率分析</h1>
+            <p class="page-intro">按天看做了几题、对了多少，方便家长掌握最近学习质量。</p>
+          </header>
+
+          <div class="stats-grid accuracy-summary" aria-label="整体正确率">
+            <div class="stat-card"><span class="stat-value">${overview.total}</span><span class="stat-label">总答题</span></div>
+            <div class="stat-card"><span class="stat-value">${escapeHtml(accuracyText)}</span><span class="stat-label">正确率</span></div>
+            <div class="stat-card"><span class="stat-value">${escapeHtml(errorRateText)}</span><span class="stat-label">错题率</span></div>
+            <div class="stat-card"><span class="stat-value">${activeDays}</span><span class="stat-label">近${overview.days}天有练</span></div>
+          </div>
+
+          <article class="surface accuracy-chart-card" aria-labelledby="accuracy-chart-title">
+            <div class="accuracy-chart-head">
+              <div>
+                <p class="eyebrow">DAILY CURVE</p>
+                <h2 id="accuracy-chart-title">近${overview.days}天正确率曲线</h2>
+              </div>
+              <p class="accuracy-chart-note">空心点=当天未练 · 折线=当天正确率</p>
+            </div>
+            ${chart}
+          </article>
+
+          <div class="accuracy-subject-grid" aria-label="分科正确率">
+            ${accuracySubjectCardMarkup('英语', 'ENGLISH', overview.english)}
+            ${accuracySubjectCardMarkup('数学', 'MATH', overview.math)}
+          </div>
+
+          <article class="surface accuracy-day-card" aria-labelledby="accuracy-day-title">
+            <div class="accuracy-chart-head">
+              <div>
+                <p class="eyebrow">DAY BY DAY</p>
+                <h2 id="accuracy-day-title">每日明细</h2>
+              </div>
+              <p class="accuracy-chart-note">从近到远</p>
+            </div>
+            <ul class="accuracy-day-list" aria-label="每日答题明细">${dayRows}</ul>
+          </article>
+        </div>
+      </section>`;
+  }
+
   function renderSupport() {
     main.innerHTML = `
       <section class="view support-view" aria-labelledby="support-title">
@@ -6489,7 +9634,7 @@ if (typeof document !== 'undefined') {
   }
 
   function setActiveTab(type) {
-    const active = type === 'level' ? 'map' : type === 'info' || type === 'support' ? 'mine' : type;
+    const active = type === 'level' ? 'map' : type === 'info' || type === 'support' || type === 'accuracy' ? 'mine' : type;
     tabButtons.forEach((button) => {
       const isActive = button.dataset.tab === active;
       if (isActive) button.setAttribute('aria-current', 'page');
@@ -6555,8 +9700,9 @@ if (typeof document !== 'undefined') {
       renderDetail(level);
       document.title = `${level.title} · 嗨洛塔少儿启蒙APP`;
     } else {
-      bottomTabs.hidden = false;
-      appShell.classList.remove('detail-shell');
+      const hideBottomTabs = route.type === 'accuracy';
+      bottomTabs.hidden = hideBottomTabs;
+      appShell.classList.toggle('detail-shell', hideBottomTabs);
       document.body.classList.remove('level-quiz-active');
       if (route.type === 'ranking') {
         renderRanking();
@@ -6564,6 +9710,9 @@ if (typeof document !== 'undefined') {
       } else if (route.type === 'mine') {
         renderMine();
         document.title = '我的 · 嗨洛塔少儿启蒙APP';
+      } else if (route.type === 'accuracy') {
+        renderAccuracy();
+        document.title = '正确率分析 · 嗨洛塔少儿启蒙APP';
       } else if (route.type === 'support') {
         renderSupport();
         document.title = '帮助与反馈 · 嗨洛塔少儿启蒙APP';
@@ -6579,7 +9728,7 @@ if (typeof document !== 'undefined') {
       }
     }
 
-    setActiveTab(route.type);
+    setActiveTab(route.type === 'accuracy' ? 'mine' : route.type);
     syncMapMusic(route);
   }
 

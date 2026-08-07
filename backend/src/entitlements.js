@@ -109,6 +109,55 @@ function clearUser(userId) {
   scheduleSave();
 }
 
+function deactivateVip(userId) {
+  const id = String(userId);
+  const prev = entitlements.get(id);
+  if (!prev) {
+    return getVipEntitlement(id);
+  }
+  const now = new Date().toISOString();
+  entitlements.set(id, {
+    ...prev,
+    vipActive: false,
+    source: prev.source || 'admin',
+    updatedAt: now,
+    revokedAt: now,
+  });
+  scheduleSave();
+  return getVipEntitlement(id);
+}
+
+/**
+ * @param {{ vipOnly?: boolean, limit?: number, page?: number }} [options]
+ * @returns {{ page:number, limit:number, total:number, totalPages:number, items:object[] }}
+ */
+function listEntitlements(options = {}) {
+  const vipOnly = options.vipOnly !== false;
+  const page = Math.max(1, Number(options.page) || 1);
+  const limit = Math.min(500, Math.max(1, Number(options.limit) || 100));
+  let rows = [...entitlements.entries()].map(([userId, row]) => ({
+    userId,
+    vipActive: row.vipActive === true,
+    source: row.source || null,
+    productId: row.productId || null,
+    platform: row.platform || null,
+    updatedAt: row.updatedAt || null,
+    createdAt: row.createdAt || null,
+  }));
+  if (vipOnly) rows = rows.filter((r) => r.vipActive);
+  rows.sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
+  const total = rows.length;
+  const start = (page - 1) * limit;
+  const items = rows.slice(start, start + limit);
+  return {
+    page,
+    limit,
+    total,
+    totalPages: Math.max(1, Math.ceil(total / limit) || 1),
+    items,
+  };
+}
+
 function maskName(name) {
   const text = String(name || '同学').trim() || '同学';
   const chars = Array.from(text);
@@ -173,6 +222,8 @@ module.exports = {
   loadAll,
   getVipEntitlement,
   activateVip,
+  deactivateVip,
+  listEntitlements,
   clearUser,
   upsertRankingScore,
   listRankings,

@@ -2,12 +2,12 @@
   "latestVersion": "1.0.1",
   "minSupportedVersion": "1.0.0",
   "title": "发现新版本",
-  "message": "为了让视频、语音和会员体验更稳定，请前往 App Store 更新。",
+  "message": "为了让视频、语音和会员体验更稳定，请前往 App Store 更新嗨洛塔。",
   "releaseNotes": [
     "优化视频播放稳定性",
     "改进题目语音播放",
-    "完善 VIP 权益提示"
+    "完善会员与本地图权益提示"
   ],
   "storeName": "App Store",
-  "updateUrl": "https://apps.apple.com/cn/search?term=%E5%AE%9D%E5%AE%9D%E8%8B%B1%E8%AF%AD%E5%B2%9B"
+  "updateUrl": "https://apps.apple.com/cn/search?term=%E5%97%A8%E6%B4%9B%E5%A1%94"
 }

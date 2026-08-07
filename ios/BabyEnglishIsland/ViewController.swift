@@ -549,11 +549,48 @@ final class IslandViewController: UIViewController, WKScriptMessageHandler, SKPr
   private static func appMetadataScript() -> WKUserScript {
     let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0"
     let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
+    let apiBase = shellConfigApiBase()
+    // Inject version + production API origin before any H5 script runs (file:// has no host).
     let source = """
     window.BABY_ISLAND_APP_VERSION = \(jsonString(version));
     window.BABY_ISLAND_BUILD_NUMBER = \(jsonString(build));
+    window.BABY_ISLAND_API_BASE = \(jsonString(apiBase));
+    (function () {
+      var base = window.BABY_ISLAND_API_BASE;
+      if (!base) return;
+      function apply() {
+        if (window.babyIslandApi && typeof window.babyIslandApi.setApiBase === 'function') {
+          window.babyIslandApi.setApiBase(base);
+          return true;
+        }
+        return false;
+      }
+      if (!apply()) {
+        document.addEventListener('DOMContentLoaded', function () { apply(); });
+        setTimeout(apply, 0);
+        setTimeout(apply, 50);
+        setTimeout(apply, 250);
+      }
+    })();
     """
     return WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+  }
+
+  /// Reads bundled `shell-config.json` → `apiBase` (HTTPS origin, no trailing slash).
+  private static func shellConfigApiBase() -> String {
+    guard
+      let url = Bundle.main.url(forResource: "shell-config", withExtension: "json"),
+      let data = try? Data(contentsOf: url),
+      let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+    else {
+      return ""
+    }
+    let raw = (object["apiBase"] as? String) ?? ""
+    var trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+    while trimmed.hasSuffix("/") {
+      trimmed = String(trimmed.dropLast())
+    }
+    return trimmed
   }
 
   private static func jsonString(_ value: String) -> String {

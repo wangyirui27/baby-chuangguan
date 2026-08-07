@@ -52,6 +52,7 @@ Thumbs.db
 !assets/brand/hirota-wordmark.png
 !assets/brand/splash-logo.png
 !assets/egypt-map/background/egypt-desert-infinite-clean-bg-dreamina-v2.png
+!ios/**/*.png
 !assets/**/*.webp
 assets/assets/
 assets/**/__pycache__/
@@ -106,3 +107,42 @@ assets/generated/
 .hermes/
 .reasonix/
 .workbuddy/
+
+# ─── iOS local signing (never commit real Team ID if filled) ──
+# Keep Team.xcconfig.example tracked; empty template may be tracked.
+ios/build/
+ios/**/*.xcuserstate
+ios/**/xcuserdata/
+*.xcarchive
+*.ipa
+DerivedData/
+
+# ─── Backup / intermediate media (not runtime) ──
+**/*.before-*
+**/*-before-*
+assets/video/free-levels/*.before*
+assets/video/free-levels-libtv-downloads/
+assets/video/free-levels-libtv-preview/
+assets/video/paid-levels/
+assets/video/math-story/
+assets/xhs-templates/
+assets/math-map/quiz/_gen/
+assets/math-map/quiz/wood-digits/_dreamina-raw/
+assets/math-map/quiz/wood-digits/_cut/
+assets/math-map/quiz/wood-digits/_picked/
+assets/math-map/quiz/wood-digits/_prompts/
+assets/math-map/quiz/wood-digits/_preview*
+assets/math-map/quiz/wood-digits/_qa*
+assets/math-map/quiz/wood-digits/*-v[1-6].webp
+assets/math-map/props/_gen*/
+assets/audio/math-story-theme/
+docs/curriculum/table-tricks-s1/
+output/
+screenshots/
+# local pack smoke dirs
+/tmp/
+hirota-www-*/
+
+# ─── Large optional local only (RDS backup / workbench pointers stay out) ──
+backend/data/
+*.sql.gz

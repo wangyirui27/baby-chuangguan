@@ -1,0 +1,1529 @@
+{
+  "version": "20260806-math-q-compose-drag-v1",
+  "speaker": "zh_female_peiqi_uranus_bigtts",
+  "resource_id": "seed-tts-2.0",
+  "generated_at": "2026-08-05T23:27:23.657Z",
+  "entries": [
+    {
+      "slug": "compose-l1-w10",
+      "text": "小朋友，盘子里已经有 1 个了，再拖进来，凑成 10 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l1-w10.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "d9af63e3fd68d5bb0b2e30b5af5ea4f1d4a569eaac58e83b6853805ddb1d7e1b"
+    },
+    {
+      "slug": "compose-l1-w2",
+      "text": "小朋友，盘子里已经有 1 个了，再拖进来，凑成 2 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l1-w2.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "61c277c30539b382d6c9fc395f051c8821cf11c98953b96e69acb8eea66b87f8"
+    },
+    {
+      "slug": "compose-l1-w3",
+      "text": "小朋友，盘子里已经有 1 个了，再拖进来，凑成 3 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l1-w3.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "7f93ca5414d885599cdd1a656f696907ebbb6b390809852867c63a0c54244a2d"
+    },
+    {
+      "slug": "compose-l1-w4",
+      "text": "小朋友，盘子里已经有 1 个了，再拖进来，凑成 4 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l1-w4.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43821,
+      "sha256": "f9b0ddfd05c0bb4fc2356c5efe4e75b62de28007e350dad8b55d1b5f30680edb"
+    },
+    {
+      "slug": "compose-l1-w5",
+      "text": "小朋友，盘子里已经有 1 个了，再拖进来，凑成 5 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l1-w5.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "b8e73ba124f7f75ee4aa5817091fe9aafbe973d4b64366d8f86fe513b6804855"
+    },
+    {
+      "slug": "compose-l1-w6",
+      "text": "小朋友，盘子里已经有 1 个了，再拖进来，凑成 6 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l1-w6.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "bc13f0fc9e61a0ec2fdf0f986b797cbbdc1bb294da44890cd61414bea317718d"
+    },
+    {
+      "slug": "compose-l1-w7",
+      "text": "小朋友，盘子里已经有 1 个了，再拖进来，凑成 7 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l1-w7.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41709,
+      "sha256": "65345de494b7384a5b8382f97f9fef3153c974f81708c2fb2eeb441eb27b2103"
+    },
+    {
+      "slug": "compose-l1-w8",
+      "text": "小朋友，盘子里已经有 1 个了，再拖进来，凑成 8 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l1-w8.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "a72cd3a106576402ffd512e0e6576861bf518af71d4928bdb1275d1759efa32e"
+    },
+    {
+      "slug": "compose-l1-w9",
+      "text": "小朋友，盘子里已经有 1 个了，再拖进来，凑成 9 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l1-w9.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "c25d28076cf3d4f813e89ed780bc0343ecc07b3d10c3c6a4fff497816b433cdc"
+    },
+    {
+      "slug": "compose-l2-w10",
+      "text": "小朋友，盘子里已经有 2 个了，再拖进来，凑成 10 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l2-w10.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43629,
+      "sha256": "9c523842c61e43848806ae9e7f7da2579ab94f501a4f4d1f9bea69509e659378"
+    },
+    {
+      "slug": "compose-l2-w3",
+      "text": "小朋友，盘子里已经有 2 个了，再拖进来，凑成 3 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l2-w3.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43821,
+      "sha256": "dc54f10dbd77adf22db4cd52beb9f6f09a652f281a7f7e5417997d2d0e578afa"
+    },
+    {
+      "slug": "compose-l2-w4",
+      "text": "小朋友，盘子里已经有 2 个了，再拖进来，凑成 4 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l2-w4.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "c8e6dd852ec5b4f4e6b298a01c025b0186b3c9a3d56dbcb077524b1f74112e2a"
+    },
+    {
+      "slug": "compose-l2-w5",
+      "text": "小朋友，盘子里已经有 2 个了，再拖进来，凑成 5 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l2-w5.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "b77e8dacb278723ecd590835324d83f60a019904c81f5b1ec634240a32066574"
+    },
+    {
+      "slug": "compose-l2-w6",
+      "text": "小朋友，盘子里已经有 2 个了，再拖进来，凑成 6 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l2-w6.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "ef2a3028d867f4e1e7110b830f3350eb91cd1adb3b06beaa8cf943d8333778fc"
+    },
+    {
+      "slug": "compose-l2-w7",
+      "text": "小朋友，盘子里已经有 2 个了，再拖进来，凑成 7 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l2-w7.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43821,
+      "sha256": "c0e9bdca1c34f44b627019850b80e5948af48c1a86a703339939917112ce1730"
+    },
+    {
+      "slug": "compose-l2-w8",
+      "text": "小朋友，盘子里已经有 2 个了，再拖进来，凑成 8 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l2-w8.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43821,
+      "sha256": "d1ffda3cfa210538e7d882420a702cc7afc0deebcfc95a7747125d8119fbfb7c"
+    },
+    {
+      "slug": "compose-l2-w9",
+      "text": "小朋友，盘子里已经有 2 个了，再拖进来，凑成 9 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l2-w9.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "461a93f021b50402f6132154c40e74986e5fe419f90a3897b943390217feab9c"
+    },
+    {
+      "slug": "compose-l3-w10",
+      "text": "小朋友，盘子里已经有 3 个了，再拖进来，凑成 10 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l3-w10.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "ea802c7fd077819a4d4ba4baffb0aaffc43f90b6874a5e5d3b827432ab199449"
+    },
+    {
+      "slug": "compose-l3-w4",
+      "text": "小朋友，盘子里已经有 3 个了，再拖进来，凑成 4 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l3-w4.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "11b75f2dc3fff27e033d8f6f6e43b94b2fac4b909003636eae18a1e038732c50"
+    },
+    {
+      "slug": "compose-l3-w5",
+      "text": "小朋友，盘子里已经有 3 个了，再拖进来，凑成 5 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l3-w5.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "ece57d8bea35c0c888689d48fb9c2f2de868f69b17172890f612e7a8360f51e8"
+    },
+    {
+      "slug": "compose-l3-w6",
+      "text": "小朋友，盘子里已经有 3 个了，再拖进来，凑成 6 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l3-w6.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 42093,
+      "sha256": "49d49e58d5e5474f49f6b9764da07ff01f48b6a65295f923ec5dcfb5df6b2f4a"
+    },
+    {
+      "slug": "compose-l3-w7",
+      "text": "小朋友，盘子里已经有 3 个了，再拖进来，凑成 7 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l3-w7.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43821,
+      "sha256": "c0934bcb44b607214e50a0cd050f3513cc5076072f8918c083658b2cdbec9ccd"
+    },
+    {
+      "slug": "compose-l3-w8",
+      "text": "小朋友，盘子里已经有 3 个了，再拖进来，凑成 8 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l3-w8.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43821,
+      "sha256": "4e26d38d06a08240d57413497b42b6737383036be57ab0d56d99d493b9ccd8fe"
+    },
+    {
+      "slug": "compose-l3-w9",
+      "text": "小朋友，盘子里已经有 3 个了，再拖进来，凑成 9 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l3-w9.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 42093,
+      "sha256": "0ddd1c4de5fb4f24d372bf6776e4ea7427581ed27b1d051e6b23102ef361e9af"
+    },
+    {
+      "slug": "compose-l4-w10",
+      "text": "小朋友，盘子里已经有 4 个了，再拖进来，凑成 10 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l4-w10.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43821,
+      "sha256": "3b5554a8d3f57441a2944d98f4945ba0fc44dc6845d3652429316afba6a8f794"
+    },
+    {
+      "slug": "compose-l4-w5",
+      "text": "小朋友，盘子里已经有 4 个了，再拖进来，凑成 5 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l4-w5.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43629,
+      "sha256": "692e4ac98b8237fe903de9dc6cc1948e0f678d879d0ddde3e742c80b0ab12570"
+    },
+    {
+      "slug": "compose-l4-w6",
+      "text": "小朋友，盘子里已经有 4 个了，再拖进来，凑成 6 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l4-w6.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43821,
+      "sha256": "be405983a1a5eb6eb4c01d0f8082d15bafed1e179a2a7a89c91f5114773af2fd"
+    },
+    {
+      "slug": "compose-l4-w7",
+      "text": "小朋友，盘子里已经有 4 个了，再拖进来，凑成 7 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l4-w7.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43629,
+      "sha256": "2a574d46fe05921f5b3d4073123638e8ede2fda1ffbe7d877ac390bfdaed53fb"
+    },
+    {
+      "slug": "compose-l4-w8",
+      "text": "小朋友，盘子里已经有 4 个了，再拖进来，凑成 8 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l4-w8.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "4891701ef79f143b3711fd7ab9c17f0fe535925fe00f68bc6e52b60f570f6451"
+    },
+    {
+      "slug": "compose-l4-w9",
+      "text": "小朋友，盘子里已经有 4 个了，再拖进来，凑成 9 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l4-w9.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43821,
+      "sha256": "f19281a96cd09a2891d9471ac7670b41a2cf81418eed778d7341c74d7861ecc6"
+    },
+    {
+      "slug": "compose-l5-w10",
+      "text": "小朋友，盘子里已经有 5 个了，再拖进来，凑成 10 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l5-w10.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "fe94cbc564fc9ce6b25f3a1a3c51084226f060b37abea97c17b19c96bd6fc743"
+    },
+    {
+      "slug": "compose-l5-w6",
+      "text": "小朋友，盘子里已经有 5 个了，再拖进来，凑成 6 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l5-w6.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 42093,
+      "sha256": "514bea6ce4f313fd6c74d2833063244cb87e87fa10617fdcb168f53eab9a4680"
+    },
+    {
+      "slug": "compose-l5-w7",
+      "text": "小朋友，盘子里已经有 5 个了，再拖进来，凑成 7 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l5-w7.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43629,
+      "sha256": "8b970f1fbefe109b12140faa3970a7aeb65b4dd149d8d4af30b043931219558c"
+    },
+    {
+      "slug": "compose-l5-w8",
+      "text": "小朋友，盘子里已经有 5 个了，再拖进来，凑成 8 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l5-w8.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 42093,
+      "sha256": "48d535168b7e88a9d48394a705baf154db117a9602da2d5518ec871030427fb0"
+    },
+    {
+      "slug": "compose-l5-w9",
+      "text": "小朋友，盘子里已经有 5 个了，再拖进来，凑成 9 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l5-w9.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "c1d82724d8ce0bfb761722c18edf84e6fdd5b5fc717aed3f0912d62519b3259d"
+    },
+    {
+      "slug": "compose-l6-w10",
+      "text": "小朋友，盘子里已经有 6 个了，再拖进来，凑成 10 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l6-w10.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43629,
+      "sha256": "3daa3a2a894907e19395dc6b8c210262ff58ddb588c00846f5bc14d1db367555"
+    },
+    {
+      "slug": "compose-l6-w7",
+      "text": "小朋友，盘子里已经有 6 个了，再拖进来，凑成 7 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l6-w7.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43821,
+      "sha256": "cd3dc316b1fec6f0bf2ec936eda3a841f7b7f3c0d3bf759c8cfb345f303b6fc2"
+    },
+    {
+      "slug": "compose-l6-w8",
+      "text": "小朋友，盘子里已经有 6 个了，再拖进来，凑成 8 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l6-w8.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43821,
+      "sha256": "10c6d00c64f8602a94807ea54bbbe3c7392f566c594c2db3fa90115c6cbce9b6"
+    },
+    {
+      "slug": "compose-l6-w9",
+      "text": "小朋友，盘子里已经有 6 个了，再拖进来，凑成 9 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l6-w9.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "6b18281dda1c7d19b96aa6592bf46ff83e8ea0fa55a8a6880fb31848b0b521e3"
+    },
+    {
+      "slug": "compose-l7-w10",
+      "text": "小朋友，盘子里已经有 7 个了，再拖进来，凑成 10 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l7-w10.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 45165,
+      "sha256": "bbf937b8ca405c237d1610c0396efb8c26bfd8ba12c138b6b349e2745cab4f7f"
+    },
+    {
+      "slug": "compose-l7-w8",
+      "text": "小朋友，盘子里已经有 7 个了，再拖进来，凑成 8 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l7-w8.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "b8dabf0324fb8a85b7063d64384dc05c67102d957b25f626142e877857360046"
+    },
+    {
+      "slug": "compose-l7-w9",
+      "text": "小朋友，盘子里已经有 7 个了，再拖进来，凑成 9 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l7-w9.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 43629,
+      "sha256": "13c59b6eae76407153b3735640d5977351ca95bc7b1e2de049d7a23e15090bf1"
+    },
+    {
+      "slug": "compose-l8-w10",
+      "text": "小朋友，盘子里已经有 8 个了，再拖进来，凑成 10 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l8-w10.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 41901,
+      "sha256": "c7b9df66cf46df93f1c067dad462f29852f81c8cfd3f11882fe931afff785a83"
+    },
+    {
+      "slug": "compose-l8-w9",
+      "text": "小朋友，盘子里已经有 8 个了，再拖进来，凑成 9 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l8-w9.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 42093,
+      "sha256": "ba6745ce0752cc5531df9f0e0c72ca383613ae021db1a8bceb04e7b4c0e38ae0"
+    },
+    {
+      "slug": "compose-l9-w10",
+      "text": "小朋友，盘子里已经有 9 个了，再拖进来，凑成 10 个吧",
+      "file": "assets/audio/questions-holly/math-q-compose-l9-w10.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 45165,
+      "sha256": "6aeeaf8f78e509ea83bb8791470b4291de6e1c1a5a351fbea8458178dc0017aa"
+    },
+    {
+      "slug": "count-0-apple",
+      "text": "小朋友，哪一组是0 个苹果？",
+      "file": "assets/audio/questions-holly/math-count-0-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "59fce9826bd12ab4450e5657087c84ff708d2c3bec724d3564220bb7405ad3c9"
+    },
+    {
+      "slug": "count-0-bead-red",
+      "text": "小朋友，哪一组是0 颗红珠？",
+      "file": "assets/audio/questions-holly/math-q-count-0-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25965,
+      "sha256": "dbaa51c936a9d0701bec21ec6e238a193412699ff9c6016efb511c68990702d5"
+    },
+    {
+      "slug": "count-0-bead-teal",
+      "text": "小朋友，哪一组是0 颗青珠？",
+      "file": "assets/audio/questions-holly/math-q-count-0-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "9e79b520b86653831c9e2160ed8c1054455ef33eff06e64e048c4f0235a7f774"
+    },
+    {
+      "slug": "count-0-eraser",
+      "text": "小朋友，哪一组是0 块橡皮？",
+      "file": "assets/audio/questions-holly/math-q-count-0-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25965,
+      "sha256": "1aa5033fcef69a2e0329cc9ca80d1d7580b0b31688e3a8adf948db4cae66b627"
+    },
+    {
+      "slug": "count-1-apple",
+      "text": "小朋友，哪一组是1 个苹果？",
+      "file": "assets/audio/questions-holly/math-count-1-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "c476735d8d4e1bf3cb909ebe465a309e4ec6bc14997ed7dd9f36a3db5ab3fa38"
+    },
+    {
+      "slug": "count-1-bead-red",
+      "text": "小朋友，哪一组是1 颗红珠？",
+      "file": "assets/audio/questions-holly/math-q-count-1-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "dd443499a9036edfbbfeebcbf8ae2473e531dc0efc8e43cd7f01acf73b3cfcc1"
+    },
+    {
+      "slug": "count-1-bead-teal",
+      "text": "小朋友，哪一组是1 颗青珠？",
+      "file": "assets/audio/questions-holly/math-q-count-1-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "35d4574a0b1a37813600e483058b4b8bab6391b544d646044dbd204b1a2ff807"
+    },
+    {
+      "slug": "count-1-eraser",
+      "text": "小朋友，哪一组是1 块橡皮？",
+      "file": "assets/audio/questions-holly/math-q-count-1-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "52aaffbe5985a3b776b9c7833087af5d065eb16ca49f244629eb4ce073f3d6d5"
+    },
+    {
+      "slug": "count-10-apple",
+      "text": "小朋友，哪一组是10 个苹果？",
+      "file": "assets/audio/questions-holly/math-q-count-10-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "009b8e0d5ba1e5ecf3ddaf5025f28d27d94c00e66511911fd1dc2ba492f8b263"
+    },
+    {
+      "slug": "count-10-bead-red",
+      "text": "小朋友，哪一组是10 颗红珠？",
+      "file": "assets/audio/questions-holly/math-q-count-10-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "9233a2969153bf5e9b82589af7b820fbfb41a267ca4742eef95ecc26b36dffa3"
+    },
+    {
+      "slug": "count-10-bead-teal",
+      "text": "小朋友，哪一组是10 颗青珠？",
+      "file": "assets/audio/questions-holly/math-q-count-10-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "d7bd2375eb44efb9bc2a9e89ac987b8a64b3988b647fb516a481c85e7c0f0345"
+    },
+    {
+      "slug": "count-10-eraser",
+      "text": "小朋友，哪一组是10 块橡皮？",
+      "file": "assets/audio/questions-holly/math-q-count-10-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "156f8deba1e3ab7998fe634941c7013f361dc73df1f78eeacd033660303c3482"
+    },
+    {
+      "slug": "count-2-apple",
+      "text": "小朋友，哪一组是2 个苹果？",
+      "file": "assets/audio/questions-holly/math-count-2-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "ef042876b6840ba624d307b8d10564ed4455d569f373b79fe041f8c07232d080"
+    },
+    {
+      "slug": "count-2-bead-red",
+      "text": "小朋友，哪一组是2 颗红珠？",
+      "file": "assets/audio/questions-holly/math-q-count-2-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "53a47df97713926e86946a28f8a98eecf1272bb312cabe34abb88d02a0808a99"
+    },
+    {
+      "slug": "count-2-bead-teal",
+      "text": "小朋友，哪一组是2 颗青珠？",
+      "file": "assets/audio/questions-holly/math-q-count-2-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25965,
+      "sha256": "ebee79474d64a272d65b27226f74219fb8691c6bbf67e68fac0ad9a8d750c31a"
+    },
+    {
+      "slug": "count-2-eraser",
+      "text": "小朋友，哪一组是2 块橡皮？",
+      "file": "assets/audio/questions-holly/math-q-count-2-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25965,
+      "sha256": "b385939ae05ecb1083c114dcb964ed560a62c53f0492fc6da54c6af88d648029"
+    },
+    {
+      "slug": "count-3-apple",
+      "text": "小朋友，哪一组是3 个苹果？",
+      "file": "assets/audio/questions-holly/math-count-3-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "ed1d5f0cb086e957334b210c7645026e3f2dbe5691da93325993ec937c4f8a16"
+    },
+    {
+      "slug": "count-3-bead-red",
+      "text": "小朋友，哪一组是3 颗红珠？",
+      "file": "assets/audio/questions-holly/math-q-count-3-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25965,
+      "sha256": "b08304d5c15101edf9ec537c8a74728962f5627bfcc6f10ffea2a06942dc87ac"
+    },
+    {
+      "slug": "count-3-bead-teal",
+      "text": "小朋友，哪一组是3 颗青珠？",
+      "file": "assets/audio/questions-holly/math-q-count-3-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "c3dc4efa4a5fee88f5983c04cfa05b9e840d59a1b886f5049ab1d4b9c5c4db55"
+    },
+    {
+      "slug": "count-3-eraser",
+      "text": "小朋友，哪一组是3 块橡皮？",
+      "file": "assets/audio/questions-holly/math-q-count-3-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "b92d26f5e52c36fb3c352096448907491c56fb0a5f95026297f89ba112495883"
+    },
+    {
+      "slug": "count-4-apple",
+      "text": "小朋友，哪一组是4 个苹果？",
+      "file": "assets/audio/questions-holly/math-count-4-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "5fa6a35ff020906c6c7331151fd4b73690b80ba955f71e3e2ea5d486ee989d73"
+    },
+    {
+      "slug": "count-4-bead-red",
+      "text": "小朋友，哪一组是4 颗红珠？",
+      "file": "assets/audio/questions-holly/math-q-count-4-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "f01667aad8f56dc6e7642fdbc3339e6f71346a0c9708016c194d104bba338958"
+    },
+    {
+      "slug": "count-4-bead-teal",
+      "text": "小朋友，哪一组是4 颗青珠？",
+      "file": "assets/audio/questions-holly/math-q-count-4-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "0e7b01d7f118d8e0c27c74941a8d4bcfa92e75c9432f9e88fb2fedc496525ae5"
+    },
+    {
+      "slug": "count-4-eraser",
+      "text": "小朋友，哪一盘是4 块橡皮？",
+      "file": "assets/audio/questions-holly/math-q-count-4-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "fbc3853ec2c2d48547a3fababc6fdea1efbc8147ed8a95c7447b2d5437f81f52"
+    },
+    {
+      "slug": "count-5-apple",
+      "text": "小朋友，哪一组是5 个苹果？",
+      "file": "assets/audio/questions-holly/math-count-5-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "4ee816a78d88c686c1eb0fbbeb59e9f67cf9daf61cb14c7dc34f922c250d8320"
+    },
+    {
+      "slug": "count-5-bead-red",
+      "text": "小朋友，哪一组是5 颗红珠？",
+      "file": "assets/audio/questions-holly/math-q-count-5-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25965,
+      "sha256": "a4f020023da6b3c172a6dcfb2738e9f80dda8066a7d92c86198ab7cf31c3becb"
+    },
+    {
+      "slug": "count-5-bead-teal",
+      "text": "小朋友，哪一组是5 颗青珠？",
+      "file": "assets/audio/questions-holly/math-q-count-5-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25773,
+      "sha256": "91111950af507522fd21eeb892c8a9152636243128b88906fdf9220379b04398"
+    },
+    {
+      "slug": "count-5-eraser",
+      "text": "小朋友，哪一组是5 块橡皮？",
+      "file": "assets/audio/questions-holly/math-q-count-5-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25965,
+      "sha256": "c4bca9d68292e20da4f141c58b2c34f7c82e946ed06fdf0923ba825520ed1a97"
+    },
+    {
+      "slug": "count-6-apple",
+      "text": "小朋友，哪一组是6 个苹果？",
+      "file": "assets/audio/questions-holly/math-q-count-6-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "decbd6fe4219f9b54a26992ec3b193fc260a15870131e98a6de5ba5304e16ade"
+    },
+    {
+      "slug": "count-6-bead-red",
+      "text": "小朋友，哪一组是6 颗红珠？",
+      "file": "assets/audio/questions-holly/math-q-count-6-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "0937e378e96643507c9b7a3d7485f01e402152c73e54fef4286e56e1637ea643"
+    },
+    {
+      "slug": "count-6-bead-teal",
+      "text": "小朋友，哪一组是6 颗青珠？",
+      "file": "assets/audio/questions-holly/math-q-count-6-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "62fda1057f648e6ccb912b9730bdec642e0825084463fe8c2f2dd9f8f0e19269"
+    },
+    {
+      "slug": "count-6-eraser",
+      "text": "小朋友，哪一组是6 块橡皮？",
+      "file": "assets/audio/questions-holly/math-q-count-6-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "43ee17f7b3c2fae0b4b38c7147a4995429095d6e6fb269aa4d1647dd8ee5d532"
+    },
+    {
+      "slug": "count-7-apple",
+      "text": "小朋友，哪一组是7 个苹果？",
+      "file": "assets/audio/questions-holly/math-q-count-7-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "18f8df7e5dcd0042f1b5e04d950154c2a6b5f9113c3728f249af08e2036292b0"
+    },
+    {
+      "slug": "count-7-bead-red",
+      "text": "小朋友，哪一组是7 颗红珠？",
+      "file": "assets/audio/questions-holly/math-q-count-7-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "e0a56365566ed3f69e66c54fdb9bd5d6ce06c6a30277493acd98ee8a56047a8d"
+    },
+    {
+      "slug": "count-7-bead-teal",
+      "text": "小朋友，哪一组是7 颗青珠？",
+      "file": "assets/audio/questions-holly/math-q-count-7-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "ed5d2fc8936b46c52b34b02516f72742017ca423a165b2ff0c9067e920b5ad30"
+    },
+    {
+      "slug": "count-7-eraser",
+      "text": "小朋友，哪一组是7 块橡皮？",
+      "file": "assets/audio/questions-holly/math-q-count-7-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25965,
+      "sha256": "d413500aac866c1f1fd6e212b3948ca743f1e0016a6935fadf1ba866df037a17"
+    },
+    {
+      "slug": "count-8-apple",
+      "text": "小朋友，哪一组是8 个苹果？",
+      "file": "assets/audio/questions-holly/math-q-count-8-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "2bd8a4461df8cea0d61747f38a51fbc503f56b2c32cad5a85709820678093f03"
+    },
+    {
+      "slug": "count-8-bead-red",
+      "text": "小朋友，哪一组是8 颗红珠？",
+      "file": "assets/audio/questions-holly/math-q-count-8-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "be0bec926934b7f4397b5cc37a0673cb7376e0ba45c93efb2302cb15aab120e6"
+    },
+    {
+      "slug": "count-8-bead-teal",
+      "text": "小朋友，哪一组是8 颗青珠？",
+      "file": "assets/audio/questions-holly/math-q-count-8-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "1b1fb9687035b9423af4dc30794c2bfd762df5f037bc76625408dd3e8766b2d1"
+    },
+    {
+      "slug": "count-8-eraser",
+      "text": "小朋友，哪一组是8 块橡皮？",
+      "file": "assets/audio/questions-holly/math-q-count-8-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25965,
+      "sha256": "bff1f4f67242ed9e534cbe2f4968609ad7d33687abda6359e6ef4a3a800acb09"
+    },
+    {
+      "slug": "count-9-apple",
+      "text": "小朋友，哪一组是9 个苹果？",
+      "file": "assets/audio/questions-holly/math-q-count-9-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "c40d61b20f87db06e4c74c3166cf5be7087ca4ba11726d2a2a4a52fcad96c870"
+    },
+    {
+      "slug": "count-9-bead-red",
+      "text": "小朋友，哪一组是9 颗红珠？",
+      "file": "assets/audio/questions-holly/math-q-count-9-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "faaab1ae53b1599d3e3038d5594ded7c5d4891b1a7df2a038033ea31e1ea39ae"
+    },
+    {
+      "slug": "count-9-bead-teal",
+      "text": "小朋友，哪一组是9 颗青珠？",
+      "file": "assets/audio/questions-holly/math-q-count-9-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "a113fd53481e034cd215df416f48956a7e52f0934e222e35e64e13d33caf3f89"
+    },
+    {
+      "slug": "count-9-eraser",
+      "text": "小朋友，哪一组是9 块橡皮？",
+      "file": "assets/audio/questions-holly/math-q-count-9-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "aa59d774d37747e53732bad93e752271f54e7a797e17ac0a28fd04f75194ee87"
+    },
+    {
+      "slug": "least-apple",
+      "text": "小朋友，哪一盘苹果最少？",
+      "file": "assets/audio/questions-holly/math-q-least-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "7cf60d9edc5ba50ee24c5348d26ad315363845b6c74a74ed7dfc0b89b020e064"
+    },
+    {
+      "slug": "least-bead-red",
+      "text": "小朋友，哪一盘红珠最少？",
+      "file": "assets/audio/questions-holly/math-q-least-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "2fd1ca222a109f0b6015d01b88e9d7f37ccb55768933088be5e19b9969faf006"
+    },
+    {
+      "slug": "least-bead-teal",
+      "text": "小朋友，哪一盘青珠最少？",
+      "file": "assets/audio/questions-holly/math-q-least-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "8f991edf06412d6570435878807bbc6557e0d2e62be023e5be4949e29a325b34"
+    },
+    {
+      "slug": "least-eraser",
+      "text": "小朋友，哪一盘橡皮最少？",
+      "file": "assets/audio/questions-holly/math-q-least-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "97a1dc8d8326b123a830fd021a6a40d3d851705d8ce6a1aa670d35c132050a6b"
+    },
+    {
+      "slug": "most-apple",
+      "text": "小朋友，哪一盘苹果最多？",
+      "file": "assets/audio/questions-holly/math-q-most-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "a6f80aa446f998ba5055a832db1d7aed5a1f105946ab7276a913ceeb832fa9a5"
+    },
+    {
+      "slug": "most-bead-red",
+      "text": "小朋友，哪一盘红珠最多？",
+      "file": "assets/audio/questions-holly/math-q-most-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "6b1c11f92f6a8268619ccd3c83249ee03dd0467cbfb8e418eeb764dcc0e033b3"
+    },
+    {
+      "slug": "most-bead-teal",
+      "text": "小朋友，哪一盘青珠最多？",
+      "file": "assets/audio/questions-holly/math-q-most-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "2bcebe03145d8a121c82b02d9c9ad62679c888d6668dcf2f6d830a0781569cf1"
+    },
+    {
+      "slug": "most-eraser",
+      "text": "小朋友，哪一盘橡皮最多？",
+      "file": "assets/audio/questions-holly/math-q-most-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22893,
+      "sha256": "ba8c6b9056a3a54ec09a7d9e73edf60c12a4cfecda70603b14d47e8fa4b2c1f9"
+    },
+    {
+      "slug": "numeral-0",
+      "text": "小朋友，哪一盘是 0 个？",
+      "file": "assets/audio/questions-holly/math-q-numeral-0.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25965,
+      "sha256": "7bf7f5d89d6571815acf28d54bd6c1fa5ddcafc872cd1104b8e042cd6b044276"
+    },
+    {
+      "slug": "numeral-1",
+      "text": "小朋友，哪一盘是 1 个？",
+      "file": "assets/audio/questions-holly/math-q-numeral-1.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 21357,
+      "sha256": "9e6c710b0b11181f3b952afe7bcd34e7d9df39da21d2608bd3be20523d569924"
+    },
+    {
+      "slug": "numeral-10",
+      "text": "小朋友，哪一盘是 10 个？",
+      "file": "assets/audio/questions-holly/math-q-numeral-10.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "b230751d19d7018364ff0ee34a0d687d3e406c582e057933cbb7abb91604e93c"
+    },
+    {
+      "slug": "numeral-2",
+      "text": "小朋友，哪一盘是 2 个？",
+      "file": "assets/audio/questions-holly/math-q-numeral-2.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 21357,
+      "sha256": "184f5b16f30c5b6fe7fb5c873523dbbf781b5730d7843356c1e987e722d099fd"
+    },
+    {
+      "slug": "numeral-3",
+      "text": "小朋友，哪一盘是 3 个？",
+      "file": "assets/audio/questions-holly/math-q-numeral-3.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 21357,
+      "sha256": "45900cda73ae7f4191b9eb8a836bc31902ec17fdcb633db9632185a271d70205"
+    },
+    {
+      "slug": "numeral-4",
+      "text": "小朋友，哪一盘是 4 个？",
+      "file": "assets/audio/questions-holly/math-q-numeral-4.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 21357,
+      "sha256": "ab396723a229806e1773579c24840598cb37adba07e7833de4067806e7710082"
+    },
+    {
+      "slug": "numeral-5",
+      "text": "小朋友，哪一盘是 5 个？",
+      "file": "assets/audio/questions-holly/math-q-numeral-5.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 21357,
+      "sha256": "13aa50c41229944e40004546456c3ff555fe2213bad0bdd836ca9324e5463bcc"
+    },
+    {
+      "slug": "numeral-6",
+      "text": "小朋友，哪一盘是 6 个？",
+      "file": "assets/audio/questions-holly/math-q-numeral-6.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 21357,
+      "sha256": "0cbbf6cda37eabaa77e8842a8c9539ad4c8f24a96d56414387a202fcf27d274c"
+    },
+    {
+      "slug": "numeral-7",
+      "text": "小朋友，哪一盘是 7 个？",
+      "file": "assets/audio/questions-holly/math-q-numeral-7.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "9bcd72148b65ba568cf453ba63905b63aab12e7e6b7c2800539318971d33e814"
+    },
+    {
+      "slug": "numeral-8",
+      "text": "小朋友，哪一盘是 8 个？",
+      "file": "assets/audio/questions-holly/math-q-numeral-8.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "d535fe6bf90731b01b68ae2f3534b822ae5b69aabff79cc96d51604b37cee121"
+    },
+    {
+      "slug": "numeral-9",
+      "text": "小朋友，哪一盘是 9 个？",
+      "file": "assets/audio/questions-holly/math-q-numeral-9.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22893,
+      "sha256": "31e1a6b2798b504b1ad7e20ea635e7034261cd794ad740a54e2b56e015a3d917"
+    },
+    {
+      "slug": "seq-next-1",
+      "text": "小朋友，1 的后面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-next-1.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 21357,
+      "sha256": "7275d5d3715c2a98de6851b118d60527806204e490fbd867871e020247932fad"
+    },
+    {
+      "slug": "seq-next-10",
+      "text": "小朋友，10 的后面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-next-10.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "67238283ad1147fb9036b33f3f33d6e937e43ac8c6a891d7fce825b4fa1e11fc"
+    },
+    {
+      "slug": "seq-next-2",
+      "text": "小朋友，2 的后面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-next-2.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "7cec3ee089ab416310fafef44b6223883435fb23e5bad6798e0989cf0e6b603e"
+    },
+    {
+      "slug": "seq-next-3",
+      "text": "小朋友，3 的后面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-next-3.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "4861ddc3e1aaad5b9eaafc9de0d34abcd3233d9c1a72a9f9efd303e2ff6562a4"
+    },
+    {
+      "slug": "seq-next-4",
+      "text": "小朋友，4 的后面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-next-4.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "dd72adb898665ce16360e2f8d8ab7cd3ef544538f4e7b8feb424f2140086a8af"
+    },
+    {
+      "slug": "seq-next-5",
+      "text": "小朋友，5 的后面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-next-5.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "d0cae2ebc9c49d4e7f46ebfc1e1a3a394c86bb1a1ac9103e3a3604d7778046f6"
+    },
+    {
+      "slug": "seq-next-6",
+      "text": "小朋友，6 的后面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-next-6.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "f4187de293d3d6a48c1c71a80eea2bcee7f76a2b463059cfdebde7b2fc562c3c"
+    },
+    {
+      "slug": "seq-next-7",
+      "text": "小朋友，7 的后面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-next-7.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "de0361ef39c7989263ae21e24091439a1b3990faa942a8ddfea4c1e2d258d610"
+    },
+    {
+      "slug": "seq-next-8",
+      "text": "小朋友，8 的后面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-next-8.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "0695677dffeb2f91034ef26dc240990b832c45af181b0bc3786a4268278921ad"
+    },
+    {
+      "slug": "seq-next-9",
+      "text": "小朋友，9 的后面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-next-9.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "c0bdec65719fd22940c0efc3193307927467e0ddd3fc11e07ee37b763a930d95"
+    },
+    {
+      "slug": "seq-prev-1",
+      "text": "小朋友，1 的前面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-prev-1.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "44e73860c4490746475ac818842dd3d85d8394a8f46bae3152aed707bdecafa0"
+    },
+    {
+      "slug": "seq-prev-10",
+      "text": "小朋友，10 的前面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-prev-10.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24429,
+      "sha256": "52365db2613da6a5579850402e8a9678886ab968c2612df13ff4e465b50b9f8a"
+    },
+    {
+      "slug": "seq-prev-2",
+      "text": "小朋友，2 的前面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-prev-2.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "aabf6c82522cb767100a2ab632986b5cd373f3084a94b3237de30c1ea0efc76b"
+    },
+    {
+      "slug": "seq-prev-3",
+      "text": "小朋友，3 的前面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-prev-3.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25965,
+      "sha256": "b5393df9fd8485a3e7310debc6be508314a26d1fea8ef0158d6aae8d5f0e5670"
+    },
+    {
+      "slug": "seq-prev-4",
+      "text": "小朋友，4 的前面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-prev-4.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "fc19e7198a3438b5aa01d4640ab94a2ea0007740f007b606a747752529436647"
+    },
+    {
+      "slug": "seq-prev-5",
+      "text": "小朋友，5 的前面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-prev-5.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25965,
+      "sha256": "ee5e88d09a95115f0b5774e00f06d487b70a3957ba7b37ed77cc4b89af8cfac0"
+    },
+    {
+      "slug": "seq-prev-6",
+      "text": "小朋友，6 的前面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-prev-6.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "d165053471b479b8540864580f005015ffeca4822a441f1c136a17230310ad21"
+    },
+    {
+      "slug": "seq-prev-7",
+      "text": "小朋友，7 的前面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-prev-7.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "2e8227305c9fc22eb43c0617c6422503244aede5c1697067871ba94cde4dad8b"
+    },
+    {
+      "slug": "seq-prev-8",
+      "text": "小朋友，8 的前面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-prev-8.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "a2a0fed2ef5fb3040abfc3690221b6152fea24e2df449de55d6ab2e68b94b570"
+    },
+    {
+      "slug": "seq-prev-9",
+      "text": "小朋友，9 的前面是几？",
+      "file": "assets/audio/questions-holly/math-q-seq-prev-9.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 24621,
+      "sha256": "79038350d713fce0d92590e47b3e21e196b71df7923f322a79dff50e5d113997"
+    },
+    {
+      "slug": "take-1-apple",
+      "text": "小朋友，请取出 1 个苹果，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-1-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "e90073e2d7b06a63b5570a7570af58610e6252f2a20b44f0670ef0abb06e5787"
+    },
+    {
+      "slug": "take-1-bead-red",
+      "text": "小朋友，请取出 1 颗红珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-1-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 29037,
+      "sha256": "fe75b6a1bc1b374536e7e6a1fe9174df6446d046c1bb93d3fe5632ecb0ceef1b"
+    },
+    {
+      "slug": "take-1-bead-teal",
+      "text": "小朋友，请取出 1 颗青珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-1-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "442ab04dcefab9c7227450be3442dc0d5bc6a6048aca5680049fa99c5a6b2d87"
+    },
+    {
+      "slug": "take-1-eraser",
+      "text": "小朋友，请取出 1 块橡皮，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-1-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "f7a9a88195dfea13435e796a5dcbabf38c67df11875399f18344eca3d12d1199"
+    },
+    {
+      "slug": "take-10-apple",
+      "text": "小朋友，请取出 10 个苹果，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-10-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "8e35ece73a8b4169ed178badf778c6b1274fd357232b5b006d87ed88a72bbfb5"
+    },
+    {
+      "slug": "take-10-bead-red",
+      "text": "小朋友，请取出 10 颗红珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-10-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 32301,
+      "sha256": "d2d05aad5a7c3bca3aebaa7d4c5944d064ac203928a3f0d0cf86060071561dcb"
+    },
+    {
+      "slug": "take-10-bead-teal",
+      "text": "小朋友，请取出 10 颗青珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-10-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "eb4245a185666d338b0eeda052c00383f0bfb08c0477172cc916de6d90c70442"
+    },
+    {
+      "slug": "take-10-eraser",
+      "text": "小朋友，请取出 10 块橡皮，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-10-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "52458a2ff61bf806aa2519d7da4aded6003c4cb68d0aea73ea68eaaff2efff21"
+    },
+    {
+      "slug": "take-2-apple",
+      "text": "小朋友，请取出 2 个苹果，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-2-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 32301,
+      "sha256": "3a0aa2451d9bf91ca926ead74381cf125f55fea510059a9cc05a55b4eb4c8a62"
+    },
+    {
+      "slug": "take-2-bead-red",
+      "text": "小朋友，请取出 2 颗红珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-2-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "e2e342bcb73c1f7190d62c2b87421a45c05db05353299e3bf444a76f837a7531"
+    },
+    {
+      "slug": "take-2-bead-teal",
+      "text": "小朋友，请取出 2 颗青珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-2-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "99094a900714243af946a6300135542d035a5ceff663e5c049173b104f169658"
+    },
+    {
+      "slug": "take-2-eraser",
+      "text": "小朋友，请取出 2 块橡皮，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-2-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30765,
+      "sha256": "14e323e45681d7e27f3d9012a99a27f7ca59d441f4e1502cdcd807dfefdd155e"
+    },
+    {
+      "slug": "take-3-apple",
+      "text": "小朋友，请取出 3 个苹果，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-3-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "9c56d02aa64a67098dae8bd9eb843e13d4583126f2c9c7a221052f6cbe578240"
+    },
+    {
+      "slug": "take-3-bead-red",
+      "text": "小朋友，请取出 3 颗红珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-3-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "ba967fd5d2ef53893dc1551871b4718de9355e865821911a07ee559cef5cac18"
+    },
+    {
+      "slug": "take-3-bead-teal",
+      "text": "小朋友，请取出 3 颗青珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-3-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "cf27f3c3b2c5101a2175baf7157d0a49ad89d918a5c6070d122f7e4a626cca93"
+    },
+    {
+      "slug": "take-3-eraser",
+      "text": "小朋友，请取出 3 块橡皮，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-3-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 32301,
+      "sha256": "f6f2f35631026ad263b216a718eb30c40fc6c00d4899475d41b848ecb783f8a7"
+    },
+    {
+      "slug": "take-4-apple",
+      "text": "小朋友，请取出 4 个苹果，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-4-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "782338a8545f94169540036370b4b1338f68b7c2464a4fd1112bd76c4b4f7588"
+    },
+    {
+      "slug": "take-4-bead-red",
+      "text": "小朋友，请取出 4 颗红珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-4-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "e523909c53193bd2f84baddbd21fbe0c3411ef9ccba7b89989866eae8920970d"
+    },
+    {
+      "slug": "take-4-bead-teal",
+      "text": "小朋友，请取出 4 颗青珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-4-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 32301,
+      "sha256": "0d4d469f0f7dd606ece6d3c48317f3a8674fbf55981c59a01d7a67151f96338b"
+    },
+    {
+      "slug": "take-4-eraser",
+      "text": "小朋友，请取出 4 块橡皮，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-4-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "968a9c08a5932a669ce36ea5ca06933bb4b8c8b202c407746c184518e9757e78"
+    },
+    {
+      "slug": "take-5-apple",
+      "text": "小朋友，请取出 5 个苹果，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-5-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "9152e64a99a160ac2cdda04da28f0068f57787ab13e1ce33516a9e145313a41b"
+    },
+    {
+      "slug": "take-5-bead-red",
+      "text": "小朋友，请取出 5 颗红珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-5-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 32493,
+      "sha256": "1439289b40a05993e5a872e382d916f429ffbac14ec3e8575ac09ba7511c32ea"
+    },
+    {
+      "slug": "take-5-bead-teal",
+      "text": "小朋友，请取出 5 颗青珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-5-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "075644cbc9d7a627eb0feebb8c51ad77166def8b61421b5aca1dd9c845bb125d"
+    },
+    {
+      "slug": "take-5-eraser",
+      "text": "小朋友，请取出 5 块橡皮，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-5-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "fd1824e87240e9b1fe253454bf6ede0e477171c63b20f55daa5be991300dfefc"
+    },
+    {
+      "slug": "take-6-apple",
+      "text": "小朋友，请取出 6 个苹果，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-6-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "217e2e10c07fdfb55cc6ef6cb66fa8a44ae4306b0edca166e2e3e5f7e540db1d"
+    },
+    {
+      "slug": "take-6-bead-red",
+      "text": "小朋友，请取出 6 颗红珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-6-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "5866618dd6fefddfe742d6d6d575e91a38be9f5f3413cefb31ed96b65679cc6f"
+    },
+    {
+      "slug": "take-6-bead-teal",
+      "text": "小朋友，请取出 6 颗青珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-6-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30765,
+      "sha256": "8228e62b16996047787102d963392c425970657386fcfca6fd56963e025ab97a"
+    },
+    {
+      "slug": "take-6-eraser",
+      "text": "小朋友，请取出 6 块橡皮，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-6-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "30672d7022dca72c13791e4346d35867ecdc10f4acbe8dbddf6d1a3985738041"
+    },
+    {
+      "slug": "take-7-apple",
+      "text": "小朋友，请取出 7 个苹果，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-7-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "94b5989a46d2089c335e3a349f912f3e9d62248e10d7f466b30d192c26b2d0bc"
+    },
+    {
+      "slug": "take-7-bead-red",
+      "text": "小朋友，请取出 7 颗红珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-7-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "f82e69881fb5a4402c14987046679bbbf61e1e62b787b875d709c484e3db52a5"
+    },
+    {
+      "slug": "take-7-bead-teal",
+      "text": "小朋友，请取出 7 颗青珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-7-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "ed693177c4547e879bb2ef6996edfa9ca7b3146e08d94d8c7122152c2606fa74"
+    },
+    {
+      "slug": "take-7-eraser",
+      "text": "小朋友，请取出 7 块橡皮，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-7-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "18007688d023665ba355396f637487ac9dfc37525fc1fc1f9808695133852814"
+    },
+    {
+      "slug": "take-8-apple",
+      "text": "小朋友，请取出 8 个苹果，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-8-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "f6e02f1b207cf05369088b9191fc3eb40b1d248cfdd9e0c64a831c34f36d577e"
+    },
+    {
+      "slug": "take-8-bead-red",
+      "text": "小朋友，请取出 8 颗红珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-8-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "f69b30351b6016b1708839e3493fb4fbcd94e2aa7a45af2da9981101360a2de0"
+    },
+    {
+      "slug": "take-8-bead-teal",
+      "text": "小朋友，请取出 8 颗青珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-8-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "458056d656ae179e693ea09858888df9b113f9e4144a56e64073d892b8251cf3"
+    },
+    {
+      "slug": "take-8-eraser",
+      "text": "小朋友，请取出 8 块橡皮，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-8-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30765,
+      "sha256": "b6cc098a05e69a73ea599c93e05c39d539d3557a89086cb6695e1e426d1056be"
+    },
+    {
+      "slug": "take-9-apple",
+      "text": "小朋友，请取出 9 个苹果，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-9-apple.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "1818fe67e9ff3c631e86ab451b29166bdbe448a3cc61a2453fd57874fdc56498"
+    },
+    {
+      "slug": "take-9-bead-red",
+      "text": "小朋友，请取出 9 颗红珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-9-bead-red.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "cab32e2ec3fefe37a6ebfb9869f7d7510a0e5a7787e3f2e07e607e6b4b1e3e39"
+    },
+    {
+      "slug": "take-9-bead-teal",
+      "text": "小朋友，请取出 9 颗青珠，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-9-bead-teal.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "387a6922359ddac7e1d9247a5344376da10ef30ad301a1a499ef602046ff8c52"
+    },
+    {
+      "slug": "take-9-eraser",
+      "text": "小朋友，请取出 9 块橡皮，拖进篮子。",
+      "file": "assets/audio/questions-holly/math-q-take-9-eraser.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "bcd864f1e429408c300b24d31cbf9ff00df116744d707efcfb4a24709563a02c"
+    }
+  ],
+  "summary": {
+    "total": 168,
+    "generated": 45,
+    "skipped": 123,
+    "available": 168,
+    "failed": 0,
+    "not_attempted": 0,
+    "text_drift": 45
+  }
+}

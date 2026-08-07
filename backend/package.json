@@ -12,7 +12,8 @@
     "generate-voice-samples": "node src/generate-voice-samples.js",
     "generate-voice-samples-v2": "node src/generate-voice-samples-v2.js",
     "generate-word-audio": "node src/generate-word-audio-v2.js",
-    "generate-question-audio": "node src/generate-question-audio-v2.js"
+    "generate-question-audio": "node src/generate-question-audio-v2.js",
+    "generate-math-question-audio": "node src/generate-math-question-audio.js"
   },
   "dependencies": {
     "@insforge/sdk": "^1.4.5",

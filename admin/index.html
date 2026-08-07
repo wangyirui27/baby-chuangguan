@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>嗨洛塔运维台</title>
+  <link rel="stylesheet" href="/admin/admin.css" />
+</head>
+<body>
+  <div id="gate" class="gate">
+    <div class="gate-card">
+      <h1>嗨洛塔运维台</h1>
+      <p class="muted">用户运维 · 经营概览 · 关卡/视频 · Token 鉴权</p>
+      <label for="tokenInput">Admin Token</label>
+      <input id="tokenInput" type="password" autocomplete="current-password" placeholder="ADMIN_TOKEN" />
+      <button id="loginBtn" type="button" class="btn primary">进入</button>
+      <p id="gateError" class="error" hidden></p>
+    </div>
+  </div>
+
+  <div id="app" class="app" hidden>
+    <header class="top">
+      <div>
+        <strong>嗨洛塔运维台</strong>
+        <span id="healthPill" class="pill">—</span>
+      </div>
+      <div class="top-actions">
+        <button id="refreshBtn" type="button" class="btn ghost">刷新</button>
+        <button id="logoutBtn" type="button" class="btn ghost">退出</button>
+      </div>
+    </header>
+
+    <section class="stats" id="statsGrid"></section>
+
+    <nav class="tabs">
+      <button type="button" class="tab active" data-tab="users">用户</button>
+      <button type="button" class="tab" data-tab="sms">短信</button>
+      <button type="button" class="tab" data-tab="vip">VIP</button>
+      <button type="button" class="tab" data-tab="rank">排行</button>
+      <button type="button" class="tab" data-tab="levels">关卡</button>
+      <button type="button" class="tab" data-tab="videos">视频</button>
+    </nav>
+
+    <section id="panel-users" class="panel">
+      <div class="toolbar">
+        <input id="userQ" type="search" placeholder="搜手机号 / 用户ID" />
+        <button id="searchUsersBtn" type="button" class="btn">搜索</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>手机号</th>
+              <th>状态</th>
+              <th>VIP</th>
+              <th>会话</th>
+              <th>注册</th>
+              <th>最近登录</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="usersBody"></tbody>
+        </table>
+      </div>
+      <div class="pager" id="usersPager" data-pager="users"></div>
+    </section>
+
+    <section id="panel-sms" class="panel" hidden>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>时间</th>
+              <th>手机号</th>
+              <th>结果</th>
+              <th>渠道</th>
+              <th>错误</th>
+            </tr>
+          </thead>
+          <tbody id="smsBody"></tbody>
+        </table>
+      </div>
+      <div class="pager" id="smsPager" data-pager="sms"></div>
+    </section>
+
+    <section id="panel-vip" class="panel" hidden>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>用户</th>
+              <th>商品</th>
+              <th>来源</th>
+              <th>平台</th>
+              <th>更新</th>
+            </tr>
+          </thead>
+          <tbody id="vipBody"></tbody>
+        </table>
+      </div>
+      <div class="pager" id="vipsPager" data-pager="vips"></div>
+    </section>
+
+    <section id="panel-rank" class="panel" hidden>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>昵称</th>
+              <th>近7日星</th>
+            </tr>
+          </thead>
+          <tbody id="rankBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+
+    <section id="panel-levels" class="panel" hidden>
+      <div class="content-bar">
+        <div class="oss-box">
+          <label for="ossBaseInput">OSS 公网前缀 (publicBaseUrl)</label>
+          <div class="toolbar">
+            <input id="ossBaseInput" type="url" placeholder="https://bucket.oss-cn-shanghai.aliyuncs.com" />
+            <button id="saveOssBtn" type="button" class="btn">保存前缀</button>
+            <button id="scanLocalBtn" type="button" class="btn">扫描本地视频</button>
+            <button id="publishPacksBtn" type="button" class="btn primary">发布到 asset-packs</button>
+          </div>
+          <p id="contentOverview" class="muted content-note">—</p>
+        </div>
+      </div>
+      <div class="toolbar">
+        <select id="levelMapFilter">
+          <option value="">全部地图</option>
+          <option value="ocean">ocean</option>
+          <option value="desert">desert</option>
+          <option value="castle">castle</option>
+        </select>
+        <select id="levelStatusFilter">
+          <option value="all">全部状态</option>
+          <option value="published">published</option>
+          <option value="draft">draft</option>
+          <option value="offline">offline</option>
+        </select>
+        <input id="levelQ" type="search" placeholder="搜关卡号 / 标题 / slug / ossKey" />
+        <button id="searchLevelsBtn" type="button" class="btn">搜索</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>地图·关</th>
+              <th>标题</th>
+              <th>状态</th>
+              <th>OSS Key</th>
+              <th>下载 URL</th>
+              <th>本地</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="levelsBody"></tbody>
+        </table>
+      </div>
+      <div class="pager" id="levelsPager" data-pager="levels"></div>
+    </section>
+
+    <section id="panel-videos" class="panel" hidden>
+      <div class="toolbar register-row">
+        <input id="newVideoOssKey" type="text" placeholder="ossKey 例 assets/video/paid-levels/level-13-apple.mp4" />
+        <input id="newVideoTitle" type="text" placeholder="标题（可选）" />
+        <input id="newVideoMapId" type="text" placeholder="mapId 可选 ocean" style="max-width:7rem" />
+        <input id="newVideoLevelId" type="number" placeholder="关卡号" style="max-width:6rem" />
+        <button id="registerVideoBtn" type="button" class="btn primary">登记视频</button>
+      </div>
+      <div class="toolbar">
+        <input id="videoQ" type="search" placeholder="搜标题 / ossKey / id" />
+        <button id="searchVideosBtn" type="button" class="btn">搜索</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>标题</th>
+              <th>状态</th>
+              <th>OSS Key</th>
+              <th>绑定关卡</th>
+              <th>大小</th>
+              <th>URL</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="videosBody"></tbody>
+        </table>
+      </div>
+      <div class="pager" id="videosPager" data-pager="videos"></div>
+    </section>
+
+    <p id="toast" class="toast" hidden></p>
+  </div>
+
+  <script src="/admin/admin.js"></script>
+</body>
+</html>

@@ -64,7 +64,15 @@ for (const level of levels) {
   }
 }
 
+// TF / 内测硬门槛：前 10 关题语音；全量 187 缺项记 gap，不挡缩小范围 releaseReady 审计里的 hardFailures
+const missingQuestionAudioFirstTen = missingQuestionAudio.filter((entry) => {
+  const id = Number(String(entry).split(':')[0]);
+  return Number.isFinite(id) && id >= 1 && id <= 10;
+});
+const missingQuestionAudioBeyondSeed = missingQuestionAudio.length - missingQuestionAudioFirstTen.length;
+
 const appRelease = JSON.parse(readFileSync(join(ROOT, 'app-release.json'), 'utf8'));
+
 function nativeShellReady() {
   const projectFile = 'ios/BabyEnglishIsland.xcodeproj/project.pbxproj';
   const appDelegateFile = 'ios/BabyEnglishIsland/AppDelegate.swift';
@@ -72,13 +80,29 @@ function nativeShellReady() {
   const infoFile = 'ios/BabyEnglishIsland/Info.plist';
   const packScriptFile = 'tools/pack-app-www.sh';
   const assetPackManifestFile = 'asset-packs.json';
-  if (![projectFile, appDelegateFile, viewControllerFile, infoFile, packScriptFile, assetPackManifestFile].every(fileExists)) return false;
+  const appIconFile = 'ios/BabyEnglishIsland/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png';
+  const privacyFile = 'ios/BabyEnglishIsland/PrivacyInfo.xcprivacy';
+  const shellConfigFile = 'ios/BabyEnglishIsland/shell-config.json';
+  if (![
+    projectFile,
+    appDelegateFile,
+    viewControllerFile,
+    infoFile,
+    packScriptFile,
+    assetPackManifestFile,
+    appIconFile,
+    privacyFile,
+    shellConfigFile,
+  ].every(fileExists)) return false;
 
   const project = readFileSync(join(ROOT, projectFile), 'utf8');
   const viewController = readFileSync(join(ROOT, viewControllerFile), 'utf8');
   const appDelegate = readFileSync(join(ROOT, appDelegateFile), 'utf8');
   const packScript = readFileSync(join(ROOT, packScriptFile), 'utf8');
-  return [
+  const infoPlist = readFileSync(join(ROOT, infoFile), 'utf8');
+  const shellConfig = JSON.parse(readFileSync(join(ROOT, shellConfigFile), 'utf8'));
+
+  const viewNeedles = [
     'WKWebView',
     'StoreKit',
     'SKPaymentQueue.default().add',
@@ -90,14 +114,24 @@ function nativeShellReady() {
     'babyIslandAssetPack',
     'URLSessionConfiguration.background',
     'downloadTask(withResumeData:',
-    'window.babyIslandAssetPackEvent',
-  ].every((needle) => viewController.includes(needle))
+    // Event name is a string payload, not window.xxx property assignment
+    '"babyIslandAssetPackEvent"',
+    'BABY_ISLAND_API_BASE',
+    'shellConfigApiBase',
+  ];
+
+  return viewNeedles.every((needle) => viewController.includes(needle))
     && appDelegate.includes('handleEventsForBackgroundURLSession')
     && appDelegate.includes('AssetPackDownloadManager.backgroundCompletionHandler')
     && project.includes('Copy H5 app')
     && project.includes('tools/pack-app-www.sh')
+    && project.includes('Assets.xcassets')
+    && project.includes('PrivacyInfo.xcprivacy')
+    && project.includes('shell-config.json')
     && packScript.includes('assets/video/free-levels/level-0[1-9]-*.mp4')
-    && packScript.includes('non-seed course video found in bundle');
+    && packScript.includes('non-seed course video found in bundle')
+    && infoPlist.includes('嗨洛塔')
+    && typeof shellConfig.apiBase === 'string';
 }
 
 const nativeReady = nativeShellReady();
@@ -113,10 +147,33 @@ function nativeBuildToolReady() {
 
 const nativeBuildReady = nativeBuildToolReady();
 
+function shellApiBaseConfigured() {
+  try {
+    const shellConfig = JSON.parse(
+      readFileSync(join(ROOT, 'ios/BabyEnglishIsland/shell-config.json'), 'utf8'),
+    );
+    return Boolean(String(shellConfig.apiBase || '').trim());
+  } catch {
+    return false;
+  }
+}
+
+function teamIdConfigured() {
+  try {
+    const team = readFileSync(join(ROOT, 'ios/Config/Team.xcconfig'), 'utf8');
+    const match = team.match(/^\s*DEVELOPMENT_TEAM\s*=\s*(\S+)/m);
+    return Boolean(match && match[1] && match[1] !== 'YOUR_TEAM_ID');
+  } catch {
+    return false;
+  }
+}
+
 const hardFailures = [
   ...(JSON.stringify(firstTen) !== JSON.stringify(expectedFirstTen) ? ['前 10 关设定被改动。'] : []),
   ...(levels.length !== 200 ? [`当前只有 ${levels.length} 关，不是 200 关。`] : []),
-  ...(missingQuestionAudio.length ? [`缺少 ${missingQuestionAudio.length} 个题目语音。`] : []),
+  ...(missingQuestionAudioFirstTen.length
+    ? [`前 10 关缺少 ${missingQuestionAudioFirstTen.length} 个题目语音。`]
+    : []),
   ...(missingWordAudio.length ? [`缺少 ${missingWordAudio.length} 个单词音频。`] : []),
   ...(missingFirstTenVideos.length ? [`前 10 关缺少 ${missingFirstTenVideos.length} 个视频。`] : []),
   ...(nonNounTopicLevels.length ? [`仍有 ${nonNounTopicLevels.length} 关属于颜色/数字/动作，不是高频名词关。`] : []),
@@ -129,6 +186,15 @@ const gaps = [
   ...(!nativeBuildReady ? ['未安装完整 Xcode 或 xcode-select 未指向 Xcode，无法编译验证 iOS 原生包。'] : []),
   ...(!appRelease.updateUrl ? ['app-release.json 没有 App Store updateUrl，更新弹窗无法直达商店。'] : []),
   ...(levels.filter((level) => !level.videoSrc).length ? [`${levels.filter((level) => !level.videoSrc).length} 关还没有课程视频。`] : []),
+  ...(missingQuestionAudioBeyondSeed > 0
+    ? [`全量题语音仍缺 ${missingQuestionAudioBeyondSeed} 个（不挡缩小范围 TestFlight 内测）。`]
+    : []),
+  ...(!shellApiBaseConfigured()
+    ? ['ios/BabyEnglishIsland/shell-config.json 的 apiBase 为空：file:// 壳登录/同步前需填生产 HTTPS 源。']
+    : []),
+  ...(!teamIdConfigured()
+    ? ['ios/Config/Team.xcconfig 未填 DEVELOPMENT_TEAM，Archive 前需写 Team ID 或在 Xcode Signing 里选队。']
+    : []),
 ];
 
 const result = {
@@ -136,12 +202,17 @@ const result = {
     firstTenLocked: JSON.stringify(firstTen) === JSON.stringify(expectedFirstTen),
     levelCount: levels.length,
     missingQuestionAudio: missingQuestionAudio.length,
+    missingQuestionAudioFirstTen: missingQuestionAudioFirstTen.length,
     missingWordAudio: missingWordAudio.length,
     missingFirstTenVideos: missingFirstTenVideos.length,
     nonNounWords: nonNounWordLevels.length,
     nativeShellReady: nativeReady,
     nativeBuildToolReady: nativeBuildReady,
+    shellApiBaseConfigured: shellApiBaseConfigured(),
+    teamIdConfigured: teamIdConfigured(),
+    // hard = content blockers for seed TF; gaps = account/Xcode/API still open
     releaseReady: hardFailures.length === 0 && gaps.length === 0,
+    testflightContentReady: hardFailures.length === 0 && nativeReady,
   },
   hardFailures,
   gaps,

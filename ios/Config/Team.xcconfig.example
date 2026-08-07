@@ -1,0 +1,3 @@
+// Copy to Team.xcconfig and fill your Apple Team ID (Membership page).
+// Team.xcconfig may stay empty until you are ready to Archive.
+DEVELOPMENT_TEAM = YOUR_TEAM_ID
