@@ -60,6 +60,7 @@ GitHub 接手验收口令：先跑 `npm run testflight:preflight`，再用有 Xc
 
 1. Apple Developer 登录 + Team ID
 2. ASC 建 App：`com.baobaoenglish.island`，名 **嗨洛塔**
+   - 表单草稿见 `docs/testflight-asc-form.md`
 3. 有完整 Xcode 的 Mac：
    ```bash
    git pull

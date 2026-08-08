@@ -172,6 +172,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | `docs/testflight-checklist.md` | A/B/C/D 勾选 |
 | `docs/testflight-smoke.md` | 真机冒烟（当前工程与模板均按 **1.0.1 (3)** 记录） |
 | `docs/testflight-secrets.md` | Team ID / ASC API Key 环境变量契约 |
+| `docs/testflight-asc-form.md` | ASC 新建 App / TestFlight 表单草稿 |
 | `docs/iap-product-ids.md` | IAP 商品 ID |
 | `docs/hosted-legal-pages/*` | 隐私/条款 **草稿 HTML**（需自行挂到公网 HTTPS） |
 | `README.md` | 仓库入口指向上述 TF 文档 |

@@ -16,6 +16,7 @@ npm test
 - **总交接（给接手 AI / 全量现状）** → [`docs/handoff-testflight-full-2026-08-07.md`](docs/handoff-testflight-full-2026-08-07.md)
 - 开发人员交接（打包用） → [`docs/dev-handoff-testflight.md`](docs/dev-handoff-testflight.md)
 - 签名/上传环境变量 → [`docs/testflight-secrets.md`](docs/testflight-secrets.md)
+- ASC / TestFlight 表单草稿 → [`docs/testflight-asc-form.md`](docs/testflight-asc-form.md)
 - 工程清单 → [`docs/testflight-checklist.md`](docs/testflight-checklist.md)
 - 内测冒烟 → [`docs/testflight-smoke.md`](docs/testflight-smoke.md)
 

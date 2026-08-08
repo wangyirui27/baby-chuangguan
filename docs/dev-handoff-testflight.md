@@ -60,6 +60,7 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 | `asset-packs.json` | L11–200 OSS URL |
 | `docs/testflight-checklist.md` | A/B/C/D 门禁 |
 | `docs/testflight-secrets.md` | Team ID / ASC API Key 环境变量契约 |
+| `docs/testflight-asc-form.md` | ASC 新建 App / TestFlight 表单草稿 |
 
 ---
 
@@ -78,7 +79,8 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 2. Team ID → `DEVELOPMENT_TEAM` 环境变量、本地 ignored `Team.xcconfig`，或 Signing 面板
 3. 无人值守上传：按 `docs/testflight-secrets.md` 配 ASC API Key；ASC Key 齐全时脚本默认允许自动管理签名，可用 `ALLOW_PROVISIONING_UPDATES=0` 关闭
 4. ASC 若无 App：新建 iOS，Bundle `com.baobaoenglish.island`，名 **嗨洛塔**
-5. 上传后处理 5–30 分钟 → 加内测组 / 外测合规
+5. 表单值按 `docs/testflight-asc-form.md`，不确定项留给产品/同事确认
+6. 上传后处理 5–30 分钟 → 加内测组 / 外测合规
 
 ---
 
