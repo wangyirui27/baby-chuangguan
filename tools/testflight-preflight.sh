@@ -99,6 +99,54 @@ test "$desert_count" = "10"
 test "$math_story_count" = "31"
 test "$math_theme_audio_count" = "31"
 
+python3 <<'PY'
+import plistlib
+import struct
+import sys
+from pathlib import Path
+
+plist_files = [
+    'ios/ExportOptions-TestFlight.plist',
+    'ios/BabyEnglishIsland/Info.plist',
+    'ios/BabyEnglishIsland/PrivacyInfo.xcprivacy',
+]
+for rel in plist_files:
+    try:
+        with open(rel, 'rb') as fh:
+            plistlib.load(fh)
+    except Exception as exc:
+        print(f'[testflight-preflight] invalid plist: {rel}: {exc}', file=sys.stderr)
+        sys.exit(13)
+
+icon = Path('ios/BabyEnglishIsland/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png')
+data = icon.read_bytes()
+if data[:8] != b'\x89PNG\r\n\x1a\n':
+    print(f'[testflight-preflight] AppIcon-1024.png is not PNG', file=sys.stderr)
+    sys.exit(14)
+pos = 8
+has_alpha = False
+width = height = None
+while pos + 8 <= len(data):
+    length = struct.unpack('>I', data[pos:pos + 4])[0]
+    kind = data[pos + 4:pos + 8]
+    chunk = data[pos + 8:pos + 8 + length]
+    pos += 12 + length
+    if kind == b'IHDR':
+        width, height, _bit_depth, color_type = struct.unpack('>IIBB', chunk[:10])
+        has_alpha = color_type in (4, 6)
+    elif kind == b'tRNS':
+        has_alpha = True
+    elif kind == b'IEND':
+        break
+if (width, height) != (1024, 1024):
+    print(f'[testflight-preflight] AppIcon-1024.png size={width}x{height} want=1024x1024', file=sys.stderr)
+    sys.exit(14)
+if has_alpha:
+    print('[testflight-preflight] AppIcon-1024.png must not contain alpha', file=sys.stderr)
+    sys.exit(14)
+print('[testflight-preflight] plist+icon gate OK')
+PY
+
 if command -v plutil >/dev/null 2>&1; then
   plutil -lint \
     ios/ExportOptions-TestFlight.plist \

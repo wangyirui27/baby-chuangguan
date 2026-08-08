@@ -154,6 +154,10 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(preflight, /math_theme_audio_count/);
   assert.match(preflight, /mathThemeAudio=\$math_theme_audio_count/);
   assert.match(preflight, /seeds ocean=\$ocean_count desert=\$desert_count math=\$math_story_count/);
+  assert.match(preflight, /plistlib\.load/);
+  assert.match(preflight, /struct\.unpack\('>IIBB'/);
+  assert.match(preflight, /plist\+icon gate OK/);
+  assert.match(preflight, /size=\{width\}x\{height\} want=1024x1024/);
   assert.match(preflight, /AppIcon-1024\.png must not contain alpha/);
   assert.match(githubWorkflow, /name: TestFlight Preflight/);
   assert.match(githubWorkflow, /npm run testflight:preflight/);
