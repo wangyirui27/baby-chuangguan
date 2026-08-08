@@ -30,6 +30,7 @@ npm ci --prefix apps/backend
 npm ci --prefix apps/frontend
 bash tools/pack-app-www.sh /tmp/hirota-www-check
 npm run testflight:preflight
+npm run testflight:verify-handoff
 npm run probe:asset-packs -- --dry-run  # 可选：只列 OSS 样本 URL，不联网
 open ios/BabyEnglishIsland.xcodeproj
 # 或装好 Xcode + Team 后：
@@ -38,8 +39,10 @@ open ios/BabyEnglishIsland.xcodeproj
 # DEVELOPMENT_TEAM=你的ID BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
 ```
 
-`docs/testflight-github-actions-template.yml` 是无凭据 CI 模板；有 GitHub `workflow` 权限的同事可复制到 `.github/workflows/testflight-preflight.yml` 启用绿勾。它只证明内容包、H5、壳工程交接门禁通过；Archive / Upload 仍必须由有完整 Xcode + Apple Developer Team 的技术同事执行。
-启用命令：`bash tools/enable-testflight-workflow.sh`，然后由有 `workflow` scope 的凭据提交 `.github/workflows/testflight-preflight.yml`。
+`.github/workflows/testflight-preflight.yml` 已启用无凭据 CI，push / PR 会跑同一套内容包、H5、壳工程交接门禁。它只证明 GitHub clean checkout 预检通过；Archive / Upload 仍必须由有完整 Xcode + Apple Developer Team 的技术同事执行。
+`docs/testflight-github-actions-template.yml` 保留为源模板；需要重建时运行 `bash tools/enable-testflight-workflow.sh`。提交 workflow 文件仍需要 GitHub 凭据带 `workflow` scope。
+
+`npm run testflight:verify-handoff` 会从当前已提交 HEAD 克隆一个干净副本、重装四处依赖并跑 `npm run testflight:preflight`，用于验证技术同事通过 GitHub 接手时不会缺文件。需要直接验远端时可用：`HANDOFF_CLONE_SOURCE=https://github.com/wangyirui27/baby-chuangguan.git npm run testflight:verify-handoff`。
 
 `DEVELOPMENT_TEAM=你的ID bash tools/ship-testflight.sh --upload`；或本地复制 `ios/Config/Team.xcconfig.example` 为 ignored 的 `ios/Config/Team.xcconfig` 后填 Team。生产 API 写入 `ios/BabyEnglishIsland/shell-config.json` 的 `apiBase`（HTTPS，无尾 `/`）。内容内测 `apiBase` 可空，`allowLocalMockLogin=true` 只用于通过强制登录门，不授予 VIP。
 TestFlight 默认 `TEMP_LOCAL_FULL_ACCESS=false`，本地壳不会绕过 11 关以后的付费墙。

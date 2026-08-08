@@ -8,6 +8,7 @@
     "e2e": "node tools/e2e-auth-flow.mjs",
     "e2e:math": "node tools/e2e-math-ai-smoke.mjs",
     "testflight:preflight": "bash tools/testflight-preflight.sh",
+    "testflight:verify-handoff": "bash tools/verify-testflight-handoff.sh",
     "audit:readiness": "node tools/audit-readiness.mjs",
     "audit:release": "node tools/audit-readiness.mjs --strict",
     "probe:asset-packs": "node tools/probe-asset-pack-urls.mjs",

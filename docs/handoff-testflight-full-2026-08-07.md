@@ -50,7 +50,12 @@ npm test
 npm run testflight:preflight
 # 预期：[testflight-preflight] git-tracked assets ocean=10 desert=10 math=31 mathThemeAudio=31
 #      [testflight-preflight] seeds ocean=10 desert=10 math=31 mathThemeAudio=31
+#      [testflight-preflight] plist+icon gate OK
 #      [testflight-preflight] OK
+
+npm run testflight:verify-handoff
+# 预期：从已提交 HEAD 克隆干净副本、重装四处依赖，再跑完 testflight:preflight 后输出 [testflight-handoff] OK
+# 验远端：HANDOFF_CLONE_SOURCE=https://github.com/wangyirui27/baby-chuangguan.git npm run testflight:verify-handoff
 
 node tools/audit-readiness.mjs
 # 关键字段（2026-08-08 实测）：
@@ -149,7 +154,8 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | pack 脚本 | `tools/pack-app-www.sh`：非视频运行时 + shell loop + 双图前 10 + 数学 story 31；L11+ 不进包 |
 | 审计 | `tools/audit-readiness.mjs`：双图种子 + 数学 story + OSS 真链 + 付费墙开关 + 版本 + 占位 URL + TF content 字段 |
 | 一键预检 | `npm run testflight:preflight`：无 Xcode 跑测试、readiness、pack、plist/scheme 语法 |
-| GitHub 预检模板 | `docs/testflight-github-actions-template.yml`：无 Apple 密钥；有 `workflow` 权限的同事复制到 `.github/workflows/testflight-preflight.yml` 后可跑内容/壳交接门禁与手动 OSS sample probe |
+| 干净交接验证 | `npm run testflight:verify-handoff`：从已提交 HEAD 克隆干净副本、重装依赖并跑完整预检 |
+| GitHub 预检 | `.github/workflows/testflight-preflight.yml`：已启用无 Apple 密钥门禁；`docs/testflight-github-actions-template.yml` 保留为源模板 |
 | 测试 | `npm test` → 383 |
 | 品牌文案 | 用户可见「嗨洛塔」；禁「英语岛 / 开通 VIP」口径（按地图收费） |
 

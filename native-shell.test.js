@@ -82,8 +82,10 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.ok(exists('ios/Config/Shared.xcconfig'));
   assert.ok(exists('ios/ExportOptions-TestFlight.plist'));
   assert.ok(exists('tools/testflight-preflight.sh'));
+  assert.ok(exists('tools/verify-testflight-handoff.sh'));
   assert.ok(exists('tools/probe-asset-pack-urls.mjs'));
   assert.ok(exists('tools/enable-testflight-workflow.sh'));
+  assert.ok(exists('.github/workflows/testflight-preflight.yml'));
   assert.ok(exists('docs/testflight-github-actions-template.yml'));
   assert.ok(exists('docs/testflight-checklist.md'));
   assert.ok(exists('docs/testflight-secrets.md'));
@@ -133,9 +135,11 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
 
   const preflight = read('tools/testflight-preflight.sh');
   const githubWorkflow = read('docs/testflight-github-actions-template.yml');
+  const enabledGithubWorkflow = read('.github/workflows/testflight-preflight.yml');
   const readme = read('README.md');
   const devHandoff = read('docs/dev-handoff-testflight.md');
   const fullHandoff = read('docs/handoff-testflight-full-2026-08-07.md');
+  const pkg = JSON.parse(read('package.json'));
   assert.match(preflight, /for bin in node npm rsync python3/);
   assert.match(preflight, /need_node_modules "backend" "npm ci --prefix backend"/);
   assert.match(preflight, /need_node_modules "apps\/backend" "npm ci --prefix apps\/backend"/);
@@ -159,16 +163,27 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(preflight, /plist\+icon gate OK/);
   assert.match(preflight, /size=\{width\}x\{height\} want=1024x1024/);
   assert.match(preflight, /AppIcon-1024\.png must not contain alpha/);
+  const verifyHandoff = read('tools/verify-testflight-handoff.sh');
+  assert.match(pkg.scripts['testflight:verify-handoff'], /tools\/verify-testflight-handoff\.sh/);
+  assert.match(verifyHandoff, /git clone --no-local "\$SOURCE" "\$DEST"/);
+  assert.match(verifyHandoff, /npm ci --prefix apps\/frontend/);
+  assert.match(verifyHandoff, /npm run testflight:preflight/);
+  assert.match(readme, /testflight:verify-handoff/);
+  assert.match(devHandoff, /testflight:verify-handoff/);
+  assert.match(fullHandoff, /testflight:verify-handoff/);
   assert.match(githubWorkflow, /name: TestFlight Preflight/);
   assert.match(githubWorkflow, /npm run testflight:preflight/);
   assert.match(githubWorkflow, /probe:asset-packs/);
   assert.match(githubWorkflow, /contents: read/);
+  assert.equal(enabledGithubWorkflow, githubWorkflow);
   assert.match(readme, /npm ci --prefix backend/);
+  assert.match(readme, /\.github\/workflows\/testflight-preflight\.yml` 已启用/);
   assert.match(devHandoff, /npm ci --prefix apps\/backend/);
   assert.match(fullHandoff, /npm ci --prefix apps\/frontend/);
   assert.match(fullHandoff, /git-tracked assets ocean=10 desert=10 math=31 mathThemeAudio=31/);
   assert.doesNotMatch(githubWorkflow, /lfs: true/);
   assert.doesNotMatch(githubWorkflow, /ASC_KEY|DEVELOPMENT_TEAM|APP_STORE_CONNECT|p8/);
+  assert.doesNotMatch(enabledGithubWorkflow, /ASC_KEY|DEVELOPMENT_TEAM|APP_STORE_CONNECT|p8/);
 
   const enableWorkflow = read('tools/enable-testflight-workflow.sh');
   assert.match(enableWorkflow, /testflight-github-actions-template\.yml/);

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>关卡等待下载预览</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0) 36%),
+          linear-gradient(180deg, #f4f6f2 0%, #f8f5ed 58%, #edf1ec 100%);
+        font-family: Nunito, "Avenir Next", "Noto Sans SC", system-ui, sans-serif;
+      }
+
+      .stage {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 100vw;
+        height: 100dvh;
+      }
+
+      .level-video-loading-close {
+        position: absolute;
+        top: max(clamp(1rem, 2.4vh, 1.5rem), env(safe-area-inset-top, 0px));
+        right: max(clamp(1rem, 2.4vh, 1.5rem), env(safe-area-inset-right, 0px));
+        z-index: 2;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: clamp(2.75rem, 6.2vh, 3.35rem);
+        height: clamp(2.75rem, 6.2vh, 3.35rem);
+        padding: 0;
+        border: 2px solid rgba(114, 93, 66, 0.22);
+        border-radius: 50%;
+        color: #725d42;
+        background: rgba(255, 253, 245, 0.72);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.9),
+          0 0.35rem 1rem rgba(75, 63, 48, 0.1);
+        backdrop-filter: blur(0.35rem);
+        -webkit-backdrop-filter: blur(0.35rem);
+      }
+
+      .level-video-loading-close:active {
+        transform: translateY(1px) scale(0.98);
+      }
+
+      .level-video-loading-close svg {
+        width: 56%;
+        height: 56%;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 3;
+        stroke-linecap: round;
+      }
+
+      .level-video-download-panel {
+        display: grid;
+        justify-items: center;
+        align-content: center;
+        gap: clamp(0.7rem, 2.2vh, 1rem);
+        width: min(20rem, 56vw);
+        min-height: clamp(13rem, 34vh, 18rem);
+      }
+
+      .level-video-loading-lottie,
+      .level-video-loading-lottie svg {
+        display: block;
+        width: clamp(9rem, 24vh, 13.5rem);
+        height: clamp(9rem, 24vh, 13.5rem);
+        overflow: visible;
+      }
+
+      .level-video-loading-dots {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.52rem;
+        color: rgba(95, 102, 104, 0.74);
+      }
+
+      .level-video-loading-dots span {
+        display: block;
+        width: 0.72rem;
+        height: 0.72rem;
+        border-radius: 999px;
+        background: currentColor;
+        opacity: 0.28;
+        transform: translateY(0) scale(0.84);
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .level-video-loading-dots span {
+          animation: level-video-loading-dot 1.1s ease-in-out infinite;
+        }
+
+        .level-video-loading-dots span:nth-child(2) {
+          animation-delay: 0.16s;
+        }
+
+        .level-video-loading-dots span:nth-child(3) {
+          animation-delay: 0.32s;
+        }
+      }
+
+      @keyframes level-video-loading-dot {
+        0%,
+        100% {
+          opacity: 0.28;
+          transform: translateY(0) scale(0.84);
+        }
+        45% {
+          opacity: 0.88;
+          transform: translateY(-0.42rem) scale(1);
+        }
+      }
+    </style>
+    <script src="assets/vendor/lottie.min.js"></script>
+  </head>
+  <body>
+    <main class="stage" aria-label="关卡视频等待页预览">
+      <button class="level-video-loading-close" type="button" aria-label="关闭预览">
+        <svg aria-hidden="true" viewBox="0 0 32 32"><path d="m9 9 14 14M23 9 9 23"/></svg>
+      </button>
+      <div class="level-video-download-panel" role="status" aria-live="polite" aria-label="视频正在准备">
+        <div class="level-video-loading-lottie" data-level-video-loading-lottie aria-hidden="true"></div>
+        <div class="level-video-loading-dots" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const host = document.querySelector("[data-level-video-loading-lottie]");
+      const lottieApi = window.lottie || window.bodymovin;
+
+      if (host && lottieApi) {
+        fetch("assets/lottie/level-video-loading.json?v=20260803-rocking-horse-v1")
+          .then((response) => (response.ok ? response.json() : null))
+          .then((data) => {
+            if (!data) return;
+            lottieApi.loadAnimation({
+              container: host,
+              renderer: "svg",
+              loop: true,
+              autoplay: true,
+              animationData: data,
+            });
+          })
+          .catch(() => {});
+      }
+    </script>
+  </body>
+</html>

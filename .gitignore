@@ -62,6 +62,7 @@ Thumbs.db
 !assets/brand/hirota-wordmark.png
 !assets/brand/splash-logo.png
 !assets/egypt-map/background/egypt-desert-infinite-clean-bg-dreamina-v2.png
+!assets/egypt-map/cutouts/characters/runtime/camel-walk-frame96-idle-v6.png
 !ios/**/*.png
 !assets/**/*.webp
 assets/assets/
@@ -85,8 +86,6 @@ assets/audio/voice-trials/
 pinchtab-*
 
 # ─── Preview/standalone HTML test pages ─────────────
-voice-samples.html
-voice-samples-v2.html
 voice-trials-*.html
 __desert_decor_qa.html
 preview-word-audio.png
