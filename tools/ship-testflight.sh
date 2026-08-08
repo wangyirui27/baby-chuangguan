@@ -5,7 +5,7 @@
 #   bash tools/ship-testflight.sh --static-check   # 无 Xcode 静态检查
 #   bash tools/ship-testflight.sh --archive        # Archive
 #   bash tools/ship-testflight.sh --upload         # Archive + 导出上传
-#   DEVELOPMENT_TEAM=XXXXXXXX bash tools/ship-testflight.sh --upload
+#   DEVELOPMENT_TEAM=XXXXXXXX ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload
 #   ASC_KEY_ID=... ASC_ISSUER_ID=... ASC_KEY_PATH=/tmp/AuthKey.p8 bash tools/ship-testflight.sh --upload
 set -euo pipefail
 
@@ -200,17 +200,26 @@ preflight() {
   local tid
   tid="$(team_id)"
   echo "Team: $(team_label "$tid")"
-  echo "ASC API Key: $(asc_key_status)"
+  local asc_status
+  asc_status="$(asc_key_status)"
+  echo "ASC API Key: $asc_status"
   echo "Build: $(marketing_version) ($(current_build_number))"
   if next="$(next_build_number)"; then
-    echo "Next retry: DEVELOPMENT_TEAM=你的ID BUILD_NUMBER=$next bash tools/ship-testflight.sh --upload"
+    local retry_env="DEVELOPMENT_TEAM=你的ID"
+    if [[ "$asc_status" == "EMPTY" ]]; then
+      retry_env="$retry_env ALLOW_PROVISIONING_UPDATES=1"
+    fi
+    echo "Next retry: $retry_env BUILD_NUMBER=$next bash tools/ship-testflight.sh --upload"
+  fi
+  if [[ "$asc_status" == "EMPTY" ]]; then
+    ylw "ASC API Key 为空：若依赖 Xcode 登录态自动拉证书/profile，请在上传命令加 ALLOW_PROVISIONING_UPDATES=1。"
   fi
   echo "apiBase: $(python3 -c "import json;print(json.load(open('$SHELL_CFG')).get('apiBase') or 'EMPTY')")"
   if [[ -z "$tid" ]]; then
     red "Team 为空。请:"
     echo "  1) Xcode → Settings → Accounts 登录 Apple ID"
     echo "  2) 打开 Membership 复制 Team ID"
-    echo "  3) DEVELOPMENT_TEAM=你的ID bash tools/ship-testflight.sh --upload"
+    echo "  3) DEVELOPMENT_TEAM=你的ID ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload"
     return 1
   fi
   local n

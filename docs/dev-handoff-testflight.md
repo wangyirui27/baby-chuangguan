@@ -36,9 +36,9 @@ npm run testflight:verify-handoff   # 可选：从已提交 HEAD 干净克隆后
 
 # 一键（推荐）
 # 会先自动跑 npm run testflight:preflight，再 Archive/Upload
-DEVELOPMENT_TEAM=你的TeamID bash tools/ship-testflight.sh --upload
+DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload
 # 若 ASC 已有同版本 build，先跑 --check 看 Next retry，再临时递增：
-# DEVELOPMENT_TEAM=你的TeamID BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
+# DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
 
 # 或 GUI
 open ios/BabyEnglishIsland.xcodeproj
@@ -99,7 +99,7 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 
 1. Xcode → Settings → Accounts 登录付费 Apple Developer
 2. Team ID → `DEVELOPMENT_TEAM` 环境变量、本地 ignored `Team.xcconfig`，或 Signing 面板
-3. 无人值守上传：按 `docs/testflight-secrets.md` 配 ASC API Key；ASC Key 齐全时脚本默认允许自动管理签名，可用 `ALLOW_PROVISIONING_UPDATES=0` 关闭
+3. 无人值守上传：按 `docs/testflight-secrets.md` 配 ASC API Key；ASC Key 齐全时脚本默认允许自动管理签名，可用 `ALLOW_PROVISIONING_UPDATES=0` 关闭。若不配 ASC Key、只靠 Xcode 登录态自动拉证书/profile，上传命令显式加 `ALLOW_PROVISIONING_UPDATES=1`
 4. ASC 若无 App：新建 iOS，Bundle `com.baobaoenglish.island`，名 **嗨洛塔**
 5. 表单值按 `docs/testflight-asc-form.md`，不确定项留给产品/同事确认
 6. 上传后处理 5–30 分钟 → 加内测组 / 外测合规

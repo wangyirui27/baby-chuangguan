@@ -61,7 +61,7 @@ OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
 
 ## C 苹果（你/开发者）
 
-GitHub 接手验收口令：fresh clone 后先跑 `npm ci && npm ci --prefix backend && npm ci --prefix apps/backend && npm ci --prefix apps/frontend`，再跑 `npm run testflight:preflight`；随后用有 Xcode 的 Mac 执行 `DEVELOPMENT_TEAM=... bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`。
+GitHub 接手验收口令：fresh clone 后先跑 `npm ci && npm ci --prefix backend && npm ci --prefix apps/backend && npm ci --prefix apps/frontend`，再跑 `npm run testflight:preflight`；随后用有 Xcode 的 Mac 执行 `DEVELOPMENT_TEAM=... ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`。
 
 1. Apple Developer 登录 + Team ID
 2. ASC 建 App：`com.baobaoenglish.island`，名 **嗨洛塔**
@@ -69,9 +69,9 @@ GitHub 接手验收口令：fresh clone 后先跑 `npm ci && npm ci --prefix bac
 3. 有完整 Xcode 的 Mac：
    ```bash
    git pull
-   DEVELOPMENT_TEAM=你的TeamID bash tools/ship-testflight.sh --upload
+   DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload
    # 若同版本 build 已上传过：
-   DEVELOPMENT_TEAM=你的TeamID BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
+   DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
    # 或 GUI：
    open ios/BabyEnglishIsland.xcodeproj
    # Signing 勾 Team → Product → Archive → App Store Connect Upload

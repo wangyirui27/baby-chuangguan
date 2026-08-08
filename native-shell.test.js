@@ -136,6 +136,8 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(ship, /npm run testflight:preflight/);
   assert.match(ship, /do_archive\(\)[\s\S]*?need_xcode[\s\S]*?run_handoff_preflight/);
   assert.match(ship, /provisioning_updates_enabled/);
+  assert.match(ship, /ALLOW_PROVISIONING_UPDATES=1/);
+  assert.match(ship, /ASC API Key 为空/);
   assert.match(ship, /BUILD_NUMBER/);
   assert.match(ship, /current_build_number/);
   assert.match(ship, /next_build_number/);
@@ -155,6 +157,8 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   const readme = read('README.md');
   const devHandoff = read('docs/dev-handoff-testflight.md');
   const fullHandoff = read('docs/handoff-testflight-full-2026-08-07.md');
+  const checklist = read('docs/testflight-checklist.md');
+  const ascForm = read('docs/testflight-asc-form.md');
   const shared = read('ios/Config/Shared.xcconfig');
   const marketingVersion = xcconfigValue(shared, 'MARKETING_VERSION');
   const buildNumber = xcconfigValue(shared, 'CURRENT_PROJECT_VERSION');
@@ -230,7 +234,11 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(verifyHandoff, /npm run testflight:preflight/);
   assert.match(readme, /testflight:verify-handoff/);
   assert.match(readme, /ship-testflight\.sh --static-check/);
+  assert.match(readme, /ALLOW_PROVISIONING_UPDATES=1/);
   assert.match(devHandoff, /testflight:verify-handoff/);
+  assert.match(devHandoff, /ALLOW_PROVISIONING_UPDATES=1/);
+  assert.match(checklist, /ALLOW_PROVISIONING_UPDATES=1/);
+  assert.match(ascForm, /ALLOW_PROVISIONING_UPDATES=1/);
   assert.match(devHandoff, /assert-ios-archive-contract\.mjs/);
   assert.match(devHandoff, /assert-testflight-bundle-media\.mjs/);
   assert.match(fullHandoff, /testflight:verify-handoff/);
@@ -267,12 +275,13 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
     assert.match(read(handoffFile), versionBuildRe);
   }
   assert.match(fullHandoff, /npm ci --prefix apps\/frontend/);
+  assert.match(fullHandoff, /ALLOW_PROVISIONING_UPDATES=1/);
   assert.match(fullHandoff, /TESTFLIGHT_HANDOFF_CARD/);
   assert.match(fullHandoff, /assert-ios-archive-contract\.mjs/);
   assert.match(fullHandoff, /assert-testflight-bundle-media\.mjs/);
   assert.match(fullHandoff, /git-tracked assets ocean=10 desert=10 math=31 mathThemeAudio=31/);
-  assert.match(read('docs/testflight-checklist.md'), /assert-ios-archive-contract\.mjs/);
-  assert.match(read('docs/testflight-checklist.md'), /assert-testflight-bundle-media\.mjs/);
+  assert.match(checklist, /assert-ios-archive-contract\.mjs/);
+  assert.match(checklist, /assert-testflight-bundle-media\.mjs/);
   assert.doesNotMatch(githubWorkflow, /lfs: true/);
   assert.doesNotMatch(githubWorkflow, /ASC_KEY|DEVELOPMENT_TEAM|APP_STORE_CONNECT|p8/);
   assert.doesNotMatch(enabledGithubWorkflow, /ASC_KEY|DEVELOPMENT_TEAM|APP_STORE_CONNECT|p8/);

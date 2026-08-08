@@ -87,7 +87,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 #   assets/video/math-story/*.mp4 31 条（约 95MB）
 ```
 
-**GitHub 接手验收口令：** fresh clone 后先跑 `npm ci && npm ci --prefix backend && npm ci --prefix apps/backend && npm ci --prefix apps/frontend`，再跑 `npm run testflight:preflight`；随后在有完整 Xcode 的 Mac 上执行 `DEVELOPMENT_TEAM=... bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`，但要求 `allowLocalMockLogin=true` 明确保留本地登录门。
+**GitHub 接手验收口令：** fresh clone 后先跑 `npm ci && npm ci --prefix backend && npm ci --prefix apps/backend && npm ci --prefix apps/frontend`，再跑 `npm run testflight:preflight`；随后在有完整 Xcode 的 Mac 上执行 `DEVELOPMENT_TEAM=... ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`，但要求 `allowLocalMockLogin=true` 明确保留本地登录门。
 
 **本机环境（写文档时）：**
 
@@ -106,13 +106,13 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 3. 写入其一即可：
    - 本地 ignored `ios/Config/Team.xcconfig`：`DEVELOPMENT_TEAM=XXXXXXXXXX`
    - 或 Xcode → Signing & Capabilities 选 Team
-   - 或：`DEVELOPMENT_TEAM=XXX bash tools/ship-testflight.sh --upload`（脚本会生成临时 ExportOptions 写 teamID，不污染 Git）
+   - 或：`DEVELOPMENT_TEAM=XXX ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`（脚本会生成临时 ExportOptions 写 teamID，不污染 Git）
 4. **App Store Connect** 若无 App：新建 iOS，Bundle **完全一致** `com.baobaoenglish.island`，显示名 **嗨洛塔**
 5. **Archive → Upload**：
    ```bash
    git pull
    bash tools/ship-testflight.sh --check   # 显示当前 build 与 Next retry 命令
-   DEVELOPMENT_TEAM=你的TeamID bash tools/ship-testflight.sh --upload
+   DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload
    # 或 GUI：open ios/BabyEnglishIsland.xcodeproj → Product → Archive → Distribute → ASC
    ```
 6. ASC 处理 5–30 分钟 → **加 Internal 测试组** → 设备安装
@@ -177,7 +177,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | 启动 | Info.plist `UILaunchScreen` + `LaunchLogo` / `LaunchBackground` |
 | Privacy | `PrivacyInfo.xcprivacy`；Info `ITSAppUsesNonExemptEncryption` |
 | Export | `ios/ExportOptions-TestFlight.plist`（teamID 占位模板；ship 生成临时副本） |
-| 发船 | `tools/ship-testflight.sh`：check / archive / upload / open；可选 ASC API Key 无人值守上传；`BUILD_NUMBER=4` 可临时递增 build |
+| 发船 | `tools/ship-testflight.sh`：check / archive / upload / open；可选 ASC API Key 无人值守上传；无 ASC Key 且依赖 Xcode 自动签名时加 `ALLOW_PROVISIONING_UPDATES=1`；`BUILD_NUMBER=4` 可临时递增 build |
 | 预检 | `tools/testflight-preflight.sh` |
 | pack 后媒体门禁 | `tools/assert-testflight-bundle-media.mjs` |
 | Archive 静态契约 | `tools/assert-ios-archive-contract.mjs`；也可跑 `bash tools/ship-testflight.sh --static-check`，不需要 Xcode |
@@ -273,7 +273,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 1. `git pull` + §1 三门禁全绿
 2. **保持** `apiBase=""` 且 `allowLocalMockLogin=true`（或产品明确要求再填生产 API）
 3. Team ID → xcconfig 或环境变量
-4. `DEVELOPMENT_TEAM=… bash tools/ship-testflight.sh --upload`
+4. `DEVELOPMENT_TEAM=… ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`
 5. ASC → TF 组 → 安装
 6. 无网测：海岛 1–10、沙漠 1–10 视频
 7. 未购买/未授权：L11+ 不被本地壳直接放行；购买/恢复/VIP/内测授权后，有网测任意 L11+ OSS 可播
@@ -290,7 +290,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
      "iapProductIds": { "mapVip": "baby_island_map_vip_001" }
    }
    ```
-4. **递增 build**（推荐发船时临时 `BUILD_NUMBER=4`；要固化再同步 Shared + pbx `CURRENT_PROJECT_VERSION`）后重新 Archive
+4. **递增 build**（推荐发船时临时 `ALLOW_PROVISIONING_UPDATES=1 BUILD_NUMBER=4`；要固化再同步 Shared + pbx `CURRENT_PROJECT_VERSION`）后重新 Archive
 5. 真机：短信登录、杀进程 session、进度同步
 6. IAP 仅当 ASC 已建同名商品
 

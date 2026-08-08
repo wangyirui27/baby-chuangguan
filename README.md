@@ -36,9 +36,9 @@ npm run testflight:verify-handoff
 npm run probe:asset-packs -- --dry-run  # 可选：只列 OSS 样本 URL，不联网
 open ios/BabyEnglishIsland.xcodeproj
 # 或装好 Xcode + Team 后：
-# DEVELOPMENT_TEAM=你的ID bash tools/ship-testflight.sh --upload
+# DEVELOPMENT_TEAM=你的ID ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload
 # 重复传同版本时：
-# DEVELOPMENT_TEAM=你的ID BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
+# DEVELOPMENT_TEAM=你的ID ALLOW_PROVISIONING_UPDATES=1 BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
 ```
 
 `.github/workflows/testflight-preflight.yml` 已启用无凭据 CI，push / PR 会跑同一套内容包、H5、壳工程交接门禁。它只证明 GitHub clean checkout 预检通过；Archive / Upload 仍必须由有完整 Xcode + Apple Developer Team 的技术同事执行。
@@ -48,7 +48,7 @@ open ios/BabyEnglishIsland.xcodeproj
 `npm run testflight:verify-handoff` 会从当前已提交 HEAD 克隆一个干净副本、重装四处依赖并跑 `npm run testflight:preflight`，用于验证技术同事通过 GitHub 接手时不会缺文件。需要直接验远端时可用：`HANDOFF_CLONE_SOURCE=https://github.com/wangyirui27/baby-chuangguan.git npm run testflight:verify-handoff`。
 预检成功会输出 `TESTFLIGHT_HANDOFF_CARD`，Actions Summary 也会生成同样的 commit / run / 版本证据和 `testflight-readiness-<sha>` artifact，技术同事可直接贴到 handoff issue。
 
-`DEVELOPMENT_TEAM=你的ID bash tools/ship-testflight.sh --upload`；或本地复制 `ios/Config/Team.xcconfig.example` 为 ignored 的 `ios/Config/Team.xcconfig` 后填 Team。生产 API 写入 `ios/BabyEnglishIsland/shell-config.json` 的 `apiBase`（HTTPS，无尾 `/`）。内容内测 `apiBase` 可空，`allowLocalMockLogin=true` 只用于通过强制登录门，不授予 VIP。
+`DEVELOPMENT_TEAM=你的ID ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`；或本地复制 `ios/Config/Team.xcconfig.example` 为 ignored 的 `ios/Config/Team.xcconfig` 后填 Team。若已配置 ASC API Key，脚本会自动允许 provisioning updates，可不显式设置。生产 API 写入 `ios/BabyEnglishIsland/shell-config.json` 的 `apiBase`（HTTPS，无尾 `/`）。内容内测 `apiBase` 可空，`allowLocalMockLogin=true` 只用于通过强制登录门，不授予 VIP。
 TestFlight 默认 `TEMP_LOCAL_FULL_ACCESS=false`，本地壳不会绕过 11 关以后的付费墙。
 
 ## 后端

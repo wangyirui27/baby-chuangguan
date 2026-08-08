@@ -61,5 +61,5 @@
 1. ASC 先建 App：平台 iOS、名称嗨洛塔、Bundle ID `com.baobaoenglish.island`、SKU 自定。
 2. 有完整 Xcode 的 Mac pull `main`。
 3. 跑 `npm run testflight:preflight`，确认 `git-tracked assets ocean=10 desert=10 math=31 mathThemeAudio=31` 与 `seeds ocean=10 desert=10 math=31 mathThemeAudio=31`。
-4. `DEVELOPMENT_TEAM=你的TeamID bash tools/ship-testflight.sh --upload`。
+4. `DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`。
 5. ASC 处理完成后，按 `docs/testflight-smoke.md` 加内测组并验收。
