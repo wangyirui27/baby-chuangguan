@@ -12,7 +12,7 @@ body:
 
         Do not paste Apple account emails, Team IDs, certificates, provisioning profiles, API keys, passwords, `.p8` contents, or `.env` values into GitHub issues. Keep signing material on the developer's Mac or in GitHub Secrets owned by that developer.
 
-        Start from `docs/dev-handoff-testflight.md`; smoke test with `docs/testflight-smoke.md`. Archive the exact verified commit in this issue (`git checkout <verified_commit>`), not a blind latest `main`.
+        Start from `docs/dev-handoff-testflight.md`; smoke test with `docs/testflight-smoke.md`. Archive the exact verified commit in this issue (`git checkout <verified_commit>`), not a blind latest `main`. The `testflight-readiness-<sha>` artifact also includes `handoffIssue` fields that can be copied into this form.
 
   - type: input
     id: commit
@@ -36,7 +36,7 @@ body:
     id: preflight_card
     attributes:
       label: TESTFLIGHT_HANDOFF_CARD
-      description: Paste the full card printed by `npm run testflight:preflight`, from the GitHub Actions "Run TestFlight handoff preflight" job log, or from `handoffCard` inside the `testflight-readiness-<sha>` artifact JSON.
+      description: Paste the full card printed by `npm run testflight:preflight`, from the GitHub Actions "Run TestFlight handoff preflight" job log, or from `handoffCard` / `handoffIssue.handoffCard` inside the `testflight-readiness-<sha>` artifact JSON.
       placeholder: |
         -----BEGIN TESTFLIGHT_HANDOFF_CARD-----
         verified_commit=<same 40-char SHA as above>

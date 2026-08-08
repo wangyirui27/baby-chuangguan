@@ -53,7 +53,7 @@ open ios/BabyEnglishIsland.xcodeproj
 GitHub 新建 Issue 时可选择 `TestFlight upload handoff` 模板，把 commit、Actions 绿勾、上传结果和真机冒烟逐项勾掉；不要把 Apple 凭据、Team ID、证书或 `.p8` 内容写进 Issue。
 
 Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（干净克隆预检约 364M / 361.1MiB；脏工作区带未跟踪 QA 资源时可能更大；含海岛+沙漠前 10 关 mp4、数学 story 31 条 mp4 + 31 条主题音 + `asset-packs.json`）。数学 story 是包内离线资源，不走 `asset-packs.json` / OSS；OSS 只覆盖海岛/沙漠 L11–200。`npm run testflight:preflight` 也会检查这些种子资源已被 Git 跟踪，并通过 `tools/assert-testflight-bundle-media.mjs` 拦截 LFS pointer、错误 mp4/mp3 magic 和异常 `www` 体积，避免“本机有、clone 后没有”或坏媒体进 IPA。
-预检成功会打印 `TESTFLIGHT_HANDOFF_CARD`；GitHub Actions Summary 会列出 commit、run、版本、Bundle ID，并上传 `testflight-readiness-<sha>` JSON artifact。artifact 内的 `handoffCard` 可直接复制到 handoff issue。提取路径：Actions 绿 run → Artifacts → 下载 `testflight-readiness-<sha>`；或 `gh run download <run_id> -n testflight-readiness-<sha>` 后执行 `node -e "console.log(require('./testflight-readiness.json').handoffCard)"`。
+预检成功会打印 `TESTFLIGHT_HANDOFF_CARD`；GitHub Actions Summary 会列出 commit、run、版本、Bundle ID，并上传 `testflight-readiness-<sha>` JSON artifact。artifact 内的 `handoffCard` 可直接复制到 handoff issue，`handoffIssue` 可直接拿来填标题、模板、run、artifact、命令、门禁清单和密钥边界。提取路径：Actions 绿 run → Artifacts → 下载 `testflight-readiness-<sha>`；或 `gh run download <run_id> -n testflight-readiness-<sha>` 后执行 `node -e "const r=require('./testflight-readiness.json'); console.log(r.handoffCard); console.log(JSON.stringify(r.handoffIssue,null,2))"`。
 如果要验证远端仓库固定提交，运行：`HANDOFF_CLONE_SOURCE=https://github.com/wangyirui27/baby-chuangguan.git HANDOFF_EXPECTED_SHA=<verified_commit> npm run testflight:verify-handoff`。
 
 ---

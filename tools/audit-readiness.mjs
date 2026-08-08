@@ -565,9 +565,55 @@ const handoffCard = [
   '-----END TESTFLIGHT_HANDOFF_CARD-----',
 ].join('\n');
 
+const githubRepository = process.env.GITHUB_REPOSITORY || 'wangyirui27/baby-chuangguan';
+const githubServerUrl = process.env.GITHUB_SERVER_URL || 'https://github.com';
+const githubRunId = process.env.GITHUB_RUN_ID || '';
+const githubSha = process.env.GITHUB_SHA || handoff.verifiedCommit;
+const actionsRunUrl = githubRunId
+  ? `${githubServerUrl}/${githubRepository}/actions/runs/${githubRunId}`
+  : '<paste successful TestFlight Preflight run URL>';
+const issueTemplateUrl = `${githubServerUrl}/${githubRepository}/issues/new?template=testflight-handoff.yml`;
+const artifactName = `testflight-readiness-${githubSha}`;
+const repositoryGates = [
+  'GitHub Actions "TestFlight Preflight" is green for verifiedCommit.',
+  'npm run testflight:verify-handoff passes from a clean clone, or this Actions artifact proves the same gate.',
+  'No real signing material or production secrets were committed.',
+];
+const developerMacPrerequisites = [
+  'Full Xcode is installed and xcode-select points inside Xcode.app.',
+  'Apple Developer account is active in Xcode Settings.',
+  'Signing team is configured locally only; do not paste Team ID or .p8 into GitHub.',
+  `App Store Connect app exists for ${handoff.bundleId} / 嗨洛塔.`,
+];
+const handoffIssue = {
+  schemaVersion: 1,
+  issueTitle: `[TestFlight] 嗨洛塔 ${handoff.versionBuild} upload handoff`,
+  issueTemplateUrl,
+  templateUrl: issueTemplateUrl,
+  verifiedCommit: handoff.verifiedCommit,
+  preflightRunUrl: actionsRunUrl,
+  readinessArtifact: artifactName,
+  artifactName,
+  uploadScope: `Content TestFlight: ${handoff.versionBuild}, apiBase may stay empty`,
+  handoffCard,
+  repositoryGates,
+  developerMacPrerequisites,
+  checklist: [...repositoryGates, ...developerMacPrerequisites],
+  commands: {
+    checkout: `git fetch --all --tags && git checkout ${handoff.verifiedCommit}`,
+    preflight: 'npm run testflight:preflight',
+    fixedRemoteVerify: `HANDOFF_CLONE_SOURCE=https://github.com/${githubRepository}.git HANDOFF_EXPECTED_SHA=${handoff.verifiedCommit} npm run testflight:verify-handoff`,
+    upload: 'DEVELOPMENT_TEAM=<local-team-id> ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload',
+    retryBuild: 'DEVELOPMENT_TEAM=<local-team-id> ALLOW_PROVISIONING_UPDATES=1 BUILD_NUMBER=<next-build> bash tools/ship-testflight.sh --upload',
+  },
+  smokeDoc: 'docs/testflight-smoke.md',
+  secretBoundary: 'Do not paste Apple account emails, Team IDs, certificates, provisioning profiles, API keys, passwords, .p8 contents, or .env values into GitHub issues.',
+};
+
 const result = {
   handoff,
   handoffCard,
+  handoffIssue,
   ok: {
     firstTenLocked: JSON.stringify(firstTen) === JSON.stringify(expectedFirstTen),
     levelCount: levels.length,

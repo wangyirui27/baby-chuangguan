@@ -91,7 +91,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 
 **GitHub 接手验收口令：** fresh clone 后先 `git fetch --all --tags && git checkout <verified_commit>`（与 handoff issue / `TESTFLIGHT_HANDOFF_CARD` 同 SHA，禁止盲 pull 最新 main），再跑 `npm ci && npm ci --prefix backend && npm ci --prefix apps/backend && npm ci --prefix apps/frontend`，再跑 `npm run testflight:preflight`；随后在有完整 Xcode 的 Mac 上执行 `DEVELOPMENT_TEAM=... ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`，但要求 `allowLocalMockLogin=true` 明确保留本地登录门。
 
-**handoffCard 提取：** Actions 绿 run → Artifacts → 下载 `testflight-readiness-<sha>`；或 `gh run download <run_id> -n testflight-readiness-<sha>` 后执行 `node -e "console.log(require('./testflight-readiness.json').handoffCard)"`。也可直接从 `npm run testflight:preflight` / Actions 的 `Run TestFlight handoff preflight` 日志复制。
+**handoffCard / handoffIssue 提取：** Actions 绿 run → Artifacts → 下载 `testflight-readiness-<sha>`；或 `gh run download <run_id> -n testflight-readiness-<sha>` 后执行 `node -e "const r=require('./testflight-readiness.json'); console.log(r.handoffCard); console.log(JSON.stringify(r.handoffIssue,null,2))"`。`handoffIssue` 包含 issue 标题、模板、run、artifact、命令、门禁清单和密钥边界；也可直接从 `npm run testflight:preflight` / Actions 的 `Run TestFlight handoff preflight` 日志复制 `handoffCard`。
 
 **本机环境（写文档时）：**
 
@@ -163,7 +163,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | 干净交接验证 | `npm run testflight:verify-handoff`：从已提交 HEAD 克隆干净副本、重装依赖并跑完整预检 |
 | GitHub 预检 | `.github/workflows/testflight-preflight.yml`：已启用无 Apple 密钥门禁；`docs/testflight-github-actions-template.yml` 保留为源模板 |
 | GitHub 接手单 | `.github/ISSUE_TEMPLATE/testflight-handoff.yml`：给有 Xcode/Apple 权限的同事记录 commit、Actions 绿勾、Archive/Upload 与真机冒烟结果；不得填写凭据 |
-| Handoff 证据卡 | `npm run testflight:preflight` 成功后输出 `TESTFLIGHT_HANDOFF_CARD`；Actions Summary 生成 commit/run/版本证据，`testflight-readiness-<sha>` artifact JSON 内含 `handoffCard` |
+| Handoff 证据卡 | `npm run testflight:preflight` 成功后输出 `TESTFLIGHT_HANDOFF_CARD`；Actions Summary 生成 commit/run/版本证据，`testflight-readiness-<sha>` artifact JSON 内含 `handoffCard` + `handoffIssue` |
 | 测试 | `npm test` → 383 |
 | 品牌文案 | 用户可见「嗨洛塔」；禁「英语岛 / 开通 VIP」口径（按地图收费） |
 

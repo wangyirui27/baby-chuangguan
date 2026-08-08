@@ -273,6 +273,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(testflightIssue, /docs\/testflight-smoke\.md/);
   assert.match(testflightIssue, /TESTFLIGHT_HANDOFF_CARD/);
   assert.match(testflightIssue, /handoffCard/);
+  assert.match(testflightIssue, /handoffIssue/);
   assert.match(testflightIssue, /40-char SHA from the latest green main preflight run/);
   assert.match(testflightIssue, /math_story_delivery=bundled_31_not_oss/);
   assert.match(testflightIssue, /oss_scope=ocean_desert_l11_200_only/);
@@ -291,10 +292,12 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(readme, /TestFlight upload handoff/);
   assert.match(readme, /TESTFLIGHT_HANDOFF_CARD/);
   assert.match(readme, /handoffCard/);
+  assert.match(readme, /handoffIssue/);
   assert.match(devHandoff, /npm ci --prefix apps\/backend/);
   assert.match(devHandoff, /TestFlight upload handoff/);
   assert.match(devHandoff, /testflight-readiness-<sha>/);
   assert.match(devHandoff, /handoffCard/);
+  assert.match(devHandoff, /handoffIssue/);
   for (const handoffFile of [
     '.github/ISSUE_TEMPLATE/testflight-handoff.yml',
     'docs/dev-handoff-testflight.md',
@@ -312,6 +315,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(fullHandoff, /ALLOW_PROVISIONING_UPDATES=1/);
   assert.match(fullHandoff, /TESTFLIGHT_HANDOFF_CARD/);
   assert.match(fullHandoff, /handoffCard/);
+  assert.match(fullHandoff, /handoffIssue/);
   assert.match(fullHandoff, /\| `94a0cde` \| 2026-08-08 \| chore：改用 CI 兼容且 audit 清零的 `vite@6\.4\.3`/);
   assert.match(fullHandoff, /\| `5f74277` \| 2026-08-08 \| ci：readiness artifact JSON 增加顶层 `handoffCard`/);
   assert.match(fullHandoff, /\| `f0c0a3d` \| 2026-08-08 \| docs：同步 TestFlight handoff issue 证据字段/);
@@ -416,6 +420,16 @@ test('release audit tracks whether the iOS shell can be build-verified', () => {
   assert.match(audit, /allowLocalMockLogin=true/);
   assert.match(audit, /testflightContentReady/);
   assert.match(audit, /handoffCard/);
+  assert.match(audit, /handoffIssue/);
+  assert.match(audit, /schemaVersion: 1/);
+  assert.match(audit, /issueTemplateUrl/);
+  assert.match(audit, /templateUrl: issueTemplateUrl/);
+  assert.match(audit, /preflightRunUrl/);
+  assert.match(audit, /readinessArtifact/);
+  assert.match(audit, /artifactName/);
+  assert.match(audit, /checklist/);
+  assert.match(audit, /fixedRemoteVerify/);
+  assert.match(audit, /secretBoundary/);
   assert.match(audit, /BEGIN TESTFLIGHT_HANDOFF_CARD/);
   assert.match(audit, /mathStoryDelivery: 'bundled_31_not_oss'/);
   assert.match(audit, /nextHumanOnly: 'Archive\/Upload on a Mac with local signing/);

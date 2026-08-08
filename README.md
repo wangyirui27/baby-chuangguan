@@ -50,7 +50,7 @@ open ios/BabyEnglishIsland.xcodeproj
 技术同事接手时可用 GitHub 的 `TestFlight upload handoff` issue 模板填写 commit、Actions 绿勾、Archive/Upload 和真机冒烟结果；Issue 里不要填写任何 Apple 凭据或 Team ID。
 
 `npm run testflight:verify-handoff` 会从当前已提交 HEAD 克隆一个干净副本、重装四处依赖并跑 `npm run testflight:preflight`，用于验证技术同事通过 GitHub 接手时不会缺文件。需要直接验远端固定提交时可用：`HANDOFF_CLONE_SOURCE=https://github.com/wangyirui27/baby-chuangguan.git HANDOFF_EXPECTED_SHA=<verified_commit> npm run testflight:verify-handoff`。
-预检成功会输出 `TESTFLIGHT_HANDOFF_CARD`；Actions Summary 会生成 commit / run / 版本证据，`testflight-readiness-<sha>` artifact JSON 也内含可直接复制的 `handoffCard`。提取 artifact：Actions 绿 run → Artifacts → 下载 `testflight-readiness-<sha>`，或 `gh run download <run_id> -n testflight-readiness-<sha>` 后执行 `node -e "console.log(require('./testflight-readiness.json').handoffCard)"`。
+预检成功会输出 `TESTFLIGHT_HANDOFF_CARD`；Actions Summary 会生成 commit / run / 版本证据，`testflight-readiness-<sha>` artifact JSON 也内含可直接复制的 `handoffCard`，以及可填 issue 的 `handoffIssue`（标题/模板/run/artifact/命令/清单/密钥边界）。提取 artifact：Actions 绿 run → Artifacts → 下载 `testflight-readiness-<sha>`，或 `gh run download <run_id> -n testflight-readiness-<sha>` 后执行 `node -e "const r=require('./testflight-readiness.json'); console.log(r.handoffCard); console.log(JSON.stringify(r.handoffIssue,null,2))"`。
 数学 story 31 条是包内离线资源，不走 `asset-packs.json` / OSS；OSS 抽检只覆盖海岛/沙漠 L11–200。
 
 `DEVELOPMENT_TEAM=你的ID ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`；或本地复制 `ios/Config/Team.xcconfig.example` 为 ignored 的 `ios/Config/Team.xcconfig` 后填 Team。若已配置 ASC API Key，脚本会自动允许 provisioning updates，可不显式设置。生产 API 写入 `ios/BabyEnglishIsland/shell-config.json` 的 `apiBase`（HTTPS，无尾 `/`）。内容内测 `apiBase` 可空，`allowLocalMockLogin=true` 只用于通过强制登录门，不授予 VIP。
