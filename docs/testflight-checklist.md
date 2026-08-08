@@ -32,6 +32,7 @@
 
 OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
 前缀：`assets/video/desert|ocean/*`（匿名 GET 已通）
+数学 story 31 条不走 OSS；它们是包内离线资源，以 `npm run testflight:preflight` 的 `math=31 mathThemeAudio=31` 为准。
 
 ---
 

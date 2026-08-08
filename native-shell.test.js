@@ -192,6 +192,8 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(preflight, /BEGIN TESTFLIGHT_HANDOFF_CARD/);
   assert.match(preflight, /verified_commit=\$sha/);
   assert.match(preflight, /bundle_id=com\.baobaoenglish\.island/);
+  assert.match(preflight, /math_story_delivery=bundled_31_not_oss/);
+  assert.match(preflight, /oss_scope=ocean_desert_l11_200_only/);
   assert.match(preflight, /preflight=OK/);
   const bundleMediaGate = read('tools/assert-testflight-bundle-media.mjs');
   assert.match(bundleMediaGate, /git-lfs\.github\.com\/spec\/v1/);
@@ -235,9 +237,13 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(readme, /testflight:verify-handoff/);
   assert.match(readme, /ship-testflight\.sh --static-check/);
   assert.match(readme, /ALLOW_PROVISIONING_UPDATES=1/);
+  assert.match(readme, /数学 story 31 条是包内离线资源，不走 `asset-packs\.json` \/ OSS/);
   assert.match(devHandoff, /testflight:verify-handoff/);
   assert.match(devHandoff, /ALLOW_PROVISIONING_UPDATES=1/);
+  assert.match(devHandoff, /数学 story 是包内离线资源，不走 `asset-packs\.json` \/ OSS/);
+  assert.match(devHandoff, /数学 story 不需要上传 OSS/);
   assert.match(checklist, /ALLOW_PROVISIONING_UPDATES=1/);
+  assert.match(checklist, /数学 story 31 条不走 OSS/);
   assert.match(ascForm, /ALLOW_PROVISIONING_UPDATES=1/);
   assert.match(devHandoff, /assert-ios-archive-contract\.mjs/);
   assert.match(devHandoff, /assert-testflight-bundle-media\.mjs/);
@@ -277,6 +283,8 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(fullHandoff, /npm ci --prefix apps\/frontend/);
   assert.match(fullHandoff, /ALLOW_PROVISIONING_UPDATES=1/);
   assert.match(fullHandoff, /TESTFLIGHT_HANDOFF_CARD/);
+  assert.match(fullHandoff, /不属于 `asset-packs\.json` \/ OSS/);
+  assert.match(fullHandoff, /仅海岛\/沙漠 L11–200/);
   assert.match(fullHandoff, /assert-ios-archive-contract\.mjs/);
   assert.match(fullHandoff, /assert-testflight-bundle-media\.mjs/);
   assert.match(fullHandoff, /git-tracked assets ocean=10 desert=10 math=31 mathThemeAudio=31/);
@@ -380,6 +388,10 @@ test('release audit tracks whether the iOS shell can be build-verified', () => {
   assert.match(audit, /mathStoryVideoCoverage/);
   assert.match(audit, /mathStoryVideos/);
   assert.match(audit, /mathStoryThemeAudio/);
+  assert.match(audit, /mathStoryDelivery/);
+  assert.match(audit, /ossRequired: false/);
+  assert.match(audit, /assetPackRequired: false/);
+  assert.match(audit, /asset-packs OSS covers only ocean\/desert L11-200/);
   assert.match(audit, /MATH_STORY_WAYPOINTS/);
   assert.match(audit, /MATH_STORY_VIDEO_VERSION/);
   assert.match(audit, /sourcePathLeaks/);

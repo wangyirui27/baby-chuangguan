@@ -50,7 +50,7 @@ open ios/BabyEnglishIsland.xcodeproj
 `docs/testflight-github-actions-template.yml` 保留为源模板；需要重建时运行 `bash tools/enable-testflight-workflow.sh`。提交 workflow 文件仍需要 GitHub 凭据带 `workflow` scope。
 GitHub 新建 Issue 时可选择 `TestFlight upload handoff` 模板，把 commit、Actions 绿勾、上传结果和真机冒烟逐项勾掉；不要把 Apple 凭据、Team ID、证书或 `.p8` 内容写进 Issue。
 
-Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（约 382MB；含海岛+沙漠前 10 关 mp4、数学 story 31 条 mp4 + 31 条主题音 + `asset-packs.json`）。`npm run testflight:preflight` 也会检查这些种子资源已被 Git 跟踪，并通过 `tools/assert-testflight-bundle-media.mjs` 拦截 LFS pointer、错误 mp4/mp3 magic 和异常 `www` 体积，避免“本机有、clone 后没有”或坏媒体进 IPA。
+Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（约 382MB；含海岛+沙漠前 10 关 mp4、数学 story 31 条 mp4 + 31 条主题音 + `asset-packs.json`）。数学 story 是包内离线资源，不走 `asset-packs.json` / OSS；OSS 只覆盖海岛/沙漠 L11–200。`npm run testflight:preflight` 也会检查这些种子资源已被 Git 跟踪，并通过 `tools/assert-testflight-bundle-media.mjs` 拦截 LFS pointer、错误 mp4/mp3 magic 和异常 `www` 体积，避免“本机有、clone 后没有”或坏媒体进 IPA。
 预检成功会打印 `TESTFLIGHT_HANDOFF_CARD`；GitHub Actions Summary 会列出 commit、run、版本、Bundle ID，并上传 `testflight-readiness-<sha>` JSON artifact，方便直接复制到 handoff issue。
 如果要验证远端仓库本身，运行：`HANDOFF_CLONE_SOURCE=https://github.com/wangyirui27/baby-chuangguan.git npm run testflight:verify-handoff`。
 
@@ -108,8 +108,8 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 
 ## 内容与网络
 
-- **包内**：海岛 `assets/video/free-levels/level-01…10` + 沙漠 `assets/video/desert-levels/level-001…010` + 数学 `assets/video/math-story/*.mp4`（31 条）+ `assets/audio/math-story-theme/*.mp3`（31 条）
-- **OSS**（需网络）：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/{desert|ocean}/…`；`asset-packs.json` 不应再出现 `cdn.example` / localhost 占位
+- **包内**：海岛 `assets/video/free-levels/level-01…10` + 沙漠 `assets/video/desert-levels/level-001…010` + 数学 `assets/video/math-story/*.mp4`（31 条）+ `assets/audio/math-story-theme/*.mp3`（31 条）；数学 story 不需要上传 OSS
+- **OSS**（需网络）：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/{desert|ocean}/…`；仅覆盖海岛/沙漠 L11–200，`asset-packs.json` 不应再出现 `cdn.example` / localhost 占位
 - 可选抽检：`npm run probe:asset-packs -- --dry-run` 只列出样本；`npm run probe:asset-packs -- --live` 才发起 HEAD / Range 请求
 - **付费墙**：`TEMP_LOCAL_FULL_ACCESS=false`；TestFlight file:// / capacitor 壳不应自动解锁 11 关以后
 - **apiBase 空**：不阻塞内容内测；`allowLocalMockLogin=true` 时可填任意 11 位手机号 + 4–6 位验证码进入内容，但不授予 VIP、不代表生产短信登录

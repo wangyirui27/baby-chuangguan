@@ -148,8 +148,8 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 |----|-------------|
 | 海岛 L1–10 包内 mp4 | `assets/video/free-levels/level-01-mom.mp4` … `level-10-book.mp4`（workbench 定稿，2026-08-07 换小体积成片） |
 | 沙漠 L1–10 包内 mp4 | `assets/video/desert-levels/level-001-good-morning.mp4` … `level-010-i-m-sorry.mp4` |
-| 数学 story 31 条包内 mp4 | `assets/video/math-story/level-001-roll-call.mp4` … `level-031-num-ten.mp4`；manifest `present=31` |
-| L11–200 OSS | `asset-packs.json`：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/{ocean\|desert}/…`，无 `cdn.example` 占位 |
+| 数学 story 31 条包内 mp4 | `assets/video/math-story/level-001-roll-call.mp4` … `level-031-num-ten.mp4`；manifest `present=31`；不属于 `asset-packs.json` / OSS |
+| L11–200 OSS | `asset-packs.json`：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/{ocean\|desert}/…`，仅海岛/沙漠 L11–200，无 `cdn.example` 占位 |
 | 付费墙 QA 开关 | `script.js`：`TEMP_LOCAL_FULL_ACCESS=false`；TestFlight file:// / capacitor 壳不自动解锁 11 关以后 |
 | 目录/对账 | `data/content-catalog.json`（400 levels）、`data/workbench-level-video-map.json` |
 | pack 脚本 | `tools/pack-app-www.sh`：非视频运行时 + shell loop + 双图前 10 + 数学 story 31；L11+ 不进包 |

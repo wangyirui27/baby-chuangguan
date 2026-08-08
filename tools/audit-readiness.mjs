@@ -31,6 +31,13 @@ const expectedFirstTen = [
   '10:Book/书',
 ];
 const forbiddenNonNounWords = new Set(['love', 'bath', 'good night']);
+const mathStoryDelivery = {
+  videos: 'bundled',
+  themeAudio: 'bundled',
+  ossRequired: false,
+  assetPackRequired: false,
+  note: 'math-story is packaged in the app bundle; asset-packs OSS covers only ocean/desert L11-200',
+};
 
 const entries = Array.isArray(wordManifest.entries)
   ? new Map(wordManifest.entries.map((entry) => [String(entry.word || '').toLowerCase(), entry]))
@@ -529,6 +536,7 @@ const result = {
     desertSeedMissing: desertSeedMissing.length,
     mathStoryVideos,
     mathStoryThemeAudio,
+    mathStoryDelivery,
     assetPackPlaceholders,
     remoteCourseVideos: remoteCoverage,
     nonNounWords: nonNounWordLevels.length,

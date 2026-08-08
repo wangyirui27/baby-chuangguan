@@ -47,6 +47,7 @@ open ios/BabyEnglishIsland.xcodeproj
 
 `npm run testflight:verify-handoff` 会从当前已提交 HEAD 克隆一个干净副本、重装四处依赖并跑 `npm run testflight:preflight`，用于验证技术同事通过 GitHub 接手时不会缺文件。需要直接验远端时可用：`HANDOFF_CLONE_SOURCE=https://github.com/wangyirui27/baby-chuangguan.git npm run testflight:verify-handoff`。
 预检成功会输出 `TESTFLIGHT_HANDOFF_CARD`，Actions Summary 也会生成同样的 commit / run / 版本证据和 `testflight-readiness-<sha>` artifact，技术同事可直接贴到 handoff issue。
+数学 story 31 条是包内离线资源，不走 `asset-packs.json` / OSS；OSS 抽检只覆盖海岛/沙漠 L11–200。
 
 `DEVELOPMENT_TEAM=你的ID ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`；或本地复制 `ios/Config/Team.xcconfig.example` 为 ignored 的 `ios/Config/Team.xcconfig` 后填 Team。若已配置 ASC API Key，脚本会自动允许 provisioning updates，可不显式设置。生产 API 写入 `ios/BabyEnglishIsland/shell-config.json` 的 `apiBase`（HTTPS，无尾 `/`）。内容内测 `apiBase` 可空，`allowLocalMockLogin=true` 只用于通过强制登录门，不授予 VIP。
 TestFlight 默认 `TEMP_LOCAL_FULL_ACCESS=false`，本地壳不会绕过 11 关以后的付费墙。
