@@ -1,13 +1,10 @@
 {
   "version": "20260807-table-tricks-qualified-31",
   "generated_at": "2026-08-07T05:45:01.809Z",
-  "sources": [
-    "/Users/yr/video/table-tricks-s1",
-    "/Users/yr/Documents/LibTV Workbench/projects/table-tricks-s1/output",
-    "/Users/yr/Documents/LibTV Workbench/projects/table-tricks-s1/videos",
-    "/Users/yr/Library/Application Support/libtv-workbench/projects/table-tricks-s1/output",
-    "/Users/yr/Library/Application Support/libtv-workbench/projects/table-tricks-s1/videos",
-    "/Users/yr/Library/Application Support/libtv-workbench/projects/table-tricks-s1"
+  "source_hints": [
+    "MATH_STORY_VIDEO_SRC",
+    "~/video/table-tricks-s1",
+    "LibTV Workbench table-tricks-s1 output/videos"
   ],
   "summary": {
     "total": 31,

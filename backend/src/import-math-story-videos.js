@@ -131,7 +131,11 @@ function main() {
   const manifest = {
     version: MATH_STORY_VIDEO_VERSION || 'unknown',
     generated_at: new Date().toISOString(),
-    sources: roots,
+    source_hints: [
+      'MATH_STORY_VIDEO_SRC',
+      '~/video/table-tricks-s1',
+      'LibTV Workbench table-tricks-s1 output/videos',
+    ],
     summary: { ...summary, present },
     entries,
   };

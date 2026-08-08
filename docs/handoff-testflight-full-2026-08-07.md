@@ -49,7 +49,7 @@ npm test
 
 npm run testflight:preflight
 # 预期：[testflight-preflight] git-tracked assets ocean=10 desert=10 math=31 mathThemeAudio=31
-#      [testflight-preflight] seeds ocean=10 desert=10 math=31
+#      [testflight-preflight] seeds ocean=10 desert=10 math=31 mathThemeAudio=31
 #      [testflight-preflight] OK
 
 node tools/audit-readiness.mjs
@@ -81,7 +81,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 #   assets/video/math-story/*.mp4 31 条（约 95MB）
 ```
 
-**GitHub 接手验收口令：** `npm run testflight:preflight` 通过；随后在有完整 Xcode 的 Mac 上执行 `DEVELOPMENT_TEAM=... bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`，但要求 `allowLocalMockLogin=true` 明确保留本地登录门。
+**GitHub 接手验收口令：** fresh clone 后先跑 `npm ci && npm ci --prefix backend && npm ci --prefix apps/backend && npm ci --prefix apps/frontend`，再跑 `npm run testflight:preflight`；随后在有完整 Xcode 的 Mac 上执行 `DEVELOPMENT_TEAM=... bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`，但要求 `allowLocalMockLogin=true` 明确保留本地登录门。
 
 **本机环境（写文档时）：**
 

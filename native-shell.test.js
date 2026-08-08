@@ -192,9 +192,14 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
 
   const mathStoryManifest = JSON.parse(read('assets/video/math-story/math-story-video-manifest.json'));
   assert.equal(mathStoryManifest.entries.length, 31);
+  assert.equal(mathStoryManifest.version, '20260807-table-tricks-qualified-31');
+  assert.ok(Array.isArray(mathStoryManifest.source_hints));
+  assert.equal(mathStoryManifest.sources, undefined);
+  assert.doesNotMatch(JSON.stringify(mathStoryManifest), /\/Users\/yr/);
   for (const entry of mathStoryManifest.entries) {
     assert.ok(exists(entry.dest), `missing ${entry.dest}`);
     assert.ok(fs.statSync(path.join(__dirname, entry.dest)).size > 0, `empty ${entry.dest}`);
+    assert.match(entry.sha256, /^[a-f0-9]{64}$/);
   }
   const mathThemeManifest = JSON.parse(read('assets/audio/math-story-theme/math-story-theme-manifest.json'));
   assert.equal(mathThemeManifest.entries.length, 31);
@@ -254,8 +259,14 @@ test('release audit tracks whether the iOS shell can be build-verified', () => {
   assert.match(audit, /mathStoryVideoCoverage/);
   assert.match(audit, /mathStoryVideos/);
   assert.match(audit, /mathStoryThemeAudio/);
+  assert.match(audit, /MATH_STORY_WAYPOINTS/);
+  assert.match(audit, /MATH_STORY_VIDEO_VERSION/);
+  assert.match(audit, /sourcePathLeaks/);
+  assert.match(audit, /sha256File/);
+  assert.match(audit, /数学 story 短片契约不一致/);
   assert.match(audit, /math-story mp4 count/);
   assert.match(audit, /数学 story 主题音未就绪/);
+  assert.match(audit, /数学 story 主题音契约不一致/);
 });
 
 test('ASC handoff keeps hosted legal drafts out of production URLs', () => {

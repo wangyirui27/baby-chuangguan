@@ -1,13 +1,21 @@
 #!/usr/bin/env node
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const { collectMathStoryThemeUtterances, levels, TEMP_LOCAL_FULL_ACCESS } = require('../script.js');
+const {
+  collectMathStoryThemeUtterances,
+  levels,
+  MATH_STORY_THEME_AUDIO_VERSION,
+  MATH_STORY_VIDEO_VERSION,
+  MATH_STORY_WAYPOINTS,
+  TEMP_LOCAL_FULL_ACCESS,
+} = require('../script.js');
 const wordManifest = require('../assets/audio/words/word-audio-manifest.json');
 
 const expectedFirstTen = [
@@ -34,6 +42,10 @@ function stripVersion(src) {
 
 function fileExists(relativePath) {
   return Boolean(relativePath) && existsSync(join(ROOT, relativePath));
+}
+
+function sha256File(file) {
+  return createHash('sha256').update(readFileSync(file)).digest('hex');
 }
 
 function staleHundredMentions() {
@@ -269,19 +281,42 @@ function assetPackPlaceholderUrls() {
 const assetPackPlaceholders = assetPackPlaceholderUrls();
 
 function mathStoryVideoCoverage() {
-  const expected = 31;
-  const fallback = { expected, listed: 0, missing: expected, localBytes: 0, firstMissing: ['manifest'] };
+  const expected = MATH_STORY_WAYPOINTS.length;
+  const fallback = {
+    expected,
+    listed: 0,
+    missing: expected,
+    mismatched: 1,
+    sourcePathLeaks: 0,
+    version: '',
+    versionExpected: MATH_STORY_VIDEO_VERSION,
+    localBytes: 0,
+    firstMissing: ['manifest'],
+    firstMismatch: [],
+  };
   try {
     const manifest = JSON.parse(readFileSync(join(ROOT, 'assets/video/math-story/math-story-video-manifest.json'), 'utf8'));
     const entries = Array.isArray(manifest.entries) ? manifest.entries : [];
+    const byId = new Map(entries.map((entry) => [String(entry.id || ''), entry]));
     const missing = [];
+    const mismatches = [];
+    const sourceItems = [
+      ...(Array.isArray(manifest.sources) ? manifest.sources : []),
+      ...(Array.isArray(manifest.source_hints) ? manifest.source_hints : []),
+    ];
+    const sourcePathLeaks = sourceItems.filter((item) => /^\/|^[A-Za-z]:[\\/]/.test(String(item || '')));
     let localBytes = 0;
-    for (const entry of entries) {
-      const rel = String(entry.dest || `assets/video/math-story/${entry.videoSlug || ''}.mp4`).trim();
-      if (!rel) {
-        missing.push(String(entry.id || entry.videoSlug || 'unknown'));
+    for (const waypoint of MATH_STORY_WAYPOINTS) {
+      const entry = byId.get(waypoint.id);
+      const expectedDest = `assets/video/math-story/${waypoint.videoSlug}.mp4`;
+      if (!entry) {
+        missing.push(waypoint.id);
         continue;
       }
+      const rel = String(entry.dest || `assets/video/math-story/${entry.videoSlug || ''}.mp4`).trim();
+      if (entry.videoSlug !== waypoint.videoSlug) mismatches.push(`${waypoint.id}:slug`);
+      if (rel !== expectedDest) mismatches.push(`${waypoint.id}:dest`);
+      if (Number(entry.beforeLevel) !== Number(waypoint.beforeLevel)) mismatches.push(`${waypoint.id}:beforeLevel`);
       const file = join(ROOT, rel);
       if (!existsSync(file)) {
         missing.push(rel);
@@ -292,14 +327,30 @@ function mathStoryVideoCoverage() {
         missing.push(rel);
         continue;
       }
+      if (Number(entry.size) && Number(entry.size) !== size) mismatches.push(`${waypoint.id}:size`);
+      if (/^[a-f0-9]{64}$/i.test(String(entry.sha256 || '')) && sha256File(file) !== entry.sha256) {
+        mismatches.push(`${waypoint.id}:sha256`);
+      }
       localBytes += size;
     }
+    for (const entry of entries) {
+      if (!entry?.id || byId.get(String(entry.id)) !== entry) mismatches.push(`duplicate:${String(entry?.id || 'unknown')}`);
+      if (entry?.id && !MATH_STORY_WAYPOINTS.some((waypoint) => waypoint.id === entry.id)) {
+        mismatches.push(`extra:${entry.id}`);
+      }
+    }
+    if (manifest.version !== MATH_STORY_VIDEO_VERSION) mismatches.push('version');
     return {
       expected,
       listed: entries.length,
       missing: missing.length + Math.max(0, expected - entries.length),
+      mismatched: mismatches.length,
+      sourcePathLeaks: sourcePathLeaks.length,
+      version: String(manifest.version || ''),
+      versionExpected: MATH_STORY_VIDEO_VERSION,
       localBytes,
       firstMissing: missing.slice(0, 5),
+      firstMismatch: mismatches.slice(0, 5),
     };
   } catch {
     return fallback;
@@ -309,18 +360,32 @@ function mathStoryVideoCoverage() {
 const mathStoryVideos = mathStoryVideoCoverage();
 
 function mathStoryThemeAudioCoverage() {
-  const expected = 31;
-  const fallback = { expected, listed: 0, missing: expected, localBytes: 0, firstMissing: ['script'] };
+  const expected = MATH_STORY_WAYPOINTS.length;
+  const fallback = {
+    expected,
+    listed: 0,
+    missing: expected,
+    mismatched: 1,
+    versionExpected: MATH_STORY_THEME_AUDIO_VERSION,
+    localBytes: 0,
+    firstMissing: ['script'],
+    firstMismatch: [],
+  };
   try {
     const entries = collectMathStoryThemeUtterances();
+    const byId = new Map(entries.map((entry) => [String(entry.id || ''), entry]));
     const missing = [];
+    const mismatches = [];
     let localBytes = 0;
-    for (const entry of entries) {
-      const rel = String(entry.file || '').trim();
-      if (!rel) {
-        missing.push(String(entry.id || 'unknown'));
+    for (const waypoint of MATH_STORY_WAYPOINTS) {
+      const entry = byId.get(waypoint.id);
+      const expectedFile = `assets/audio/math-story-theme/${waypoint.id}.mp3`;
+      if (!entry) {
+        missing.push(waypoint.id);
         continue;
       }
+      const rel = String(entry.file || '').trim();
+      if (rel !== expectedFile) mismatches.push(`${waypoint.id}:file`);
       const file = join(ROOT, rel);
       if (!existsSync(file)) {
         missing.push(rel);
@@ -333,12 +398,21 @@ function mathStoryThemeAudioCoverage() {
       }
       localBytes += size;
     }
+    for (const entry of entries) {
+      if (!entry?.id || byId.get(String(entry.id)) !== entry) mismatches.push(`duplicate:${String(entry?.id || 'unknown')}`);
+      if (entry?.id && !MATH_STORY_WAYPOINTS.some((waypoint) => waypoint.id === entry.id)) {
+        mismatches.push(`extra:${entry.id}`);
+      }
+    }
     return {
       expected,
       listed: entries.length,
       missing: missing.length + Math.max(0, expected - entries.length),
+      mismatched: mismatches.length,
+      versionExpected: MATH_STORY_THEME_AUDIO_VERSION,
       localBytes,
       firstMissing: missing.slice(0, 5),
+      firstMismatch: mismatches.slice(0, 5),
     };
   } catch {
     return fallback;
@@ -389,8 +463,14 @@ const hardFailures = [
   ...(mathStoryVideos.listed !== mathStoryVideos.expected || mathStoryVideos.missing
     ? [`数学 story 短片未就绪：manifest ${mathStoryVideos.listed}/${mathStoryVideos.expected}，本地缺 ${mathStoryVideos.missing} 个。`]
     : []),
+  ...(mathStoryVideos.mismatched || mathStoryVideos.sourcePathLeaks
+    ? [`数学 story 短片契约不一致：mismatch=${mathStoryVideos.mismatched}，sourcePathLeaks=${mathStoryVideos.sourcePathLeaks}。`]
+    : []),
   ...(mathStoryThemeAudio.listed !== mathStoryThemeAudio.expected || mathStoryThemeAudio.missing
     ? [`数学 story 主题音未就绪：script ${mathStoryThemeAudio.listed}/${mathStoryThemeAudio.expected}，本地缺 ${mathStoryThemeAudio.missing} 个。`]
+    : []),
+  ...(mathStoryThemeAudio.mismatched
+    ? [`数学 story 主题音契约不一致：mismatch=${mathStoryThemeAudio.mismatched}。`]
     : []),
   ...(!shellApiBaseConfigured() && !shellLocalMockLoginAllowed()
     ? ['内容 TestFlight apiBase 为空时必须在 shell-config.json 显式配置 allowLocalMockLogin=true。']
