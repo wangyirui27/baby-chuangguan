@@ -62,14 +62,15 @@ OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
 
 ## C 苹果（你/开发者）
 
-GitHub 接手验收口令：fresh clone 后先跑 `npm ci && npm ci --prefix backend && npm ci --prefix apps/backend && npm ci --prefix apps/frontend`，再跑 `npm run testflight:preflight`；随后用有 Xcode 的 Mac 执行 `DEVELOPMENT_TEAM=... ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`。
+GitHub 接手验收口令：fresh clone 后 `git fetch --all --tags && git checkout <verified_commit>`（与 handoff issue / `TESTFLIGHT_HANDOFF_CARD` 同 SHA，禁止盲 pull 最新 main），再跑 `npm ci && npm ci --prefix backend && npm ci --prefix apps/backend && npm ci --prefix apps/frontend`，再跑 `npm run testflight:preflight`；随后用有 Xcode 的 Mac 执行 `DEVELOPMENT_TEAM=... ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`。
 
 1. Apple Developer 登录 + Team ID
 2. ASC 建 App：`com.baobaoenglish.island`，名 **嗨洛塔**
    - 表单草稿见 `docs/testflight-asc-form.md`
 3. 有完整 Xcode 的 Mac：
    ```bash
-   git pull
+   git fetch --all --tags
+   git checkout <verified_commit>
    DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload
    # 若同版本 build 已上传过：
    DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
@@ -97,7 +98,7 @@ L11–200 的 OSS URL 已在清单中；真机要播放这些课视频，需要�
 
 ## 你只需拍板/动手
 
-1. **现在就 Archive？** → 找有 Xcode 的人 pull `main` 后跑 `ship-testflight.sh --upload` 或 GUI Archive。
+1. **现在就 Archive？** → 找有 Xcode 的人 checkout handoff issue 里的 verified commit 后跑 `ship-testflight.sh --upload` 或 GUI Archive。
 2. **要登录云进度？** → 给生产 `apiBase`（或确认暂空做内容内测）。
 3. **Team ID** → 有了发我，或技术在本机用环境变量/ignored `ios/Config/Team.xcconfig`。
 

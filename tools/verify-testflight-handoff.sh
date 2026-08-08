@@ -28,7 +28,7 @@ if [[ -n "$(git status --short --untracked-files=no)" ]]; then
 fi
 
 SOURCE="${HANDOFF_CLONE_SOURCE:-$ROOT}"
-EXPECTED_HEAD="$(git rev-parse HEAD)"
+EXPECTED_HEAD="${HANDOFF_EXPECTED_SHA:-$(git rev-parse HEAD)}"
 TMP="$(mktemp -d)"
 DEST="$TMP/repo"
 
@@ -37,10 +37,13 @@ echo "[testflight-handoff] expected_head=$EXPECTED_HEAD"
 git clone --no-local "$SOURCE" "$DEST"
 
 cd "$DEST"
+if [[ -n "${HANDOFF_EXPECTED_SHA:-}" ]]; then
+  git checkout --detach "$EXPECTED_HEAD"
+fi
 CLONE_HEAD="$(git rev-parse HEAD)"
 echo "[testflight-handoff] clone_head=$CLONE_HEAD"
 
-if [[ "$SOURCE" == "$ROOT" && "$CLONE_HEAD" != "$EXPECTED_HEAD" ]]; then
+if [[ "$CLONE_HEAD" != "$EXPECTED_HEAD" ]]; then
   echo "[testflight-handoff] clone HEAD mismatch" >&2
   exit 2
 fi

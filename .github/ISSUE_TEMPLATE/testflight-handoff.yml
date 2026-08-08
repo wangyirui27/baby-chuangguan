@@ -12,7 +12,7 @@ body:
 
         Do not paste Apple account emails, Team IDs, certificates, provisioning profiles, API keys, passwords, `.p8` contents, or `.env` values into GitHub issues. Keep signing material on the developer's Mac or in GitHub Secrets owned by that developer.
 
-        Start from `docs/dev-handoff-testflight.md`; smoke test with `docs/testflight-smoke.md`.
+        Start from `docs/dev-handoff-testflight.md`; smoke test with `docs/testflight-smoke.md`. Archive the exact verified commit in this issue (`git checkout <verified_commit>`), not a blind latest `main`.
 
   - type: input
     id: commit
@@ -94,7 +94,7 @@ body:
     attributes:
       label: Archive and upload
       options:
-        - label: Pulled the verified commit above on the developer Mac.
+        - label: Checked out the verified commit above on the developer Mac; did not archive a blind latest `main`.
           required: true
         - label: Ran `bash tools/ship-testflight.sh --check` and reviewed the next build retry hint.
           required: true

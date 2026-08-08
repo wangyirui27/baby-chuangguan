@@ -3,7 +3,7 @@
 **生成：** 2026-08-07（本机实测）
 **仓库：** https://github.com/wangyirui27/baby-chuangguan
 **本地路径：** `/Users/yr/嗨洛塔少儿启蒙APP`
-**分支：** `main`（2026-08-08 已继续更新；以 `git pull` 后 `git log -1 --oneline` 为准）
+**分支：** `main`（2026-08-08 已继续更新；接手上传时以 handoff issue / `TESTFLIGHT_HANDOFF_CARD` 的 `verified_commit` 为准）
 **产品：** 嗨洛塔（HIROTA）少儿启蒙 · Bundle `com.baobaoenglish.island` · **1.0.1 (3)**
 **形态：** iOS WKWebView 壳 + 根目录 H5（`index.html` / `script.js` / `style.css`）+ 可选 Node 后端
 
@@ -40,6 +40,8 @@
 ```bash
 git clone https://github.com/wangyirui27/baby-chuangguan.git
 cd baby-chuangguan
+git fetch --all --tags
+git checkout <verified_commit>   # 与 handoff issue / TESTFLIGHT_HANDOFF_CARD 同 SHA，禁止盲 pull 最新 main
 npm ci
 npm ci --prefix backend
 npm ci --prefix apps/backend
@@ -56,7 +58,7 @@ npm run testflight:preflight
 
 npm run testflight:verify-handoff
 # 预期：从已提交 HEAD 克隆干净副本、重装四处依赖，再跑完 testflight:preflight 后输出 [testflight-handoff] OK
-# 验远端：HANDOFF_CLONE_SOURCE=https://github.com/wangyirui27/baby-chuangguan.git npm run testflight:verify-handoff
+# 验远端固定提交：HANDOFF_CLONE_SOURCE=https://github.com/wangyirui27/baby-chuangguan.git HANDOFF_EXPECTED_SHA=<verified_commit> npm run testflight:verify-handoff
 
 node tools/audit-readiness.mjs
 # 关键字段（2026-08-08 实测）：
@@ -81,13 +83,15 @@ node tools/audit-readiness.mjs
 #   remoteCourseVideos ocean/desert: listed 190, missingRemote11to200 0, realOssUrls 190
 
 bash tools/pack-app-www.sh /tmp/hirota-www-check
-# 预期：runtime asset gate OK；约 382MB；含
+# 预期：runtime asset gate OK；干净克隆约 364M / 361.1MiB；脏工作区带未跟踪 QA 资源时可能更大；含
 #   assets/video/free-levels/level-01…10
 #   assets/video/desert-levels/level-001…010
 #   assets/video/math-story/*.mp4 31 条（约 95MB）
 ```
 
-**GitHub 接手验收口令：** fresh clone 后先跑 `npm ci && npm ci --prefix backend && npm ci --prefix apps/backend && npm ci --prefix apps/frontend`，再跑 `npm run testflight:preflight`；随后在有完整 Xcode 的 Mac 上执行 `DEVELOPMENT_TEAM=... ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`，但要求 `allowLocalMockLogin=true` 明确保留本地登录门。
+**GitHub 接手验收口令：** fresh clone 后先 `git fetch --all --tags && git checkout <verified_commit>`（与 handoff issue / `TESTFLIGHT_HANDOFF_CARD` 同 SHA，禁止盲 pull 最新 main），再跑 `npm ci && npm ci --prefix backend && npm ci --prefix apps/backend && npm ci --prefix apps/frontend`，再跑 `npm run testflight:preflight`；随后在有完整 Xcode 的 Mac 上执行 `DEVELOPMENT_TEAM=... ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`，但要求 `allowLocalMockLogin=true` 明确保留本地登录门。
+
+**handoffCard 提取：** Actions 绿 run → Artifacts → 下载 `testflight-readiness-<sha>`；或 `gh run download <run_id> -n testflight-readiness-<sha>` 后执行 `node -e "console.log(require('./testflight-readiness.json').handoffCard)"`。也可直接从 `npm run testflight:preflight` / Actions 的 `Run TestFlight handoff preflight` 日志复制。
 
 **本机环境（写文档时）：**
 
@@ -110,7 +114,8 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 4. **App Store Connect** 若无 App：新建 iOS，Bundle **完全一致** `com.baobaoenglish.island`，显示名 **嗨洛塔**
 5. **Archive → Upload**：
    ```bash
-   git pull
+   git fetch --all --tags
+   git checkout <verified_commit>
    bash tools/ship-testflight.sh --check   # 显示当前 build 与 Next retry 命令
    DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload
    # 或 GUI：open ios/BabyEnglishIsland.xcodeproj → Product → Archive → Distribute → ASC
@@ -220,6 +225,9 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 
 | Commit | 日期 | 摘要 |
 |--------|------|------|
+| `94a0cde` | 2026-08-08 | chore：改用 CI 兼容且 audit 清零的 `vite@6.4.3`；GitHub Actions run `31253276875` 成功，artifact `testflight-readiness-94a0cde608d7442362481badd4a87ee8802c97f2` |
+| `b0adcbc` | 2026-08-08 | chore：尝试 Vite 8 审计修复，但 CI 失败；已由 `94a0cde` 覆盖，勿作为发船源 |
+| `5f74277` | 2026-08-08 | ci：readiness artifact JSON 增加顶层 `handoffCard`，issue/docs/native test 同步 |
 | `f0c0a3d` | 2026-08-08 | docs：同步 TestFlight handoff issue 证据字段与近期提交线 |
 | `0f0840a` | 2026-08-08 | docs：明确数学 story 31 条是包内离线资源，不属于 OSS / `asset-packs.json` |
 | `2ab4692` | 2026-08-08 | docs：无 ASC Key、依赖 Xcode 登录态自动签名时，上传命令显式加 `ALLOW_PROVISIONING_UPDATES=1` |
@@ -278,7 +286,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 
 ### 5.1 内容内测（推荐先发）
 
-1. `git pull` + §1 三门禁全绿
+1. `git fetch --all --tags && git checkout <verified_commit>` + §1 三门禁全绿
 2. **保持** `apiBase=""` 且 `allowLocalMockLogin=true`（或产品明确要求再填生产 API）
 3. Team ID → xcconfig 或环境变量
 4. `DEVELOPMENT_TEAM=… ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`
@@ -401,14 +409,14 @@ IAP Product ID：`baby_island_map_vip_001`（Swift 常量与 shell-config 文档
 | 隐私 URL 未上公网 | 内测通常不挡 | 外测/上架要 |
 | 工程目录名 BabyEnglishIsland | 否 | 用户可见名已是嗨洛塔 |
 | 单体 `script.js` 无 i18n | 否 | 与 TF 无关；多语言另项 |
-| pack ~382MB | 否 | 大于旧文档写的 ~180MB，以实测为准 |
+| pack ~364M / 361.1MiB（干净克隆） | 否 | 脏工作区带未跟踪 QA 资源时可能更大；以 clean checkout / Actions 为准 |
 | smoke 构建号 | 否 | 已对齐工程 **1.0.1 (3)**；上传后以 ASC 实际构建为准 |
 
 ---
 
 ## 10. 接手 AI 行动协议
 
-1. **先** `git pull` + 跑 §1 三门禁，用输出更新「现状」，禁止只抄本文旧数字。
+1. **先** `git fetch --all --tags && git checkout <verified_commit>` + 跑 §1 三门禁，用输出更新「现状」，禁止只抄本文旧数字。
 2. 用户问「还差什么」→ **只答未绿的 C/D/本机 Xcode**，勿复读已绿 A。
 3. 用户说「能做的先做」→ 查 A/B 是否仍在仓；已齐则列用户侧，**禁止**从零重做图标/Privacy。
 4. 无 Xcode → 可改文档/修 H5/修 pack/audit；**禁止**谎称已 Archive。

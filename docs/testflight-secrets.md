@@ -2,6 +2,13 @@
 
 不要把真实值写进 Git。技术同事在本机 shell、CI Secrets 或本地 ignored `ios/Config/Team.xcconfig` 里配置。
 
+## 边界（必读）
+
+- 本仓已启用的 GitHub Actions `TestFlight Preflight` 不需要、也不应配置任何 Apple / ASC / Team 密钥；它只跑无凭据内容与壳工程门禁。
+- 下表的“GitHub Secrets 友好名”只是 `tools/ship-testflight.sh` 支持的环境变量别名，给技术同事本机或其自有私密 CI 使用，不是要求写进本仓 Secrets。
+- Team ID、`.p8`、ASC API Key、证书和 provisioning profile 只放本机环境变量、ignored `ios/Config/Team.xcconfig`、钥匙串或技术同事自有密钥库。
+- 禁止写入 Git 跟踪文件、GitHub Issue、PR 评论或可公开的 Actions 日志。
+
 ## 必需
 
 | 名称 | 用途 |

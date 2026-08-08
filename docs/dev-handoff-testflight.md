@@ -20,7 +20,9 @@
 
 ```bash
 git clone https://github.com/wangyirui27/baby-chuangguan.git
-cd baby-chuangguan && git pull
+cd baby-chuangguan
+git fetch --all --tags
+git checkout <verified_commit>   # 与 handoff issue / TESTFLIGHT_HANDOFF_CARD 同 SHA，禁止盲 pull 最新 main
 npm ci
 npm ci --prefix backend
 npm ci --prefix apps/backend
@@ -50,9 +52,9 @@ open ios/BabyEnglishIsland.xcodeproj
 `docs/testflight-github-actions-template.yml` 保留为源模板；需要重建时运行 `bash tools/enable-testflight-workflow.sh`。提交 workflow 文件仍需要 GitHub 凭据带 `workflow` scope。
 GitHub 新建 Issue 时可选择 `TestFlight upload handoff` 模板，把 commit、Actions 绿勾、上传结果和真机冒烟逐项勾掉；不要把 Apple 凭据、Team ID、证书或 `.p8` 内容写进 Issue。
 
-Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（约 382MB；含海岛+沙漠前 10 关 mp4、数学 story 31 条 mp4 + 31 条主题音 + `asset-packs.json`）。数学 story 是包内离线资源，不走 `asset-packs.json` / OSS；OSS 只覆盖海岛/沙漠 L11–200。`npm run testflight:preflight` 也会检查这些种子资源已被 Git 跟踪，并通过 `tools/assert-testflight-bundle-media.mjs` 拦截 LFS pointer、错误 mp4/mp3 magic 和异常 `www` 体积，避免“本机有、clone 后没有”或坏媒体进 IPA。
-预检成功会打印 `TESTFLIGHT_HANDOFF_CARD`；GitHub Actions Summary 会列出 commit、run、版本、Bundle ID，并上传 `testflight-readiness-<sha>` JSON artifact。artifact 内的 `handoffCard` 可直接复制到 handoff issue。
-如果要验证远端仓库本身，运行：`HANDOFF_CLONE_SOURCE=https://github.com/wangyirui27/baby-chuangguan.git npm run testflight:verify-handoff`。
+Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（干净克隆预检约 364M / 361.1MiB；脏工作区带未跟踪 QA 资源时可能更大；含海岛+沙漠前 10 关 mp4、数学 story 31 条 mp4 + 31 条主题音 + `asset-packs.json`）。数学 story 是包内离线资源，不走 `asset-packs.json` / OSS；OSS 只覆盖海岛/沙漠 L11–200。`npm run testflight:preflight` 也会检查这些种子资源已被 Git 跟踪，并通过 `tools/assert-testflight-bundle-media.mjs` 拦截 LFS pointer、错误 mp4/mp3 magic 和异常 `www` 体积，避免“本机有、clone 后没有”或坏媒体进 IPA。
+预检成功会打印 `TESTFLIGHT_HANDOFF_CARD`；GitHub Actions Summary 会列出 commit、run、版本、Bundle ID，并上传 `testflight-readiness-<sha>` JSON artifact。artifact 内的 `handoffCard` 可直接复制到 handoff issue。提取路径：Actions 绿 run → Artifacts → 下载 `testflight-readiness-<sha>`；或 `gh run download <run_id> -n testflight-readiness-<sha>` 后执行 `node -e "console.log(require('./testflight-readiness.json').handoffCard)"`。
+如果要验证远端仓库固定提交，运行：`HANDOFF_CLONE_SOURCE=https://github.com/wangyirui27/baby-chuangguan.git HANDOFF_EXPECTED_SHA=<verified_commit> npm run testflight:verify-handoff`。
 
 ---
 
@@ -94,12 +96,13 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 |----------|----------|
 | `npm run testflight:preflight` 内容/壳预检 | 完整 Xcode（非 Command Line Tools） |
 | 共享 scheme、ExportOptions 模板、Archive 脚本 | 付费 Apple Developer Team |
-| Build Phase 自动打约 382MB `www/` | `DEVELOPMENT_TEAM` 或本地 Signing 面板 |
+| Build Phase 自动打约 364M / 361.1MiB `www`（干净克隆） | `DEVELOPMENT_TEAM` 或本地 Signing 面板 |
 | `asset-packs.json` OSS 真链 + 包内种子 | 可选 ASC API Key（只放本机/Secrets） |
 
 1. Xcode → Settings → Accounts 登录付费 Apple Developer
 2. Team ID → `DEVELOPMENT_TEAM` 环境变量、本地 ignored `Team.xcconfig`，或 Signing 面板
 3. 无人值守上传：按 `docs/testflight-secrets.md` 配 ASC API Key；ASC Key 齐全时脚本默认允许自动管理签名，可用 `ALLOW_PROVISIONING_UPDATES=0` 关闭。若不配 ASC Key、只靠 Xcode 登录态自动拉证书/profile，上传命令显式加 `ALLOW_PROVISIONING_UPDATES=1`
+   - 本仓 Actions 不做 Upload，不需要配置 Apple / ASC / Team Secrets；这些值只放同事本机或其自有私密 CI。
 4. ASC 若无 App：新建 iOS，Bundle `com.baobaoenglish.island`，名 **嗨洛塔**
 5. 表单值按 `docs/testflight-asc-form.md`，不确定项留给产品/同事确认
 6. 上传后处理 5–30 分钟 → 加内测组 / 外测合规

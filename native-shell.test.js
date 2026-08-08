@@ -232,17 +232,29 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   const verifyHandoff = read('tools/verify-testflight-handoff.sh');
   assert.match(pkg.scripts['testflight:verify-handoff'], /tools\/verify-testflight-handoff\.sh/);
   assert.match(verifyHandoff, /git clone --no-local "\$SOURCE" "\$DEST"/);
+  assert.match(verifyHandoff, /HANDOFF_EXPECTED_SHA/);
+  assert.match(verifyHandoff, /git checkout --detach "\$EXPECTED_HEAD"/);
   assert.match(verifyHandoff, /npm ci --prefix apps\/frontend/);
   assert.match(verifyHandoff, /npm run testflight:preflight/);
+  assert.match(readme, /git checkout <verified_commit>/);
   assert.match(readme, /testflight:verify-handoff/);
+  assert.match(readme, /HANDOFF_EXPECTED_SHA=<verified_commit>/);
+  assert.match(readme, /gh run download <run_id> -n testflight-readiness-<sha>/);
   assert.match(readme, /ship-testflight\.sh --static-check/);
   assert.match(readme, /ALLOW_PROVISIONING_UPDATES=1/);
   assert.match(readme, /数学 story 31 条是包内离线资源，不走 `asset-packs\.json` \/ OSS/);
   assert.match(devHandoff, /testflight:verify-handoff/);
+  assert.match(devHandoff, /git checkout <verified_commit>/);
+  assert.match(devHandoff, /HANDOFF_EXPECTED_SHA=<verified_commit>/);
+  assert.match(devHandoff, /gh run download <run_id> -n testflight-readiness-<sha>/);
+  assert.match(devHandoff, /干净克隆预检约 364M \/ 361\.1MiB/);
+  assert.match(fullHandoff, /脏工作区带未跟踪 QA 资源时可能更大/);
   assert.match(devHandoff, /ALLOW_PROVISIONING_UPDATES=1/);
+  assert.match(devHandoff, /本仓 Actions 不做 Upload，不需要配置 Apple \/ ASC \/ Team Secrets/);
   assert.match(devHandoff, /数学 story 是包内离线资源，不走 `asset-packs\.json` \/ OSS/);
   assert.match(devHandoff, /数学 story 不需要上传 OSS/);
   assert.match(checklist, /ALLOW_PROVISIONING_UPDATES=1/);
+  assert.match(checklist, /git checkout <verified_commit>/);
   assert.match(checklist, /数学 story 31 条不走 OSS/);
   assert.match(ascForm, /ALLOW_PROVISIONING_UPDATES=1/);
   assert.match(devHandoff, /assert-ios-archive-contract\.mjs/);
@@ -268,6 +280,8 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(testflightIssue, /allowLocalMockLogin=true/);
   assert.match(testflightIssue, /next_human_only=Archive\/Upload on a Mac with local signing/);
   assert.match(testflightIssue, /Run TestFlight handoff preflight/);
+  assert.match(testflightIssue, /git checkout <verified_commit>/);
+  assert.match(testflightIssue, /blind latest `main`/);
   assert.doesNotMatch(testflightIssue, /08e0e3fb15969117e7072c0c1269e694790e97e2/);
   assert.match(testflightIssue, /com\.baobaoenglish\.island/);
   assert.match(testflightIssue, versionBuildRe);
@@ -292,9 +306,14 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
     assert.match(read(handoffFile), versionBuildRe);
   }
   assert.match(fullHandoff, /npm ci --prefix apps\/frontend/);
+  assert.match(fullHandoff, /git checkout <verified_commit>/);
+  assert.match(fullHandoff, /HANDOFF_EXPECTED_SHA=<verified_commit>/);
+  assert.match(fullHandoff, /gh run download <run_id> -n testflight-readiness-<sha>/);
   assert.match(fullHandoff, /ALLOW_PROVISIONING_UPDATES=1/);
   assert.match(fullHandoff, /TESTFLIGHT_HANDOFF_CARD/);
   assert.match(fullHandoff, /handoffCard/);
+  assert.match(fullHandoff, /\| `94a0cde` \| 2026-08-08 \| chore：改用 CI 兼容且 audit 清零的 `vite@6\.4\.3`/);
+  assert.match(fullHandoff, /\| `5f74277` \| 2026-08-08 \| ci：readiness artifact JSON 增加顶层 `handoffCard`/);
   assert.match(fullHandoff, /\| `f0c0a3d` \| 2026-08-08 \| docs：同步 TestFlight handoff issue 证据字段/);
   assert.match(fullHandoff, /\| `0f0840a` \| 2026-08-08 \| docs：明确数学 story 31 条是包内离线资源/);
   assert.match(fullHandoff, /\| `08e0e3f` \| 2026-08-08 \| ci：启用 GitHub 无凭据 TestFlight Preflight/);
@@ -310,6 +329,10 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.doesNotMatch(githubWorkflow, /ASC_KEY|DEVELOPMENT_TEAM|APP_STORE_CONNECT|p8/);
   assert.doesNotMatch(enabledGithubWorkflow, /ASC_KEY|DEVELOPMENT_TEAM|APP_STORE_CONNECT|p8/);
   assert.doesNotMatch(testflightIssue, /ASC_KEY|APP_STORE_CONNECT|BEGIN PRIVATE|AuthKey_|\.mobileprovision|\.p12/);
+
+  const secrets = read('docs/testflight-secrets.md');
+  assert.match(secrets, /本仓已启用的 GitHub Actions `TestFlight Preflight` 不需要、也不应配置任何 Apple \/ ASC \/ Team 密钥/);
+  assert.match(secrets, /不是要求写进本仓 Secrets/);
 
   const enableWorkflow = read('tools/enable-testflight-workflow.sh');
   assert.match(enableWorkflow, /testflight-github-actions-template\.yml/);
