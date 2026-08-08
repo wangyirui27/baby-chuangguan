@@ -19,7 +19,7 @@ npm test
 - 内测冒烟 → [`docs/testflight-smoke.md`](docs/testflight-smoke.md)
 
 ```bash
-bash tools/pack-app-www.sh
+bash tools/pack-app-www.sh /tmp/hirota-www-check
 open ios/BabyEnglishIsland.xcodeproj
 # 或装好 Xcode + Team 后：
 # DEVELOPMENT_TEAM=你的ID bash tools/ship-testflight.sh --upload
@@ -34,4 +34,4 @@ open ios/BabyEnglishIsland.xcodeproj
 ## 仓库约定
 
 - 不提交：`.env`、本地 `data/*.json`、截图、AI 中间态（`_gen` / `_dreamina-raw`）、付费课全量 mp4
-- 进 TF 包：runtime + 海岛/沙漠 L01–10 + 数学运行时资源（见 `tools/pack-app-www.sh`）
+- 进 TF 包：runtime + 海岛/沙漠 L01–10 + 数学 story 31 条（见 `tools/pack-app-www.sh`）

@@ -23,13 +23,13 @@
 
 | 层 | 状态 | 说明 |
 |----|------|------|
-| **A 内容包** | ✅ 已绿并推仓 | `npm test` 379 pass；`testflightContentReady=true`；`hardFailures=[]`；pack 含海岛+沙漠各前 10 |
+| **A 内容包** | ✅ 已绿并推仓 | `npm test` 379 pass；`testflightContentReady=true`；`hardFailures=[]`；pack 含海岛+沙漠各前 10 + 数学 story 31 条 |
 | **B iOS 壳骨架** | ✅ 仓内齐 | 图标/启动/Privacy/pack Build Phase/ship 脚本齐；**本机无 Xcode.app → 不能 Archive** |
 | **C 苹果** | ⬜ 用户/有 Xcode 的 Mac | Team ID、ASC App、Archive Upload、TF 组 |
 | **D 后台** | ⬜ 可选 | 内容内测 **apiBase 可空**；要登录/云进度再填生产 HTTPS |
 
 **距离「内测员能从 TestFlight 装上玩内容」还差：有完整 Xcode 的 Mac + Apple Team + Archive 上传。**
-**不差：** 前 10 关视频进包、L11–200 OSS 清单、H5 测试、壳工程文件。
+**不差：** 前 10 关视频进包、数学 story 31 条进包、L11–200 OSS 清单、H5 测试、壳工程文件。
 
 **不要声称：** 已 Archive / 已上 TF / 已全功能登录联调（本机无证据）。
 
@@ -44,7 +44,7 @@ npm test
 # 预期：tests 379 · pass 379 · fail 0
 
 node tools/audit-readiness.mjs
-# 关键字段（2026-08-07 实测）：
+# 关键字段（2026-08-08 实测）：
 #   testflightContentReady: true
 #   nativeShellReady: true
 #   hardFailures: []
@@ -56,12 +56,14 @@ node tools/audit-readiness.mjs
 #   missingQuestionAudioFirstTen: 0
 #   missingFirstTenVideos: 0
 #   desertSeedMissing: 0
+#   mathStoryVideos: expected 31, listed 31, missing 0, localBytes 99877902
 #   remoteCourseVideos ocean/desert: listed 190, missingRemote11to200 0, realOssUrls 190
 
 bash tools/pack-app-www.sh /tmp/hirota-www-check
-# 预期：runtime asset gate OK；约 286MB；含
+# 预期：runtime asset gate OK；约 382MB；含
 #   assets/video/free-levels/level-01…10
 #   assets/video/desert-levels/level-001…010
+#   assets/video/math-story/*.mp4 31 条（约 95MB）
 ```
 
 **本机环境（写文档时）：**
@@ -121,10 +123,11 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 |----|-------------|
 | 海岛 L1–10 包内 mp4 | `assets/video/free-levels/level-01-mom.mp4` … `level-10-book.mp4`（workbench 定稿，2026-08-07 换小体积成片） |
 | 沙漠 L1–10 包内 mp4 | `assets/video/desert-levels/level-001-good-morning.mp4` … `level-010-i-m-sorry.mp4` |
+| 数学 story 31 条包内 mp4 | `assets/video/math-story/level-001-roll-call.mp4` … `level-031-num-ten.mp4`；manifest `present=31` |
 | L11–200 OSS | `asset-packs.json`：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/{ocean\|desert}/…`，无 `cdn.example` 占位 |
 | 目录/对账 | `data/content-catalog.json`（400 levels）、`data/workbench-level-video-map.json` |
-| pack 脚本 | `tools/pack-app-www.sh`：非视频运行时 + shell loop + 双图前 10；L11+ 不进包 |
-| 审计 | `tools/audit-readiness.mjs`：双图种子 + OSS 真链 + TF content 字段 |
+| pack 脚本 | `tools/pack-app-www.sh`：非视频运行时 + shell loop + 双图前 10 + 数学 story 31；L11+ 不进包 |
+| 审计 | `tools/audit-readiness.mjs`：双图种子 + 数学 story + OSS 真链 + TF content 字段 |
 | 测试 | `npm test` → 379 |
 | 品牌文案 | 用户可见「嗨洛塔」；禁「英语岛 / 开通 VIP」口径（按地图收费） |
 
@@ -171,12 +174,15 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 
 > 「最近」= 约 2026-07-31～2026-08-07 推上 `main` 的 TF 相关与产品收口。
 > **本 Hermes 会话（写本文当下）**：只做了多语言难度口头评估 + 本交接文档；**未**再改发船代码。
+> **2026-08-08 Codex 后续**：已将数学 story 31 条 mp4 纳入 GitHub、`pack-app-www` 和 readiness 门禁；见 `8e755be`。
 > 工作区另有 **untracked** 数学 QA/切图脚本（见 §8），与 TF 门禁无关，勿误提交除非用户要求。
 
 ### 4.1 提交时间线（新 → 旧）
 
 | Commit | 日期 | 摘要 |
 |--------|------|------|
+| `8e755be` | 2026-08-08 | fix：数学 story 31 条 mp4 进仓并打入 iOS `www` 包 |
+| `85a136d` | 2026-08-08 | docs：更新 TestFlight handoff 与内容/全功能内测口径 |
 | `c0381fe` | 2026-08-07 | docs(tf)：对齐 `ship-testflight` 路径与 **1.0.1 (3)** 交接清单 |
 | `5c9069c` | 2026-08-07 | **feat(tf)**：OSS 课视频清单 + 沙漠 L1–10 进包；海岛前 10 换 workbench 成片；catalog/video-map；pack/audit 增强；auth/apiClient 与壳注入；build **3** |
 | `7348b25` | 2026-08-07 | docs：hosted legal pages（隐私/条款/儿童隐私） |
@@ -254,10 +260,11 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 
 ### 5.4 pack 铁律（改资源必知）
 
-- **进包：** 非视频运行时资源、壳 loop、海岛 L01–10、沙漠 L001–010、`asset-packs.json`
+- **进包：** 非视频运行时资源、壳 loop、海岛 L01–10、沙漠 L001–010、数学 story 31 条、`asset-packs.json`
 - **不进包：** L11+ 全量 mp4、drafts、`_gen`、raw Dreamina、付费课全量
 - 漏沙漠种子 = 沙漠前 10 离线不可播
-- 改 pack 后：`bash tools/pack-app-www.sh /tmp/x && ls …/desert-levels | wc -l` 应为 10
+- 漏数学 story = 数学地图 31 处短片空播/fallback
+- 改 pack 后：`bash tools/pack-app-www.sh /tmp/x` 应显示 `math-story x31 in`，且 `find /tmp/x/assets/video/math-story -name '*.mp4' | wc -l` 应为 31
 
 ---
 
@@ -269,6 +276,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 - [ ]（仅全功能）短信登录 + 重进保持 session
 - [ ] 海岛 + 沙漠 **1–10**：视频、题、词音
 - [ ]（有网）L11+ OSS 课视频
+- [ ] 数学 story 短片：至少测第一个 story 有画面、有声音、可继续
 - [ ] 数学一关：无 `+/=/?` 硬符号；拖拽可完成；语音与题面一致
 - [ ] FAB 静音；返回不崩
 - [ ]（可选）IAP 拉起/取消不崩

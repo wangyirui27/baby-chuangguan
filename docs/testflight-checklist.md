@@ -1,13 +1,13 @@
 # TestFlight 工程清单（助手已落地 vs 你侧）
 
-更新：2026-08-07（iPad TF 最后准备 · OSS 课视频 + 沙漠种子进包）  
-工程：嗨洛塔 / Bundle `com.baobaoenglish.island` / 版本 **1.0.1 (3)**  
+更新：2026-08-08（iPad TF 最后准备 · OSS 课视频 + 沙漠种子 + 数学 story 进包）
+工程：嗨洛塔 / Bundle `com.baobaoenglish.island` / 版本 **1.0.1 (3)**
 仓库：`https://github.com/wangyirui27/baby-chuangguan` · 分支 `main`
 
 ## 一句话
 
-**A 内容包 + B 原生壳骨架已齐**（`testflightContentReady=true`，`hardFailures=[]`，`npm test` 379 全绿，`pack-app-www` 含海岛+沙漠各前 10 关）。  
-**本机无完整 Xcode → 不能本地 Archive**。  
+**A 内容包 + B 原生壳骨架已齐**（`testflightContentReady=true`，`hardFailures=[]`，`npm test` 379 全绿，`pack-app-www` 含海岛+沙漠各前 10 关 + 数学 story 31 条）。
+**本机无完整 Xcode → 不能本地 Archive**。
 **C 苹果账号 / D 后台公网**仍是外部步骤。
 
 ---
@@ -19,6 +19,7 @@
 | 200 关 + 前 10 关设定 | ✅ |
 | 海岛 L1–10 包内视频 | ✅ workbench 定稿 |
 | 沙漠 L1–10 包内视频 | ✅ 已进 `pack-app-www` + 仓 |
+| 数学 story 31 条短片 | ✅ 已进 `pack-app-www` + 仓 |
 | L11–200 课视频 | ✅ OSS 公网直链（`asset-packs.json`，非假 CDN） |
 | RDS 474 BLOB 备份 | ✅ 仅备份，播放走 OSS |
 | 品牌 嗨洛塔 / 禁英语岛开通VIP | ✅ |
@@ -26,7 +27,7 @@
 | `node tools/audit-readiness.mjs` | ✅ TF content ready |
 | Build | **1.0.1 (3)** |
 
-OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`  
+OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
 前缀：`assets/video/desert|ocean/*`（匿名 GET 已通）
 
 ---
@@ -50,8 +51,8 @@ OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
 
 ## C 苹果（你/开发者）
 
-1. Apple Developer 登录 + Team ID  
-2. ASC 建 App：`com.baobaoenglish.island`，名 **嗨洛塔**  
+1. Apple Developer 登录 + Team ID
+2. ASC 建 App：`com.baobaoenglish.island`，名 **嗨洛塔**
 3. 有完整 Xcode 的 Mac：
    ```bash
    git pull
@@ -68,18 +69,18 @@ OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
 
 | 模式 | apiBase | 能力 |
 |------|---------|------|
-| **内容内测（推荐先发）** | 空 | 离线海岛/沙漠前 10 + L11–200 下 OSS；登录/云进度不可用 |
+| **内容内测（推荐先发）** | 空 | 离线海岛/沙漠前 10 + 数学 story 31 条 + L11–200 下 OSS；登录/云进度不可用 |
 | 全功能 TF | 生产 HTTPS 根（无尾斜杠） | 登录/学习进度；短信·IAP 另配 |
 
-`ios/BabyEnglishIsland/shell-config.json` 当前 `apiBase=""`。  
+`ios/BabyEnglishIsland/shell-config.json` 当前 `apiBase=""`。
 **不要**把 `api.modelisms.com` 当嗨洛塔后端（那是影关）。
 
 ---
 
 ## 你只需拍板/动手
 
-1. **现在就 Archive？** → 找有 Xcode 的人 pull `main` 后跑 `ship-testflight.sh --upload` 或 GUI Archive。  
-2. **要登录云进度？** → 给生产 `apiBase`（或确认暂空做内容内测）。  
+1. **现在就 Archive？** → 找有 Xcode 的人 pull `main` 后跑 `ship-testflight.sh --upload` 或 GUI Archive。
+2. **要登录云进度？** → 给生产 `apiBase`（或确认暂空做内容内测）。
 3. **Team ID** → 有了发我或自己写 `ios/Config/Team.xcconfig`。
 
 助手这边 **A 已推仓，B 骨架齐，不能代登苹果/代 Archive。**
