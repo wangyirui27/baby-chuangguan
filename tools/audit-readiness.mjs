@@ -181,12 +181,6 @@ function shellConfig() {
   }
 }
 
-function shellLocalMockLoginExplicit() {
-  const config = shellConfig();
-  return Object.prototype.hasOwnProperty.call(config, 'allowLocalMockLogin')
-    && typeof config.allowLocalMockLogin === 'boolean';
-}
-
 function shellLocalMockLoginAllowed() {
   return shellConfig().allowLocalMockLogin === true;
 }
@@ -398,8 +392,8 @@ const hardFailures = [
   ...(mathStoryThemeAudio.listed !== mathStoryThemeAudio.expected || mathStoryThemeAudio.missing
     ? [`数学 story 主题音未就绪：script ${mathStoryThemeAudio.listed}/${mathStoryThemeAudio.expected}，本地缺 ${mathStoryThemeAudio.missing} 个。`]
     : []),
-  ...(!shellApiBaseConfigured() && !shellLocalMockLoginExplicit()
-    ? ['内容 TestFlight apiBase 为空时必须在 shell-config.json 显式配置 allowLocalMockLogin。']
+  ...(!shellApiBaseConfigured() && !shellLocalMockLoginAllowed()
+    ? ['内容 TestFlight apiBase 为空时必须在 shell-config.json 显式配置 allowLocalMockLogin=true。']
     : []),
   ...(nonNounTopicLevels.length ? [`仍有 ${nonNounTopicLevels.length} 关属于颜色/数字/动作，不是高频名词关。`] : []),
   ...(nonNounWordLevels.length ? [`仍有 ${nonNounWordLevels.length} 个非名词词条：${nonNounWordLevels.map((level) => `${level.id}:${level.title}`).join(', ')}。`] : []),

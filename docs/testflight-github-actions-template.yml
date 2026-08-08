@@ -1,0 +1,80 @@
+name: TestFlight Preflight
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      probe_asset_urls:
+        description: "Run live OSS URL sample probe after preflight"
+        required: false
+        default: false
+        type: boolean
+      probe_sample:
+        description: "Asset URL sample count, or all"
+        required: false
+        default: "6"
+
+permissions:
+  contents: read
+
+jobs:
+  content-preflight:
+    name: Content and shell handoff preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            backend/package-lock.json
+            apps/backend/package-lock.json
+            apps/frontend/package-lock.json
+
+      - name: Install system tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rsync
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm ci --prefix backend
+          npm ci --prefix apps/backend
+          npm ci --prefix apps/frontend
+
+      - name: Run TestFlight handoff preflight
+        run: npm run testflight:preflight
+
+  asset-url-probe:
+    name: Optional OSS asset URL probe
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: content-preflight
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.probe_asset_urls == true }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Probe OSS sample URLs
+        env:
+          PROBE_SAMPLE: ${{ inputs.probe_sample }}
+        run: npm run probe:asset-packs -- --live --sample "$PROBE_SAMPLE" --timeout-ms 8000

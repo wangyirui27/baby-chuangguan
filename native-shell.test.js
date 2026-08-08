@@ -83,6 +83,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.ok(exists('ios/ExportOptions-TestFlight.plist'));
   assert.ok(exists('tools/testflight-preflight.sh'));
   assert.ok(exists('tools/probe-asset-pack-urls.mjs'));
+  assert.ok(exists('docs/testflight-github-actions-template.yml'));
   assert.ok(exists('docs/testflight-checklist.md'));
   assert.ok(exists('docs/testflight-secrets.md'));
   assert.ok(exists('docs/iap-product-ids.md'));
@@ -123,6 +124,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(exportOptions, /<key>signingStyle<\/key>\s*<string>automatic<\/string>/);
 
   const preflight = read('tools/testflight-preflight.sh');
+  const githubWorkflow = read('docs/testflight-github-actions-template.yml');
   assert.match(preflight, /for bin in node npm rsync python3/);
   assert.match(preflight, /npm test/);
   assert.match(preflight, /node tools\/audit-readiness\.mjs/);
@@ -136,6 +138,11 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(preflight, /mathThemeAudio=\$math_theme_audio_count/);
   assert.match(preflight, /seeds ocean=\$ocean_count desert=\$desert_count math=\$math_story_count/);
   assert.match(preflight, /AppIcon-1024\.png must not contain alpha/);
+  assert.match(githubWorkflow, /name: TestFlight Preflight/);
+  assert.match(githubWorkflow, /npm run testflight:preflight/);
+  assert.match(githubWorkflow, /probe:asset-packs/);
+  assert.match(githubWorkflow, /contents: read/);
+  assert.doesNotMatch(githubWorkflow, /ASC_KEY|DEVELOPMENT_TEAM|APP_STORE_CONNECT|p8/);
 
   const swiftVipProductId = viewController.match(/private let vipProductId = "([^"]+)"/)?.[1];
   const shellConfig = JSON.parse(read('ios/BabyEnglishIsland/shell-config.json'));
@@ -205,6 +212,8 @@ test('release audit tracks whether the iOS shell can be build-verified', () => {
   assert.match(audit, /shell-config\.json/);
   assert.match(audit, /shellLocalMockLoginAllowed/);
   assert.match(audit, /allowLocalMockLogin/);
+  assert.match(audit, /!shellLocalMockLoginAllowed\(\)/);
+  assert.match(audit, /allowLocalMockLogin=true/);
   assert.match(audit, /testflightContentReady/);
   assert.match(audit, /TEMP_LOCAL_FULL_ACCESS/);
   assert.match(audit, /assetPackPlaceholders/);

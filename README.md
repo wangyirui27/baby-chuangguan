@@ -31,6 +31,8 @@ open ios/BabyEnglishIsland.xcodeproj
 # DEVELOPMENT_TEAM=你的ID BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
 ```
 
+`docs/testflight-github-actions-template.yml` 是无凭据 CI 模板；有 GitHub `workflow` 权限的同事可复制到 `.github/workflows/testflight-preflight.yml` 启用绿勾。它只证明内容包、H5、壳工程交接门禁通过；Archive / Upload 仍必须由有完整 Xcode + Apple Developer Team 的技术同事执行。
+
 `DEVELOPMENT_TEAM=你的ID bash tools/ship-testflight.sh --upload`；或本地复制 `ios/Config/Team.xcconfig.example` 为 ignored 的 `ios/Config/Team.xcconfig` 后填 Team。生产 API 写入 `ios/BabyEnglishIsland/shell-config.json` 的 `apiBase`（HTTPS，无尾 `/`）。内容内测 `apiBase` 可空，`allowLocalMockLogin=true` 只用于通过强制登录门，不授予 VIP。
 TestFlight 默认 `TEMP_LOCAL_FULL_ACCESS=false`，本地壳不会绕过 11 关以后的付费墙。
 

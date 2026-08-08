@@ -40,6 +40,8 @@ open ios/BabyEnglishIsland.xcodeproj
 # Product → Archive → Distribute App → App Store Connect → Upload
 ```
 
+`docs/testflight-github-actions-template.yml` 可由有 GitHub `workflow` 权限的同事复制到 `.github/workflows/testflight-preflight.yml`，在 `main` / PR 上跑同一套无凭据门禁。它不做 Archive / Upload，也不需要 Apple 密钥。
+
 Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（约 382MB；含海岛+沙漠前 10 关 mp4、数学 story 31 条 mp4 + 31 条主题音 + `asset-packs.json`）。
 
 ---
@@ -59,6 +61,7 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 | `tools/pack-app-www.sh` | 打运行时 www |
 | `tools/audit-readiness.mjs` | TF 内容门禁：付费墙开关、版本、OSS 占位 URL、资源计数 |
 | `tools/probe-asset-pack-urls.mjs` | 可选 OSS URL 抽检；默认 dry-run，不进默认预检 |
+| `docs/testflight-github-actions-template.yml` | GitHub 无凭据预检模板；需有 `workflow` 权限的同事复制启用 |
 | `asset-packs.json` | L11–200 OSS URL |
 | `docs/testflight-checklist.md` | A/B/C/D 门禁 |
 | `docs/testflight-secrets.md` | Team ID / ASC API Key 环境变量契约 |

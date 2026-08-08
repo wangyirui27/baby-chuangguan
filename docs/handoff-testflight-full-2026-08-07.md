@@ -41,7 +41,7 @@
 cd /Users/yr/嗨洛塔少儿启蒙APP   # 或 clone 后的 baby-chuangguan
 git pull origin main
 npm test
-# 预期：tests 379 · pass 379 · fail 0
+# 预期：tests 383 · pass 383 · fail 0
 
 npm run testflight:preflight
 # 预期：[testflight-preflight] seeds ocean=10 desert=10 math=31
@@ -140,7 +140,8 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | pack 脚本 | `tools/pack-app-www.sh`：非视频运行时 + shell loop + 双图前 10 + 数学 story 31；L11+ 不进包 |
 | 审计 | `tools/audit-readiness.mjs`：双图种子 + 数学 story + OSS 真链 + 付费墙开关 + 版本 + 占位 URL + TF content 字段 |
 | 一键预检 | `npm run testflight:preflight`：无 Xcode 跑测试、readiness、pack、plist/scheme 语法 |
-| 测试 | `npm test` → 379 |
+| GitHub 预检模板 | `docs/testflight-github-actions-template.yml`：无 Apple 密钥；有 `workflow` 权限的同事复制到 `.github/workflows/testflight-preflight.yml` 后可跑内容/壳交接门禁与手动 OSS sample probe |
+| 测试 | `npm test` → 383 |
 | 品牌文案 | 用户可见「嗨洛塔」；禁「英语岛 / 开通 VIP」口径（按地图收费） |
 
 ### 3.2 B · iOS 壳
@@ -199,7 +200,9 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 
 | Commit | 日期 | 摘要 |
 |--------|------|------|
-| `latest` | 2026-08-08 | fix：TF 预检门禁收紧，关闭本地壳付费绕过，共享 scheme，清理 `asset-packs.json` 假 URL |
+| `latest` | 2026-08-08 | docs/fix：GitHub 无凭据 TestFlight Preflight 模板，修正交接旧口径，收紧空 apiBase 的 local mock 登录门禁 |
+| `4637505` | 2026-08-08 | fix：显式化内容 TestFlight local mock 登录、法律草稿 ASC 禁用提示、OSS URL 抽检工具 |
+| `c4c3c36` | 2026-08-08 | fix：TF 预检门禁收紧，关闭本地壳付费绕过，共享 scheme，清理 `asset-packs.json` 假 URL |
 | `d916a4e` | 2026-08-08 | docs：记录数学 story 31 条进包与 pack 体积 |
 | `8e755be` | 2026-08-08 | fix：数学 story 31 条 mp4 进仓并打入 iOS `www` 包 |
 | `85a136d` | 2026-08-08 | docs：更新 TestFlight handoff 与内容/全功能内测口径 |
