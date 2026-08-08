@@ -46,24 +46,26 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 |------|------|
 | `ios/BabyEnglishIsland.xcodeproj` | Xcode 工程 |
 | `ios/BabyEnglishIsland.xcodeproj/xcshareddata/xcschemes/BabyEnglishIsland.xcscheme` | 共享 scheme，CLI / CI 可识别 |
-| `ios/Config/Team.xcconfig` | `DEVELOPMENT_TEAM=`（本地填，勿泄密） |
+| `ios/Config/Team.xcconfig.example` | 本地复制为 ignored 的 `Team.xcconfig` 后填 Team ID |
 | `ios/Config/Shared.xcconfig` | 版本 1.0.1 / build 3 / Bundle ID |
 | `ios/BabyEnglishIsland/shell-config.json` | `apiBase`（内容内测可空） |
-| `ios/ExportOptions-TestFlight.plist` | TF 导出（teamID 由 ship 脚本写入） |
+| `ios/ExportOptions-TestFlight.plist` | TF 导出模板（ship 脚本生成临时带 teamID 的副本） |
 | `tools/ship-testflight.sh` | check / archive / upload / open |
 | `tools/pack-app-www.sh` | 打运行时 www |
 | `tools/audit-readiness.mjs` | TF 内容门禁：付费墙开关、版本、OSS 占位 URL、资源计数 |
 | `asset-packs.json` | L11–200 OSS URL |
 | `docs/testflight-checklist.md` | A/B/C/D 门禁 |
+| `docs/testflight-secrets.md` | Team ID / ASC API Key 环境变量契约 |
 
 ---
 
 ## 签名与 ASC
 
 1. Xcode → Settings → Accounts 登录付费 Apple Developer
-2. Team ID → `DEVELOPMENT_TEAM` 或 Signing 面板
-3. ASC 若无 App：新建 iOS，Bundle `com.baobaoenglish.island`，名 **嗨洛塔**
-4. 上传后处理 5–30 分钟 → 加内测组 / 外测合规
+2. Team ID → `DEVELOPMENT_TEAM` 环境变量、本地 ignored `Team.xcconfig`，或 Signing 面板
+3. 无人值守上传：按 `docs/testflight-secrets.md` 配 ASC API Key；人工 Xcode 登录态上传可跳过
+4. ASC 若无 App：新建 iOS，Bundle `com.baobaoenglish.island`，名 **嗨洛塔**
+5. 上传后处理 5–30 分钟 → 加内测组 / 外测合规
 
 ---
 

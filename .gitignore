@@ -114,7 +114,8 @@ assets/generated/
 .workbuddy/
 
 # ─── iOS local signing (never commit real Team ID if filled) ──
-# Keep Team.xcconfig.example tracked; empty template may be tracked.
+# Keep Team.xcconfig.example tracked; real Team.xcconfig is local only.
+ios/Config/Team.xcconfig
 ios/build/
 ios/**/*.xcuserstate
 ios/**/xcuserdata/

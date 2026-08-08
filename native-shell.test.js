@@ -73,11 +73,11 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.ok(exists('ios/BabyEnglishIsland/Assets.xcassets/LaunchLogo.imageset/LaunchLogo.png'));
   assert.ok(exists('ios/BabyEnglishIsland/PrivacyInfo.xcprivacy'));
   assert.ok(exists('ios/BabyEnglishIsland/shell-config.json'));
-  assert.ok(exists('ios/Config/Team.xcconfig'));
   assert.ok(exists('ios/Config/Team.xcconfig.example'));
   assert.ok(exists('ios/Config/Shared.xcconfig'));
   assert.ok(exists('ios/ExportOptions-TestFlight.plist'));
   assert.ok(exists('docs/testflight-checklist.md'));
+  assert.ok(exists('docs/testflight-secrets.md'));
   assert.ok(exists('docs/iap-product-ids.md'));
   assert.ok(exists('docs/testflight-smoke.md'));
   assert.ok(exists('assets/video/math-story/math-story-video-manifest.json'));
@@ -86,6 +86,17 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(info, /嗨洛塔/);
   assert.match(info, /UILaunchScreen/);
   assert.match(info, /ITSAppUsesNonExemptEncryption/);
+
+  const gitignore = read('.gitignore');
+  assert.match(gitignore, /ios\/Config\/Team\.xcconfig/);
+
+  const ship = read('tools/ship-testflight.sh');
+  assert.match(ship, /EXPORT_OPTS_TEMPLATE/);
+  assert.match(ship, /EXPORT_OPTS_WORK/);
+  assert.match(ship, /ASC_KEY_ID/);
+  assert.match(ship, /ASC_ISSUER_ID/);
+  assert.match(ship, /authenticationKeyPath/);
+  assert.doesNotMatch(ship, /plutil -replace teamID -string "\$tid" "\$EXPORT_OPTS"/);
 
   const shellConfig = JSON.parse(read('ios/BabyEnglishIsland/shell-config.json'));
   assert.equal(typeof shellConfig.apiBase, 'string');
@@ -143,6 +154,8 @@ test('release audit tracks whether the iOS shell can be build-verified', () => {
   assert.match(audit, /TEMP_LOCAL_FULL_ACCESS/);
   assert.match(audit, /assetPackPlaceholders/);
   assert.match(audit, /scriptReleaseVersion/);
+  assert.match(audit, /sharedMarketingVersion/);
+  assert.match(audit, /projectBuildNumbers/);
   assert.match(audit, /mathStoryVideoCoverage/);
   assert.match(audit, /mathStoryVideos/);
   assert.match(audit, /math-story mp4 count/);

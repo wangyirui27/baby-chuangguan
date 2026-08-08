@@ -5,6 +5,7 @@
 #   bash tools/ship-testflight.sh --archive        # Archive
 #   bash tools/ship-testflight.sh --upload         # Archive + 导出上传
 #   DEVELOPMENT_TEAM=XXXXXXXX bash tools/ship-testflight.sh --upload
+#   ASC_KEY_ID=... ASC_ISSUER_ID=... ASC_KEY_PATH=/tmp/AuthKey.p8 bash tools/ship-testflight.sh --upload
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -13,13 +14,91 @@ PROJ="$IOS/BabyEnglishIsland.xcodeproj"
 SCHEME="BabyEnglishIsland"
 ARCHIVE_PATH="${ARCHIVE_PATH:-/tmp/hirota-BabyEnglishIsland.xcarchive}"
 EXPORT_DIR="${EXPORT_DIR:-/tmp/hirota-tf-export}"
-EXPORT_OPTS="$IOS/ExportOptions-TestFlight.plist"
+EXPORT_OPTS_TEMPLATE="$IOS/ExportOptions-TestFlight.plist"
+EXPORT_OPTS_WORK="${EXPORT_OPTS_WORK:-/tmp/hirota-ExportOptions-TestFlight.plist}"
+ASC_KEY_TMP="${ASC_KEY_TMP:-/tmp/hirota-asc/AuthKey.p8}"
 TEAM_FILE="$IOS/Config/Team.xcconfig"
 SHELL_CFG="$IOS/BabyEnglishIsland/shell-config.json"
 
 red() { printf '\033[31m%s\033[0m\n' "$*"; }
 grn() { printf '\033[32m%s\033[0m\n' "$*"; }
 ylw() { printf '\033[33m%s\033[0m\n' "$*"; }
+team_label() {
+  [[ -n "$1" ]] && echo "CONFIGURED" || echo "EMPTY"
+}
+
+asc_key_id() {
+  echo "${ASC_KEY_ID:-${APP_STORE_CONNECT_API_KEY_ID:-}}"
+}
+
+asc_issuer_id() {
+  echo "${ASC_ISSUER_ID:-${APP_STORE_CONNECT_ISSUER_ID:-}}"
+}
+
+asc_key_path() {
+  if [[ -n "${ASC_KEY_PATH:-${APP_STORE_CONNECT_API_KEY_PATH:-}}" ]]; then
+    echo "${ASC_KEY_PATH:-${APP_STORE_CONNECT_API_KEY_PATH:-}}"
+    return
+  fi
+  local key_b64="${ASC_KEY_P8_BASE64:-${APP_STORE_CONNECT_API_KEY_P8_BASE64:-}}"
+  if [[ -z "$key_b64" ]]; then
+    echo ""
+    return
+  fi
+  mkdir -p "$(dirname "$ASC_KEY_TMP")"
+  if ! printf '%s' "$key_b64" | base64 --decode >"$ASC_KEY_TMP" 2>/dev/null; then
+    printf '%s' "$key_b64" | base64 -D >"$ASC_KEY_TMP"
+  fi
+  chmod 600 "$ASC_KEY_TMP"
+  echo "$ASC_KEY_TMP"
+}
+
+asc_key_status() {
+  local key_id issuer_id raw_path key_b64
+  key_id="$(asc_key_id)"
+  issuer_id="$(asc_issuer_id)"
+  raw_path="${ASC_KEY_PATH:-${APP_STORE_CONNECT_API_KEY_PATH:-}}"
+  key_b64="${ASC_KEY_P8_BASE64:-${APP_STORE_CONNECT_API_KEY_P8_BASE64:-}}"
+  if [[ -z "$key_id$issuer_id$raw_path$key_b64" ]]; then
+    echo "EMPTY"
+    return
+  fi
+  if [[ -z "$key_id" || -z "$issuer_id" || -z "$raw_path$key_b64" ]]; then
+    echo "INCOMPLETE"
+    return
+  fi
+  if [[ -n "$raw_path" && ! -f "$raw_path" ]]; then
+    echo "MISSING_FILE"
+    return
+  fi
+  echo "CONFIGURED"
+}
+
+build_xcode_auth_args() {
+  XCODE_AUTH_ARGS=()
+  local key_id issuer_id key_path
+  key_id="$(asc_key_id)"
+  issuer_id="$(asc_issuer_id)"
+  key_path="$(asc_key_path)"
+  if [[ -n "$key_id$key_path$issuer_id" ]]; then
+    [[ -n "$key_id" && -n "$issuer_id" && -n "$key_path" ]] || {
+      red "ASC API Key 需要同时提供 ASC_KEY_ID、ASC_ISSUER_ID、ASC_KEY_PATH（或 ASC_KEY_P8_BASE64）"
+      exit 1
+    }
+    [[ -f "$key_path" ]] || {
+      red "ASC_KEY_PATH 不存在: $key_path"
+      exit 1
+    }
+    XCODE_AUTH_ARGS+=(
+      -authenticationKeyPath "$key_path"
+      -authenticationKeyID "$key_id"
+      -authenticationKeyIssuerID "$issuer_id"
+    )
+  fi
+  if [[ "${ALLOW_PROVISIONING_UPDATES:-0}" == "1" ]]; then
+    XCODE_AUTH_ARGS+=(-allowProvisioningUpdates)
+  fi
+}
 
 need_xcode() {
   if [[ ! -d /Applications/Xcode.app ]]; then
@@ -54,15 +133,12 @@ team_id() {
   echo ""
 }
 
-write_team() {
+make_export_options() {
   local t="$1"
-  cat >"$TEAM_FILE" <<EOF
-// Filled by tools/ship-testflight.sh — do not commit real secrets if policy requires.
-DEVELOPMENT_TEAM = $t
-EOF
-  # ExportOptions teamID
-  /usr/bin/plutil -replace teamID -string "$t" "$EXPORT_OPTS" 2>/dev/null || true
-  grn "DEVELOPMENT_TEAM=$t → Team.xcconfig + ExportOptions"
+  mkdir -p "$(dirname "$EXPORT_OPTS_WORK")"
+  cp "$EXPORT_OPTS_TEMPLATE" "$EXPORT_OPTS_WORK"
+  /usr/bin/plutil -replace teamID -string "$t" "$EXPORT_OPTS_WORK"
+  echo "$EXPORT_OPTS_WORK"
 }
 
 preflight() {
@@ -72,7 +148,8 @@ preflight() {
   security find-identity -v -p codesigning || true
   local tid
   tid="$(team_id)"
-  echo "Team: ${tid:-EMPTY}"
+  echo "Team: $(team_label "$tid")"
+  echo "ASC API Key: $(asc_key_status)"
   echo "apiBase: $(python3 -c "import json;print(json.load(open('$SHELL_CFG')).get('apiBase') or 'EMPTY')")"
   if [[ -z "$tid" ]]; then
     red "Team 为空。请:"
@@ -94,9 +171,9 @@ do_archive() {
   local tid
   tid="$(team_id)"
   [[ -n "$tid" ]] || { red "无 Team ID"; exit 1; }
-  write_team "$tid"
   rm -rf "$ARCHIVE_PATH"
-  grn "Archive → $ARCHIVE_PATH"
+  grn "Archive → $ARCHIVE_PATH (Team configured)"
+  build_xcode_auth_args
   xcodebuild \
     -project "$PROJ" \
     -scheme "$SCHEME" \
@@ -104,6 +181,7 @@ do_archive() {
     -destination 'generic/platform=iOS' \
     -archivePath "$ARCHIVE_PATH" \
     DEVELOPMENT_TEAM="$tid" \
+    "${XCODE_AUTH_ARGS[@]}" \
     archive | /usr/bin/tee /tmp/hirota-archive.log | tail -30
   grn "Archive OK"
 }
@@ -114,12 +192,15 @@ do_upload() {
   mkdir -p "$EXPORT_DIR"
   local tid
   tid="$(team_id)"
-  /usr/bin/plutil -replace teamID -string "$tid" "$EXPORT_OPTS"
+  local export_opts
+  export_opts="$(make_export_options "$tid")"
   grn "Export+Upload (app-store-connect)…"
+  build_xcode_auth_args
   xcodebuild -exportArchive \
     -archivePath "$ARCHIVE_PATH" \
     -exportPath "$EXPORT_DIR" \
-    -exportOptionsPlist "$EXPORT_OPTS" | /usr/bin/tee /tmp/hirota-export.log | tail -40
+    -exportOptionsPlist "$export_opts" \
+    "${XCODE_AUTH_ARGS[@]}" | /usr/bin/tee /tmp/hirota-export.log | tail -40
   grn "若上传成功：打开 App Store Connect → TestFlight → 处理完成后加内测组"
   ls -la "$EXPORT_DIR" || true
 }
@@ -135,7 +216,11 @@ case "$cmd" in
     need_xcode || true
     preflight || true
     echo ""
-    ylw "内容包已就绪。本机还差: 完整 Xcode + Apple 登录证书 + Team ID（apiBase 建议生产 HTTPS，内容内测可暂空）。"
+    if [[ -n "$(team_id)" ]]; then
+      ylw "内容包已就绪。本机还差: 完整 Xcode + Apple 登录证书（apiBase 建议生产 HTTPS，内容内测可暂空）。"
+    else
+      ylw "内容包已就绪。本机还差: 完整 Xcode + Apple 登录证书 + Team ID（apiBase 建议生产 HTTPS，内容内测可暂空）。"
+    fi
     ;;
   --archive|archive) do_archive ;;
   --upload|upload) do_upload ;;

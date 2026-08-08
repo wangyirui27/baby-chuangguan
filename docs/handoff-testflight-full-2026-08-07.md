@@ -84,9 +84,9 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 1. **完整 Xcode**（非 CLT）的 Mac；`xcode-select -s /Applications/Xcode.app/Contents/Developer`
 2. **Apple Developer** 付费账号；拿到 **Team ID**
 3. 写入其一即可：
-   - `ios/Config/Team.xcconfig`：`DEVELOPMENT_TEAM=XXXXXXXXXX`
+   - 本地 ignored `ios/Config/Team.xcconfig`：`DEVELOPMENT_TEAM=XXXXXXXXXX`
    - 或 Xcode → Signing & Capabilities 选 Team
-   - 或：`DEVELOPMENT_TEAM=XXX bash tools/ship-testflight.sh --upload`（脚本会写 ExportOptions teamID）
+   - 或：`DEVELOPMENT_TEAM=XXX bash tools/ship-testflight.sh --upload`（脚本会生成临时 ExportOptions 写 teamID，不污染 Git）
 4. **App Store Connect** 若无 App：新建 iOS，Bundle **完全一致** `com.baobaoenglish.island`，显示名 **嗨洛塔**
 5. **Archive → Upload**：
    ```bash
@@ -145,12 +145,13 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | AppDelegate | `ios/BabyEnglishIsland/AppDelegate.swift`（含 background URLSession 钩子） |
 | 配置 | `ios/BabyEnglishIsland/shell-config.json`（apiBase 空、displayName 嗨洛塔、IAP id） |
 | 版本 | `ios/Config/Shared.xcconfig` + pbx：`MARKETING_VERSION=1.0.1`，`CURRENT_PROJECT_VERSION=3` |
-| Team 位 | `ios/Config/Team.xcconfig`（空）+ `Team.xcconfig.example`；Shared `#include? "Team.xcconfig"` |
+| Team 位 | `ios/Config/Team.xcconfig.example`；真实 `Team.xcconfig` 为本地 ignored 文件；Shared `#include? "Team.xcconfig"` |
 | 图标 | `Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png` |
 | 启动 | Info.plist `UILaunchScreen` + `LaunchLogo` / `LaunchBackground` |
 | Privacy | `PrivacyInfo.xcprivacy`；Info `ITSAppUsesNonExemptEncryption` |
-| Export | `ios/ExportOptions-TestFlight.plist`（teamID 占位） |
-| 发船 | `tools/ship-testflight.sh`：check / archive / upload / open |
+| Export | `ios/ExportOptions-TestFlight.plist`（teamID 占位模板；ship 生成临时副本） |
+| 发船 | `tools/ship-testflight.sh`：check / archive / upload / open；可选 ASC API Key 无人值守上传 |
+| 签名变量 | `docs/testflight-secrets.md` |
 | H5 API | `auth/apiClient.js` 读 `window.BABY_ISLAND_API_BASE`，strip 尾 `/`；有 apiBase 时不走 local mock |
 | 版本提示 | `app-release.json` latestVersion `1.0.1`，商店搜词嗨洛塔 |
 
@@ -162,6 +163,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | `docs/dev-handoff-testflight.md` | 给打包同事的 5 分钟上手 |
 | `docs/testflight-checklist.md` | A/B/C/D 勾选 |
 | `docs/testflight-smoke.md` | 真机冒烟（当前工程与模板均按 **1.0.1 (3)** 记录） |
+| `docs/testflight-secrets.md` | Team ID / ASC API Key 环境变量契约 |
 | `docs/iap-product-ids.md` | IAP 商品 ID |
 | `docs/hosted-legal-pages/*` | 隐私/条款 **草稿 HTML**（需自行挂到公网 HTTPS） |
 | `README.md` | 仓库入口指向上述 TF 文档 |
@@ -307,8 +309,10 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
   tools/audit-readiness.mjs
   ios/BabyEnglishIsland.xcodeproj
   ios/BabyEnglishIsland.xcodeproj/xcshareddata/xcschemes/BabyEnglishIsland.xcscheme
-  ios/Config/{Shared,Team}.xcconfig
+  ios/Config/Shared.xcconfig
+  ios/Config/Team.xcconfig.example
   ios/ExportOptions-TestFlight.plist
+  docs/testflight-secrets.md
   ios/BabyEnglishIsland/{ViewController.swift,shell-config.json,PrivacyInfo.xcprivacy,Assets.xcassets}
   docs/handoff-testflight-full-2026-08-07.md  # 本文
   docs/dev-handoff-testflight.md

@@ -44,9 +44,10 @@ OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
 | 品牌显示名 嗨洛塔 | ✅ |
 | Build Phase 调 `pack-app-www.sh` → bundle `www/` | ✅ |
 | Shared scheme `BabyEnglishIsland.xcscheme` | ✅ |
-| `ExportOptions-TestFlight.plist` | ✅（teamID 占位，发船时写入） |
+| `ExportOptions-TestFlight.plist` | ✅（teamID 占位；ship 使用临时副本写入） |
 | `tools/ship-testflight.sh` | ✅ check / archive / upload / open |
-| `Team.xcconfig` DEVELOPMENT_TEAM | ⬜ 空，需填 |
+| `docs/testflight-secrets.md` | ✅ Team ID / ASC API Key 环境变量契约 |
+| `Team.xcconfig` DEVELOPMENT_TEAM | ⬜ 本地 ignored 文件或环境变量，需填 |
 | 本机 Xcode.app | ⬜ 仅 Command Line Tools |
 
 ---
@@ -85,6 +86,6 @@ L11–200 的 OSS URL 已在清单中；真机要播放这些课视频，需要�
 
 1. **现在就 Archive？** → 找有 Xcode 的人 pull `main` 后跑 `ship-testflight.sh --upload` 或 GUI Archive。
 2. **要登录云进度？** → 给生产 `apiBase`（或确认暂空做内容内测）。
-3. **Team ID** → 有了发我或自己写 `ios/Config/Team.xcconfig`。
+3. **Team ID** → 有了发我，或技术在本机用环境变量/ignored `ios/Config/Team.xcconfig`。
 
 助手这边 **A 已推仓，B 骨架齐，不能代登苹果/代 Archive。**

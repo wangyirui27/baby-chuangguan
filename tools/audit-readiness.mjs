@@ -74,6 +74,12 @@ const missingQuestionAudioBeyondSeed = missingQuestionAudio.length - missingQues
 const appRelease = JSON.parse(readFileSync(join(ROOT, 'app-release.json'), 'utf8'));
 const scriptSource = readFileSync(join(ROOT, 'script.js'), 'utf8');
 const scriptReleaseVersion = scriptSource.match(/APP_RELEASE_VERSION\s*=\s*'([^']+)'/)?.[1] || '';
+const sharedConfigSource = readFileSync(join(ROOT, 'ios/Config/Shared.xcconfig'), 'utf8');
+const projectSource = readFileSync(join(ROOT, 'ios/BabyEnglishIsland.xcodeproj/project.pbxproj'), 'utf8');
+const sharedMarketingVersion = sharedConfigSource.match(/^\s*MARKETING_VERSION\s*=\s*(\S+)/m)?.[1] || '';
+const sharedBuildNumber = sharedConfigSource.match(/^\s*CURRENT_PROJECT_VERSION\s*=\s*(\S+)/m)?.[1] || '';
+const projectMarketingVersions = [...new Set([...projectSource.matchAll(/MARKETING_VERSION\s*=\s*([^;]+);/g)].map((m) => m[1].trim()))];
+const projectBuildNumbers = [...new Set([...projectSource.matchAll(/CURRENT_PROJECT_VERSION\s*=\s*([^;]+);/g)].map((m) => m[1].trim()))];
 
 function nativeShellReady() {
   const projectFile = 'ios/BabyEnglishIsland.xcodeproj/project.pbxproj';
@@ -168,6 +174,7 @@ function shellApiBaseConfigured() {
 }
 
 function teamIdConfigured() {
+  if (String(process.env.DEVELOPMENT_TEAM || '').trim()) return true;
   try {
     const team = readFileSync(join(ROOT, 'ios/Config/Team.xcconfig'), 'utf8');
     const match = team.match(/^\s*DEVELOPMENT_TEAM\s*=\s*(\S+)/m);
@@ -310,6 +317,15 @@ const hardFailures = [
   ...(scriptReleaseVersion && appRelease.latestVersion && scriptReleaseVersion !== appRelease.latestVersion
     ? [`H5 关于页版本 ${scriptReleaseVersion} 与 app-release latestVersion ${appRelease.latestVersion} 不一致。`]
     : []),
+  ...(sharedMarketingVersion && appRelease.latestVersion && sharedMarketingVersion !== appRelease.latestVersion
+    ? [`iOS MARKETING_VERSION ${sharedMarketingVersion} 与 app-release latestVersion ${appRelease.latestVersion} 不一致。`]
+    : []),
+  ...(projectMarketingVersions.length && !projectMarketingVersions.every((version) => version === sharedMarketingVersion)
+    ? [`pbx MARKETING_VERSION ${projectMarketingVersions.join(', ')} 与 Shared.xcconfig ${sharedMarketingVersion} 不一致。`]
+    : []),
+  ...(projectBuildNumbers.length && !projectBuildNumbers.every((build) => build === sharedBuildNumber)
+    ? [`pbx CURRENT_PROJECT_VERSION ${projectBuildNumbers.join(', ')} 与 Shared.xcconfig ${sharedBuildNumber} 不一致。`]
+    : []),
   ...(assetPackPlaceholders.count
     ? [`asset-packs.json 仍有 ${assetPackPlaceholders.count} 条假 CDN/本地 downloadUrl。`]
     : []),
@@ -349,7 +365,7 @@ const gaps = [
     ? ['ios/BabyEnglishIsland/shell-config.json 的 apiBase 为空：file:// 壳登录/同步前需填生产 HTTPS 源。']
     : []),
   ...(!teamIdConfigured()
-    ? ['ios/Config/Team.xcconfig 未填 DEVELOPMENT_TEAM，Archive 前需写 Team ID 或在 Xcode Signing 里选队。']
+    ? ['未通过 DEVELOPMENT_TEAM 或本地 ios/Config/Team.xcconfig 配置 Team ID，Archive 前需写 Team ID 或在 Xcode Signing 里选队。']
     : []),
 ];
 
@@ -368,6 +384,10 @@ const result = {
     nonNounWords: nonNounWordLevels.length,
     tempLocalFullAccess: TEMP_LOCAL_FULL_ACCESS,
     scriptReleaseVersion,
+    sharedMarketingVersion,
+    sharedBuildNumber,
+    projectMarketingVersions,
+    projectBuildNumbers,
     nativeShellReady: nativeReady,
     nativeBuildToolReady: nativeBuildReady,
     shellApiBaseConfigured: shellApiBaseConfigured(),
