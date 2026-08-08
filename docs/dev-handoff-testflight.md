@@ -31,7 +31,7 @@ npm run testflight:preflight
 # 一键（推荐）
 # 会先自动跑 npm run testflight:preflight，再 Archive/Upload
 DEVELOPMENT_TEAM=你的TeamID bash tools/ship-testflight.sh --upload
-# 若 ASC 已有同版本 build，再临时递增：
+# 若 ASC 已有同版本 build，先跑 --check 看 Next retry，再临时递增：
 # DEVELOPMENT_TEAM=你的TeamID BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
 
 # 或 GUI
@@ -41,6 +41,7 @@ open ios/BabyEnglishIsland.xcodeproj
 ```
 
 `docs/testflight-github-actions-template.yml` 可由有 GitHub `workflow` 权限的同事复制到 `.github/workflows/testflight-preflight.yml`，在 `main` / PR 上跑同一套无凭据门禁。它不做 Archive / Upload，也不需要 Apple 密钥。
+启用：`bash tools/enable-testflight-workflow.sh`，再由有 `workflow` scope 的凭据提交 `.github/workflows/testflight-preflight.yml`。
 
 Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（约 382MB；含海岛+沙漠前 10 关 mp4、数学 story 31 条 mp4 + 31 条主题音 + `asset-packs.json`）。
 
@@ -58,6 +59,7 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 | `ios/ExportOptions-TestFlight.plist` | TF 导出模板（ship 脚本生成临时带 teamID 的副本） |
 | `tools/ship-testflight.sh` | check / archive / upload / open |
 | `tools/testflight-preflight.sh` | 无 Xcode 内容/壳门禁一键预检 |
+| `tools/enable-testflight-workflow.sh` | 把 GitHub Actions 模板复制到 `.github/workflows/`；提交需 workflow scope |
 | `tools/pack-app-www.sh` | 打运行时 www |
 | `tools/audit-readiness.mjs` | TF 内容门禁：付费墙开关、版本、OSS 占位 URL、资源计数 |
 | `tools/probe-asset-pack-urls.mjs` | 可选 OSS URL 抽检；默认 dry-run，不进默认预检 |

@@ -83,6 +83,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.ok(exists('ios/ExportOptions-TestFlight.plist'));
   assert.ok(exists('tools/testflight-preflight.sh'));
   assert.ok(exists('tools/probe-asset-pack-urls.mjs'));
+  assert.ok(exists('tools/enable-testflight-workflow.sh'));
   assert.ok(exists('docs/testflight-github-actions-template.yml'));
   assert.ok(exists('docs/testflight-checklist.md'));
   assert.ok(exists('docs/testflight-secrets.md'));
@@ -113,11 +114,18 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(ship, /ASC_KEY_ID/);
   assert.match(ship, /ASC_ISSUER_ID/);
   assert.match(ship, /authenticationKeyPath/);
+  assert.match(ship, /cleanup_asc_key_tmp/);
+  assert.match(ship, /ASC_KEY_TMP_CREATED=1/);
   assert.match(ship, /run_handoff_preflight/);
   assert.match(ship, /npm run testflight:preflight/);
   assert.match(ship, /do_archive\(\)[\s\S]*?need_xcode[\s\S]*?run_handoff_preflight/);
   assert.match(ship, /provisioning_updates_enabled/);
   assert.match(ship, /BUILD_NUMBER/);
+  assert.match(ship, /current_build_number/);
+  assert.match(ship, /next_build_number/);
+  assert.match(ship, /resolve_build_number/);
+  assert.match(ship, /\^\[1-9\]\[0-9\]\*/);
+  assert.match(ship, /Next retry/);
   assert.doesNotMatch(ship, /\n\s*sudo xcode-select/);
   assert.doesNotMatch(ship, /plutil -replace teamID -string "\$tid" "\$EXPORT_OPTS"/);
   assert.match(exportOptions, /<key>teamID<\/key>\s*<string>YOUR_TEAM_ID<\/string>/);
@@ -142,7 +150,13 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(githubWorkflow, /npm run testflight:preflight/);
   assert.match(githubWorkflow, /probe:asset-packs/);
   assert.match(githubWorkflow, /contents: read/);
+  assert.doesNotMatch(githubWorkflow, /lfs: true/);
   assert.doesNotMatch(githubWorkflow, /ASC_KEY|DEVELOPMENT_TEAM|APP_STORE_CONNECT|p8/);
+
+  const enableWorkflow = read('tools/enable-testflight-workflow.sh');
+  assert.match(enableWorkflow, /testflight-github-actions-template\.yml/);
+  assert.match(enableWorkflow, /\.github\/workflows\/testflight-preflight\.yml/);
+  assert.match(enableWorkflow, /workflow scope/);
 
   const swiftVipProductId = viewController.match(/private let vipProductId = "([^"]+)"/)?.[1];
   const shellConfig = JSON.parse(read('ios/BabyEnglishIsland/shell-config.json'));

@@ -19,6 +19,7 @@ EXPORT_OPTS_WORK="${EXPORT_OPTS_WORK:-/tmp/hirota-ExportOptions-TestFlight.plist
 ASC_KEY_TMP="${ASC_KEY_TMP:-/tmp/hirota-asc/AuthKey.p8}"
 TEAM_FILE="$IOS/Config/Team.xcconfig"
 SHELL_CFG="$IOS/BabyEnglishIsland/shell-config.json"
+ASC_KEY_TMP_CREATED=0
 
 red() { printf '\033[31m%s\033[0m\n' "$*"; }
 grn() { printf '\033[32m%s\033[0m\n' "$*"; }
@@ -26,6 +27,13 @@ ylw() { printf '\033[33m%s\033[0m\n' "$*"; }
 team_label() {
   [[ -n "$1" ]] && echo "CONFIGURED" || echo "EMPTY"
 }
+
+cleanup_asc_key_tmp() {
+  if [[ "$ASC_KEY_TMP_CREATED" == "1" && -f "$ASC_KEY_TMP" ]]; then
+    rm -f "$ASC_KEY_TMP"
+  fi
+}
+trap cleanup_asc_key_tmp EXIT
 
 asc_key_id() {
   echo "${ASC_KEY_ID:-${APP_STORE_CONNECT_API_KEY_ID:-}}"
@@ -50,6 +58,7 @@ asc_key_path() {
     printf '%s' "$key_b64" | base64 -D >"$ASC_KEY_TMP"
   fi
   chmod 600 "$ASC_KEY_TMP"
+  ASC_KEY_TMP_CREATED=1
   echo "$ASC_KEY_TMP"
 }
 
@@ -143,6 +152,32 @@ team_id() {
   echo ""
 }
 
+marketing_version() {
+  sed -n 's/^MARKETING_VERSION[[:space:]]*=[[:space:]]*//p' "$IOS/Config/Shared.xcconfig" | tr -d '[:space:]' | head -1
+}
+
+current_build_number() {
+  sed -n 's/^CURRENT_PROJECT_VERSION[[:space:]]*=[[:space:]]*//p' "$IOS/Config/Shared.xcconfig" | tr -d '[:space:]' | head -1
+}
+
+next_build_number() {
+  local build
+  build="$(current_build_number)"
+  [[ "$build" =~ ^[0-9]+$ ]] || return 1
+  echo $((build + 1))
+}
+
+resolve_build_number() {
+  local repo_build effective
+  repo_build="$(current_build_number)"
+  effective="${BUILD_NUMBER:-$repo_build}"
+  [[ "$effective" =~ ^[1-9][0-9]*$ ]] || {
+    red "BUILD_NUMBER/repo build 必须是正整数，当前: ${effective:-EMPTY}" >&2
+    exit 2
+  }
+  echo "$effective"
+}
+
 make_export_options() {
   local t="$1"
   mkdir -p "$(dirname "$EXPORT_OPTS_WORK")"
@@ -165,6 +200,10 @@ preflight() {
   tid="$(team_id)"
   echo "Team: $(team_label "$tid")"
   echo "ASC API Key: $(asc_key_status)"
+  echo "Build: $(marketing_version) ($(current_build_number))"
+  if next="$(next_build_number)"; then
+    echo "Next retry: DEVELOPMENT_TEAM=你的ID BUILD_NUMBER=$next bash tools/ship-testflight.sh --upload"
+  fi
   echo "apiBase: $(python3 -c "import json;print(json.load(open('$SHELL_CFG')).get('apiBase') or 'EMPTY')")"
   if [[ -z "$tid" ]]; then
     red "Team 为空。请:"
@@ -182,6 +221,8 @@ preflight() {
 }
 
 do_archive() {
+  local effective_build
+  effective_build="$(resolve_build_number)"
   need_xcode
   run_handoff_preflight
   local tid
@@ -193,8 +234,10 @@ do_archive() {
   local build_setting_args=()
   if [[ -n "${BUILD_NUMBER:-}" ]]; then
     ylw "Build number override: $BUILD_NUMBER"
-    build_setting_args+=(CURRENT_PROJECT_VERSION="$BUILD_NUMBER")
+  else
+    ylw "Using repo build number: $effective_build"
   fi
+  build_setting_args+=(CURRENT_PROJECT_VERSION="$effective_build")
   xcodebuild \
     -project "$PROJ" \
     -scheme "$SCHEME" \

@@ -97,6 +97,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 5. **Archive → Upload**：
    ```bash
    git pull
+   bash tools/ship-testflight.sh --check   # 显示当前 build 与 Next retry 命令
    DEVELOPMENT_TEAM=你的TeamID bash tools/ship-testflight.sh --upload
    # 或 GUI：open ios/BabyEnglishIsland.xcodeproj → Product → Archive → Distribute → ASC
    ```
