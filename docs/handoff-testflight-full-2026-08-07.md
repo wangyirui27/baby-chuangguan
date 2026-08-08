@@ -211,7 +211,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 
 ## 4. 最近已完成工作汇总（git / 工程）
 
-> 「最近」= 约 2026-07-31～2026-08-07 推上 `main` 的 TF 相关与产品收口。
+> 「最近」= 约 2026-07-31～2026-08-08 推上 `main` 的 TF 相关与产品收口。
 > **本 Hermes 会话（写本文当下）**：只做了多语言难度口头评估 + 本交接文档；**未**再改发船代码。
 > **2026-08-08 Codex 后续**：已将数学 story 31 条 mp4 纳入 GitHub、`pack-app-www` 和 readiness 门禁；见 `8e755be`。随后补齐共享 xcscheme、付费墙默认关闭、H5 版本 1.0.1 和 `asset-packs.json` 真 OSS URL。
 > 工作区另有 **untracked** 数学 QA/切图脚本（见 §8），与 TF 门禁无关，勿误提交除非用户要求。
@@ -220,7 +220,14 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 
 | Commit | 日期 | 摘要 |
 |--------|------|------|
-| `latest` | 2026-08-08 | docs/fix：GitHub 无凭据 TestFlight Preflight 模板，修正交接旧口径，收紧空 apiBase 的 local mock 登录门禁 |
+| `0f0840a` | 2026-08-08 | docs：明确数学 story 31 条是包内离线资源，不属于 OSS / `asset-packs.json` |
+| `2ab4692` | 2026-08-08 | docs：无 ASC Key、依赖 Xcode 登录态自动签名时，上传命令显式加 `ALLOW_PROVISIONING_UPDATES=1` |
+| `049c3ef` | 2026-08-08 | ci：钉住 TestFlight handoff readiness artifact / Actions 证据 |
+| `38e989f` | 2026-08-08 | ci：增加 TestFlight 打包后媒体完整性门禁 |
+| `c55de8b` | 2026-08-08 | ci：增加 iOS Archive 静态契约检查 |
+| `340ca0e` | 2026-08-08 | ci：增加 TestFlight handoff 证据门禁 |
+| `a1ce85c` | 2026-08-08 | docs：增加技术同事 TestFlight handoff issue 表单 |
+| `08e0e3f` | 2026-08-08 | ci：启用 GitHub 无凭据 TestFlight Preflight |
 | `4637505` | 2026-08-08 | fix：显式化内容 TestFlight local mock 登录、法律草稿 ASC 禁用提示、OSS URL 抽检工具 |
 | `c4c3c36` | 2026-08-08 | fix：TF 预检门禁收紧，关闭本地壳付费绕过，共享 scheme，清理 `asset-packs.json` 假 URL |
 | `d916a4e` | 2026-08-08 | docs：记录数学 story 31 条进包与 pack 体积 |

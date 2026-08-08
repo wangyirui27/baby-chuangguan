@@ -260,6 +260,14 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(testflightIssue, /docs\/dev-handoff-testflight\.md/);
   assert.match(testflightIssue, /docs\/testflight-smoke\.md/);
   assert.match(testflightIssue, /TESTFLIGHT_HANDOFF_CARD/);
+  assert.match(testflightIssue, /40-char SHA from the latest green main preflight run/);
+  assert.match(testflightIssue, /math_story_delivery=bundled_31_not_oss/);
+  assert.match(testflightIssue, /oss_scope=ocean_desert_l11_200_only/);
+  assert.match(testflightIssue, /apiBase_empty_ok=true/);
+  assert.match(testflightIssue, /allowLocalMockLogin=true/);
+  assert.match(testflightIssue, /next_human_only=Archive\/Upload on a Mac with local signing/);
+  assert.match(testflightIssue, /Run TestFlight handoff preflight/);
+  assert.doesNotMatch(testflightIssue, /08e0e3fb15969117e7072c0c1269e694790e97e2/);
   assert.match(testflightIssue, /com\.baobaoenglish\.island/);
   assert.match(testflightIssue, versionBuildRe);
   assert.match(testflightIssue, /Do not paste Apple account emails, Team IDs, certificates/);
@@ -283,6 +291,9 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(fullHandoff, /npm ci --prefix apps\/frontend/);
   assert.match(fullHandoff, /ALLOW_PROVISIONING_UPDATES=1/);
   assert.match(fullHandoff, /TESTFLIGHT_HANDOFF_CARD/);
+  assert.match(fullHandoff, /\| `0f0840a` \| 2026-08-08 \| docs：明确数学 story 31 条是包内离线资源/);
+  assert.match(fullHandoff, /\| `08e0e3f` \| 2026-08-08 \| ci：启用 GitHub 无凭据 TestFlight Preflight/);
+  assert.doesNotMatch(fullHandoff, /^\| `latest` \|/m);
   assert.match(fullHandoff, /不属于 `asset-packs\.json` \/ OSS/);
   assert.match(fullHandoff, /仅海岛\/沙漠 L11–200/);
   assert.match(fullHandoff, /assert-ios-archive-contract\.mjs/);
