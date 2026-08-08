@@ -229,6 +229,10 @@ test('release audit tracks whether the iOS shell can be build-verified', () => {
   assert.match(audit, /!shellLocalMockLoginAllowed\(\)/);
   assert.match(audit, /allowLocalMockLogin=true/);
   assert.match(audit, /testflightContentReady/);
+  assert.match(audit, /contentTestflightGaps/);
+  assert.match(audit, /uploadBlockers/);
+  assert.match(audit, /fullFunctionGaps/);
+  assert.match(audit, /全功能登录:[\s\S]*?apiBase 为空/);
   assert.match(audit, /TEMP_LOCAL_FULL_ACCESS/);
   assert.match(audit, /assetPackPlaceholders/);
   assert.match(audit, /scriptReleaseVersion/);

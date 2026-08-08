@@ -24,7 +24,7 @@ cd baby-chuangguan && git pull
 # 本机完整 Xcode（非仅 CLT）
 xcode-select -p   # 应含 Xcode.app
 npm test          # 应 383 pass
-node tools/audit-readiness.mjs   # testflightContentReady: true
+node tools/audit-readiness.mjs   # testflightContentReady: true；contentTestflightGaps: []
 bash tools/pack-app-www.sh /tmp/hirota-www-check
 npm run testflight:preflight
 

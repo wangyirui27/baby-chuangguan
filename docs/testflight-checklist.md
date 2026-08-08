@@ -25,7 +25,7 @@
 | RDS 474 BLOB 备份 | ✅ 仅备份，播放走 OSS |
 | 品牌 嗨洛塔 / 禁英语岛开通VIP | ✅ |
 | `npm test` | ✅ 383 pass |
-| `node tools/audit-readiness.mjs` | ✅ TF content ready |
+| `node tools/audit-readiness.mjs` | ✅ `testflightContentReady=true` 且 `contentTestflightGaps=[]`；`uploadBlockers` 是 Xcode/Team |
 | `npm run probe:asset-packs -- --dry-run` | ✅ 可选 OSS URL 抽检入口；默认不联网 |
 | Build | **1.0.1 (3)** |
 

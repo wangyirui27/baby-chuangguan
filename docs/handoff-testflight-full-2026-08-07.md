@@ -52,6 +52,9 @@ node tools/audit-readiness.mjs
 #   testflightContentReady: true
 #   nativeShellReady: true
 #   hardFailures: []
+#   contentTestflightGaps: []     # 内容 TF 自身无 repo 缺口
+#   uploadBlockers: [...]         # Xcode / Team ID，技术同事本机处理
+#   fullFunctionGaps: [...]       # 全功能登录/商店级缺口，不挡内容 TF
 #   releaseReady: false          # 正常，勿挡 TF
 #   nativeBuildToolReady: false  # 无完整 Xcode
 #   shellApiBaseConfigured: false

@@ -410,20 +410,32 @@ for (const mapId of ['ocean', 'desert']) {
   }
 }
 
-const gaps = [
+const contentTestflightGaps = [
   ...(!nativeReady ? ['未发现可检查的 iOS 原生壳，VIP 内购和发版更新仍只是 H5 桥预留。'] : []),
-  ...(!nativeBuildReady ? ['未安装完整 Xcode 或 xcode-select 未指向 Xcode，无法编译验证 iOS 原生包。'] : []),
-  ...(!appRelease.updateUrl ? ['app-release.json 没有 App Store updateUrl，更新弹窗无法直达商店。'] : []),
-  ...remoteGaps,
+];
+
+const uploadBlockers = [
+  ...(!nativeBuildReady ? ['外部上传: 未安装完整 Xcode 或 xcode-select 未指向 Xcode，无法编译验证 iOS 原生包。'] : []),
+  ...(!teamIdConfigured()
+    ? ['外部上传: 未通过 DEVELOPMENT_TEAM 或本地 ios/Config/Team.xcconfig 配置 Team ID，Archive 前需写 Team ID 或在 Xcode Signing 里选队。']
+    : []),
+];
+
+const fullFunctionGaps = [
+  ...(!appRelease.updateUrl ? ['全功能/商店: app-release.json 没有 App Store updateUrl，更新弹窗无法直达商店。'] : []),
+  ...remoteGaps.map((gap) => `全功能/OSS: ${gap}`),
   ...(missingQuestionAudioBeyondSeed > 0
-    ? [`全量题语音仍缺 ${missingQuestionAudioBeyondSeed} 个（不挡缩小范围 TestFlight 内测）。`]
+    ? [`全功能内容: 全量题语音仍缺 ${missingQuestionAudioBeyondSeed} 个（不挡缩小范围 TestFlight 内测）。`]
     : []),
   ...(!shellApiBaseConfigured()
-    ? ['ios/BabyEnglishIsland/shell-config.json 的 apiBase 为空：生产短信登录/云同步前需填生产 HTTPS 源。']
+    ? ['全功能登录: ios/BabyEnglishIsland/shell-config.json 的 apiBase 为空；内容 TestFlight 可空，生产短信登录/云同步前需填生产 HTTPS 源。']
     : []),
-  ...(!teamIdConfigured()
-    ? ['未通过 DEVELOPMENT_TEAM 或本地 ios/Config/Team.xcconfig 配置 Team ID，Archive 前需写 Team ID 或在 Xcode Signing 里选队。']
-    : []),
+];
+
+const gaps = [
+  ...contentTestflightGaps,
+  ...uploadBlockers,
+  ...fullFunctionGaps,
 ];
 
 const result = {
@@ -451,11 +463,14 @@ const result = {
     shellApiBaseConfigured: shellApiBaseConfigured(),
     shellLocalMockLoginAllowed: shellLocalMockLoginAllowed(),
     teamIdConfigured: teamIdConfigured(),
-    // hard = content blockers for seed TF; gaps = account/Xcode/API still open
+    // hard = content blockers for seed TF; scoped gaps keep content TF separate from upload/full-function work
     releaseReady: hardFailures.length === 0 && gaps.length === 0,
-    testflightContentReady: hardFailures.length === 0 && nativeReady,
+    testflightContentReady: hardFailures.length === 0 && nativeReady && contentTestflightGaps.length === 0,
   },
   hardFailures,
+  contentTestflightGaps,
+  uploadBlockers,
+  fullFunctionGaps,
   gaps,
 };
 
