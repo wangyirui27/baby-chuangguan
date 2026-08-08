@@ -173,6 +173,24 @@ function shellApiBaseConfigured() {
   }
 }
 
+function shellConfig() {
+  try {
+    return JSON.parse(readFileSync(join(ROOT, 'ios/BabyEnglishIsland/shell-config.json'), 'utf8'));
+  } catch {
+    return {};
+  }
+}
+
+function shellLocalMockLoginExplicit() {
+  const config = shellConfig();
+  return Object.prototype.hasOwnProperty.call(config, 'allowLocalMockLogin')
+    && typeof config.allowLocalMockLogin === 'boolean';
+}
+
+function shellLocalMockLoginAllowed() {
+  return shellConfig().allowLocalMockLogin === true;
+}
+
 function teamIdConfigured() {
   if (String(process.env.DEVELOPMENT_TEAM || '').trim()) return true;
   try {
@@ -380,6 +398,9 @@ const hardFailures = [
   ...(mathStoryThemeAudio.listed !== mathStoryThemeAudio.expected || mathStoryThemeAudio.missing
     ? [`数学 story 主题音未就绪：script ${mathStoryThemeAudio.listed}/${mathStoryThemeAudio.expected}，本地缺 ${mathStoryThemeAudio.missing} 个。`]
     : []),
+  ...(!shellApiBaseConfigured() && !shellLocalMockLoginExplicit()
+    ? ['内容 TestFlight apiBase 为空时必须在 shell-config.json 显式配置 allowLocalMockLogin。']
+    : []),
   ...(nonNounTopicLevels.length ? [`仍有 ${nonNounTopicLevels.length} 关属于颜色/数字/动作，不是高频名词关。`] : []),
   ...(nonNounWordLevels.length ? [`仍有 ${nonNounWordLevels.length} 个非名词词条：${nonNounWordLevels.map((level) => `${level.id}:${level.title}`).join(', ')}。`] : []),
   ...(staleHundredMentions().map((file) => `${file} 仍有 100 levels 文档残留。`)),
@@ -404,7 +425,7 @@ const gaps = [
     ? [`全量题语音仍缺 ${missingQuestionAudioBeyondSeed} 个（不挡缩小范围 TestFlight 内测）。`]
     : []),
   ...(!shellApiBaseConfigured()
-    ? ['ios/BabyEnglishIsland/shell-config.json 的 apiBase 为空：file:// 壳登录/同步前需填生产 HTTPS 源。']
+    ? ['ios/BabyEnglishIsland/shell-config.json 的 apiBase 为空：生产短信登录/云同步前需填生产 HTTPS 源。']
     : []),
   ...(!teamIdConfigured()
     ? ['未通过 DEVELOPMENT_TEAM 或本地 ios/Config/Team.xcconfig 配置 Team ID，Archive 前需写 Team ID 或在 Xcode Signing 里选队。']
@@ -434,6 +455,7 @@ const result = {
     nativeShellReady: nativeReady,
     nativeBuildToolReady: nativeBuildReady,
     shellApiBaseConfigured: shellApiBaseConfigured(),
+    shellLocalMockLoginAllowed: shellLocalMockLoginAllowed(),
     teamIdConfigured: teamIdConfigured(),
     // hard = content blockers for seed TF; gaps = account/Xcode/API still open
     releaseReady: hardFailures.length === 0 && gaps.length === 0,

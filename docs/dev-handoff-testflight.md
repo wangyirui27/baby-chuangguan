@@ -12,7 +12,7 @@
 |------|------|
 | TestFlight 构建 | Archive → App Store Connect → 内测组可装 |
 | 内容验收 | 海岛/沙漠 **前 10 关** + 数学 story **31 条视频与 31 条主题音**离线可玩；购买/VIP/内测授权后 **L11+** 联网可播 OSS 课视频 |
-| （可选）登录联调 | 仅当产品给了生产 `apiBase` |
+| （可选）登录联调 | 内容内测走显式 local mock 登录；生产登录仅当产品给了生产 `apiBase` |
 
 ---
 
@@ -23,7 +23,7 @@ git clone https://github.com/wangyirui27/baby-chuangguan.git
 cd baby-chuangguan && git pull
 # 本机完整 Xcode（非仅 CLT）
 xcode-select -p   # 应含 Xcode.app
-npm test          # 应 379 pass
+npm test          # 应 383 pass
 node tools/audit-readiness.mjs   # testflightContentReady: true
 bash tools/pack-app-www.sh /tmp/hirota-www-check
 npm run testflight:preflight
@@ -52,12 +52,13 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 | `ios/BabyEnglishIsland.xcodeproj/xcshareddata/xcschemes/BabyEnglishIsland.xcscheme` | 共享 scheme，CLI / CI 可识别 |
 | `ios/Config/Team.xcconfig.example` | 本地复制为 ignored 的 `Team.xcconfig` 后填 Team ID |
 | `ios/Config/Shared.xcconfig` | 版本 1.0.1 / build 3 / Bundle ID |
-| `ios/BabyEnglishIsland/shell-config.json` | `apiBase`（内容内测可空） |
+| `ios/BabyEnglishIsland/shell-config.json` | `apiBase`（内容内测可空）+ `allowLocalMockLogin`（内容内测显式 mock 登录） |
 | `ios/ExportOptions-TestFlight.plist` | TF 导出模板（ship 脚本生成临时带 teamID 的副本） |
 | `tools/ship-testflight.sh` | check / archive / upload / open |
 | `tools/testflight-preflight.sh` | 无 Xcode 内容/壳门禁一键预检 |
 | `tools/pack-app-www.sh` | 打运行时 www |
 | `tools/audit-readiness.mjs` | TF 内容门禁：付费墙开关、版本、OSS 占位 URL、资源计数 |
+| `tools/probe-asset-pack-urls.mjs` | 可选 OSS URL 抽检；默认 dry-run，不进默认预检 |
 | `asset-packs.json` | L11–200 OSS URL |
 | `docs/testflight-checklist.md` | A/B/C/D 门禁 |
 | `docs/testflight-secrets.md` | Team ID / ASC API Key 环境变量契约 |
@@ -89,8 +90,9 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 
 - **包内**：海岛 `assets/video/free-levels/level-01…10` + 沙漠 `assets/video/desert-levels/level-001…010` + 数学 `assets/video/math-story/*.mp4`（31 条）+ `assets/audio/math-story-theme/*.mp3`（31 条）
 - **OSS**（需网络）：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/{desert|ocean}/…`；`asset-packs.json` 不应再出现 `cdn.example` / localhost 占位
+- 可选抽检：`npm run probe:asset-packs -- --dry-run` 只列出样本；`npm run probe:asset-packs -- --live` 才发起 HEAD / Range 请求
 - **付费墙**：`TEMP_LOCAL_FULL_ACCESS=false`；TestFlight file:// / capacitor 壳不应自动解锁 11 关以后
-- **apiBase 空**：不阻塞内容内测；登录/云存进度不可用
+- **apiBase 空**：不阻塞内容内测；`allowLocalMockLogin=true` 时可填任意 11 位手机号 + 4–6 位验证码进入内容，但不授予 VIP、不代表生产短信登录
 - **禁止**把影关 `api.modelisms.com` 填进嗨洛塔 `apiBase`
 - **禁止提交**真实 `ios/Config/Team.xcconfig`、`.p8`、`.env`，也不要把真 Team ID 写进 `ExportOptions-TestFlight.plist` 模板
 

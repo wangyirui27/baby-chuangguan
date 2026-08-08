@@ -11,7 +11,14 @@ const vm = require('node:vm');
 
 // Helper: load the apiClient.js into a sandbox and return
 // { window, getToken, setToken, babyIslandApi }.
-function loadApiClient({ token = null, cookies = '', fileProtocol = false, fetchImpl = null } = {}) {
+function loadApiClient({
+  token = null,
+  cookies = '',
+  fileProtocol = false,
+  fetchImpl = null,
+  disableLocalMock = false,
+  apiBase = '',
+} = {}) {
   const filePath = path.join(__dirname, 'apiClient.js');
   const source = fs.readFileSync(filePath, 'utf8');
 
@@ -28,6 +35,8 @@ function loadApiClient({ token = null, cookies = '', fileProtocol = false, fetch
   sandbox.console = console;
   sandbox.fetch = fetchImpl || (() => Promise.reject(new TypeError('fetch failed (test)')));
   sandbox.location = { protocol: fileProtocol ? 'file:' : 'http:' };
+  if (disableLocalMock) sandbox.BABY_ISLAND_DISABLE_LOCAL_MOCK = true;
+  if (apiBase) sandbox.BABY_ISLAND_API_BASE = apiBase;
   if (token) sandbox.sessionStorage.setItem('baby-island-auth-token', token);
 
   vm.createContext(sandbox);
@@ -66,6 +75,21 @@ test('local mock fallback: verifyCode with invalid phone throws', async () => {
     () => babyIslandApi.verifyCode('123', '1234'),
     /手机号格式不正确/
   );
+});
+
+test('native shell can explicitly disable local mock fallback', async () => {
+  const { babyIslandApi } = loadApiClient({ disableLocalMock: true, fileProtocol: true });
+  assert.equal(babyIslandApi._canUseLocalMock(), false);
+  await assert.rejects(
+    () => babyIslandApi.verifyCode('11111111111', '1234'),
+    /登录服务未启动|连接失败/
+  );
+});
+
+test('shell-injected apiBase disables local mock fallback', async () => {
+  const { babyIslandApi } = loadApiClient({ apiBase: 'https://api.example.test' });
+  assert.equal(babyIslandApi.getApiBase(), 'https://api.example.test');
+  assert.equal(babyIslandApi._canUseLocalMock(), false);
 });
 
 test('local mock fallback: sendVerificationCode returns success', async () => {

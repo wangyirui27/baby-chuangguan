@@ -23,10 +23,10 @@
 
 | 层 | 状态 | 说明 |
 |----|------|------|
-| **A 内容包** | ✅ 已绿并推仓 | `npm test` 379 pass；`testflightContentReady=true`；`hardFailures=[]`；pack 含海岛+沙漠各前 10 + 数学 story 31 条；`asset-packs.json` 无假 CDN/local URL |
+| **A 内容包** | ✅ 已绿并推仓 | `npm test` 383 pass；`testflightContentReady=true`；`hardFailures=[]`；pack 含海岛+沙漠各前 10 + 数学 story 31 条；`asset-packs.json` 无假 CDN/local URL |
 | **B iOS 壳骨架** | ✅ 仓内齐 | 图标/启动/Privacy/pack Build Phase/共享 xcscheme/ship 脚本齐；**本机无 Xcode.app → 不能 Archive** |
 | **C 苹果** | ⬜ 用户/有 Xcode 的 Mac | Team ID、ASC App、Archive Upload、TF 组 |
-| **D 后台** | ⬜ 可选 | 内容内测 **apiBase 可空**；要登录/云进度再填生产 HTTPS |
+| **D 后台** | ⬜ 可选 | 内容内测 **apiBase 可空**，显式 `allowLocalMockLogin=true` 只用于通过登录门；要生产短信/云进度再填生产 HTTPS |
 
 **距离「内测员能从 TestFlight 装上玩内容」还差：有完整 Xcode 的 Mac + Apple Team + Archive 上传。**
 **不差：** 前 10 关视频进包、数学 story 31 条进包、L11–200 OSS 清单、H5 测试、壳工程文件。
@@ -73,7 +73,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 #   assets/video/math-story/*.mp4 31 条（约 95MB）
 ```
 
-**GitHub 接手验收口令：** `npm run testflight:preflight` 通过；随后在有完整 Xcode 的 Mac 上执行 `DEVELOPMENT_TEAM=... bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`。
+**GitHub 接手验收口令：** `npm run testflight:preflight` 通过；随后在有完整 Xcode 的 Mac 上执行 `DEVELOPMENT_TEAM=... bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`，但要求 `allowLocalMockLogin=true` 明确保留本地登录门。
 
 **本机环境（写文档时）：**
 
@@ -107,7 +107,8 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 
 | 项 | 现状 | 何时要 |
 |----|------|--------|
-| `shell-config.json` → `apiBase` | `""` | 要短信登录 / 云进度 / 必登门 |
+| `shell-config.json` → `apiBase` | `""` | 要生产短信登录 / 云进度 |
+| `shell-config.json` → `allowLocalMockLogin` | `true` | 内容内测空 `apiBase` 时通过强制登录门；不授予 VIP |
 | 生产后端 HTTPS + 阿里云短信 | 代码有，部署/密钥用户侧 | 全功能 TF |
 | ASC IAP `baby_island_map_vip_001` | 未建则只测免费前 10 | 测付费墙 |
 | 隐私政策 **公网 HTTPS URL** | 仓内草稿 `docs/hosted-legal-pages/` | 外测/上架问卷；**内测可后补** |
@@ -150,7 +151,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | 共享 scheme | `ios/BabyEnglishIsland.xcodeproj/xcshareddata/xcschemes/BabyEnglishIsland.xcscheme` |
 | 壳代码 | `ios/BabyEnglishIsland/ViewController.swift`（WKWebView、`BABY_ISLAND_API_BASE` 注入、asset pack / IAP bridge） |
 | AppDelegate | `ios/BabyEnglishIsland/AppDelegate.swift`（含 background URLSession 钩子） |
-| 配置 | `ios/BabyEnglishIsland/shell-config.json`（apiBase 空、displayName 嗨洛塔、IAP id） |
+| 配置 | `ios/BabyEnglishIsland/shell-config.json`（apiBase 空、allowLocalMockLogin=true、displayName 嗨洛塔、IAP id） |
 | 版本 | `ios/Config/Shared.xcconfig` + pbx：`MARKETING_VERSION=1.0.1`，`CURRENT_PROJECT_VERSION=3` |
 | Team 位 | `ios/Config/Team.xcconfig.example`；真实 `Team.xcconfig` 为本地 ignored 文件；Shared `#include? "Team.xcconfig"` |
 | 图标 | `Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png` |
@@ -160,7 +161,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | 发船 | `tools/ship-testflight.sh`：check / archive / upload / open；可选 ASC API Key 无人值守上传；`BUILD_NUMBER=4` 可临时递增 build |
 | 预检 | `tools/testflight-preflight.sh` |
 | 签名变量 | `docs/testflight-secrets.md` |
-| H5 API | `auth/apiClient.js` 读 `window.BABY_ISLAND_API_BASE`，strip 尾 `/`；有 apiBase 时不走 local mock |
+| H5 API | `auth/apiClient.js` 读 `window.BABY_ISLAND_API_BASE`，strip 尾 `/`；有 apiBase 时不走 local mock；native 壳注入 `BABY_ISLAND_DISABLE_LOCAL_MOCK` |
 | 版本提示 | `app-release.json` latestVersion `1.0.1`，商店搜词嗨洛塔 |
 
 ### 3.3 文档（已有，可交叉读）
@@ -174,15 +175,16 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | `docs/testflight-secrets.md` | Team ID / ASC API Key 环境变量契约 |
 | `docs/testflight-asc-form.md` | ASC 新建 App / TestFlight 表单草稿 |
 | `docs/iap-product-ids.md` | IAP 商品 ID |
-| `docs/hosted-legal-pages/*` | 隐私/条款 **草稿 HTML**（需自行挂到公网 HTTPS） |
+| `docs/hosted-legal-pages/*` | 隐私/条款 **草稿 HTML**（仍含待填字段；替换并确认前不得作为 ASC/外测 URL） |
 | `README.md` | 仓库入口指向上述 TF 文档 |
 | Skill（助手侧） | `ios-webview-testflight-ship` + `references/tf-final-prep-rules.md` |
 
 ### 3.4 法律页
 
 - 仓内：`docs/hosted-legal-pages/{privacy,terms,children-privacy,index}.html`
-- 另有副本：`/Users/yr/APP上架准备/hosted-legal-pages/`（若存在）
-- **未**自动部署到公网；ASC 填 URL 前需用户托管
+- **未**自动部署到公网；Internal TestFlight 可先留空
+- External TestFlight / App Review 填 URL 前，必须托管到公网 HTTPS，且页面源码中 `【待填` 计数为 0
+- 禁止把 `file://`、本机路径、GitHub raw、仓内相对路径或仍含待填字段的托管草稿填进 ASC
 
 ---
 
@@ -246,7 +248,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 ### 5.1 内容内测（推荐先发）
 
 1. `git pull` + §1 三门禁全绿
-2. **保持** `apiBase=""`（或产品明确要求再填）
+2. **保持** `apiBase=""` 且 `allowLocalMockLogin=true`（或产品明确要求再填生产 API）
 3. Team ID → xcconfig 或环境变量
 4. `DEVELOPMENT_TEAM=… bash tools/ship-testflight.sh --upload`
 5. ASC → TF 组 → 安装
@@ -274,7 +276,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 1. `apiBase` 必须在 **App bundle** 的 `shell-config.json`，不是只改 H5
 2. 原生 `WKUserScript` **atDocumentStart** 写 `window.BABY_ISLAND_API_BASE`
 3. H5 `auth/apiClient.js` 启动时 `setApiBase`；有 base 时 **禁止** local mock 假登录成功
-4. 空 apiBase：本地/内容内测可用；登录门不要当生产验收
+4. 空 apiBase：内容内测走显式 local mock 登录；不要当生产短信/云进度验收，也不会授予 VIP
 
 ### 5.4 pack 铁律（改资源必知）
 
@@ -291,6 +293,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 构建号记录用：**嗨洛塔 1.0.1 (3)**（或实际上传号）
 
 - [ ] 冷启动非长时间白屏；桌面名「嗨洛塔」
+- [ ]（内容内测）本地 mock 登录能进内容且不授予 VIP
 - [ ]（仅全功能）短信登录 + 重进保持 session
 - [ ] 海岛 + 沙漠 **1–10**：视频、题、词音
 - [ ]（有网）L11+ OSS 课视频
@@ -362,7 +365,7 @@ IAP Product ID：`baby_island_map_vip_001`（Swift 常量与 shell-config 文档
 | Team / apiBase 空 | Team 挡签名；apiBase **不挡**内容内测 | |
 | 全量题语音缺 187 | 否 | 前 10 题语音齐 |
 | `releaseReady=false` | 否 | 商店级另论 |
-| 登录仅 +86 短信 | 仅全功能 | 内容内测可不登 |
+| 登录仅 +86 短信 | 仅全功能 | 内容内测走 local mock 登录过门，不算生产登录 |
 | IAP 未在 ASC 建品 | 否 | 只测免费 |
 | 隐私 URL 未上公网 | 内测通常不挡 | 外测/上架要 |
 | 工程目录名 BabyEnglishIsland | 否 | 用户可见名已是嗨洛塔 |
@@ -398,6 +401,7 @@ IAP Product ID：`baby_island_map_vip_001`（Swift 常量与 shell-config 文档
 - 无网：海岛 L1–10、沙漠 L1–10 课视频可播
 - 有网：L11+ 从 OSS 可播
 - 设置/关于：版本 **1.0.1 (N)** 与 ASC 构建一致
+- （内容内测）local mock 登录能进内容但 L11+ 仍需授权
 - （全功能）登录发短信成功，进度可恢复
 
 ---

@@ -4555,6 +4555,9 @@ if (typeof document !== 'undefined') {
     setAuthLock(true);
     // 复用已有 dialog
     document.querySelectorAll('dialog.login-dialog').forEach((el) => el.remove());
+    const loginHintText = authApi()?.isLocalMockEnabled?.()
+      ? '内容内测可填任意 11 位手机号 + 任意 4–6 位验证码'
+      : '请输入短信验证码，新号码验证后将自动注册';
 
     const dialog = document.createElement('dialog');
     dialog.className = 'login-dialog' + (required ? ' is-required' : '');
@@ -4581,7 +4584,7 @@ if (typeof document !== 'undefined') {
       '      <button class="login-send-code" type="button" data-login-send-code>获取验证码</button>',
       '    </div>',
       '    <p class="login-error" data-login-error role="alert" hidden></p>',
-      '    <p class="login-hint">未注册的手机号验证后将自动注册。本地可填任意 11 位手机号 + 任意 4–6 位验证码</p>',
+      `    <p class="login-hint">${escapeHtml(loginHintText)}</p>`,
       '    <button class="login-submit" type="submit" data-login-submit>开始探险</button>',
       '  </form>',
       '</div>',

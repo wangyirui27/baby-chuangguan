@@ -10,6 +10,7 @@
     "testflight:preflight": "bash tools/testflight-preflight.sh",
     "audit:readiness": "node tools/audit-readiness.mjs",
     "audit:release": "node tools/audit-readiness.mjs --strict",
+    "probe:asset-packs": "node tools/probe-asset-pack-urls.mjs",
     "generate:contracts": "node tools/contracts/generate.mjs",
     "generate:question-audio": "node backend/src/generate-question-audio-v2.js",
     "generate:math-question-audio": "node backend/src/generate-math-question-audio.js",

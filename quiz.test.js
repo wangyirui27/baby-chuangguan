@@ -3512,6 +3512,9 @@ test('front-end forced login gate + account runtime for learning sync', () => {
   assert.match(source, /function runAuthBootGate/);
   assert.match(source, /babyIslandApi/);
   assert.match(source, /checkSession/);
+  assert.match(source, /isLocalMockEnabled/);
+  assert.match(source, /内容内测可填任意 11 位手机号/);
+  assert.match(source, /请输入短信验证码/);
   assert.match(source, /hydrateLearningStateFromBackend/);
   assert.match(source, /function openPaywallDialog/);
   assert.match(source, /paywall-dialog/);

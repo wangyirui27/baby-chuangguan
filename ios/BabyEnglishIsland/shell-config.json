@@ -1,7 +1,8 @@
 {
   "apiBase": "",
   "displayName": "嗨洛塔",
-  "bundleNote": "Content TestFlight may leave apiBase empty. For login/cloud sync only: set production HTTPS origin (no trailing slash).",
+  "allowLocalMockLogin": true,
+  "bundleNote": "Content TestFlight may leave apiBase empty and allow explicit local mock login without VIP unlock. For login/cloud sync only: set production HTTPS origin (no trailing slash).",
   "iapProductIds": {
     "mapVip": "baby_island_map_vip_001"
   }

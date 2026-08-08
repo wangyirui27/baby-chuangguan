@@ -6,7 +6,7 @@
 
 ## 一句话
 
-**A 内容包 + B 原生壳骨架已齐**（`testflightContentReady=true`，`hardFailures=[]`，`npm test` 379 全绿，`pack-app-www` 含海岛+沙漠各前 10 关 + 数学 story 31 条；共享 xcscheme 已补）。
+**A 内容包 + B 原生壳骨架已齐**（`testflightContentReady=true`，`hardFailures=[]`，`npm test` 383 全绿，`pack-app-www` 含海岛+沙漠各前 10 关 + 数学 story 31 条；共享 xcscheme 已补）。
 **本机无完整 Xcode → 不能本地 Archive**。
 **C 苹果账号 / D 后台公网**仍是外部步骤。
 
@@ -24,8 +24,9 @@
 | 付费墙本地开关 | ✅ `TEMP_LOCAL_FULL_ACCESS=false`；TF file:// 壳不自动解锁 |
 | RDS 474 BLOB 备份 | ✅ 仅备份，播放走 OSS |
 | 品牌 嗨洛塔 / 禁英语岛开通VIP | ✅ |
-| `npm test` | ✅ 379 pass |
+| `npm test` | ✅ 383 pass |
 | `node tools/audit-readiness.mjs` | ✅ TF content ready |
+| `npm run probe:asset-packs -- --dry-run` | ✅ 可选 OSS URL 抽检入口；默认不联网 |
 | Build | **1.0.1 (3)** |
 
 OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
@@ -79,12 +80,12 @@ GitHub 接手验收口令：先跑 `npm run testflight:preflight`，再用有 Xc
 
 | 模式 | apiBase | 能力 |
 |------|---------|------|
-| **内容内测（推荐先发）** | 空 | 离线海岛/沙漠前 10 + 数学 story 31 条；未授权 L11+ 留在付费墙；登录/云进度不可用 |
+| **内容内测（推荐先发）** | 空 | 显式 local mock 登录进入内容；离线海岛/沙漠前 10 + 数学 story 31 条；未授权 L11+ 留在付费墙；无云进度 |
 | 全功能 TF | 生产 HTTPS 根（无尾斜杠） | 登录/学习进度；短信·IAP 另配 |
 
 L11–200 的 OSS URL 已在清单中；真机要播放这些课视频，需要购买/恢复购买/VIP/内测授权后再测。
 
-`ios/BabyEnglishIsland/shell-config.json` 当前 `apiBase=""`。
+`ios/BabyEnglishIsland/shell-config.json` 当前 `apiBase=""` 且 `allowLocalMockLogin=true`，仅用于内容内测通过强制登录门，不授予 VIP。
 **不要**把 `api.modelisms.com` 当嗨洛塔后端（那是影关）。
 
 ---

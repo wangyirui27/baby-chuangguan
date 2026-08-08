@@ -30,7 +30,9 @@ test('iOS shell implements the H5 purchase and release-update bridges', () => {
   assert.match(viewController, /contentController\.addUserScript\(Self\.appMetadataScript\(\)\)/);
   assert.match(viewController, /window\.BABY_ISLAND_APP_VERSION/);
   assert.match(viewController, /window\.BABY_ISLAND_API_BASE/);
+  assert.match(viewController, /window\.BABY_ISLAND_DISABLE_LOCAL_MOCK/);
   assert.match(viewController, /shellConfigApiBase/);
+  assert.match(viewController, /shellConfigAllowLocalMockLogin/);
   assert.match(viewController, /babyIslandApi\.setApiBase/);
   assert.doesNotMatch(viewController, /contentController\.add\(self, name:/);
   assert.match(viewController, /final class AssetPackDownloadManager/);
@@ -80,6 +82,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.ok(exists('ios/Config/Shared.xcconfig'));
   assert.ok(exists('ios/ExportOptions-TestFlight.plist'));
   assert.ok(exists('tools/testflight-preflight.sh'));
+  assert.ok(exists('tools/probe-asset-pack-urls.mjs'));
   assert.ok(exists('docs/testflight-checklist.md'));
   assert.ok(exists('docs/testflight-secrets.md'));
   assert.ok(exists('docs/iap-product-ids.md'));
@@ -137,12 +140,16 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   const swiftVipProductId = viewController.match(/private let vipProductId = "([^"]+)"/)?.[1];
   const shellConfig = JSON.parse(read('ios/BabyEnglishIsland/shell-config.json'));
   assert.equal(shellConfig.apiBase, '');
+  assert.equal(shellConfig.allowLocalMockLogin, true);
   assert.equal(shellConfig.iapProductIds.mapVip, 'baby_island_map_vip_001');
   assert.equal(swiftVipProductId, shellConfig.iapProductIds.mapVip);
   assert.match(shellConfig.bundleNote, /Content TestFlight may leave apiBase empty/);
+  assert.match(shellConfig.bundleNote, /explicit local mock login/);
 
   const apiClient = read('auth/apiClient.js');
   assert.match(apiClient, /BABY_ISLAND_API_BASE/);
+  assert.match(apiClient, /BABY_ISLAND_DISABLE_LOCAL_MOCK/);
+  assert.match(apiClient, /isLocalMockEnabled/);
   assert.match(apiClient, /setApiBase\(window\.BABY_ISLAND_API_BASE\)/);
 
   const release = JSON.parse(read('app-release.json'));
@@ -196,6 +203,8 @@ test('release audit tracks whether the iOS shell can be build-verified', () => {
   assert.match(audit, /missingQuestionAudioFirstTen/);
   assert.match(audit, /BABY_ISLAND_API_BASE/);
   assert.match(audit, /shell-config\.json/);
+  assert.match(audit, /shellLocalMockLoginAllowed/);
+  assert.match(audit, /allowLocalMockLogin/);
   assert.match(audit, /testflightContentReady/);
   assert.match(audit, /TEMP_LOCAL_FULL_ACCESS/);
   assert.match(audit, /assetPackPlaceholders/);
@@ -207,4 +216,44 @@ test('release audit tracks whether the iOS shell can be build-verified', () => {
   assert.match(audit, /mathStoryThemeAudio/);
   assert.match(audit, /math-story mp4 count/);
   assert.match(audit, /数学 story 主题音未就绪/);
+});
+
+test('ASC handoff keeps hosted legal drafts out of production URLs', () => {
+  for (const file of [
+    'docs/hosted-legal-pages/privacy.html',
+    'docs/hosted-legal-pages/terms.html',
+    'docs/hosted-legal-pages/children-privacy.html',
+  ]) {
+    const page = read(file);
+    assert.match(page, /状态:仓内草稿/);
+    assert.match(page, /禁止.*ASC.*外测.*公网正式 URL/);
+    assert.doesNotMatch(page, /状态:可直接用草稿/);
+  }
+
+  const ascForm = read('docs/testflight-asc-form.md');
+  assert.match(ascForm, /Internal TestFlight 可先留空/);
+  assert.match(ascForm, /External TestFlight \/ App Review/);
+  assert.match(ascForm, /页面源码中 `【待填` 计数为 0/);
+  assert.match(ascForm, /file:\/\/\.\.\./);
+  assert.match(ascForm, /GitHub raw/);
+
+  const handoff = read('docs/handoff-testflight-full-2026-08-07.md');
+  assert.match(handoff, /替换并确认前不得作为 ASC\/外测 URL/);
+  assert.match(handoff, /Internal TestFlight 可先留空/);
+  assert.match(handoff, /`【待填` 计数为 0/);
+  assert.doesNotMatch(handoff, /APP上架准备/);
+});
+
+test('asset pack URL probe is opt-in and dry-run by default', () => {
+  const pkg = JSON.parse(read('package.json'));
+  assert.equal(pkg.scripts['probe:asset-packs'], 'node tools/probe-asset-pack-urls.mjs');
+  assert.doesNotMatch(pkg.scripts.test, /probe:asset-packs/);
+  assert.doesNotMatch(pkg.scripts['testflight:preflight'], /probe:asset-packs/);
+
+  const probe = read('tools/probe-asset-pack-urls.mjs');
+  assert.match(probe, /Default is dry-run/);
+  assert.match(probe, /!options\.live/);
+  assert.match(probe, /downloadUrl/);
+  assert.match(probe, /Range: 'bytes=0-0'/);
+  assert.match(probe, /HEAD->GET-range/);
 });

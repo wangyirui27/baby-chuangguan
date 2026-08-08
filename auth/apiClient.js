@@ -301,6 +301,10 @@
     return API_BASE;
   }
 
+  function isLocalMockEnabled() {
+    return canUseLocalMock();
+  }
+
   // Apply shell-injected base as soon as this module evaluates (WKUserScript may set it earlier).
   try {
     if (typeof window !== 'undefined' && window.BABY_ISLAND_API_BASE) {
@@ -455,6 +459,7 @@
   window.babyIslandApi = {
     setApiBase: setApiBase,
     getApiBase: getApiBase,
+    isLocalMockEnabled: isLocalMockEnabled,
     getLastDevCode: getLastDevCode,
     sendVerificationCode: sendVerificationCode,
     verifyCode: verifyCode,
