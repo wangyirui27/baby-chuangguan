@@ -1,0 +1,111 @@
+name: TestFlight upload handoff
+description: Hand off a verified commit to the developer who has Xcode and Apple Developer access.
+title: "[TestFlight] 嗨洛塔 1.0.1 (3) upload handoff"
+labels:
+  - testflight
+  - handoff
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this issue to coordinate the external Mac/Xcode upload step.
+
+        Do not paste Apple account emails, Team IDs, certificates, provisioning profiles, API keys, passwords, `.p8` contents, or `.env` values into GitHub issues. Keep signing material on the developer's Mac or in GitHub Secrets owned by that developer.
+
+        Start from `docs/dev-handoff-testflight.md`; smoke test with `docs/testflight-smoke.md`.
+
+  - type: input
+    id: commit
+    attributes:
+      label: Verified commit
+      description: Commit SHA from `main` to archive and upload.
+      placeholder: 08e0e3fb15969117e7072c0c1269e694790e97e2
+    validations:
+      required: true
+
+  - type: input
+    id: preflight_run
+    attributes:
+      label: GitHub Actions preflight run
+      description: Link to the successful "TestFlight Preflight" run for this commit.
+      placeholder: https://github.com/wangyirui27/baby-chuangguan/actions/runs/31250194934
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Upload scope
+      options:
+        - Content TestFlight: 1.0.1 (3), apiBase may stay empty
+        - Full-function TestFlight: production apiBase configured first
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: repo_gates
+    attributes:
+      label: Repository gates
+      options:
+        - label: GitHub Actions "TestFlight Preflight" is green for the commit above.
+          required: true
+        - label: `npm run testflight:verify-handoff` passes from a clean clone, or the GitHub run proves the same gate.
+          required: true
+        - label: No real signing material or production secrets were committed.
+          required: true
+
+  - type: checkboxes
+    id: developer_machine
+    attributes:
+      label: Developer Mac prerequisites
+      options:
+        - label: Full Xcode is installed and `xcode-select -p` points inside `Xcode.app`.
+          required: true
+        - label: Apple Developer account is active in Xcode Settings.
+          required: true
+        - label: Signing team is configured locally only, via Xcode Signing settings, local ignored `ios/Config/Team.xcconfig`, or an environment variable.
+          required: true
+        - label: App Store Connect app exists with Bundle ID `com.baobaoenglish.island` and display name `嗨洛塔`.
+          required: true
+
+  - type: checkboxes
+    id: upload
+    attributes:
+      label: Archive and upload
+      options:
+        - label: Pulled the verified commit above on the developer Mac.
+          required: true
+        - label: Ran `bash tools/ship-testflight.sh --check` and reviewed the next build retry hint.
+          required: true
+        - label: Ran `bash tools/ship-testflight.sh --upload` with signing configured locally, or used Xcode Organizer to upload.
+          required: true
+        - label: Confirmed the build appeared in App Store Connect processing.
+          required: true
+
+  - type: input
+    id: uploaded_build
+    attributes:
+      label: Uploaded version/build
+      description: Actual version and build shown in App Store Connect after upload.
+      placeholder: 1.0.1 (3)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: smoke
+    attributes:
+      label: TestFlight smoke
+      options:
+        - label: Added at least one internal tester in App Store Connect.
+          required: true
+        - label: Installed from TestFlight on a real iPad/iPhone.
+          required: true
+        - label: Passed `docs/testflight-smoke.md` for launch, offline seed content, math story video/audio, paid wall, and version display.
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes, screenshots, or failure summary
+      description: Link screenshots or paste non-secret error text only.
+      placeholder: "Upload succeeded. ASC build processing started at ..."

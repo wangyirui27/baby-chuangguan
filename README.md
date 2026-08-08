@@ -22,6 +22,7 @@ npm test
 - ASC / TestFlight 表单草稿 → [`docs/testflight-asc-form.md`](docs/testflight-asc-form.md)
 - 工程清单 → [`docs/testflight-checklist.md`](docs/testflight-checklist.md)
 - 内测冒烟 → [`docs/testflight-smoke.md`](docs/testflight-smoke.md)
+- 技术同事接手 issue 模板 → [`.github/ISSUE_TEMPLATE/testflight-handoff.yml`](.github/ISSUE_TEMPLATE/testflight-handoff.yml)
 
 ```bash
 npm ci
@@ -41,6 +42,7 @@ open ios/BabyEnglishIsland.xcodeproj
 
 `.github/workflows/testflight-preflight.yml` 已启用无凭据 CI，push / PR 会跑同一套内容包、H5、壳工程交接门禁。它只证明 GitHub clean checkout 预检通过；Archive / Upload 仍必须由有完整 Xcode + Apple Developer Team 的技术同事执行。
 `docs/testflight-github-actions-template.yml` 保留为源模板；需要重建时运行 `bash tools/enable-testflight-workflow.sh`。提交 workflow 文件仍需要 GitHub 凭据带 `workflow` scope。
+技术同事接手时可用 GitHub 的 `TestFlight upload handoff` issue 模板填写 commit、Actions 绿勾、Archive/Upload 和真机冒烟结果；Issue 里不要填写任何 Apple 凭据或 Team ID。
 
 `npm run testflight:verify-handoff` 会从当前已提交 HEAD 克隆一个干净副本、重装四处依赖并跑 `npm run testflight:preflight`，用于验证技术同事通过 GitHub 接手时不会缺文件。需要直接验远端时可用：`HANDOFF_CLONE_SOURCE=https://github.com/wangyirui27/baby-chuangguan.git npm run testflight:verify-handoff`。
 
