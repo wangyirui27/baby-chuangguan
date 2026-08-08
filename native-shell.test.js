@@ -5,6 +5,9 @@ const assert = require('node:assert/strict');
 
 const read = (file) => fs.readFileSync(path.join(__dirname, file), 'utf8');
 const exists = (file) => fs.existsSync(path.join(__dirname, file));
+const escapeRegExp = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const xcconfigValue = (source, key) =>
+  source.match(new RegExp(`^\\s*${key}\\s*=\\s*(\\S+)`, 'm'))?.[1] || '';
 
 test('iOS shell implements the H5 purchase and release-update bridges', () => {
   assert.ok(exists('ios/BabyEnglishIsland.xcodeproj/project.pbxproj'));
@@ -17,6 +20,8 @@ test('iOS shell implements the H5 purchase and release-update bridges', () => {
   const viewController = read('ios/BabyEnglishIsland/ViewController.swift');
   const project = read('ios/BabyEnglishIsland.xcodeproj/project.pbxproj');
   const scheme = read('ios/BabyEnglishIsland.xcodeproj/xcshareddata/xcschemes/BabyEnglishIsland.xcscheme');
+  const shared = read('ios/Config/Shared.xcconfig');
+  const marketingVersion = xcconfigValue(shared, 'MARKETING_VERSION');
 
   assert.match(appDelegate, /@main/);
   assert.match(appDelegate, /IslandViewController\(\)/);
@@ -67,7 +72,7 @@ test('iOS shell implements the H5 purchase and release-update bridges', () => {
   assert.match(project, /PrivacyInfo\.xcprivacy/);
   assert.match(project, /shell-config\.json/);
   assert.match(project, /ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon/);
-  assert.match(project, /MARKETING_VERSION = 1\.0\.1/);
+  assert.match(project, new RegExp(`MARKETING_VERSION = ${escapeRegExp(marketingVersion)}`));
   assert.doesNotMatch(project, /rsync -a --delete "\$ROOT\/assets/);
 });
 
@@ -150,6 +155,11 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   const readme = read('README.md');
   const devHandoff = read('docs/dev-handoff-testflight.md');
   const fullHandoff = read('docs/handoff-testflight-full-2026-08-07.md');
+  const shared = read('ios/Config/Shared.xcconfig');
+  const marketingVersion = xcconfigValue(shared, 'MARKETING_VERSION');
+  const buildNumber = xcconfigValue(shared, 'CURRENT_PROJECT_VERSION');
+  const versionBuild = `${marketingVersion} (${buildNumber})`;
+  const versionBuildRe = new RegExp(escapeRegExp(versionBuild));
   const pkg = JSON.parse(read('package.json'));
   assert.match(preflight, /for bin in node npm rsync python3/);
   assert.match(preflight, /need_node_modules "backend" "npm ci --prefix backend"/);
@@ -165,7 +175,9 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(preflight, /email-like asset filename/);
   assert.match(preflight, /missing asset filename/);
   assert.match(preflight, /bash tools\/pack-app-www\.sh/);
-  assert.match(preflight, /node tools\/assert-testflight-bundle-media\.mjs "\$OUT"/);
+  assert.match(preflight, /media_gate_args=\("\$OUT"\)/);
+  assert.match(preflight, /TESTFLIGHT_BUNDLE_MEDIA_REPORT/);
+  assert.match(preflight, /node tools\/assert-testflight-bundle-media\.mjs "\$\{media_gate_args\[@\]\}"/);
   assert.match(preflight, /probe:asset-packs -- --dry-run --sample 12/);
   assert.match(preflight, /ocean_count/);
   assert.match(preflight, /desert_count/);
@@ -184,6 +196,9 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(bundleMediaGate, /assets\/video\/math-story/);
   assert.match(bundleMediaGate, /assets\/audio\/math-story-theme/);
   assert.match(bundleMediaGate, /raw\.subarray\(4, 8\)\.equals\(MP4_FTYP\)/);
+  assert.match(bundleMediaGate, /--json report\.json/);
+  assert.match(bundleMediaGate, /writeFileSync\(jsonPath/);
+  assert.match(bundleMediaGate, /lfsPointersClean/);
   assert.match(bundleMediaGate, /280 \* 1024 \* 1024/);
   assert.match(bundleMediaGate, /520 \* 1024 \* 1024/);
   const secretScan = read('tools/scan-no-apple-secrets.sh');
@@ -199,6 +214,10 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(archiveContract, /buildForArchiving = "YES"/);
   assert.match(archiveContract, /teamID must stay YOUR_TEAM_ID placeholder/);
   assert.match(archiveContract, /manageAppVersionAndBuildNumber must be false/);
+  assert.match(archiveContract, /\.github\/ISSUE_TEMPLATE\/testflight-handoff\.yml/);
+  assert.match(archiveContract, /versionBuild/);
+  assert.match(archiveContract, /handoff issue version drift/);
+  assert.match(archiveContract, /handoff doc version drift/);
   assert.match(preflight, /plistlib\.load/);
   assert.match(preflight, /struct\.unpack\('>IIBB'/);
   assert.match(preflight, /plist\+icon gate OK/);
@@ -228,7 +247,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(testflightIssue, /docs\/testflight-smoke\.md/);
   assert.match(testflightIssue, /TESTFLIGHT_HANDOFF_CARD/);
   assert.match(testflightIssue, /com\.baobaoenglish\.island/);
-  assert.match(testflightIssue, /1\.0\.1 \(3\)/);
+  assert.match(testflightIssue, versionBuildRe);
   assert.match(testflightIssue, /Do not paste Apple account emails, Team IDs, certificates/);
   assert.match(readme, /npm ci --prefix backend/);
   assert.match(readme, /\.github\/workflows\/testflight-preflight\.yml` 已启用/);
@@ -237,6 +256,16 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(devHandoff, /npm ci --prefix apps\/backend/);
   assert.match(devHandoff, /TestFlight upload handoff/);
   assert.match(devHandoff, /testflight-readiness-<sha>/);
+  for (const handoffFile of [
+    '.github/ISSUE_TEMPLATE/testflight-handoff.yml',
+    'docs/dev-handoff-testflight.md',
+    'docs/handoff-testflight-full-2026-08-07.md',
+    'docs/testflight-asc-form.md',
+    'docs/testflight-checklist.md',
+    'docs/testflight-smoke.md',
+  ]) {
+    assert.match(read(handoffFile), versionBuildRe);
+  }
   assert.match(fullHandoff, /npm ci --prefix apps\/frontend/);
   assert.match(fullHandoff, /TESTFLIGHT_HANDOFF_CARD/);
   assert.match(fullHandoff, /assert-ios-archive-contract\.mjs/);
@@ -270,7 +299,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(apiClient, /setApiBase\(window\.BABY_ISLAND_API_BASE\)/);
 
   const release = JSON.parse(read('app-release.json'));
-  assert.equal(release.latestVersion, '1.0.1');
+  assert.equal(release.latestVersion, marketingVersion);
   assert.match(release.updateUrl, /term=%E5%97%A8%E6%B4%9B%E5%A1%94/);
 
   const mathStoryManifest = JSON.parse(read('assets/video/math-story/math-story-video-manifest.json'));

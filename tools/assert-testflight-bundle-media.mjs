@@ -1,18 +1,24 @@
 #!/usr/bin/env node
-import { closeSync, existsSync, openSync, readdirSync, readSync, statSync } from 'node:fs';
+import { closeSync, existsSync, openSync, readdirSync, readSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
-const root = process.argv[2];
+const args = process.argv.slice(2);
+const root = args[0];
+const jsonIndex = args.indexOf('--json');
+const jsonPath = jsonIndex >= 0 ? args[jsonIndex + 1] : '';
 const fail = (code, message) => {
   console.error(`[assert-testflight-bundle-media] ${message}`);
   process.exit(code);
 };
 
 if (!root) {
-  fail(2, 'usage: node tools/assert-testflight-bundle-media.mjs <packed-www-dir>');
+  fail(2, 'usage: node tools/assert-testflight-bundle-media.mjs <packed-www-dir> [--json report.json]');
 }
 if (!existsSync(root) || !statSync(root).isDirectory()) {
   fail(2, `packed www dir not found: ${root}`);
+}
+if (jsonIndex >= 0 && !jsonPath) {
+  fail(2, '--json requires a report path');
 }
 
 const LFS_POINTER = Buffer.from('version https://git-lfs.github.com/spec/v1');
@@ -115,6 +121,28 @@ if (totalBytes < MIN_WWW_BYTES || totalBytes > MAX_WWW_BYTES) {
   );
 }
 
+const summary = {
+  schema: 1,
+  ok: true,
+  files: allFiles.length,
+  mp4: mp4s.length,
+  mp3: mp3s.length,
+  sizeBytes: totalBytes,
+  sizeMiB: Number((totalBytes / 1024 / 1024).toFixed(1)),
+  lfsPointersClean: true,
+  mp4Magic: 'ftyp',
+  mp3Magic: 'ID3-or-frame-sync',
+  limits: {
+    minWwwBytes: MIN_WWW_BYTES,
+    maxWwwBytes: MAX_WWW_BYTES,
+    minMp4Bytes: MIN_MP4_BYTES,
+    minMp3Bytes: MIN_MP3_BYTES,
+  },
+};
+if (jsonPath) {
+  writeFileSync(jsonPath, `${JSON.stringify(summary, null, 2)}\n`);
+}
+
 console.log(
-  `[assert-testflight-bundle-media] OK files=${allFiles.length} mp4=${mp4s.length} mp3=${mp3s.length} sizeMiB=${(totalBytes / 1024 / 1024).toFixed(1)}`,
+  `[assert-testflight-bundle-media] OK files=${summary.files} mp4=${summary.mp4} mp3=${summary.mp3} sizeMiB=${summary.sizeMiB}`,
 );

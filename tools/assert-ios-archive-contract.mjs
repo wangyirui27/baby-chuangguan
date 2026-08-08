@@ -53,6 +53,12 @@ for (const file of [
   'ios/BabyEnglishIsland/Info.plist',
   'ios/BabyEnglishIsland/PrivacyInfo.xcprivacy',
   'ios/ExportOptions-TestFlight.plist',
+  '.github/ISSUE_TEMPLATE/testflight-handoff.yml',
+  'docs/dev-handoff-testflight.md',
+  'docs/handoff-testflight-full-2026-08-07.md',
+  'docs/testflight-asc-form.md',
+  'docs/testflight-checklist.md',
+  'docs/testflight-smoke.md',
   'tools/pack-app-www.sh',
 ]) {
   requireFile(file);
@@ -68,6 +74,7 @@ const exportOptions = read('ios/ExportOptions-TestFlight.plist');
 const sharedMarketingVersion = xcconfigValue(shared, 'MARKETING_VERSION');
 const sharedBuild = xcconfigValue(shared, 'CURRENT_PROJECT_VERSION');
 const sharedBundle = xcconfigValue(shared, 'PRODUCT_BUNDLE_IDENTIFIER');
+const versionBuild = `${sharedMarketingVersion} (${sharedBuild})`;
 
 if (sharedMarketingVersion !== appRelease.latestVersion) {
   fail(`Shared MARKETING_VERSION=${sharedMarketingVersion} want app-release latestVersion ${appRelease.latestVersion}`);
@@ -109,6 +116,25 @@ if (plistBool(exportOptions, 'manageAppVersionAndBuildNumber') !== 'false') {
   fail('ExportOptions manageAppVersionAndBuildNumber must be false');
 }
 if (plistBool(exportOptions, 'uploadSymbols') !== 'true') fail('ExportOptions uploadSymbols must be true');
+
+const issue = read('.github/ISSUE_TEMPLATE/testflight-handoff.yml');
+for (const needle of [
+  `title: "[TestFlight] 嗨洛塔 ${versionBuild} upload handoff"`,
+  `version_build=${versionBuild}`,
+  `Content TestFlight: ${versionBuild}, apiBase may stay empty`,
+  `placeholder: ${versionBuild}`,
+]) {
+  if (!issue.includes(needle)) fail(`handoff issue version drift: missing ${needle}`);
+}
+for (const file of [
+  'docs/dev-handoff-testflight.md',
+  'docs/handoff-testflight-full-2026-08-07.md',
+  'docs/testflight-asc-form.md',
+  'docs/testflight-checklist.md',
+  'docs/testflight-smoke.md',
+]) {
+  if (!read(file).includes(versionBuild)) fail(`handoff doc version drift: ${file} missing ${versionBuild}`);
+}
 
 if (process.exitCode) process.exit();
 

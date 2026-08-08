@@ -91,7 +91,11 @@ const walk = (dir) => {
 walk(root);
 JS
 bash tools/pack-app-www.sh "$OUT"
-node tools/assert-testflight-bundle-media.mjs "$OUT"
+media_gate_args=("$OUT")
+if [[ -n "${TESTFLIGHT_BUNDLE_MEDIA_REPORT:-}" ]]; then
+  media_gate_args+=("--json" "$TESTFLIGHT_BUNDLE_MEDIA_REPORT")
+fi
+node tools/assert-testflight-bundle-media.mjs "${media_gate_args[@]}"
 npm run probe:asset-packs -- --dry-run --sample 12
 
 ocean_count="$(find "$OUT/assets/video/free-levels" -maxdepth 1 -type f -name 'level-*.mp4' | wc -l | tr -d ' ')"
