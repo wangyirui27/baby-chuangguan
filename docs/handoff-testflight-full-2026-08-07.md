@@ -43,6 +43,10 @@ git pull origin main
 npm test
 # 预期：tests 379 · pass 379 · fail 0
 
+npm run testflight:preflight
+# 预期：[testflight-preflight] seeds ocean=10 desert=10 math=31
+#      [testflight-preflight] OK
+
 node tools/audit-readiness.mjs
 # 关键字段（2026-08-08 实测）：
 #   testflightContentReady: true
@@ -68,6 +72,8 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 #   assets/video/desert-levels/level-001…010
 #   assets/video/math-story/*.mp4 31 条（约 95MB）
 ```
+
+**GitHub 接手验收口令：** `npm run testflight:preflight` 通过；随后在有完整 Xcode 的 Mac 上执行 `DEVELOPMENT_TEAM=... bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`。
 
 **本机环境（写文档时）：**
 

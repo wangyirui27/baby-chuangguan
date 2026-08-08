@@ -65,6 +65,15 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 
 ## 签名与 ASC
 
+### 仓内已有 / 同事自带
+
+| 仓内已有 | 同事自带 |
+|----------|----------|
+| `npm run testflight:preflight` 内容/壳预检 | 完整 Xcode（非 Command Line Tools） |
+| 共享 scheme、ExportOptions 模板、Archive 脚本 | 付费 Apple Developer Team |
+| Build Phase 自动打约 382MB `www/` | `DEVELOPMENT_TEAM` 或本地 Signing 面板 |
+| `asset-packs.json` OSS 真链 + 包内种子 | 可选 ASC API Key（只放本机/Secrets） |
+
 1. Xcode → Settings → Accounts 登录付费 Apple Developer
 2. Team ID → `DEVELOPMENT_TEAM` 环境变量、本地 ignored `Team.xcconfig`，或 Signing 面板
 3. 无人值守上传：按 `docs/testflight-secrets.md` 配 ASC API Key；ASC Key 齐全时脚本默认允许自动管理签名，可用 `ALLOW_PROVISIONING_UPDATES=0` 关闭
@@ -80,6 +89,7 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 - **付费墙**：`TEMP_LOCAL_FULL_ACCESS=false`；TestFlight file:// / capacitor 壳不应自动解锁 11 关以后
 - **apiBase 空**：不阻塞内容内测；登录/云存进度不可用
 - **禁止**把影关 `api.modelisms.com` 填进嗨洛塔 `apiBase`
+- **禁止提交**真实 `ios/Config/Team.xcconfig`、`.p8`、`.env`，也不要把真 Team ID 写进 `ExportOptions-TestFlight.plist` 模板
 
 ---
 

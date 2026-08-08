@@ -56,6 +56,8 @@ OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
 
 ## C 苹果（你/开发者）
 
+GitHub 接手验收口令：先跑 `npm run testflight:preflight`，再用有 Xcode 的 Mac 执行 `DEVELOPMENT_TEAM=... bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`。
+
 1. Apple Developer 登录 + Team ID
 2. ASC 建 App：`com.baobaoenglish.island`，名 **嗨洛塔**
 3. 有完整 Xcode 的 Mac：

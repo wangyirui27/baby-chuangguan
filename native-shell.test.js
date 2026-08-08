@@ -95,6 +95,8 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(gitignore, /\*\.p8/);
 
   const ship = read('tools/ship-testflight.sh');
+  const exportOptions = read('ios/ExportOptions-TestFlight.plist');
+  const viewController = read('ios/BabyEnglishIsland/ViewController.swift');
   assert.match(ship, /EXPORT_OPTS_TEMPLATE/);
   assert.match(ship, /EXPORT_OPTS_WORK/);
   assert.match(ship, /ASC_KEY_ID/);
@@ -104,18 +106,26 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(ship, /BUILD_NUMBER/);
   assert.doesNotMatch(ship, /\n\s*sudo xcode-select/);
   assert.doesNotMatch(ship, /plutil -replace teamID -string "\$tid" "\$EXPORT_OPTS"/);
+  assert.match(exportOptions, /<key>teamID<\/key>\s*<string>YOUR_TEAM_ID<\/string>/);
+  assert.match(exportOptions, /<key>signingStyle<\/key>\s*<string>automatic<\/string>/);
 
   const preflight = read('tools/testflight-preflight.sh');
   assert.match(preflight, /for bin in node npm rsync python3/);
   assert.match(preflight, /npm test/);
   assert.match(preflight, /node tools\/audit-readiness\.mjs/);
   assert.match(preflight, /bash tools\/pack-app-www\.sh/);
+  assert.match(preflight, /ocean_count/);
+  assert.match(preflight, /desert_count/);
   assert.match(preflight, /math_story_count/);
+  assert.match(preflight, /seeds ocean=\$ocean_count desert=\$desert_count math=\$math_story_count/);
   assert.match(preflight, /AppIcon-1024\.png must not contain alpha/);
 
+  const swiftVipProductId = viewController.match(/private let vipProductId = "([^"]+)"/)?.[1];
   const shellConfig = JSON.parse(read('ios/BabyEnglishIsland/shell-config.json'));
-  assert.equal(typeof shellConfig.apiBase, 'string');
+  assert.equal(shellConfig.apiBase, '');
   assert.equal(shellConfig.iapProductIds.mapVip, 'baby_island_map_vip_001');
+  assert.equal(swiftVipProductId, shellConfig.iapProductIds.mapVip);
+  assert.match(shellConfig.bundleNote, /Content TestFlight may leave apiBase empty/);
 
   const apiClient = read('auth/apiClient.js');
   assert.match(apiClient, /BABY_ISLAND_API_BASE/);

@@ -4,18 +4,18 @@
 
 ## CI（GitHub Actions）
 
-工作流：`.github/workflows/backend-ci.yml`
+当前仓库没有提交 `.github/workflows/*`。下表是已验证过的 backend CI 目标形态，不是当前已启用的 Actions 状态。
 
 | 项 | 值 |
 |----|-----|
-| 触发 | `push` / `pull_request` |
+| 建议触发 | `push` / `pull_request` |
 | paths | `backend/**`、`deploy/**`、工作流自身 |
 | Runner | `ubuntu-latest` |
 | Node | 20 |
 | 步骤 | 在 `backend/`：`npm ci` → `npm test` |
 | 云密钥 | **无**（不读 RDS / Redis / OSS / InsForge） |
 
-改 `backend/` 或 `deploy/` 后推分支或开 PR，Actions 里看 Backend CI 是否绿。
+改 `backend/` 或 `deploy/` 后，先在本地跑 `cd backend && npm ci && npm test`。如以后补 GitHub Actions，再按上表实现。
 
 ## GitHub Secrets（名，不写值）
 

@@ -1,7 +1,7 @@
 {
   "apiBase": "",
   "displayName": "嗨洛塔",
-  "bundleNote": "Set apiBase to production HTTPS origin before TestFlight (no trailing slash), e.g. https://api.example.com",
+  "bundleNote": "Content TestFlight may leave apiBase empty. For login/cloud sync only: set production HTTPS origin (no trailing slash).",
   "iapProductIds": {
     "mapVip": "baby_island_map_vip_001"
   }
