@@ -260,6 +260,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(testflightIssue, /docs\/dev-handoff-testflight\.md/);
   assert.match(testflightIssue, /docs\/testflight-smoke\.md/);
   assert.match(testflightIssue, /TESTFLIGHT_HANDOFF_CARD/);
+  assert.match(testflightIssue, /handoffCard/);
   assert.match(testflightIssue, /40-char SHA from the latest green main preflight run/);
   assert.match(testflightIssue, /math_story_delivery=bundled_31_not_oss/);
   assert.match(testflightIssue, /oss_scope=ocean_desert_l11_200_only/);
@@ -275,9 +276,11 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(readme, /\.github\/workflows\/testflight-preflight\.yml` 已启用/);
   assert.match(readme, /TestFlight upload handoff/);
   assert.match(readme, /TESTFLIGHT_HANDOFF_CARD/);
+  assert.match(readme, /handoffCard/);
   assert.match(devHandoff, /npm ci --prefix apps\/backend/);
   assert.match(devHandoff, /TestFlight upload handoff/);
   assert.match(devHandoff, /testflight-readiness-<sha>/);
+  assert.match(devHandoff, /handoffCard/);
   for (const handoffFile of [
     '.github/ISSUE_TEMPLATE/testflight-handoff.yml',
     'docs/dev-handoff-testflight.md',
@@ -291,6 +294,8 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(fullHandoff, /npm ci --prefix apps\/frontend/);
   assert.match(fullHandoff, /ALLOW_PROVISIONING_UPDATES=1/);
   assert.match(fullHandoff, /TESTFLIGHT_HANDOFF_CARD/);
+  assert.match(fullHandoff, /handoffCard/);
+  assert.match(fullHandoff, /\| `f0c0a3d` \| 2026-08-08 \| docs：同步 TestFlight handoff issue 证据字段/);
   assert.match(fullHandoff, /\| `0f0840a` \| 2026-08-08 \| docs：明确数学 story 31 条是包内离线资源/);
   assert.match(fullHandoff, /\| `08e0e3f` \| 2026-08-08 \| ci：启用 GitHub 无凭据 TestFlight Preflight/);
   assert.doesNotMatch(fullHandoff, /^\| `latest` \|/m);
@@ -387,6 +392,10 @@ test('release audit tracks whether the iOS shell can be build-verified', () => {
   assert.match(audit, /!shellLocalMockLoginAllowed\(\)/);
   assert.match(audit, /allowLocalMockLogin=true/);
   assert.match(audit, /testflightContentReady/);
+  assert.match(audit, /handoffCard/);
+  assert.match(audit, /BEGIN TESTFLIGHT_HANDOFF_CARD/);
+  assert.match(audit, /mathStoryDelivery: 'bundled_31_not_oss'/);
+  assert.match(audit, /nextHumanOnly: 'Archive\/Upload on a Mac with local signing/);
   assert.match(audit, /contentTestflightGaps/);
   assert.match(audit, /uploadBlockers/);
   assert.match(audit, /fullFunctionGaps/);

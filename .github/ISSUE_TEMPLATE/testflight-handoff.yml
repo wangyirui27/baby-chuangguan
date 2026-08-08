@@ -36,7 +36,7 @@ body:
     id: preflight_card
     attributes:
       label: TESTFLIGHT_HANDOFF_CARD
-      description: Paste the full card printed by `npm run testflight:preflight` or from the GitHub Actions "Run TestFlight handoff preflight" job log. Use the Actions summary/artifact only to cross-check commit, run, version, and readiness JSON.
+      description: Paste the full card printed by `npm run testflight:preflight`, from the GitHub Actions "Run TestFlight handoff preflight" job log, or from `handoffCard` inside the `testflight-readiness-<sha>` artifact JSON.
       placeholder: |
         -----BEGIN TESTFLIGHT_HANDOFF_CARD-----
         verified_commit=<same 40-char SHA as above>

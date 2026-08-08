@@ -97,6 +97,7 @@ const sharedConfigSource = readFileSync(join(ROOT, 'ios/Config/Shared.xcconfig')
 const projectSource = readFileSync(join(ROOT, 'ios/BabyEnglishIsland.xcodeproj/project.pbxproj'), 'utf8');
 const sharedMarketingVersion = sharedConfigSource.match(/^\s*MARKETING_VERSION\s*=\s*(\S+)/m)?.[1] || '';
 const sharedBuildNumber = sharedConfigSource.match(/^\s*CURRENT_PROJECT_VERSION\s*=\s*(\S+)/m)?.[1] || '';
+const sharedBundleId = sharedConfigSource.match(/^\s*PRODUCT_BUNDLE_IDENTIFIER\s*=\s*(\S+)/m)?.[1] || 'com.baobaoenglish.island';
 const projectMarketingVersions = [...new Set([...projectSource.matchAll(/MARKETING_VERSION\s*=\s*([^;]+);/g)].map((m) => m[1].trim()))];
 const projectBuildNumbers = [...new Set([...projectSource.matchAll(/CURRENT_PROJECT_VERSION\s*=\s*([^;]+);/g)].map((m) => m[1].trim()))];
 
@@ -212,6 +213,18 @@ function teamIdConfigured() {
     return Boolean(match && match[1] && match[1] !== 'YOUR_TEAM_ID');
   } catch {
     return false;
+  }
+}
+
+function gitHeadSha() {
+  try {
+    return execFileSync('git', ['rev-parse', 'HEAD'], {
+      cwd: ROOT,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    return 'unknown';
   }
 }
 
@@ -525,7 +538,36 @@ const gaps = [
   ...fullFunctionGaps,
 ];
 
+const handoff = {
+  verifiedCommit: gitHeadSha(),
+  versionBuild: `${sharedMarketingVersion} (${sharedBuildNumber})`,
+  bundleId: sharedBundleId,
+  scope: 'content_testflight',
+  mathStoryDelivery: 'bundled_31_not_oss',
+  ossScope: 'ocean_desert_l11_200_only',
+  apiBaseEmptyOk: true,
+  allowLocalMockLogin: shellLocalMockLoginAllowed(),
+  preflight: hardFailures.length === 0 && contentTestflightGaps.length === 0 ? 'OK' : 'NOT_READY',
+  nextHumanOnly: 'Archive/Upload on a Mac with local signing; do not paste Team ID or .p8 into GitHub',
+};
+const handoffCard = [
+  '-----BEGIN TESTFLIGHT_HANDOFF_CARD-----',
+  `verified_commit=${handoff.verifiedCommit}`,
+  `version_build=${handoff.versionBuild}`,
+  `bundle_id=${handoff.bundleId}`,
+  `scope=${handoff.scope}`,
+  `math_story_delivery=${handoff.mathStoryDelivery}`,
+  `oss_scope=${handoff.ossScope}`,
+  `apiBase_empty_ok=${handoff.apiBaseEmptyOk}`,
+  `allowLocalMockLogin=${handoff.allowLocalMockLogin}`,
+  `preflight=${handoff.preflight}`,
+  `next_human_only=${handoff.nextHumanOnly}`,
+  '-----END TESTFLIGHT_HANDOFF_CARD-----',
+].join('\n');
+
 const result = {
+  handoff,
+  handoffCard,
   ok: {
     firstTenLocked: JSON.stringify(firstTen) === JSON.stringify(expectedFirstTen),
     levelCount: levels.length,
