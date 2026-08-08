@@ -26,9 +26,12 @@ xcode-select -p   # 应含 Xcode.app
 npm test          # 应 379 pass
 node tools/audit-readiness.mjs   # testflightContentReady: true
 bash tools/pack-app-www.sh /tmp/hirota-www-check
+npm run testflight:preflight
 
 # 一键（推荐）
 DEVELOPMENT_TEAM=你的TeamID bash tools/ship-testflight.sh --upload
+# 若 ASC 已有同版本 build，再临时递增：
+# DEVELOPMENT_TEAM=你的TeamID BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
 
 # 或 GUI
 open ios/BabyEnglishIsland.xcodeproj
@@ -51,6 +54,7 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 | `ios/BabyEnglishIsland/shell-config.json` | `apiBase`（内容内测可空） |
 | `ios/ExportOptions-TestFlight.plist` | TF 导出模板（ship 脚本生成临时带 teamID 的副本） |
 | `tools/ship-testflight.sh` | check / archive / upload / open |
+| `tools/testflight-preflight.sh` | 无 Xcode 内容/壳门禁一键预检 |
 | `tools/pack-app-www.sh` | 打运行时 www |
 | `tools/audit-readiness.mjs` | TF 内容门禁：付费墙开关、版本、OSS 占位 URL、资源计数 |
 | `asset-packs.json` | L11–200 OSS URL |
@@ -63,7 +67,7 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 
 1. Xcode → Settings → Accounts 登录付费 Apple Developer
 2. Team ID → `DEVELOPMENT_TEAM` 环境变量、本地 ignored `Team.xcconfig`，或 Signing 面板
-3. 无人值守上传：按 `docs/testflight-secrets.md` 配 ASC API Key；人工 Xcode 登录态上传可跳过
+3. 无人值守上传：按 `docs/testflight-secrets.md` 配 ASC API Key；ASC Key 齐全时脚本默认允许自动管理签名，可用 `ALLOW_PROVISIONING_UPDATES=0` 关闭
 4. ASC 若无 App：新建 iOS，Bundle `com.baobaoenglish.island`，名 **嗨洛塔**
 5. 上传后处理 5–30 分钟 → 加内测组 / 外测合规
 

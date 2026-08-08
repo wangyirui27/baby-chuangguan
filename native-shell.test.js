@@ -35,6 +35,7 @@ test('iOS shell implements the H5 purchase and release-update bridges', () => {
   assert.doesNotMatch(viewController, /contentController\.add\(self, name:/);
   assert.match(viewController, /final class AssetPackDownloadManager/);
   assert.match(viewController, /URLSessionConfiguration\.background/);
+  assert.match(viewController, /config\.allowsCellularAccess = true/);
   assert.match(viewController, /cancel \{ \[weak self\] resumeData in/);
   assert.match(viewController, /downloadTask\(withResumeData:/);
   assert.match(viewController, /"babyIslandAssetPackEvent"/);
@@ -76,6 +77,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.ok(exists('ios/Config/Team.xcconfig.example'));
   assert.ok(exists('ios/Config/Shared.xcconfig'));
   assert.ok(exists('ios/ExportOptions-TestFlight.plist'));
+  assert.ok(exists('tools/testflight-preflight.sh'));
   assert.ok(exists('docs/testflight-checklist.md'));
   assert.ok(exists('docs/testflight-secrets.md'));
   assert.ok(exists('docs/iap-product-ids.md'));
@@ -89,6 +91,8 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
 
   const gitignore = read('.gitignore');
   assert.match(gitignore, /ios\/Config\/Team\.xcconfig/);
+  assert.match(gitignore, /\.secrets\//);
+  assert.match(gitignore, /\*\.p8/);
 
   const ship = read('tools/ship-testflight.sh');
   assert.match(ship, /EXPORT_OPTS_TEMPLATE/);
@@ -96,7 +100,18 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(ship, /ASC_KEY_ID/);
   assert.match(ship, /ASC_ISSUER_ID/);
   assert.match(ship, /authenticationKeyPath/);
+  assert.match(ship, /provisioning_updates_enabled/);
+  assert.match(ship, /BUILD_NUMBER/);
+  assert.doesNotMatch(ship, /\n\s*sudo xcode-select/);
   assert.doesNotMatch(ship, /plutil -replace teamID -string "\$tid" "\$EXPORT_OPTS"/);
+
+  const preflight = read('tools/testflight-preflight.sh');
+  assert.match(preflight, /for bin in node npm rsync python3/);
+  assert.match(preflight, /npm test/);
+  assert.match(preflight, /node tools\/audit-readiness\.mjs/);
+  assert.match(preflight, /bash tools\/pack-app-www\.sh/);
+  assert.match(preflight, /math_story_count/);
+  assert.match(preflight, /AppIcon-1024\.png must not contain alpha/);
 
   const shellConfig = JSON.parse(read('ios/BabyEnglishIsland/shell-config.json'));
   assert.equal(typeof shellConfig.apiBase, 'string');

@@ -46,7 +46,9 @@ OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
 | Shared scheme `BabyEnglishIsland.xcscheme` | ✅ |
 | `ExportOptions-TestFlight.plist` | ✅（teamID 占位；ship 使用临时副本写入） |
 | `tools/ship-testflight.sh` | ✅ check / archive / upload / open |
+| `tools/testflight-preflight.sh` | ✅ 无 Xcode 内容/壳门禁一键预检 |
 | `docs/testflight-secrets.md` | ✅ Team ID / ASC API Key 环境变量契约 |
+| AppIcon alpha | ✅ `AppIcon-1024.png` 已去 alpha；预检会拦截 alpha |
 | `Team.xcconfig` DEVELOPMENT_TEAM | ⬜ 本地 ignored 文件或环境变量，需填 |
 | 本机 Xcode.app | ⬜ 仅 Command Line Tools |
 
@@ -60,6 +62,8 @@ OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
    ```bash
    git pull
    DEVELOPMENT_TEAM=你的TeamID bash tools/ship-testflight.sh --upload
+   # 若同版本 build 已上传过：
+   DEVELOPMENT_TEAM=你的TeamID BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
    # 或 GUI：
    open ios/BabyEnglishIsland.xcodeproj
    # Signing 勾 Team → Product → Archive → App Store Connect Upload

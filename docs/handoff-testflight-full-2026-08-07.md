@@ -132,6 +132,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | 目录/对账 | `data/content-catalog.json`（400 levels）、`data/workbench-level-video-map.json` |
 | pack 脚本 | `tools/pack-app-www.sh`：非视频运行时 + shell loop + 双图前 10 + 数学 story 31；L11+ 不进包 |
 | 审计 | `tools/audit-readiness.mjs`：双图种子 + 数学 story + OSS 真链 + 付费墙开关 + 版本 + 占位 URL + TF content 字段 |
+| 一键预检 | `npm run testflight:preflight`：无 Xcode 跑测试、readiness、pack、plist/scheme 语法 |
 | 测试 | `npm test` → 379 |
 | 品牌文案 | 用户可见「嗨洛塔」；禁「英语岛 / 开通 VIP」口径（按地图收费） |
 
@@ -150,7 +151,8 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | 启动 | Info.plist `UILaunchScreen` + `LaunchLogo` / `LaunchBackground` |
 | Privacy | `PrivacyInfo.xcprivacy`；Info `ITSAppUsesNonExemptEncryption` |
 | Export | `ios/ExportOptions-TestFlight.plist`（teamID 占位模板；ship 生成临时副本） |
-| 发船 | `tools/ship-testflight.sh`：check / archive / upload / open；可选 ASC API Key 无人值守上传 |
+| 发船 | `tools/ship-testflight.sh`：check / archive / upload / open；可选 ASC API Key 无人值守上传；`BUILD_NUMBER=4` 可临时递增 build |
+| 预检 | `tools/testflight-preflight.sh` |
 | 签名变量 | `docs/testflight-secrets.md` |
 | H5 API | `auth/apiClient.js` 读 `window.BABY_ISLAND_API_BASE`，strip 尾 `/`；有 apiBase 时不走 local mock |
 | 版本提示 | `app-release.json` latestVersion `1.0.1`，商店搜词嗨洛塔 |
@@ -256,7 +258,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
      "iapProductIds": { "mapVip": "baby_island_map_vip_001" }
    }
    ```
-4. **递增 build**（Shared + pbx `CURRENT_PROJECT_VERSION` 同步，例如 4）后重新 Archive
+4. **递增 build**（推荐发船时临时 `BUILD_NUMBER=4`；要固化再同步 Shared + pbx `CURRENT_PROJECT_VERSION`）后重新 Archive
 5. 真机：短信登录、杀进程 session、进度同步
 6. IAP 仅当 ASC 已建同名商品
 
@@ -306,6 +308,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
   assets/video/desert-levels/                # 沙漠前 10
   tools/pack-app-www.sh
   tools/ship-testflight.sh
+  tools/testflight-preflight.sh
   tools/audit-readiness.mjs
   ios/BabyEnglishIsland.xcodeproj
   ios/BabyEnglishIsland.xcodeproj/xcshareddata/xcschemes/BabyEnglishIsland.xcscheme

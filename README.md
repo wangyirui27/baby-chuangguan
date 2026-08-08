@@ -21,9 +21,12 @@ npm test
 
 ```bash
 bash tools/pack-app-www.sh /tmp/hirota-www-check
+npm run testflight:preflight
 open ios/BabyEnglishIsland.xcodeproj
 # 或装好 Xcode + Team 后：
 # DEVELOPMENT_TEAM=你的ID bash tools/ship-testflight.sh --upload
+# 重复传同版本时：
+# DEVELOPMENT_TEAM=你的ID BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
 ```
 
 `DEVELOPMENT_TEAM=你的ID bash tools/ship-testflight.sh --upload`；或本地复制 `ios/Config/Team.xcconfig.example` 为 ignored 的 `ios/Config/Team.xcconfig` 后填 Team。生产 API 写入 `ios/BabyEnglishIsland/shell-config.json` 的 `apiBase`（HTTPS，无尾 `/`）。

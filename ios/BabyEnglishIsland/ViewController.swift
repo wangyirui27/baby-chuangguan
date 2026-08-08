@@ -48,7 +48,7 @@ final class AssetPackDownloadManager: NSObject, URLSessionDownloadDelegate {
     let bundleId = Bundle.main.bundleIdentifier ?? "com.baobaoenglish.island"
     let config = URLSessionConfiguration.background(withIdentifier: "\(bundleId).assetpacks")
     config.sessionSendsLaunchEvents = true
-    config.allowsCellularAccess = false
+    config.allowsCellularAccess = true
     config.isDiscretionary = false
     return URLSession(configuration: config, delegate: self, delegateQueue: nil)
   }()

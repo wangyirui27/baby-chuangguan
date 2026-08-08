@@ -95,9 +95,17 @@ build_xcode_auth_args() {
       -authenticationKeyIssuerID "$issuer_id"
     )
   fi
-  if [[ "${ALLOW_PROVISIONING_UPDATES:-0}" == "1" ]]; then
+  if provisioning_updates_enabled; then
     XCODE_AUTH_ARGS+=(-allowProvisioningUpdates)
   fi
+}
+
+provisioning_updates_enabled() {
+  case "${ALLOW_PROVISIONING_UPDATES:-}" in
+    0|false|FALSE|no|NO) return 1 ;;
+    1|true|TRUE|yes|YES) return 0 ;;
+  esac
+  [[ "$(asc_key_status)" == "CONFIGURED" ]]
 }
 
 need_xcode() {
@@ -111,8 +119,10 @@ need_xcode() {
   local dev
   dev="$(xcode-select -p 2>/dev/null || true)"
   if [[ "$dev" != *Xcode.app* ]]; then
-    ylw "xcode-select 未指向 Xcode，尝试切换…"
-    sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+    red "xcode-select 未指向完整 Xcode: ${dev:-EMPTY}"
+    echo "请在本机执行:"
+    echo "  sudo xcode-select -s /Applications/Xcode.app/Contents/Developer"
+    return 1
   fi
   xcodebuild -version
 }
@@ -174,6 +184,11 @@ do_archive() {
   rm -rf "$ARCHIVE_PATH"
   grn "Archive → $ARCHIVE_PATH (Team configured)"
   build_xcode_auth_args
+  local build_setting_args=()
+  if [[ -n "${BUILD_NUMBER:-}" ]]; then
+    ylw "Build number override: $BUILD_NUMBER"
+    build_setting_args+=(CURRENT_PROJECT_VERSION="$BUILD_NUMBER")
+  fi
   xcodebuild \
     -project "$PROJ" \
     -scheme "$SCHEME" \
@@ -181,6 +196,7 @@ do_archive() {
     -destination 'generic/platform=iOS' \
     -archivePath "$ARCHIVE_PATH" \
     DEVELOPMENT_TEAM="$tid" \
+    "${build_setting_args[@]}" \
     "${XCODE_AUTH_ARGS[@]}" \
     archive | /usr/bin/tee /tmp/hirota-archive.log | tail -30
   grn "Archive OK"

@@ -6,6 +6,9 @@ node_modules/
 .env
 .env.*
 !.env.example
+.secrets/
+*.p8
+AuthKey_*.p8
 
 # ─── Runtime data (generated JSON) ──────────────────
 # Local user/session fixtures (never commit real user PII dumps)
@@ -26,6 +29,8 @@ build/
 *.temp
 *.log
 *.lock
+!package-lock.json
+!**/package-lock.json
 
 # ─── Local tooling venvs ──────────────────────────
 .venv-rembg/

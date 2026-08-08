@@ -7,6 +7,7 @@
     "start": "cd backend && npm start",
     "e2e": "node tools/e2e-auth-flow.mjs",
     "e2e:math": "node tools/e2e-math-ai-smoke.mjs",
+    "testflight:preflight": "bash tools/testflight-preflight.sh",
     "audit:readiness": "node tools/audit-readiness.mjs",
     "audit:release": "node tools/audit-readiness.mjs --strict",
     "generate:contracts": "node tools/contracts/generate.mjs",
