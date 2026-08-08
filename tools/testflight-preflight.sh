@@ -29,6 +29,31 @@ done
 
 npm test
 node tools/audit-readiness.mjs
+node <<'JS'
+const fs = require('node:fs');
+const path = require('node:path');
+const root = 'ios/BabyEnglishIsland/Assets.xcassets';
+const emailLike = /[A-Za-z][A-Za-z0-9._%+-]*@[A-Za-z][A-Za-z0-9.-]*\.[A-Za-z]{2,}/;
+const walk = (dir) => {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const file = path.join(dir, entry.name);
+    if (entry.isDirectory()) walk(file);
+    if (!entry.isFile() || entry.name !== 'Contents.json') continue;
+    const json = JSON.parse(fs.readFileSync(file, 'utf8'));
+    for (const image of json.images || []) {
+      if (!image.filename) continue;
+      if (emailLike.test(image.filename)) {
+        throw new Error(`[testflight-preflight] email-like asset filename: ${file} -> ${image.filename}`);
+      }
+      const target = path.join(path.dirname(file), image.filename);
+      if (!fs.existsSync(target)) {
+        throw new Error(`[testflight-preflight] missing asset filename: ${file} -> ${image.filename}`);
+      }
+    }
+  }
+};
+walk(root);
+JS
 bash tools/pack-app-www.sh "$OUT"
 
 ocean_count="$(find "$OUT/assets/video/free-levels" -maxdepth 1 -type f -name 'level-*.mp4' | wc -l | tr -d ' ')"

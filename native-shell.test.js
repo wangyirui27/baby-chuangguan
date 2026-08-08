@@ -72,6 +72,8 @@ test('iOS shell implements the H5 purchase and release-update bridges', () => {
 test('iOS ship kit has icon, privacy, launch, team config, export options', () => {
   assert.ok(exists('ios/BabyEnglishIsland/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png'));
   assert.ok(exists('ios/BabyEnglishIsland/Assets.xcassets/LaunchLogo.imageset/LaunchLogo.png'));
+  assert.ok(exists('ios/BabyEnglishIsland/Assets.xcassets/LaunchLogo.imageset/LaunchLogo@2x.png'));
+  assert.ok(exists('ios/BabyEnglishIsland/Assets.xcassets/LaunchLogo.imageset/LaunchLogo@3x.png'));
   assert.ok(exists('ios/BabyEnglishIsland/PrivacyInfo.xcprivacy'));
   assert.ok(exists('ios/BabyEnglishIsland/shell-config.json'));
   assert.ok(exists('ios/Config/Team.xcconfig.example'));
@@ -85,9 +87,13 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.ok(exists('assets/video/math-story/math-story-video-manifest.json'));
 
   const info = read('ios/BabyEnglishIsland/Info.plist');
+  const launchLogoContents = read('ios/BabyEnglishIsland/Assets.xcassets/LaunchLogo.imageset/Contents.json');
   assert.match(info, /嗨洛塔/);
   assert.match(info, /UILaunchScreen/);
   assert.match(info, /ITSAppUsesNonExemptEncryption/);
+  assert.match(launchLogoContents, /LaunchLogo@2x\.png/);
+  assert.match(launchLogoContents, /LaunchLogo@3x\.png/);
+  assert.doesNotMatch(launchLogoContents, /[A-Za-z][A-Za-z0-9._%+-]*@[A-Za-z][A-Za-z0-9.-]*\.[A-Za-z]{2,}/);
 
   const gitignore = read('.gitignore');
   assert.match(gitignore, /ios\/Config\/Team\.xcconfig/);
@@ -113,6 +119,8 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(preflight, /for bin in node npm rsync python3/);
   assert.match(preflight, /npm test/);
   assert.match(preflight, /node tools\/audit-readiness\.mjs/);
+  assert.match(preflight, /email-like asset filename/);
+  assert.match(preflight, /missing asset filename/);
   assert.match(preflight, /bash tools\/pack-app-www\.sh/);
   assert.match(preflight, /ocean_count/);
   assert.match(preflight, /desert_count/);
