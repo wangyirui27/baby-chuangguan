@@ -9,6 +9,9 @@ node_modules/
 .secrets/
 *.p8
 AuthKey_*.p8
+*.p12
+*.cer
+*.mobileprovision
 
 # ─── Runtime data (generated JSON) ──────────────────
 # Local user/session fixtures (never commit real user PII dumps)

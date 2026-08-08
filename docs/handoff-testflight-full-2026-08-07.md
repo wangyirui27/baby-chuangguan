@@ -157,6 +157,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | 干净交接验证 | `npm run testflight:verify-handoff`：从已提交 HEAD 克隆干净副本、重装依赖并跑完整预检 |
 | GitHub 预检 | `.github/workflows/testflight-preflight.yml`：已启用无 Apple 密钥门禁；`docs/testflight-github-actions-template.yml` 保留为源模板 |
 | GitHub 接手单 | `.github/ISSUE_TEMPLATE/testflight-handoff.yml`：给有 Xcode/Apple 权限的同事记录 commit、Actions 绿勾、Archive/Upload 与真机冒烟结果；不得填写凭据 |
+| Handoff 证据卡 | `npm run testflight:preflight` 成功后输出 `TESTFLIGHT_HANDOFF_CARD`；Actions Summary 也会生成同样证据和 `testflight-readiness-<sha>` artifact |
 | 测试 | `npm test` → 383 |
 | 品牌文案 | 用户可见「嗨洛塔」；禁「英语岛 / 开通 VIP」口径（按地图收费） |
 

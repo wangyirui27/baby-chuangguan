@@ -56,6 +56,31 @@ jobs:
       - name: Run TestFlight handoff preflight
         run: npm run testflight:preflight
 
+      - name: Emit handoff summary
+        run: |
+          node tools/audit-readiness.mjs > testflight-readiness.json
+          VERSION="$(sed -n 's/^MARKETING_VERSION[[:space:]]*=[[:space:]]*//p' ios/Config/Shared.xcconfig | tr -d '[:space:]' | head -1)"
+          BUILD="$(sed -n 's/^CURRENT_PROJECT_VERSION[[:space:]]*=[[:space:]]*//p' ios/Config/Shared.xcconfig | tr -d '[:space:]' | head -1)"
+          {
+            echo "## TestFlight handoff"
+            echo "- commit: \`${GITHUB_SHA}\`"
+            echo "- run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "- version/build: \`${VERSION} (${BUILD})\`"
+            echo "- bundle: \`com.baobaoenglish.island\`"
+            echo "- issue template: \`TestFlight upload handoff\`"
+            echo ""
+            echo '```json'
+            node -e "const r=require('./testflight-readiness.json'); console.log(JSON.stringify({ok:r.ok,hardFailures:r.hardFailures,contentTestflightGaps:r.contentTestflightGaps,uploadBlockers:r.uploadBlockers}, null, 2));"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload readiness artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: testflight-readiness-${{ github.sha }}
+          path: testflight-readiness.json
+          retention-days: 14
+
   asset-url-probe:
     name: Optional OSS asset URL probe
     runs-on: ubuntu-latest

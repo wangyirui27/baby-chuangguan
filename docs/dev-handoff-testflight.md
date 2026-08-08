@@ -50,6 +50,7 @@ open ios/BabyEnglishIsland.xcodeproj
 GitHub 新建 Issue 时可选择 `TestFlight upload handoff` 模板，把 commit、Actions 绿勾、上传结果和真机冒烟逐项勾掉；不要把 Apple 凭据、Team ID、证书或 `.p8` 内容写进 Issue。
 
 Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（约 382MB；含海岛+沙漠前 10 关 mp4、数学 story 31 条 mp4 + 31 条主题音 + `asset-packs.json`）。`npm run testflight:preflight` 也会检查这些种子资源已被 Git 跟踪，避免“本机有、clone 后没有”。
+预检成功会打印 `TESTFLIGHT_HANDOFF_CARD`；GitHub Actions Summary 会列出 commit、run、版本、Bundle ID，并上传 `testflight-readiness-<sha>` JSON artifact，方便直接复制到 handoff issue。
 如果要验证远端仓库本身，运行：`HANDOFF_CLONE_SOURCE=https://github.com/wangyirui27/baby-chuangguan.git npm run testflight:verify-handoff`。
 
 ---
@@ -67,6 +68,7 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 | `tools/ship-testflight.sh` | check / archive / upload / open |
 | `tools/testflight-preflight.sh` | 无 Xcode 内容/壳门禁一键预检；含关键视频/主题音 Git 跟踪计数 |
 | `tools/verify-testflight-handoff.sh` | 从已提交 HEAD 干净克隆、重装依赖并跑完整 TF 预检 |
+| `tools/scan-no-apple-secrets.sh` | 防止误提交 Team ID、`.p8`、证书、provisioning profile、IPA |
 | `tools/enable-testflight-workflow.sh` | 从模板重建 `.github/workflows/testflight-preflight.yml`；提交需 workflow scope |
 | `tools/pack-app-www.sh` | 打运行时 www |
 | `tools/audit-readiness.mjs` | TF 内容门禁：付费墙开关、版本、OSS 占位 URL、资源计数 |

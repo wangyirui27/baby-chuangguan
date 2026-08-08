@@ -41,6 +41,7 @@ need_node_modules "backend" "npm ci --prefix backend"
 need_node_modules "apps/backend" "npm ci --prefix apps/backend"
 need_node_modules "apps/frontend" "npm ci --prefix apps/frontend"
 
+bash tools/scan-no-apple-secrets.sh
 npm test
 node tools/audit-readiness.mjs
 if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
@@ -89,6 +90,7 @@ const walk = (dir) => {
 walk(root);
 JS
 bash tools/pack-app-www.sh "$OUT"
+npm run probe:asset-packs -- --dry-run --sample 12
 
 ocean_count="$(find "$OUT/assets/video/free-levels" -maxdepth 1 -type f -name 'level-*.mp4' | wc -l | tr -d ' ')"
 desert_count="$(find "$OUT/assets/video/desert-levels" -maxdepth 1 -type f -name 'level-*.mp4' | wc -l | tr -d ' ')"
@@ -169,3 +171,19 @@ fi
 du -sh "$OUT" "$OUT/assets/video/math-story"
 echo "[testflight-preflight] seeds ocean=$ocean_count desert=$desert_count math=$math_story_count mathThemeAudio=$math_theme_audio_count"
 echo "[testflight-preflight] OK"
+
+sha="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
+version="$(sed -n 's/^MARKETING_VERSION[[:space:]]*=[[:space:]]*//p' ios/Config/Shared.xcconfig | tr -d '[:space:]' | head -1)"
+build="$(sed -n 's/^CURRENT_PROJECT_VERSION[[:space:]]*=[[:space:]]*//p' ios/Config/Shared.xcconfig | tr -d '[:space:]' | head -1)"
+cat <<EOF
+-----BEGIN TESTFLIGHT_HANDOFF_CARD-----
+verified_commit=$sha
+version_build=$version ($build)
+bundle_id=com.baobaoenglish.island
+scope=content_testflight
+apiBase_empty_ok=true
+allowLocalMockLogin=true
+preflight=OK
+next_human_only=Archive/Upload on a Mac with local signing; do not paste Team ID or .p8 into GitHub
+-----END TESTFLIGHT_HANDOFF_CARD-----
+EOF

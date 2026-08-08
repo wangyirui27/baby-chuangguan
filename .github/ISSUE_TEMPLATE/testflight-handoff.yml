@@ -32,6 +32,22 @@ body:
     validations:
       required: true
 
+  - type: textarea
+    id: preflight_card
+    attributes:
+      label: TESTFLIGHT_HANDOFF_CARD
+      description: Paste the card printed by `npm run testflight:preflight` or the GitHub Actions summary.
+      placeholder: |
+        -----BEGIN TESTFLIGHT_HANDOFF_CARD-----
+        verified_commit=...
+        version_build=1.0.1 (3)
+        bundle_id=com.baobaoenglish.island
+        scope=content_testflight
+        preflight=OK
+        -----END TESTFLIGHT_HANDOFF_CARD-----
+    validations:
+      required: true
+
   - type: dropdown
     id: scope
     attributes:
