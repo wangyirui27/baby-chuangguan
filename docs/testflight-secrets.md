@@ -42,7 +42,7 @@ bash tools/ship-testflight.sh --upload
 |------|------|
 | `ALLOW_PROVISIONING_UPDATES=1` | 强制允许 `xcodebuild` 通过 Apple 服务自动管理签名；未配 ASC API Key 但需要自动拉 profile 时用 |
 | `ALLOW_PROVISIONING_UPDATES=0` | 强制关闭自动管理签名；ASC API Key 齐全时脚本默认允许，如需关闭才设为 `0` |
-| `BUILD_NUMBER=4` | 重复上传同版本时临时覆盖 `CURRENT_PROJECT_VERSION`，避免 build 号撞车 |
+| `BUILD_NUMBER=<next-build>` | 重复上传同版本时临时覆盖 `CURRENT_PROJECT_VERSION`；设为高于 ASC 已有构建号的正整数，避免 build 号撞车 |
 | `ARCHIVE_PATH` | 自定义 `.xcarchive` 输出路径 |
 | `EXPORT_DIR` | 自定义导出目录 |
 | `EXPORT_OPTS_WORK` | 自定义临时 ExportOptions 路径 |

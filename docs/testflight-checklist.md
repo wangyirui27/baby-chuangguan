@@ -72,8 +72,8 @@ GitHub 接手验收口令：fresh clone 后 `git fetch --all --tags && git check
    git fetch --all --tags
    git checkout <verified_commit>
    DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload
-   # 若同版本 build 已上传过：
-   DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
+   # 若同版本 build 已上传过，把 <next-build> 设为高于 ASC 已有构建号的正整数：
+   DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 BUILD_NUMBER=<next-build> bash tools/ship-testflight.sh --upload
    # 或 GUI：
    open ios/BabyEnglishIsland.xcodeproj
    # Signing 勾 Team → Product → Archive → App Store Connect Upload

@@ -242,6 +242,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(readme, /gh run download <run_id> -n testflight-readiness-<sha>/);
   assert.match(readme, /ship-testflight\.sh --static-check/);
   assert.match(readme, /ALLOW_PROVISIONING_UPDATES=1/);
+  assert.match(readme, /BUILD_NUMBER=<next-build>/);
   assert.match(readme, /数学 story 31 条是包内离线资源，不走 `asset-packs\.json` \/ OSS/);
   assert.match(devHandoff, /testflight:verify-handoff/);
   assert.match(devHandoff, /git checkout <verified_commit>/);
@@ -250,10 +251,12 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(devHandoff, /干净克隆预检约 364M \/ 361\.1MiB/);
   assert.match(fullHandoff, /脏工作区带未跟踪 QA 资源时可能更大/);
   assert.match(devHandoff, /ALLOW_PROVISIONING_UPDATES=1/);
+  assert.match(devHandoff, /BUILD_NUMBER=<next-build>/);
   assert.match(devHandoff, /本仓 Actions 不做 Upload，不需要配置 Apple \/ ASC \/ Team Secrets/);
   assert.match(devHandoff, /数学 story 是包内离线资源，不走 `asset-packs\.json` \/ OSS/);
   assert.match(devHandoff, /数学 story 不需要上传 OSS/);
   assert.match(checklist, /ALLOW_PROVISIONING_UPDATES=1/);
+  assert.match(checklist, /BUILD_NUMBER=<next-build>/);
   assert.match(checklist, /git checkout <verified_commit>/);
   assert.match(checklist, /数学 story 31 条不走 OSS/);
   assert.match(ascForm, /ALLOW_PROVISIONING_UPDATES=1/);
@@ -313,6 +316,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(fullHandoff, /HANDOFF_EXPECTED_SHA=<verified_commit>/);
   assert.match(fullHandoff, /gh run download <run_id> -n testflight-readiness-<sha>/);
   assert.match(fullHandoff, /ALLOW_PROVISIONING_UPDATES=1/);
+  assert.match(fullHandoff, /BUILD_NUMBER=<next-build>/);
   assert.match(fullHandoff, /TESTFLIGHT_HANDOFF_CARD/);
   assert.match(fullHandoff, /handoffCard/);
   assert.match(fullHandoff, /handoffIssue/);
@@ -337,6 +341,8 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   const secrets = read('docs/testflight-secrets.md');
   assert.match(secrets, /本仓已启用的 GitHub Actions `TestFlight Preflight` 不需要、也不应配置任何 Apple \/ ASC \/ Team 密钥/);
   assert.match(secrets, /不是要求写进本仓 Secrets/);
+  assert.match(secrets, /BUILD_NUMBER=<next-build>/);
+  assert.doesNotMatch(`${readme}\n${devHandoff}\n${fullHandoff}\n${checklist}\n${secrets}`, /BUILD_NUMBER=4/);
 
   const enableWorkflow = read('tools/enable-testflight-workflow.sh');
   assert.match(enableWorkflow, /testflight-github-actions-template\.yml/);

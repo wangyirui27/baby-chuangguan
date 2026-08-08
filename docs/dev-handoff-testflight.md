@@ -39,8 +39,8 @@ npm run testflight:verify-handoff   # 可选：从已提交 HEAD 干净克隆后
 # 一键（推荐）
 # 会先自动跑 npm run testflight:preflight，再 Archive/Upload
 DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload
-# 若 ASC 已有同版本 build，先跑 --check 看 Next retry，再临时递增：
-# DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
+# 若 ASC 已有同版本 build，把 <next-build> 设为高于 ASC 已有构建号的正整数：
+# DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 BUILD_NUMBER=<next-build> bash tools/ship-testflight.sh --upload
 
 # 或 GUI
 open ios/BabyEnglishIsland.xcodeproj

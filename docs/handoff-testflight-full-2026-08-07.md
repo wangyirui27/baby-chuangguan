@@ -182,7 +182,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | 启动 | Info.plist `UILaunchScreen` + `LaunchLogo` / `LaunchBackground` |
 | Privacy | `PrivacyInfo.xcprivacy`；Info `ITSAppUsesNonExemptEncryption` |
 | Export | `ios/ExportOptions-TestFlight.plist`（teamID 占位模板；ship 生成临时副本） |
-| 发船 | `tools/ship-testflight.sh`：check / archive / upload / open；可选 ASC API Key 无人值守上传；无 ASC Key 且依赖 Xcode 自动签名时加 `ALLOW_PROVISIONING_UPDATES=1`；`BUILD_NUMBER=4` 可临时递增 build |
+| 发船 | `tools/ship-testflight.sh`：check / archive / upload / open；可选 ASC API Key 无人值守上传；无 ASC Key 且依赖 Xcode 自动签名时加 `ALLOW_PROVISIONING_UPDATES=1`；`BUILD_NUMBER=<next-build>` 可临时递增 build，需高于 ASC 已有构建号 |
 | 预检 | `tools/testflight-preflight.sh` |
 | pack 后媒体门禁 | `tools/assert-testflight-bundle-media.mjs` |
 | Archive 静态契约 | `tools/assert-ios-archive-contract.mjs`；也可跑 `bash tools/ship-testflight.sh --static-check`，不需要 Xcode |
@@ -306,7 +306,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
      "iapProductIds": { "mapVip": "baby_island_map_vip_001" }
    }
    ```
-4. **递增 build**（推荐发船时临时 `ALLOW_PROVISIONING_UPDATES=1 BUILD_NUMBER=4`；要固化再同步 Shared + pbx `CURRENT_PROJECT_VERSION`）后重新 Archive
+4. **递增 build**（推荐发船时临时 `ALLOW_PROVISIONING_UPDATES=1 BUILD_NUMBER=<next-build>`，且高于 ASC 已有构建号；要固化再同步 Shared + pbx `CURRENT_PROJECT_VERSION`）后重新 Archive
 5. 真机：短信登录、杀进程 session、进度同步
 6. IAP 仅当 ASC 已建同名商品
 

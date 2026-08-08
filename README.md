@@ -41,8 +41,8 @@ npm run probe:asset-packs -- --dry-run  # 可选：只列 OSS 样本 URL，不�
 open ios/BabyEnglishIsland.xcodeproj
 # 或装好 Xcode + Team 后：
 # DEVELOPMENT_TEAM=你的ID ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload
-# 重复传同版本时：
-# DEVELOPMENT_TEAM=你的ID ALLOW_PROVISIONING_UPDATES=1 BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
+# 重复传同版本时：把 <next-build> 设为高于 ASC 已有构建号的正整数
+# DEVELOPMENT_TEAM=你的ID ALLOW_PROVISIONING_UPDATES=1 BUILD_NUMBER=<next-build> bash tools/ship-testflight.sh --upload
 ```
 
 `.github/workflows/testflight-preflight.yml` 已启用无凭据 CI，push / PR 会跑同一套内容包、H5、壳工程交接门禁。它只证明 GitHub clean checkout 预检通过；Archive / Upload 仍必须由有完整 Xcode + Apple Developer Team 的技术同事执行。
