@@ -76,6 +76,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.ok(exists('docs/testflight-checklist.md'));
   assert.ok(exists('docs/iap-product-ids.md'));
   assert.ok(exists('docs/testflight-smoke.md'));
+  assert.ok(exists('assets/video/math-story/math-story-video-manifest.json'));
 
   const info = read('ios/BabyEnglishIsland/Info.plist');
   assert.match(info, /嗨洛塔/);
@@ -93,6 +94,13 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   const release = JSON.parse(read('app-release.json'));
   assert.equal(release.latestVersion, '1.0.1');
   assert.match(release.updateUrl, /term=%E5%97%A8%E6%B4%9B%E5%A1%94/);
+
+  const mathStoryManifest = JSON.parse(read('assets/video/math-story/math-story-video-manifest.json'));
+  assert.equal(mathStoryManifest.entries.length, 31);
+  for (const entry of mathStoryManifest.entries) {
+    assert.ok(exists(entry.dest), `missing ${entry.dest}`);
+    assert.ok(fs.statSync(path.join(__dirname, entry.dest)).size > 0, `empty ${entry.dest}`);
+  }
 });
 
 test('native pack script keeps only seed videos and runtime map assets', () => {
@@ -103,11 +111,13 @@ test('native pack script keeps only seed videos and runtime map assets', () => {
   assert.match(packScript, /assets\/video\/free-levels\/level-10-\*\.mp4/);
   assert.match(packScript, /assets\/video\/desert-levels\/level-00\[1-9\]-\*\.mp4/);
   assert.match(packScript, /assets\/video\/desert-levels\/level-010-\*\.mp4/);
+  assert.match(packScript, /assets\/video\/math-story\/\*\.mp4/);
+  assert.match(packScript, /math-story mp4 count=\$math_story_count want=31/);
   assert.match(packScript, /non-seed course video found in bundle/);
   assert.match(packScript, /raw-v2/);
   assert.match(packScript, /candidates/);
   assert.match(packScript, /front-ocean-v1-video/);
-  assert.match(packScript, /ocean L01-10\+desert L001-010 in/);
+  assert.match(packScript, /ocean L01-10\+desert L001-010\+math-story x31 in/);
   assert.match(packScript, /_dreamina\*/);
   assert.match(packScript, /runtime asset gate OK/);
 });
@@ -126,4 +136,7 @@ test('release audit tracks whether the iOS shell can be build-verified', () => {
   assert.match(audit, /BABY_ISLAND_API_BASE/);
   assert.match(audit, /shell-config\.json/);
   assert.match(audit, /testflightContentReady/);
+  assert.match(audit, /mathStoryVideoCoverage/);
+  assert.match(audit, /mathStoryVideos/);
+  assert.match(audit, /math-story mp4 count/);
 });

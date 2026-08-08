@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -129,6 +129,8 @@ function nativeShellReady() {
     && project.includes('PrivacyInfo.xcprivacy')
     && project.includes('shell-config.json')
     && packScript.includes('assets/video/free-levels/level-0[1-9]-*.mp4')
+    && packScript.includes('assets/video/math-story/*.mp4')
+    && packScript.includes('math-story mp4 count')
     && packScript.includes('non-seed course video found in bundle')
     && infoPlist.includes('嗨洛塔')
     && typeof shellConfig.apiBase === 'string';
@@ -210,6 +212,46 @@ function assetPackRemoteCoverage() {
 }
 
 const remoteCoverage = assetPackRemoteCoverage();
+
+function mathStoryVideoCoverage() {
+  const expected = 31;
+  const fallback = { expected, listed: 0, missing: expected, localBytes: 0, firstMissing: ['manifest'] };
+  try {
+    const manifest = JSON.parse(readFileSync(join(ROOT, 'assets/video/math-story/math-story-video-manifest.json'), 'utf8'));
+    const entries = Array.isArray(manifest.entries) ? manifest.entries : [];
+    const missing = [];
+    let localBytes = 0;
+    for (const entry of entries) {
+      const rel = String(entry.dest || `assets/video/math-story/${entry.videoSlug || ''}.mp4`).trim();
+      if (!rel) {
+        missing.push(String(entry.id || entry.videoSlug || 'unknown'));
+        continue;
+      }
+      const file = join(ROOT, rel);
+      if (!existsSync(file)) {
+        missing.push(rel);
+        continue;
+      }
+      const size = statSync(file).size;
+      if (size <= 0) {
+        missing.push(rel);
+        continue;
+      }
+      localBytes += size;
+    }
+    return {
+      expected,
+      listed: entries.length,
+      missing: missing.length + Math.max(0, expected - entries.length),
+      localBytes,
+      firstMissing: missing.slice(0, 5),
+    };
+  } catch {
+    return fallback;
+  }
+}
+
+const mathStoryVideos = mathStoryVideoCoverage();
 const desertSeedMissing = [];
 for (let id = 1; id <= 10; id += 1) {
   // filenames come from DESERT_FREE_LEVEL_VIDEOS in script; existence via glob
@@ -234,6 +276,9 @@ const hardFailures = [
   ...(missingWordAudio.length ? [`缺少 ${missingWordAudio.length} 个单词音频。`] : []),
   ...(missingFirstTenVideos.length ? [`前 10 关缺少 ${missingFirstTenVideos.length} 个视频。`] : []),
   ...(desertSeedMissing.length ? [`沙漠前 10 关包内视频缺 ${desertSeedMissing.length} 个。`] : []),
+  ...(mathStoryVideos.listed !== mathStoryVideos.expected || mathStoryVideos.missing
+    ? [`数学 story 短片未就绪：manifest ${mathStoryVideos.listed}/${mathStoryVideos.expected}，本地缺 ${mathStoryVideos.missing} 个。`]
+    : []),
   ...(nonNounTopicLevels.length ? [`仍有 ${nonNounTopicLevels.length} 关属于颜色/数字/动作，不是高频名词关。`] : []),
   ...(nonNounWordLevels.length ? [`仍有 ${nonNounWordLevels.length} 个非名词词条：${nonNounWordLevels.map((level) => `${level.id}:${level.title}`).join(', ')}。`] : []),
   ...(staleHundredMentions().map((file) => `${file} 仍有 100 levels 文档残留。`)),
@@ -274,6 +319,7 @@ const result = {
     missingWordAudio: missingWordAudio.length,
     missingFirstTenVideos: missingFirstTenVideos.length,
     desertSeedMissing: desertSeedMissing.length,
+    mathStoryVideos,
     remoteCourseVideos: remoteCoverage,
     nonNounWords: nonNounWordLevels.length,
     nativeShellReady: nativeReady,

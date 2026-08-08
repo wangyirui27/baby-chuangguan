@@ -133,7 +133,10 @@ assets/video/desert-levels/*.bak
 assets/video/free-levels-libtv-downloads/
 assets/video/free-levels-libtv-preview/
 assets/video/paid-levels/
-assets/video/math-story/
+assets/video/math-story/*
+!assets/video/math-story/
+!assets/video/math-story/*.mp4
+!assets/video/math-story/math-story-video-manifest.json
 assets/xhs-templates/
 assets/math-map/quiz/_gen/
 assets/math-map/quiz/wood-digits/_dreamina-raw/

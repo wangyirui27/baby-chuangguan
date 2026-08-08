@@ -4,8 +4,9 @@
 # 包体铁律（产品确认）：
 # 1) 非视频的基本运行时素材必须打进 App（音频、图标、地图 UI 图、数学道具、Lottie、品牌…）
 # 2) 课程闯关教学 mp4：仅种子 L01–L10 进包；付费/后续关走下载或 CDN（不塞整库）
-# 3) 地图氛围 loop（海洋/沙漠背景循环、骆驼 alpha）算「壳层体验」仍进包（体积可控）
-# 4) 生成草稿 / raw / candidates / _dreamina / _gen 等绝不准进包
+# 3) 数学地图 31 条 story waypoint mp4：当前播放路径是包内 assets/video/math-story，必须进包
+# 4) 地图氛围 loop（海洋/沙漠背景循环、骆驼 alpha）算「壳层体验」仍进包（体积可控）
+# 5) 生成草稿 / raw / candidates / _dreamina / _gen 等绝不准进包
 #
 # Full optional map/course packs may still download later; basics must work offline at first launch.
 set -euo pipefail
@@ -104,6 +105,9 @@ copy_glob "assets/video/free-levels/level-10-*.mp4"
 # 沙漠 desert free L001–L010（包内定稿，与 script.js DESERT_FREE_LEVEL_VIDEOS 对齐）
 copy_glob "assets/video/desert-levels/level-00[1-9]-*.mp4"
 copy_glob "assets/video/desert-levels/level-010-*.mp4"
+# 数学 story waypoint 短片（31 条；script.js 使用本地相对路径播放）
+copy_glob "assets/video/math-story/*.mp4"
+copy_file "assets/video/math-story/math-story-video-manifest.json"
 
 # brand pack guard
 if [[ -d "$ROOT/assets/brand" ]]; then
@@ -143,11 +147,18 @@ for level in 001 002 003 004 005 006 007 008 009 010; do
     exit 8
   fi
 done
+math_story_count="$(find "$OUT/assets/video/math-story" -maxdepth 1 -type f -name '*.mp4' 2>/dev/null | wc -l | tr -d ' ')"
+if [[ "$math_story_count" != "31" ]]; then
+  echo "[pack-app-www] FAIL: math-story mp4 count=$math_story_count want=31" >&2
+  exit 13
+fi
 
-# fail if non-seed course video leaked (only free ocean L01-10 + desert L001-010 allowed)
+# fail if non-seed course video leaked (free ocean L01-10 + desert L001-010 + math-story allowed)
 if find "$OUT/assets/video" -type f 2>/dev/null \
   | grep -Ev '/free-levels/level-(0[1-9]|10)-[^/]+\.mp4$' \
   | grep -Ev '/desert-levels/level-(00[1-9]|010)-[^/]+\.mp4$' \
+  | grep -Ev '/math-story/level-[0-9]{3}-[^/]+\.mp4$' \
+  | grep -Ev '/math-story/math-story-video-manifest\.json$' \
   | head -1 | grep -q .; then
   echo "[pack-app-www] FAIL: non-seed course video found in bundle" >&2
   exit 3
@@ -247,4 +258,4 @@ PY
 
 echo "[pack-app-www] OK -> $OUT"
 du -sh "$OUT" "$OUT/assets" 2>/dev/null || true
-echo "[pack-app-www] basics(non-video)+shell loops+ocean L01-10+desert L001-010 in; L11+ OSS/asset-packs; drafts/raw out"
+echo "[pack-app-www] basics(non-video)+shell loops+ocean L01-10+desert L001-010+math-story x31 in; L11+ OSS/asset-packs; drafts/raw out"

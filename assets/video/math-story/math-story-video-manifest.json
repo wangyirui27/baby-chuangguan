@@ -1,0 +1,363 @@
+{
+  "version": "20260807-table-tricks-qualified-31",
+  "generated_at": "2026-08-07T05:45:01.809Z",
+  "sources": [
+    "/Users/yr/video/table-tricks-s1",
+    "/Users/yr/Documents/LibTV Workbench/projects/table-tricks-s1/output",
+    "/Users/yr/Documents/LibTV Workbench/projects/table-tricks-s1/videos",
+    "/Users/yr/Library/Application Support/libtv-workbench/projects/table-tricks-s1/output",
+    "/Users/yr/Library/Application Support/libtv-workbench/projects/table-tricks-s1/videos",
+    "/Users/yr/Library/Application Support/libtv-workbench/projects/table-tricks-s1"
+  ],
+  "summary": {
+    "total": 31,
+    "copied": 31,
+    "skipped": 0,
+    "missing": 0,
+    "updated": 31,
+    "present": 31
+  },
+  "entries": [
+    {
+      "id": "num-00",
+      "title": "圆圈的零",
+      "videoSlug": "level-021-num-zero",
+      "beforeLevel": 1,
+      "dest": "assets/video/math-story/level-021-num-zero.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-021-num-zero.mp4",
+      "size": 3019154,
+      "sha256": "8c1534f2b9c67a0df7ddd398e75e5da0ae25fd1a9246e8aac4f9e818da6714f5"
+    },
+    {
+      "id": "num-01",
+      "title": "竖立的一",
+      "videoSlug": "level-022-num-one",
+      "beforeLevel": 1,
+      "dest": "assets/video/math-story/level-022-num-one.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-022-num-one.mp4",
+      "size": 3199474,
+      "sha256": "82460d43120dd44569b2acc9c60be00d6810bf5a2f0da2e8dd03c83435308eef"
+    },
+    {
+      "id": "num-02",
+      "title": "弯曲的二",
+      "videoSlug": "level-023-num-two",
+      "beforeLevel": 2,
+      "dest": "assets/video/math-story/level-023-num-two.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-023-num-two.mp4",
+      "size": 3276339,
+      "sha256": "8c55056921386bdd1457a4611b98eccc677a93e734d1973056eaa8719a123624"
+    },
+    {
+      "id": "num-03",
+      "title": "两弯的三",
+      "videoSlug": "level-024-num-three",
+      "beforeLevel": 3,
+      "dest": "assets/video/math-story/level-024-num-three.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-024-num-three.mp4",
+      "size": 3158654,
+      "sha256": "42ae61a9a1458d177aae52883d81820354d3ef95d1d7fd46ef1aad5a5c6789b6"
+    },
+    {
+      "id": "ep-05",
+      "title": "一个也很了不起",
+      "videoSlug": "level-005-one-left",
+      "beforeLevel": 6,
+      "dest": "assets/video/math-story/level-005-one-left.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-005-one-left.mp4",
+      "size": 2986391,
+      "sha256": "5c80fb220df4b51f9cd3ab380b63f5b01dc47dae855d4771f66b5885aae44f5f"
+    },
+    {
+      "id": "ep-01",
+      "title": "点三个苹果站整齐",
+      "videoSlug": "level-001-roll-call",
+      "beforeLevel": 10,
+      "dest": "assets/video/math-story/level-001-roll-call.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-001-roll-call.mp4",
+      "size": 3515805,
+      "sha256": "26f28a2c57afc0502d6576401bf0fc28d4323c789291fce7eceb6f4ec1c4da24"
+    },
+    {
+      "id": "ep-03",
+      "title": "眼睛一下看出两个",
+      "videoSlug": "level-003-two-together",
+      "beforeLevel": 14,
+      "dest": "assets/video/math-story/level-003-two-together.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-003-two-together.mp4",
+      "size": 2658739,
+      "sha256": "b8d34d785be24f65faaa270fd19c5592240ab657b399515343f8118de06cbf53"
+    },
+    {
+      "id": "ep-04",
+      "title": "三个秒排成队",
+      "videoSlug": "level-004-three-line",
+      "beforeLevel": 18,
+      "dest": "assets/video/math-story/level-004-three-line.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-004-three-line.mp4",
+      "size": 2955208,
+      "sha256": "ee8df9f14eef8766b01a9c5d122591959d959028769d25e3bd9faf094822f90a"
+    },
+    {
+      "id": "ep-06",
+      "title": "拉长了还是一样多",
+      "videoSlug": "level-006-stretch",
+      "beforeLevel": 22,
+      "dest": "assets/video/math-story/level-006-stretch.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-006-stretch.mp4",
+      "size": 3019313,
+      "sha256": "fa31304370f632b0e915a5b5f76de87fe23cb877b375608f289c791b9eb1e3ec"
+    },
+    {
+      "id": "num-04",
+      "title": "开门的四",
+      "videoSlug": "level-025-num-four",
+      "beforeLevel": 26,
+      "dest": "assets/video/math-story/level-025-num-four.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-025-num-four.mp4",
+      "size": 3232899,
+      "sha256": "f3284194e435a4ea777d28474c3af819e38c42ef0dd521e0297a20d741416696"
+    },
+    {
+      "id": "ep-02",
+      "title": "四个珠子全点亮",
+      "videoSlug": "level-002-light-up",
+      "beforeLevel": 28,
+      "dest": "assets/video/math-story/level-002-light-up.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-002-light-up.mp4",
+      "size": 3332576,
+      "sha256": "07cb0136605cbd0477f81a18ac21a0cb1797cc9f1722c90285e8434893233229"
+    },
+    {
+      "id": "num-05",
+      "title": "钩子的五",
+      "videoSlug": "level-026-num-five",
+      "beforeLevel": 30,
+      "dest": "assets/video/math-story/level-026-num-five.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-026-num-five.mp4",
+      "size": 3211972,
+      "sha256": "a7a6dc28c997222ea60163ade72c3316340e4a8f7eba609e7a2e85e430c84e39"
+    },
+    {
+      "id": "ep-12",
+      "title": "五来了小队更大",
+      "videoSlug": "level-012-five-arrive",
+      "beforeLevel": 34,
+      "dest": "assets/video/math-story/level-012-five-arrive.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-012-five-arrive.mp4",
+      "size": 3345782,
+      "sha256": "4edbe48b2db05cb5c7d3ff1f52fbf3077e033c9a627e1dd34a244e2317bcb2b6"
+    },
+    {
+      "id": "ep-08",
+      "title": "偷偷少了一个",
+      "videoSlug": "level-008-one-missing",
+      "beforeLevel": 40,
+      "dest": "assets/video/math-story/level-008-one-missing.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-008-one-missing.mp4",
+      "size": 3629172,
+      "sha256": "df31482d69ffc904d79c0aab9664a85106be3b33ca5d34a68757e20ca27fa3c9"
+    },
+    {
+      "id": "ep-11",
+      "title": "三的召集令",
+      "videoSlug": "level-011-summon-three",
+      "beforeLevel": 46,
+      "dest": "assets/video/math-story/level-011-summon-three.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-011-summon-three.mp4",
+      "size": 3274174,
+      "sha256": "d564b1e3a65e370360ebfe6658ff5bdd0cae5df5bc2134e216ccbb4f848bafcd"
+    },
+    {
+      "id": "ep-09",
+      "title": "一样多也可以很帅",
+      "videoSlug": "level-009-same-many",
+      "beforeLevel": 66,
+      "dest": "assets/video/math-story/level-009-same-many.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-009-same-many.mp4",
+      "size": 4205713,
+      "sha256": "b4227db152b1ef29c7665dc93a62e7eb2803a9bad02f40aaed870390f9771479"
+    },
+    {
+      "id": "ep-07",
+      "title": "哪边沉下去",
+      "videoSlug": "level-007-sink-side",
+      "beforeLevel": 70,
+      "dest": "assets/video/math-story/level-007-sink-side.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-007-sink-side.mp4",
+      "size": 3379083,
+      "sha256": "0590a57dbdd58d8e0cb089245ade70f2495dbb8ea3512b597d05e49c5386f724"
+    },
+    {
+      "id": "ep-10",
+      "title": "谁排第一眼最长",
+      "videoSlug": "level-010-first-glance",
+      "beforeLevel": 78,
+      "dest": "assets/video/math-story/level-010-first-glance.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-010-first-glance.mp4",
+      "size": 3342858,
+      "sha256": "4aa645f47417dc06ccc81c51ca0a15743c67413f9295084bacbab4b9aa1c65df"
+    },
+    {
+      "id": "ep-13",
+      "title": "篮子只要两个",
+      "videoSlug": "level-013-basket-two",
+      "beforeLevel": 86,
+      "dest": "assets/video/math-story/level-013-basket-two.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-013-basket-two.mp4",
+      "size": 3404994,
+      "sha256": "06a9cbf58456f196d953d48179ca1d0cd1e53c421c6905002902f7cf3516019b"
+    },
+    {
+      "id": "ep-14",
+      "title": "再请三个进来",
+      "videoSlug": "level-014-invite-three-more",
+      "beforeLevel": 96,
+      "dest": "assets/video/math-story/level-014-invite-three-more.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-014-invite-three-more.mp4",
+      "size": 3259806,
+      "sha256": "b4bf723a899d811b71e64703b8d9f1b371465415a0ed9b97791ce6e9ea088d74"
+    },
+    {
+      "id": "ep-15",
+      "title": "刚好四个关门打烊",
+      "videoSlug": "level-015-exactly-four",
+      "beforeLevel": 106,
+      "dest": "assets/video/math-story/level-015-exactly-four.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-015-exactly-four.mp4",
+      "size": 2767816,
+      "sha256": "4ea689b71d58916b97eb3a6d9b6de3d3166502c24734f4885dad96f641bb0bb5"
+    },
+    {
+      "id": "ep-16",
+      "title": "盘子还差一点点",
+      "videoSlug": "level-016-plate-gap",
+      "beforeLevel": 111,
+      "dest": "assets/video/math-story/level-016-plate-gap.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-016-plate-gap.mp4",
+      "size": 2793753,
+      "sha256": "66fd4f175ee2f3863f00eaac3000d95a226874b503fea186d54bcbbc6065bcf6"
+    },
+    {
+      "id": "ep-17",
+      "title": "五个可合可分",
+      "videoSlug": "level-017-five-teams",
+      "beforeLevel": 126,
+      "dest": "assets/video/math-story/level-017-five-teams.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-017-five-teams.mp4",
+      "size": 3176853,
+      "sha256": "93b83a41db79e66518f7186d2f395912edad465c6964e719de00d2bc4f341c7f"
+    },
+    {
+      "id": "num-06",
+      "title": "旋涡的六",
+      "videoSlug": "level-027-num-six",
+      "beforeLevel": 141,
+      "dest": "assets/video/math-story/level-027-num-six.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-027-num-six.mp4",
+      "size": 2842784,
+      "sha256": "4e72ebf8f0bf73f6ccd0d891aa877e0e4829d431e4144ac9138f17d1c30b7884"
+    },
+    {
+      "id": "num-07",
+      "title": "拐角的七",
+      "videoSlug": "level-028-num-seven",
+      "beforeLevel": 145,
+      "dest": "assets/video/math-story/level-028-num-seven.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-028-num-seven.mp4",
+      "size": 3109916,
+      "sha256": "e2517bb226b0e26e21909c5f01ba280ad1e1334bf969ee698d71d5d5c3177241"
+    },
+    {
+      "id": "num-08",
+      "title": "雪人的八",
+      "videoSlug": "level-029-num-eight",
+      "beforeLevel": 149,
+      "dest": "assets/video/math-story/level-029-num-eight.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-029-num-eight.mp4",
+      "size": 3168950,
+      "sha256": "c78d75b14607788bdab2c2e1f95bc5cb114b738c29c248b645ec21e569f95310"
+    },
+    {
+      "id": "num-09",
+      "title": "气球的九",
+      "videoSlug": "level-030-num-nine",
+      "beforeLevel": 153,
+      "dest": "assets/video/math-story/level-030-num-nine.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-030-num-nine.mp4",
+      "size": 3172315,
+      "sha256": "f651ffe3c0c26b926ca9ad9a43aef003b091f514977d3e01f71ccfd867e6aa66"
+    },
+    {
+      "id": "num-10",
+      "title": "一和零",
+      "videoSlug": "level-031-num-ten",
+      "beforeLevel": 157,
+      "dest": "assets/video/math-story/level-031-num-ten.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-031-num-ten.mp4",
+      "size": 3114664,
+      "sha256": "5e6ae939485e89bda7aee3b3ade36b4ae16f9841777f1c4924825d84f784ec49"
+    },
+    {
+      "id": "ep-18",
+      "title": "十才是大餐盘",
+      "videoSlug": "level-018-ten-feast",
+      "beforeLevel": 161,
+      "dest": "assets/video/math-story/level-018-ten-feast.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-018-ten-feast.mp4",
+      "size": 3931327,
+      "sha256": "b39e84bb1d66eb96e0d893b86949aa8b5d664c86570f337a41560f6e3bf0971a"
+    },
+    {
+      "id": "ep-19",
+      "title": "四的后面是谁",
+      "videoSlug": "level-019-four-backdoor",
+      "beforeLevel": 166,
+      "dest": "assets/video/math-story/level-019-four-backdoor.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-019-four-backdoor.mp4",
+      "size": 3068202,
+      "sha256": "2415fbf1242461894bd3dd2c96da064dc853ffbd8dfef34006721ca18e706c60"
+    },
+    {
+      "id": "ep-20",
+      "title": "终点是十",
+      "videoSlug": "level-020-little-parade",
+      "beforeLevel": 180,
+      "dest": "assets/video/math-story/level-020-little-parade.mp4",
+      "status": "copied",
+      "src": "video/table-tricks-s1/level-020-little-parade.mp4",
+      "size": 3323216,
+      "sha256": "77fe61e5758509a78fc5c092419cfab93ed91c73308ceda132c140bd6001dfde"
+    }
+  ]
+}
