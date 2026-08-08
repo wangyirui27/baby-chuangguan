@@ -1163,7 +1163,7 @@
           "title": "Mom",
           "slug": "mom",
           "ossKey": "assets/video/ocean/level-001-mom.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-001-mom.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-001-mom.mp4",
           "bytesTotal": 3242823,
           "sha256": "",
           "status": "published"
@@ -1173,7 +1173,7 @@
           "title": "Dad",
           "slug": "dad",
           "ossKey": "assets/video/ocean/level-002-dad.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-002-dad.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-002-dad.mp4",
           "bytesTotal": 3755148,
           "sha256": "",
           "status": "published"
@@ -1183,7 +1183,7 @@
           "title": "Grandma",
           "slug": "grandma",
           "ossKey": "assets/video/ocean/level-003-grandma.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-003-grandma.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-003-grandma.mp4",
           "bytesTotal": 4002806,
           "sha256": "",
           "status": "published"
@@ -1193,7 +1193,7 @@
           "title": "Grandpa",
           "slug": "grandpa",
           "ossKey": "assets/video/ocean/level-004-grandpa.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-004-grandpa.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-004-grandpa.mp4",
           "bytesTotal": 3610051,
           "sha256": "",
           "status": "published"
@@ -1203,7 +1203,7 @@
           "title": "Hand",
           "slug": "hand",
           "ossKey": "assets/video/ocean/level-005-hand.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-005-hand.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-005-hand.mp4",
           "bytesTotal": 3343244,
           "sha256": "",
           "status": "published"
@@ -1213,7 +1213,7 @@
           "title": "Rice",
           "slug": "rice",
           "ossKey": "assets/video/ocean/level-006-rice.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-006-rice.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-006-rice.mp4",
           "bytesTotal": 3091121,
           "sha256": "",
           "status": "published"
@@ -1223,7 +1223,7 @@
           "title": "Water",
           "slug": "water",
           "ossKey": "assets/video/ocean/level-007-water.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-007-water.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-007-water.mp4",
           "bytesTotal": 3225033,
           "sha256": "",
           "status": "published"
@@ -1233,7 +1233,7 @@
           "title": "Car",
           "slug": "car",
           "ossKey": "assets/video/ocean/level-008-car.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-008-car.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-008-car.mp4",
           "bytesTotal": 3869653,
           "sha256": "",
           "status": "published"
@@ -1243,7 +1243,7 @@
           "title": "Dog",
           "slug": "dog",
           "ossKey": "assets/video/ocean/level-009-dog.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-009-dog.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-009-dog.mp4",
           "bytesTotal": 3483064,
           "sha256": "",
           "status": "published"
@@ -1253,7 +1253,7 @@
           "title": "Book",
           "slug": "book",
           "ossKey": "assets/video/ocean/level-010-book.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-010-book.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-010-book.mp4",
           "bytesTotal": 3958520,
           "sha256": "",
           "status": "published"
@@ -1263,7 +1263,7 @@
           "title": "Apple",
           "slug": "apple",
           "ossKey": "assets/video/ocean/level-011-apple.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-011-apple.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-011-apple.mp4",
           "bytesTotal": 3205857,
           "sha256": "",
           "status": "published"
@@ -1273,7 +1273,7 @@
           "title": "Banana",
           "slug": "banana",
           "ossKey": "assets/video/ocean/level-012-banana.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-012-banana.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-012-banana.mp4",
           "bytesTotal": 3163657,
           "sha256": "",
           "status": "published"
@@ -1283,7 +1283,7 @@
           "title": "Orange",
           "slug": "orange",
           "ossKey": "assets/video/ocean/level-013-orange.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-013-orange.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-013-orange.mp4",
           "bytesTotal": 3697822,
           "sha256": "",
           "status": "published"
@@ -1293,7 +1293,7 @@
           "title": "Watermelon",
           "slug": "watermelon",
           "ossKey": "assets/video/ocean/level-014-watermelon.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-014-watermelon.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-014-watermelon.mp4",
           "bytesTotal": 3689598,
           "sha256": "",
           "status": "published"
@@ -1303,7 +1303,7 @@
           "title": "Strawberry",
           "slug": "strawberry",
           "ossKey": "assets/video/ocean/level-015-strawberry.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-015-strawberry.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-015-strawberry.mp4",
           "bytesTotal": 2747817,
           "sha256": "",
           "status": "published"
@@ -1313,7 +1313,7 @@
           "title": "Grape",
           "slug": "grape",
           "ossKey": "assets/video/ocean/level-016-grape.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-016-grape.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-016-grape.mp4",
           "bytesTotal": 3059873,
           "sha256": "",
           "status": "published"
@@ -1323,7 +1323,7 @@
           "title": "Pear",
           "slug": "pear",
           "ossKey": "assets/video/ocean/level-017-pear.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-017-pear.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-017-pear.mp4",
           "bytesTotal": 3432710,
           "sha256": "",
           "status": "published"
@@ -1333,7 +1333,7 @@
           "title": "Peach",
           "slug": "peach",
           "ossKey": "assets/video/ocean/level-018-peach.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-018-peach.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-018-peach.mp4",
           "bytesTotal": 3769493,
           "sha256": "",
           "status": "published"
@@ -1343,7 +1343,7 @@
           "title": "Mango",
           "slug": "mango",
           "ossKey": "assets/video/ocean/level-019-mango.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-019-mango.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-019-mango.mp4",
           "bytesTotal": 3787185,
           "sha256": "",
           "status": "published"
@@ -1353,7 +1353,7 @@
           "title": "Cherry",
           "slug": "cherry",
           "ossKey": "assets/video/ocean/level-020-cherry.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-020-cherry.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-020-cherry.mp4",
           "bytesTotal": 2918960,
           "sha256": "",
           "status": "published"
@@ -1363,7 +1363,7 @@
           "title": "Muffin",
           "slug": "muffin",
           "ossKey": "assets/video/ocean/level-021-muffin.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-021-muffin.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-021-muffin.mp4",
           "bytesTotal": 3278078,
           "sha256": "",
           "status": "published"
@@ -1373,7 +1373,7 @@
           "title": "Pudding",
           "slug": "pudding",
           "ossKey": "assets/video/ocean/level-022-pudding.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-022-pudding.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-022-pudding.mp4",
           "bytesTotal": 3250243,
           "sha256": "",
           "status": "published"
@@ -1383,7 +1383,7 @@
           "title": "Candy",
           "slug": "candy",
           "ossKey": "assets/video/ocean/level-023-candy.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-023-candy.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-023-candy.mp4",
           "bytesTotal": 3874143,
           "sha256": "",
           "status": "published"
@@ -1393,7 +1393,7 @@
           "title": "Cookie",
           "slug": "cookie",
           "ossKey": "assets/video/ocean/level-024-cookie.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-024-cookie.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-024-cookie.mp4",
           "bytesTotal": 3699427,
           "sha256": "",
           "status": "published"
@@ -1403,7 +1403,7 @@
           "title": "Chocolate",
           "slug": "chocolate",
           "ossKey": "assets/video/ocean/level-025-chocolate.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-025-chocolate.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-025-chocolate.mp4",
           "bytesTotal": 3853398,
           "sha256": "",
           "status": "published"
@@ -1413,7 +1413,7 @@
           "title": "Ice Cream",
           "slug": "ice-cream",
           "ossKey": "assets/video/ocean/level-026-ice-cream.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-026-ice-cream.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-026-ice-cream.mp4",
           "bytesTotal": 3665695,
           "sha256": "",
           "status": "published"
@@ -1423,7 +1423,7 @@
           "title": "Cake",
           "slug": "cake",
           "ossKey": "assets/video/ocean/level-027-cake.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-027-cake.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-027-cake.mp4",
           "bytesTotal": 3623804,
           "sha256": "",
           "status": "published"
@@ -1433,7 +1433,7 @@
           "title": "Donut",
           "slug": "donut",
           "ossKey": "assets/video/ocean/level-028-donut.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-028-donut.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-028-donut.mp4",
           "bytesTotal": 3564113,
           "sha256": "",
           "status": "published"
@@ -1443,7 +1443,7 @@
           "title": "Pancake",
           "slug": "pancake",
           "ossKey": "assets/video/ocean/level-029-pancake.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-029-pancake.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-029-pancake.mp4",
           "bytesTotal": 2766418,
           "sha256": "",
           "status": "published"
@@ -1453,7 +1453,7 @@
           "title": "Honey",
           "slug": "honey",
           "ossKey": "assets/video/ocean/level-030-honey.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-030-honey.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-030-honey.mp4",
           "bytesTotal": 3098797,
           "sha256": "",
           "status": "published"
@@ -1463,7 +1463,7 @@
           "title": "Egg",
           "slug": "egg",
           "ossKey": "assets/video/ocean/level-031-egg.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-031-egg.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-031-egg.mp4",
           "bytesTotal": 2441919,
           "sha256": "",
           "status": "published"
@@ -1473,7 +1473,7 @@
           "title": "Steamed Bun",
           "slug": "steamed-bun",
           "ossKey": "assets/video/ocean/level-032-steamed-bun.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-032-steamed-bun.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-032-steamed-bun.mp4",
           "bytesTotal": 2713464,
           "sha256": "",
           "status": "published"
@@ -1483,7 +1483,7 @@
           "title": "Bread",
           "slug": "bread",
           "ossKey": "assets/video/ocean/level-033-bread.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-033-bread.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-033-bread.mp4",
           "bytesTotal": 3481555,
           "sha256": "",
           "status": "published"
@@ -1493,7 +1493,7 @@
           "title": "Milk",
           "slug": "milk",
           "ossKey": "assets/video/ocean/level-034-milk.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-034-milk.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-034-milk.mp4",
           "bytesTotal": 3560187,
           "sha256": "",
           "status": "published"
@@ -1503,7 +1503,7 @@
           "title": "Juice",
           "slug": "juice",
           "ossKey": "assets/video/ocean/level-035-juice.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-035-juice.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-035-juice.mp4",
           "bytesTotal": 3545306,
           "sha256": "",
           "status": "published"
@@ -1513,7 +1513,7 @@
           "title": "Yogurt",
           "slug": "yogurt",
           "ossKey": "assets/video/ocean/level-036-yogurt.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-036-yogurt.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-036-yogurt.mp4",
           "bytesTotal": 2728655,
           "sha256": "",
           "status": "published"
@@ -1523,7 +1523,7 @@
           "title": "Cheese",
           "slug": "cheese",
           "ossKey": "assets/video/ocean/level-037-cheese.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-037-cheese.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-037-cheese.mp4",
           "bytesTotal": 3725113,
           "sha256": "",
           "status": "published"
@@ -1533,7 +1533,7 @@
           "title": "Soup",
           "slug": "soup",
           "ossKey": "assets/video/ocean/level-038-soup.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-038-soup.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-038-soup.mp4",
           "bytesTotal": 23615537,
           "sha256": "",
           "status": "published"
@@ -1543,7 +1543,7 @@
           "title": "Noodles",
           "slug": "noodles",
           "ossKey": "assets/video/ocean/level-039-noodles.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-039-noodles.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-039-noodles.mp4",
           "bytesTotal": 17249660,
           "sha256": "",
           "status": "published"
@@ -1553,7 +1553,7 @@
           "title": "Dumpling",
           "slug": "dumpling",
           "ossKey": "assets/video/ocean/level-040-dumpling.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-040-dumpling.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-040-dumpling.mp4",
           "bytesTotal": 19581358,
           "sha256": "",
           "status": "published"
@@ -1563,7 +1563,7 @@
           "title": "Tomato",
           "slug": "tomato",
           "ossKey": "assets/video/ocean/level-041-tomato.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-041-tomato.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-041-tomato.mp4",
           "bytesTotal": 23004607,
           "sha256": "",
           "status": "published"
@@ -1573,7 +1573,7 @@
           "title": "Potato",
           "slug": "potato",
           "ossKey": "assets/video/ocean/level-042-potato.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-042-potato.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-042-potato.mp4",
           "bytesTotal": 22099425,
           "sha256": "",
           "status": "published"
@@ -1583,7 +1583,7 @@
           "title": "Pizza",
           "slug": "pizza",
           "ossKey": "assets/video/ocean/level-043-pizza.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-043-pizza.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-043-pizza.mp4",
           "bytesTotal": 22676665,
           "sha256": "",
           "status": "published"
@@ -1593,7 +1593,7 @@
           "title": "Burger",
           "slug": "burger",
           "ossKey": "assets/video/ocean/level-044-burger.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-044-burger.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-044-burger.mp4",
           "bytesTotal": 21093122,
           "sha256": "",
           "status": "published"
@@ -1603,7 +1603,7 @@
           "title": "Salad",
           "slug": "salad",
           "ossKey": "assets/video/ocean/level-045-salad.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-045-salad.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-045-salad.mp4",
           "bytesTotal": 26482846,
           "sha256": "",
           "status": "published"
@@ -1613,7 +1613,7 @@
           "title": "Carrot",
           "slug": "carrot",
           "ossKey": "assets/video/ocean/level-046-carrot.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-046-carrot.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-046-carrot.mp4",
           "bytesTotal": 23355160,
           "sha256": "",
           "status": "published"
@@ -1623,7 +1623,7 @@
           "title": "Corn",
           "slug": "corn",
           "ossKey": "assets/video/ocean/level-047-corn.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-047-corn.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-047-corn.mp4",
           "bytesTotal": 29348781,
           "sha256": "",
           "status": "published"
@@ -1633,7 +1633,7 @@
           "title": "Pumpkin",
           "slug": "pumpkin",
           "ossKey": "assets/video/ocean/level-048-pumpkin.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-048-pumpkin.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-048-pumpkin.mp4",
           "bytesTotal": 22721822,
           "sha256": "",
           "status": "published"
@@ -1643,7 +1643,7 @@
           "title": "Mushroom",
           "slug": "mushroom",
           "ossKey": "assets/video/ocean/level-049-mushroom.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-049-mushroom.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-049-mushroom.mp4",
           "bytesTotal": 23154224,
           "sha256": "",
           "status": "published"
@@ -1653,7 +1653,7 @@
           "title": "Sandwich",
           "slug": "sandwich",
           "ossKey": "assets/video/ocean/level-050-sandwich.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-050-sandwich.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-050-sandwich.mp4",
           "bytesTotal": 24842433,
           "sha256": "",
           "status": "published"
@@ -1663,7 +1663,7 @@
           "title": "Puppy",
           "slug": "puppy",
           "ossKey": "assets/video/ocean/level-051-puppy.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-051-puppy.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-051-puppy.mp4",
           "bytesTotal": 19422850,
           "sha256": "",
           "status": "published"
@@ -1673,7 +1673,7 @@
           "title": "Kitty",
           "slug": "kitty",
           "ossKey": "assets/video/ocean/level-052-kitty.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-052-kitty.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-052-kitty.mp4",
           "bytesTotal": 20850873,
           "sha256": "",
           "status": "published"
@@ -1683,7 +1683,7 @@
           "title": "Bunny",
           "slug": "bunny",
           "ossKey": "assets/video/ocean/level-053-bunny.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-053-bunny.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-053-bunny.mp4",
           "bytesTotal": 27221420,
           "sha256": "",
           "status": "published"
@@ -1693,7 +1693,7 @@
           "title": "Duck",
           "slug": "duck",
           "ossKey": "assets/video/ocean/level-054-duck.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-054-duck.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-054-duck.mp4",
           "bytesTotal": 24237826,
           "sha256": "",
           "status": "published"
@@ -1703,7 +1703,7 @@
           "title": "Chick",
           "slug": "chick",
           "ossKey": "assets/video/ocean/level-055-chick.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-055-chick.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-055-chick.mp4",
           "bytesTotal": 26026793,
           "sha256": "",
           "status": "published"
@@ -1713,7 +1713,7 @@
           "title": "Pig",
           "slug": "pig",
           "ossKey": "assets/video/ocean/level-056-pig.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-056-pig.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-056-pig.mp4",
           "bytesTotal": 22642009,
           "sha256": "",
           "status": "published"
@@ -1723,7 +1723,7 @@
           "title": "Cow",
           "slug": "cow",
           "ossKey": "assets/video/ocean/level-057-cow.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-057-cow.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-057-cow.mp4",
           "bytesTotal": 26579033,
           "sha256": "",
           "status": "published"
@@ -1733,7 +1733,7 @@
           "title": "Cat",
           "slug": "cat",
           "ossKey": "assets/video/ocean/level-058-cat.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-058-cat.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-058-cat.mp4",
           "bytesTotal": 23048279,
           "sha256": "",
           "status": "published"
@@ -1743,7 +1743,7 @@
           "title": "Sheep",
           "slug": "sheep",
           "ossKey": "assets/video/ocean/level-059-sheep.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-059-sheep.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-059-sheep.mp4",
           "bytesTotal": 23347103,
           "sha256": "",
           "status": "published"
@@ -1753,7 +1753,7 @@
           "title": "Horse",
           "slug": "horse",
           "ossKey": "assets/video/ocean/level-060-horse.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-060-horse.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-060-horse.mp4",
           "bytesTotal": 21372144,
           "sha256": "",
           "status": "published"
@@ -1763,7 +1763,7 @@
           "title": "Panda",
           "slug": "panda",
           "ossKey": "assets/video/ocean/level-061-panda.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-061-panda.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-061-panda.mp4",
           "bytesTotal": 23801011,
           "sha256": "",
           "status": "published"
@@ -1773,7 +1773,7 @@
           "title": "Koala",
           "slug": "koala",
           "ossKey": "assets/video/ocean/level-062-koala.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-062-koala.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-062-koala.mp4",
           "bytesTotal": 21557122,
           "sha256": "",
           "status": "published"
@@ -1783,7 +1783,7 @@
           "title": "Hippo",
           "slug": "hippo",
           "ossKey": "assets/video/ocean/level-063-hippo.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-063-hippo.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-063-hippo.mp4",
           "bytesTotal": 23777149,
           "sha256": "",
           "status": "published"
@@ -1793,7 +1793,7 @@
           "title": "Monkey",
           "slug": "monkey",
           "ossKey": "assets/video/ocean/level-064-monkey.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-064-monkey.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-064-monkey.mp4",
           "bytesTotal": 24213723,
           "sha256": "",
           "status": "published"
@@ -1803,7 +1803,7 @@
           "title": "Tiger",
           "slug": "tiger",
           "ossKey": "assets/video/ocean/level-065-tiger.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-065-tiger.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-065-tiger.mp4",
           "bytesTotal": 27913633,
           "sha256": "",
           "status": "published"
@@ -1813,7 +1813,7 @@
           "title": "Lion",
           "slug": "lion",
           "ossKey": "assets/video/ocean/level-066-lion.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-066-lion.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-066-lion.mp4",
           "bytesTotal": 22394965,
           "sha256": "",
           "status": "published"
@@ -1823,7 +1823,7 @@
           "title": "Zebra",
           "slug": "zebra",
           "ossKey": "assets/video/ocean/level-067-zebra.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-067-zebra.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-067-zebra.mp4",
           "bytesTotal": 21634646,
           "sha256": "",
           "status": "published"
@@ -1833,7 +1833,7 @@
           "title": "Giraffe",
           "slug": "giraffe",
           "ossKey": "assets/video/ocean/level-068-giraffe.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-068-giraffe.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-068-giraffe.mp4",
           "bytesTotal": 25490966,
           "sha256": "",
           "status": "published"
@@ -1843,7 +1843,7 @@
           "title": "Elephant",
           "slug": "elephant",
           "ossKey": "assets/video/ocean/level-069-elephant.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-069-elephant.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-069-elephant.mp4",
           "bytesTotal": 26660251,
           "sha256": "",
           "status": "published"
@@ -1853,7 +1853,7 @@
           "title": "Kangaroo",
           "slug": "kangaroo",
           "ossKey": "assets/video/ocean/level-070-kangaroo.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-070-kangaroo.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-070-kangaroo.mp4",
           "bytesTotal": 31145697,
           "sha256": "",
           "status": "published"
@@ -1863,7 +1863,7 @@
           "title": "Butterfly",
           "slug": "butterfly",
           "ossKey": "assets/video/ocean/level-071-butterfly.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-071-butterfly.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-071-butterfly.mp4",
           "bytesTotal": 25143264,
           "sha256": "",
           "status": "published"
@@ -1873,7 +1873,7 @@
           "title": "Fish",
           "slug": "fish",
           "ossKey": "assets/video/ocean/level-072-fish.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-072-fish.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-072-fish.mp4",
           "bytesTotal": 23071084,
           "sha256": "",
           "status": "published"
@@ -1883,7 +1883,7 @@
           "title": "Frog",
           "slug": "frog",
           "ossKey": "assets/video/ocean/level-073-frog.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-073-frog.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-073-frog.mp4",
           "bytesTotal": 19131707,
           "sha256": "",
           "status": "published"
@@ -1893,7 +1893,7 @@
           "title": "Bee",
           "slug": "bee",
           "ossKey": "assets/video/ocean/level-074-bee.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-074-bee.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-074-bee.mp4",
           "bytesTotal": 18576931,
           "sha256": "",
           "status": "published"
@@ -1903,7 +1903,7 @@
           "title": "Bird",
           "slug": "bird",
           "ossKey": "assets/video/ocean/level-075-bird.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-075-bird.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-075-bird.mp4",
           "bytesTotal": 16346812,
           "sha256": "",
           "status": "published"
@@ -1913,7 +1913,7 @@
           "title": "Turtle",
           "slug": "turtle",
           "ossKey": "assets/video/ocean/level-076-turtle.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-076-turtle.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-076-turtle.mp4",
           "bytesTotal": 23401104,
           "sha256": "",
           "status": "published"
@@ -1923,7 +1923,7 @@
           "title": "Crab",
           "slug": "crab",
           "ossKey": "assets/video/ocean/level-077-crab.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-077-crab.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-077-crab.mp4",
           "bytesTotal": 21721988,
           "sha256": "",
           "status": "published"
@@ -1933,7 +1933,7 @@
           "title": "Ant",
           "slug": "ant",
           "ossKey": "assets/video/ocean/level-078-ant.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-078-ant.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-078-ant.mp4",
           "bytesTotal": 22745371,
           "sha256": "",
           "status": "published"
@@ -1943,7 +1943,7 @@
           "title": "Snail",
           "slug": "snail",
           "ossKey": "assets/video/ocean/level-079-snail.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-079-snail.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-079-snail.mp4",
           "bytesTotal": 24898487,
           "sha256": "",
           "status": "published"
@@ -1953,7 +1953,7 @@
           "title": "Ladybug",
           "slug": "ladybug",
           "ossKey": "assets/video/ocean/level-080-ladybug.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-080-ladybug.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-080-ladybug.mp4",
           "bytesTotal": 24481603,
           "sha256": "",
           "status": "published"
@@ -1963,7 +1963,7 @@
           "title": "Tummy",
           "slug": "tummy",
           "ossKey": "assets/video/ocean/level-081-tummy.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-081-tummy.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-081-tummy.mp4",
           "bytesTotal": 21847818,
           "sha256": "",
           "status": "published"
@@ -1973,7 +1973,7 @@
           "title": "Eye",
           "slug": "eye",
           "ossKey": "assets/video/ocean/level-082-eye.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-082-eye.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-082-eye.mp4",
           "bytesTotal": 23775604,
           "sha256": "",
           "status": "published"
@@ -1983,7 +1983,7 @@
           "title": "Ear",
           "slug": "ear",
           "ossKey": "assets/video/ocean/level-083-ear.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-083-ear.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-083-ear.mp4",
           "bytesTotal": 20090118,
           "sha256": "",
           "status": "published"
@@ -1993,7 +1993,7 @@
           "title": "Nose",
           "slug": "nose",
           "ossKey": "assets/video/ocean/level-084-nose.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-084-nose.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-084-nose.mp4",
           "bytesTotal": 21436586,
           "sha256": "",
           "status": "published"
@@ -2003,7 +2003,7 @@
           "title": "Mouth",
           "slug": "mouth",
           "ossKey": "assets/video/ocean/level-085-mouth.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-085-mouth.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-085-mouth.mp4",
           "bytesTotal": 29883847,
           "sha256": "",
           "status": "published"
@@ -2013,7 +2013,7 @@
           "title": "Head",
           "slug": "head",
           "ossKey": "assets/video/ocean/level-086-head.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-086-head.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-086-head.mp4",
           "bytesTotal": 24158007,
           "sha256": "",
           "status": "published"
@@ -2023,7 +2023,7 @@
           "title": "Hair",
           "slug": "hair",
           "ossKey": "assets/video/ocean/level-087-hair.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-087-hair.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-087-hair.mp4",
           "bytesTotal": 20352109,
           "sha256": "",
           "status": "published"
@@ -2033,7 +2033,7 @@
           "title": "Foot",
           "slug": "foot",
           "ossKey": "assets/video/ocean/level-088-foot.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-088-foot.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-088-foot.mp4",
           "bytesTotal": 2917951,
           "sha256": "",
           "status": "published"
@@ -2043,7 +2043,7 @@
           "title": "Leg",
           "slug": "leg",
           "ossKey": "assets/video/ocean/level-089-leg.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-089-leg.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-089-leg.mp4",
           "bytesTotal": 4121876,
           "sha256": "",
           "status": "published"
@@ -2053,7 +2053,7 @@
           "title": "Arm",
           "slug": "arm",
           "ossKey": "assets/video/ocean/level-090-arm.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-090-arm.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-090-arm.mp4",
           "bytesTotal": 3937273,
           "sha256": "",
           "status": "published"
@@ -2063,7 +2063,7 @@
           "title": "Clothes",
           "slug": "clothes",
           "ossKey": "assets/video/ocean/level-091-clothes.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-091-clothes.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-091-clothes.mp4",
           "bytesTotal": 3802453,
           "sha256": "",
           "status": "published"
@@ -2073,7 +2073,7 @@
           "title": "Shoes",
           "slug": "shoes",
           "ossKey": "assets/video/ocean/level-092-shoes.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-092-shoes.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-092-shoes.mp4",
           "bytesTotal": 4298701,
           "sha256": "",
           "status": "published"
@@ -2083,7 +2083,7 @@
           "title": "Socks",
           "slug": "socks",
           "ossKey": "assets/video/ocean/level-093-socks.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-093-socks.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-093-socks.mp4",
           "bytesTotal": 4832379,
           "sha256": "",
           "status": "published"
@@ -2093,7 +2093,7 @@
           "title": "Hat",
           "slug": "hat",
           "ossKey": "assets/video/ocean/level-094-hat.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-094-hat.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-094-hat.mp4",
           "bytesTotal": 3745607,
           "sha256": "",
           "status": "published"
@@ -2103,7 +2103,7 @@
           "title": "Dress",
           "slug": "dress",
           "ossKey": "assets/video/ocean/level-095-dress.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-095-dress.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-095-dress.mp4",
           "bytesTotal": 3669054,
           "sha256": "",
           "status": "published"
@@ -2113,7 +2113,7 @@
           "title": "Scarf",
           "slug": "scarf",
           "ossKey": "assets/video/ocean/level-096-scarf.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-096-scarf.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-096-scarf.mp4",
           "bytesTotal": 4299288,
           "sha256": "",
           "status": "published"
@@ -2123,7 +2123,7 @@
           "title": "Shirt",
           "slug": "shirt",
           "ossKey": "assets/video/ocean/level-097-shirt.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-097-shirt.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-097-shirt.mp4",
           "bytesTotal": 2995939,
           "sha256": "",
           "status": "published"
@@ -2133,7 +2133,7 @@
           "title": "Pants",
           "slug": "pants",
           "ossKey": "assets/video/ocean/level-098-pants.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-098-pants.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-098-pants.mp4",
           "bytesTotal": 3198904,
           "sha256": "",
           "status": "published"
@@ -2143,7 +2143,7 @@
           "title": "Coat",
           "slug": "coat",
           "ossKey": "assets/video/ocean/level-099-coat.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-099-coat.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-099-coat.mp4",
           "bytesTotal": 4597544,
           "sha256": "",
           "status": "published"
@@ -2153,7 +2153,7 @@
           "title": "Boots",
           "slug": "boots",
           "ossKey": "assets/video/ocean/level-100-boots.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-100-boots.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-100-boots.mp4",
           "bytesTotal": 4212257,
           "sha256": "",
           "status": "published"
@@ -2163,7 +2163,7 @@
           "title": "Teddy Bear",
           "slug": "teddy-bear",
           "ossKey": "assets/video/ocean/level-101-teddy-bear.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-101-teddy-bear.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-101-teddy-bear.mp4",
           "bytesTotal": 3796405,
           "sha256": "",
           "status": "published"
@@ -2173,7 +2173,7 @@
           "title": "Bubble",
           "slug": "bubble",
           "ossKey": "assets/video/ocean/level-102-bubble.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-102-bubble.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-102-bubble.mp4",
           "bytesTotal": 3093963,
           "sha256": "",
           "status": "published"
@@ -2183,7 +2183,7 @@
           "title": "Balloon",
           "slug": "balloon",
           "ossKey": "assets/video/ocean/level-103-balloon.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-103-balloon.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-103-balloon.mp4",
           "bytesTotal": 3419836,
           "sha256": "",
           "status": "published"
@@ -2193,7 +2193,7 @@
           "title": "Ball",
           "slug": "ball",
           "ossKey": "assets/video/ocean/level-104-ball.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-104-ball.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-104-ball.mp4",
           "bytesTotal": 4371945,
           "sha256": "",
           "status": "published"
@@ -2203,7 +2203,7 @@
           "title": "Camel",
           "slug": "camel",
           "ossKey": "assets/video/ocean/level-105-camel.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-105-camel.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-105-camel.mp4",
           "bytesTotal": 3498531,
           "sha256": "",
           "status": "published"
@@ -2213,7 +2213,7 @@
           "title": "Doll",
           "slug": "doll",
           "ossKey": "assets/video/ocean/level-106-doll.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-106-doll.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-106-doll.mp4",
           "bytesTotal": 4050820,
           "sha256": "",
           "status": "published"
@@ -2223,7 +2223,7 @@
           "title": "Kite",
           "slug": "kite",
           "ossKey": "assets/video/ocean/level-107-kite.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-107-kite.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-107-kite.mp4",
           "bytesTotal": 4995414,
           "sha256": "",
           "status": "published"
@@ -2233,7 +2233,7 @@
           "title": "Blocks",
           "slug": "blocks",
           "ossKey": "assets/video/ocean/level-108-blocks.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-108-blocks.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-108-blocks.mp4",
           "bytesTotal": 4500498,
           "sha256": "",
           "status": "published"
@@ -2243,7 +2243,7 @@
           "title": "Mouse",
           "slug": "mouse",
           "ossKey": "assets/video/ocean/level-109-mouse.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-109-mouse.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-109-mouse.mp4",
           "bytesTotal": 4884733,
           "sha256": "",
           "status": "published"
@@ -2253,7 +2253,7 @@
           "title": "Slide",
           "slug": "slide",
           "ossKey": "assets/video/ocean/level-110-slide.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-110-slide.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-110-slide.mp4",
           "bytesTotal": 4799842,
           "sha256": "",
           "status": "published"
@@ -2263,7 +2263,7 @@
           "title": "Baby",
           "slug": "baby",
           "ossKey": "assets/video/ocean/level-111-baby.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-111-baby.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-111-baby.mp4",
           "bytesTotal": 4661442,
           "sha256": "",
           "status": "published"
@@ -2273,7 +2273,7 @@
           "title": "Boy",
           "slug": "boy",
           "ossKey": "assets/video/ocean/level-112-boy.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-112-boy.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-112-boy.mp4",
           "bytesTotal": 3287660,
           "sha256": "",
           "status": "published"
@@ -2283,7 +2283,7 @@
           "title": "Girl 2",
           "slug": "girl-2",
           "ossKey": "assets/video/ocean/level-113-girl_2.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-113-girl_2.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-113-girl_2.mp4",
           "bytesTotal": 4007010,
           "sha256": "",
           "status": "published"
@@ -2293,7 +2293,7 @@
           "title": "Face",
           "slug": "face",
           "ossKey": "assets/video/ocean/level-114-face.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-114-face.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-114-face.mp4",
           "bytesTotal": 4381384,
           "sha256": "",
           "status": "published"
@@ -2303,7 +2303,7 @@
           "title": "Tooth",
           "slug": "tooth",
           "ossKey": "assets/video/ocean/level-115-tooth.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-115-tooth.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-115-tooth.mp4",
           "bytesTotal": 4390218,
           "sha256": "",
           "status": "published"
@@ -2313,7 +2313,7 @@
           "title": "Finger",
           "slug": "finger",
           "ossKey": "assets/video/ocean/level-116-finger.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-116-finger.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-116-finger.mp4",
           "bytesTotal": 4369973,
           "sha256": "",
           "status": "published"
@@ -2323,7 +2323,7 @@
           "title": "Toe",
           "slug": "toe",
           "ossKey": "assets/video/ocean/level-117-toe.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-117-toe.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-117-toe.mp4",
           "bytesTotal": 3783623,
           "sha256": "",
           "status": "published"
@@ -2333,7 +2333,7 @@
           "title": "Knee",
           "slug": "knee",
           "ossKey": "assets/video/ocean/level-118-knee.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-118-knee.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-118-knee.mp4",
           "bytesTotal": 3780226,
           "sha256": "",
           "status": "published"
@@ -2343,7 +2343,7 @@
           "title": "Snake",
           "slug": "snake",
           "ossKey": "assets/video/ocean/level-119-snake.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-119-snake.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-119-snake.mp4",
           "bytesTotal": 3631872,
           "sha256": "",
           "status": "published"
@@ -2353,7 +2353,7 @@
           "title": "Piano",
           "slug": "piano",
           "ossKey": "assets/video/ocean/level-120-piano.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-120-piano.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-120-piano.mp4",
           "bytesTotal": 3355331,
           "sha256": "",
           "status": "published"
@@ -2363,7 +2363,7 @@
           "title": "Sofa",
           "slug": "sofa",
           "ossKey": "assets/video/ocean/level-121-sofa.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-121-sofa.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-121-sofa.mp4",
           "bytesTotal": 3696951,
           "sha256": "",
           "status": "published"
@@ -2373,7 +2373,7 @@
           "title": "Bed",
           "slug": "bed",
           "ossKey": "assets/video/ocean/level-122-bed.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-122-bed.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-122-bed.mp4",
           "bytesTotal": 3759990,
           "sha256": "",
           "status": "published"
@@ -2383,7 +2383,7 @@
           "title": "Pillow",
           "slug": "pillow",
           "ossKey": "assets/video/ocean/level-123-pillow.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-123-pillow.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-123-pillow.mp4",
           "bytesTotal": 3299457,
           "sha256": "",
           "status": "published"
@@ -2393,7 +2393,7 @@
           "title": "Blanket",
           "slug": "blanket",
           "ossKey": "assets/video/ocean/level-124-blanket.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-124-blanket.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-124-blanket.mp4",
           "bytesTotal": 4237266,
           "sha256": "",
           "status": "published"
@@ -2403,7 +2403,7 @@
           "title": "Lamp",
           "slug": "lamp",
           "ossKey": "assets/video/ocean/level-125-lamp.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-125-lamp.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-125-lamp.mp4",
           "bytesTotal": 3768577,
           "sha256": "",
           "status": "published"
@@ -2413,7 +2413,7 @@
           "title": "Clock",
           "slug": "clock",
           "ossKey": "assets/video/ocean/level-126-clock.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-126-clock.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-126-clock.mp4",
           "bytesTotal": 3679370,
           "sha256": "",
           "status": "published"
@@ -2423,7 +2423,7 @@
           "title": "Mirror",
           "slug": "mirror",
           "ossKey": "assets/video/ocean/level-127-mirror.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-127-mirror.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-127-mirror.mp4",
           "bytesTotal": 3702869,
           "sha256": "",
           "status": "published"
@@ -2433,7 +2433,7 @@
           "title": "Door",
           "slug": "door",
           "ossKey": "assets/video/ocean/level-128-door.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-128-door.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-128-door.mp4",
           "bytesTotal": 3619644,
           "sha256": "",
           "status": "published"
@@ -2443,7 +2443,7 @@
           "title": "Window",
           "slug": "window",
           "ossKey": "assets/video/ocean/level-129-window.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-129-window.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-129-window.mp4",
           "bytesTotal": 3917204,
           "sha256": "",
           "status": "published"
@@ -2453,7 +2453,7 @@
           "title": "Chair",
           "slug": "chair",
           "ossKey": "assets/video/ocean/level-130-chair.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-130-chair.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-130-chair.mp4",
           "bytesTotal": 4043282,
           "sha256": "",
           "status": "published"
@@ -2463,7 +2463,7 @@
           "title": "Cup",
           "slug": "cup",
           "ossKey": "assets/video/ocean/level-131-cup.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-131-cup.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-131-cup.mp4",
           "bytesTotal": 2983517,
           "sha256": "",
           "status": "published"
@@ -2473,7 +2473,7 @@
           "title": "Bowl",
           "slug": "bowl",
           "ossKey": "assets/video/ocean/level-132-bowl.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-132-bowl.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-132-bowl.mp4",
           "bytesTotal": 3277747,
           "sha256": "",
           "status": "published"
@@ -2483,7 +2483,7 @@
           "title": "Spoon",
           "slug": "spoon",
           "ossKey": "assets/video/ocean/level-133-spoon.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-133-spoon.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-133-spoon.mp4",
           "bytesTotal": 3524613,
           "sha256": "",
           "status": "published"
@@ -2493,7 +2493,7 @@
           "title": "Plate",
           "slug": "plate",
           "ossKey": "assets/video/ocean/level-134-plate.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-134-plate.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-134-plate.mp4",
           "bytesTotal": 3498776,
           "sha256": "",
           "status": "published"
@@ -2503,7 +2503,7 @@
           "title": "Bottle",
           "slug": "bottle",
           "ossKey": "assets/video/ocean/level-135-bottle.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-135-bottle.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-135-bottle.mp4",
           "bytesTotal": 3211133,
           "sha256": "",
           "status": "published"
@@ -2513,7 +2513,7 @@
           "title": "Box",
           "slug": "box",
           "ossKey": "assets/video/ocean/level-136-box.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-136-box.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-136-box.mp4",
           "bytesTotal": 3326198,
           "sha256": "",
           "status": "published"
@@ -2523,7 +2523,7 @@
           "title": "Bag",
           "slug": "bag",
           "ossKey": "assets/video/ocean/level-137-bag.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-137-bag.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-137-bag.mp4",
           "bytesTotal": 3693869,
           "sha256": "",
           "status": "published"
@@ -2533,7 +2533,7 @@
           "title": "Table",
           "slug": "table",
           "ossKey": "assets/video/ocean/level-138-table.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-138-table.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-138-table.mp4",
           "bytesTotal": 3378098,
           "sha256": "",
           "status": "published"
@@ -2543,7 +2543,7 @@
           "title": "Fork",
           "slug": "fork",
           "ossKey": "assets/video/ocean/level-139-fork.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-139-fork.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-139-fork.mp4",
           "bytesTotal": 3097634,
           "sha256": "",
           "status": "published"
@@ -2553,7 +2553,7 @@
           "title": "Chopsticks",
           "slug": "chopsticks",
           "ossKey": "assets/video/ocean/level-140-chopsticks.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-140-chopsticks.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-140-chopsticks.mp4",
           "bytesTotal": 2928950,
           "sha256": "",
           "status": "published"
@@ -2563,7 +2563,7 @@
           "title": "Drum",
           "slug": "drum",
           "ossKey": "assets/video/ocean/level-141-drum.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-141-drum.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-141-drum.mp4",
           "bytesTotal": 3348908,
           "sha256": "",
           "status": "published"
@@ -2573,7 +2573,7 @@
           "title": "Rope",
           "slug": "rope",
           "ossKey": "assets/video/ocean/level-142-rope.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-142-rope.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-142-rope.mp4",
           "bytesTotal": 3245311,
           "sha256": "",
           "status": "published"
@@ -2583,7 +2583,7 @@
           "title": "Soap",
           "slug": "soap",
           "ossKey": "assets/video/ocean/level-143-soap.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-143-soap.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-143-soap.mp4",
           "bytesTotal": 3750447,
           "sha256": "",
           "status": "published"
@@ -2593,7 +2593,7 @@
           "title": "Towel",
           "slug": "towel",
           "ossKey": "assets/video/ocean/level-144-towel.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-144-towel.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-144-towel.mp4",
           "bytesTotal": 3733104,
           "sha256": "",
           "status": "published"
@@ -2603,7 +2603,7 @@
           "title": "Tissue",
           "slug": "tissue",
           "ossKey": "assets/video/ocean/level-145-tissue.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-145-tissue.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-145-tissue.mp4",
           "bytesTotal": 3628737,
           "sha256": "",
           "status": "published"
@@ -2613,7 +2613,7 @@
           "title": "Money",
           "slug": "money",
           "ossKey": "assets/video/ocean/level-146-money.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-146-money.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-146-money.mp4",
           "bytesTotal": 3651621,
           "sha256": "",
           "status": "published"
@@ -2623,7 +2623,7 @@
           "title": "Comb",
           "slug": "comb",
           "ossKey": "assets/video/ocean/level-147-comb.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-147-comb.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-147-comb.mp4",
           "bytesTotal": 3642367,
           "sha256": "",
           "status": "published"
@@ -2633,7 +2633,7 @@
           "title": "Bathtub",
           "slug": "bathtub",
           "ossKey": "assets/video/ocean/level-148-bathtub.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-148-bathtub.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-148-bathtub.mp4",
           "bytesTotal": 3956135,
           "sha256": "",
           "status": "published"
@@ -2643,7 +2643,7 @@
           "title": "Toilet",
           "slug": "toilet",
           "ossKey": "assets/video/ocean/level-149-toilet.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-149-toilet.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-149-toilet.mp4",
           "bytesTotal": 3350976,
           "sha256": "",
           "status": "published"
@@ -2653,7 +2653,7 @@
           "title": "Toothbrush",
           "slug": "toothbrush",
           "ossKey": "assets/video/ocean/level-150-toothbrush.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-150-toothbrush.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-150-toothbrush.mp4",
           "bytesTotal": 3343299,
           "sha256": "",
           "status": "published"
@@ -2663,7 +2663,7 @@
           "title": "Moon",
           "slug": "moon",
           "ossKey": "assets/video/ocean/level-151-moon.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-151-moon.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-151-moon.mp4",
           "bytesTotal": 3816867,
           "sha256": "",
           "status": "published"
@@ -2673,7 +2673,7 @@
           "title": "Sun",
           "slug": "sun",
           "ossKey": "assets/video/ocean/level-152-sun.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-152-sun.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-152-sun.mp4",
           "bytesTotal": 4044215,
           "sha256": "",
           "status": "published"
@@ -2683,7 +2683,7 @@
           "title": "Star",
           "slug": "star",
           "ossKey": "assets/video/ocean/level-153-star.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-153-star.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-153-star.mp4",
           "bytesTotal": 3303244,
           "sha256": "",
           "status": "published"
@@ -2693,7 +2693,7 @@
           "title": "Rainbow",
           "slug": "rainbow",
           "ossKey": "assets/video/ocean/level-154-rainbow.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-154-rainbow.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-154-rainbow.mp4",
           "bytesTotal": 3921221,
           "sha256": "",
           "status": "published"
@@ -2703,7 +2703,7 @@
           "title": "Sky",
           "slug": "sky",
           "ossKey": "assets/video/ocean/level-155-sky.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-155-sky.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-155-sky.mp4",
           "bytesTotal": 3749259,
           "sha256": "",
           "status": "published"
@@ -2713,7 +2713,7 @@
           "title": "Cloud",
           "slug": "cloud",
           "ossKey": "assets/video/ocean/level-156-cloud.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-156-cloud.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-156-cloud.mp4",
           "bytesTotal": 3850111,
           "sha256": "",
           "status": "published"
@@ -2723,7 +2723,7 @@
           "title": "Rain",
           "slug": "rain",
           "ossKey": "assets/video/ocean/level-157-rain.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-157-rain.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-157-rain.mp4",
           "bytesTotal": 4162330,
           "sha256": "",
           "status": "published"
@@ -2733,7 +2733,7 @@
           "title": "Snow",
           "slug": "snow",
           "ossKey": "assets/video/ocean/level-158-snow.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-158-snow.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-158-snow.mp4",
           "bytesTotal": 4121446,
           "sha256": "",
           "status": "published"
@@ -2743,7 +2743,7 @@
           "title": "Wind",
           "slug": "wind",
           "ossKey": "assets/video/ocean/level-159-wind.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-159-wind.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-159-wind.mp4",
           "bytesTotal": 3223931,
           "sha256": "",
           "status": "published"
@@ -2753,7 +2753,7 @@
           "title": "Umbrella",
           "slug": "umbrella",
           "ossKey": "assets/video/ocean/level-160-umbrella.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-160-umbrella.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-160-umbrella.mp4",
           "bytesTotal": 3700586,
           "sha256": "",
           "status": "published"
@@ -2763,7 +2763,7 @@
           "title": "Flower",
           "slug": "flower",
           "ossKey": "assets/video/ocean/level-161-flower.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-161-flower.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-161-flower.mp4",
           "bytesTotal": 4122333,
           "sha256": "",
           "status": "published"
@@ -2773,7 +2773,7 @@
           "title": "Tree",
           "slug": "tree",
           "ossKey": "assets/video/ocean/level-162-tree.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-162-tree.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-162-tree.mp4",
           "bytesTotal": 4079630,
           "sha256": "",
           "status": "published"
@@ -2783,7 +2783,7 @@
           "title": "Grass",
           "slug": "grass",
           "ossKey": "assets/video/ocean/level-163-grass.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-163-grass.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-163-grass.mp4",
           "bytesTotal": 3559638,
           "sha256": "",
           "status": "published"
@@ -2793,7 +2793,7 @@
           "title": "Leaf",
           "slug": "leaf",
           "ossKey": "assets/video/ocean/level-164-leaf.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-164-leaf.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-164-leaf.mp4",
           "bytesTotal": 3703717,
           "sha256": "",
           "status": "published"
@@ -2803,7 +2803,7 @@
           "title": "Rock",
           "slug": "rock",
           "ossKey": "assets/video/ocean/level-165-rock.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-165-rock.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-165-rock.mp4",
           "bytesTotal": 3339724,
           "sha256": "",
           "status": "published"
@@ -2813,7 +2813,7 @@
           "title": "Road",
           "slug": "road",
           "ossKey": "assets/video/ocean/level-166-road.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-166-road.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-166-road.mp4",
           "bytesTotal": 4529451,
           "sha256": "",
           "status": "published"
@@ -2823,7 +2823,7 @@
           "title": "Traffic Light",
           "slug": "traffic-light",
           "ossKey": "assets/video/ocean/level-167-traffic-light.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-167-traffic-light.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-167-traffic-light.mp4",
           "bytesTotal": 3357184,
           "sha256": "",
           "status": "published"
@@ -2833,7 +2833,7 @@
           "title": "Snack",
           "slug": "snack",
           "ossKey": "assets/video/ocean/level-168-snack.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-168-snack.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-168-snack.mp4",
           "bytesTotal": 3714639,
           "sha256": "",
           "status": "published"
@@ -2843,7 +2843,7 @@
           "title": "Sugar",
           "slug": "sugar",
           "ossKey": "assets/video/ocean/level-169-sugar.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-169-sugar.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-169-sugar.mp4",
           "bytesTotal": 4155227,
           "sha256": "",
           "status": "published"
@@ -2853,7 +2853,7 @@
           "title": "Nails",
           "slug": "nails",
           "ossKey": "assets/video/ocean/level-170-nails.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-170-nails.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-170-nails.mp4",
           "bytesTotal": 3324789,
           "sha256": "",
           "status": "published"
@@ -2863,7 +2863,7 @@
           "title": "Taxi",
           "slug": "taxi",
           "ossKey": "assets/video/ocean/level-171-taxi.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-171-taxi.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-171-taxi.mp4",
           "bytesTotal": 4032501,
           "sha256": "",
           "status": "published"
@@ -2873,7 +2873,7 @@
           "title": "Bus",
           "slug": "bus",
           "ossKey": "assets/video/ocean/level-172-bus.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-172-bus.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-172-bus.mp4",
           "bytesTotal": 3499487,
           "sha256": "",
           "status": "published"
@@ -2883,7 +2883,7 @@
           "title": "Bike",
           "slug": "bike",
           "ossKey": "assets/video/ocean/level-173-bike.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-173-bike.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-173-bike.mp4",
           "bytesTotal": 3805130,
           "sha256": "",
           "status": "published"
@@ -2893,7 +2893,7 @@
           "title": "Train",
           "slug": "train",
           "ossKey": "assets/video/ocean/level-174-train.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-174-train.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-174-train.mp4",
           "bytesTotal": 4020697,
           "sha256": "",
           "status": "published"
@@ -2903,7 +2903,7 @@
           "title": "Plane",
           "slug": "plane",
           "ossKey": "assets/video/ocean/level-175-plane.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-175-plane.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-175-plane.mp4",
           "bytesTotal": 3996651,
           "sha256": "",
           "status": "published"
@@ -2913,7 +2913,7 @@
           "title": "Boat",
           "slug": "boat",
           "ossKey": "assets/video/ocean/level-176-boat.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-176-boat.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-176-boat.mp4",
           "bytesTotal": 3877859,
           "sha256": "",
           "status": "published"
@@ -2923,7 +2923,7 @@
           "title": "Night",
           "slug": "night",
           "ossKey": "assets/video/ocean/level-177-night.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-177-night.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-177-night.mp4",
           "bytesTotal": 3619038,
           "sha256": "",
           "status": "published"
@@ -2933,7 +2933,7 @@
           "title": "Truck",
           "slug": "truck",
           "ossKey": "assets/video/ocean/level-178-truck.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-178-truck.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-178-truck.mp4",
           "bytesTotal": 3693738,
           "sha256": "",
           "status": "published"
@@ -2943,7 +2943,7 @@
           "title": "Morning",
           "slug": "morning",
           "ossKey": "assets/video/ocean/level-179-morning.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-179-morning.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-179-morning.mp4",
           "bytesTotal": 3452751,
           "sha256": "",
           "status": "published"
@@ -2953,7 +2953,7 @@
           "title": "Breakfast",
           "slug": "breakfast",
           "ossKey": "assets/video/ocean/level-180-breakfast.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-180-breakfast.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-180-breakfast.mp4",
           "bytesTotal": 4326676,
           "sha256": "",
           "status": "published"
@@ -2963,7 +2963,7 @@
           "title": "Backpack",
           "slug": "backpack",
           "ossKey": "assets/video/ocean/level-181-backpack.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-181-backpack.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-181-backpack.mp4",
           "bytesTotal": 3335569,
           "sha256": "",
           "status": "published"
@@ -2973,7 +2973,7 @@
           "title": "Lunch",
           "slug": "lunch",
           "ossKey": "assets/video/ocean/level-182-lunch.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-182-lunch.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-182-lunch.mp4",
           "bytesTotal": 3409158,
           "sha256": "",
           "status": "published"
@@ -2983,7 +2983,7 @@
           "title": "Crayon",
           "slug": "crayon",
           "ossKey": "assets/video/ocean/level-183-crayon.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-183-crayon.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-183-crayon.mp4",
           "bytesTotal": 3157108,
           "sha256": "",
           "status": "published"
@@ -2993,7 +2993,7 @@
           "title": "Pencil",
           "slug": "pencil",
           "ossKey": "assets/video/ocean/level-184-pencil.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-184-pencil.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-184-pencil.mp4",
           "bytesTotal": 3202528,
           "sha256": "",
           "status": "published"
@@ -3003,7 +3003,7 @@
           "title": "Dinner",
           "slug": "dinner",
           "ossKey": "assets/video/ocean/level-185-dinner.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-185-dinner.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-185-dinner.mp4",
           "bytesTotal": 3194625,
           "sha256": "",
           "status": "published"
@@ -3013,7 +3013,7 @@
           "title": "Goal",
           "slug": "goal",
           "ossKey": "assets/video/ocean/level-186-goal.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-186-goal.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-186-goal.mp4",
           "bytesTotal": 3395538,
           "sha256": "",
           "status": "published"
@@ -3023,7 +3023,7 @@
           "title": "Paper",
           "slug": "paper",
           "ossKey": "assets/video/ocean/level-187-paper.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-187-paper.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-187-paper.mp4",
           "bytesTotal": 3134625,
           "sha256": "",
           "status": "published"
@@ -3033,7 +3033,7 @@
           "title": "Bath",
           "slug": "bath",
           "ossKey": "assets/video/ocean/level-188-bath.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-188-bath.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-188-bath.mp4",
           "bytesTotal": 3407294,
           "sha256": "",
           "status": "published"
@@ -3043,7 +3043,7 @@
           "title": "Song",
           "slug": "song",
           "ossKey": "assets/video/ocean/level-189-song.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-189-song.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-189-song.mp4",
           "bytesTotal": 3328774,
           "sha256": "",
           "status": "published"
@@ -3053,7 +3053,7 @@
           "title": "Soccer",
           "slug": "soccer",
           "ossKey": "assets/video/ocean/level-190-soccer.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-190-soccer.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-190-soccer.mp4",
           "bytesTotal": 4249882,
           "sha256": "",
           "status": "published"
@@ -3063,7 +3063,7 @@
           "title": "Circle",
           "slug": "circle",
           "ossKey": "assets/video/ocean/level-191-circle.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-191-circle.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-191-circle.mp4",
           "bytesTotal": 3114509,
           "sha256": "",
           "status": "published"
@@ -3073,7 +3073,7 @@
           "title": "Square",
           "slug": "square",
           "ossKey": "assets/video/ocean/level-192-square.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-192-square.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-192-square.mp4",
           "bytesTotal": 4093176,
           "sha256": "",
           "status": "published"
@@ -3083,7 +3083,7 @@
           "title": "Triangle",
           "slug": "triangle",
           "ossKey": "assets/video/ocean/level-193-triangle.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-193-triangle.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-193-triangle.mp4",
           "bytesTotal": 3184141,
           "sha256": "",
           "status": "published"
@@ -3093,7 +3093,7 @@
           "title": "Heart",
           "slug": "heart",
           "ossKey": "assets/video/ocean/level-194-heart.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-194-heart.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-194-heart.mp4",
           "bytesTotal": 4133864,
           "sha256": "",
           "status": "published"
@@ -3103,7 +3103,7 @@
           "title": "Picture",
           "slug": "picture",
           "ossKey": "assets/video/ocean/level-195-picture.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-195-picture.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-195-picture.mp4",
           "bytesTotal": 3643814,
           "sha256": "",
           "status": "published"
@@ -3113,7 +3113,7 @@
           "title": "Key",
           "slug": "key",
           "ossKey": "assets/video/ocean/level-196-key.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-196-key.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-196-key.mp4",
           "bytesTotal": 3573953,
           "sha256": "",
           "status": "published"
@@ -3123,7 +3123,7 @@
           "title": "Button",
           "slug": "button",
           "ossKey": "assets/video/ocean/level-197-button.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-197-button.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-197-button.mp4",
           "bytesTotal": 3574285,
           "sha256": "",
           "status": "published"
@@ -3133,7 +3133,7 @@
           "title": "Bucket",
           "slug": "bucket",
           "ossKey": "assets/video/ocean/level-198-bucket.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-198-bucket.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-198-bucket.mp4",
           "bytesTotal": 4133217,
           "sha256": "",
           "status": "published"
@@ -3143,7 +3143,7 @@
           "title": "Toothpaste",
           "slug": "toothpaste",
           "ossKey": "assets/video/ocean/level-199-toothpaste.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-199-toothpaste.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-199-toothpaste.mp4",
           "bytesTotal": 3070918,
           "sha256": "",
           "status": "published"
@@ -3153,7 +3153,7 @@
           "title": "Sponge",
           "slug": "sponge",
           "ossKey": "assets/video/ocean/level-200-sponge.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/ocean/level-200-sponge.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/ocean/level-200-sponge.mp4",
           "bytesTotal": 3620819,
           "sha256": "",
           "status": "published"
@@ -4321,7 +4321,7 @@
           "title": "Good Morning",
           "slug": "good-morning",
           "ossKey": "assets/video/desert/level-001-good-morning.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-001-good-morning.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-001-good-morning.mp4",
           "bytesTotal": 3178950,
           "sha256": "",
           "status": "published"
@@ -4331,7 +4331,7 @@
           "title": "How Are You",
           "slug": "how-are-you",
           "ossKey": "assets/video/desert/level-002-how-are-you.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-002-how-are-you.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-002-how-are-you.mp4",
           "bytesTotal": 3376706,
           "sha256": "",
           "status": "published"
@@ -4341,7 +4341,7 @@
           "title": "See You Later",
           "slug": "see-you-later",
           "ossKey": "assets/video/desert/level-003-see-you-later.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-003-see-you-later.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-003-see-you-later.mp4",
           "bytesTotal": 3556315,
           "sha256": "",
           "status": "published"
@@ -4351,7 +4351,7 @@
           "title": "Good Night",
           "slug": "good-night",
           "ossKey": "assets/video/desert/level-004-good-night.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-004-good-night.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-004-good-night.mp4",
           "bytesTotal": 21805710,
           "sha256": "",
           "status": "published"
@@ -4361,7 +4361,7 @@
           "title": "Have Fun",
           "slug": "have-fun",
           "ossKey": "assets/video/desert/level-005-have-fun.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-005-have-fun.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-005-have-fun.mp4",
           "bytesTotal": 22760060,
           "sha256": "",
           "status": "published"
@@ -4371,7 +4371,7 @@
           "title": "Goodbye",
           "slug": "goodbye",
           "ossKey": "assets/video/desert/level-006-goodbye.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-006-goodbye.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-006-goodbye.mp4",
           "bytesTotal": 24504432,
           "sha256": "",
           "status": "published"
@@ -4381,7 +4381,7 @@
           "title": "Thank You",
           "slug": "thank-you",
           "ossKey": "assets/video/desert/level-007-thank-you.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-007-thank-you.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-007-thank-you.mp4",
           "bytesTotal": 25716569,
           "sha256": "",
           "status": "published"
@@ -4391,7 +4391,7 @@
           "title": "You're Welcome",
           "slug": "you-re-welcome",
           "ossKey": "assets/video/desert/level-008-you-re-welcome.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-008-you-re-welcome.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-008-you-re-welcome.mp4",
           "bytesTotal": 22413320,
           "sha256": "",
           "status": "published"
@@ -4401,7 +4401,7 @@
           "title": "Excuse Me",
           "slug": "excuse-me",
           "ossKey": "assets/video/desert/level-009-excuse-me.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-009-excuse-me.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-009-excuse-me.mp4",
           "bytesTotal": 18690829,
           "sha256": "",
           "status": "published"
@@ -4411,7 +4411,7 @@
           "title": "I'm Sorry",
           "slug": "i-m-sorry",
           "ossKey": "assets/video/desert/level-010-i-m-sorry.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-010-i-m-sorry.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-010-i-m-sorry.mp4",
           "bytesTotal": 17452327,
           "sha256": "",
           "status": "published"
@@ -4421,7 +4421,7 @@
           "title": "Listen Please",
           "slug": "listen-please",
           "ossKey": "assets/video/desert/level-011-listen-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-011-listen-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-011-listen-please.mp4",
           "bytesTotal": 24861604,
           "sha256": "",
           "status": "published"
@@ -4431,7 +4431,7 @@
           "title": "Raise Your Hand",
           "slug": "raise-your-hand",
           "ossKey": "assets/video/desert/level-012-raise-your-hand.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-012-raise-your-hand.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-012-raise-your-hand.mp4",
           "bytesTotal": 20396900,
           "sha256": "",
           "status": "published"
@@ -4441,7 +4441,7 @@
           "title": "Let's Line Up",
           "slug": "let-s-line-up",
           "ossKey": "assets/video/desert/level-013-let-s-line-up.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-013-let-s-line-up.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-013-let-s-line-up.mp4",
           "bytesTotal": 20899559,
           "sha256": "",
           "status": "published"
@@ -4451,7 +4451,7 @@
           "title": "Sit Down Please",
           "slug": "sit-down-please",
           "ossKey": "assets/video/desert/level-014-sit-down-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-014-sit-down-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-014-sit-down-please.mp4",
           "bytesTotal": 24815306,
           "sha256": "",
           "status": "published"
@@ -4461,7 +4461,7 @@
           "title": "Stand Up Please",
           "slug": "stand-up-please",
           "ossKey": "assets/video/desert/level-015-stand-up-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-015-stand-up-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-015-stand-up-please.mp4",
           "bytesTotal": 17991359,
           "sha256": "",
           "status": "published"
@@ -4471,7 +4471,7 @@
           "title": "Look Over Here",
           "slug": "look-over-here",
           "ossKey": "assets/video/desert/level-016-look-over-here.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-016-look-over-here.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-016-look-over-here.mp4",
           "bytesTotal": 17975563,
           "sha256": "",
           "status": "published"
@@ -4481,7 +4481,7 @@
           "title": "Quiet Please",
           "slug": "quiet-please",
           "ossKey": "assets/video/desert/level-017-quiet-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-017-quiet-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-017-quiet-please.mp4",
           "bytesTotal": 22715273,
           "sha256": "",
           "status": "published"
@@ -4491,7 +4491,7 @@
           "title": "Can You Answer",
           "slug": "can-you-answer",
           "ossKey": "assets/video/desert/level-018-can-you-answer.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-018-can-you-answer.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-018-can-you-answer.mp4",
           "bytesTotal": 16433761,
           "sha256": "",
           "status": "published"
@@ -4501,7 +4501,7 @@
           "title": "Let's Work Together",
           "slug": "let-s-work-together",
           "ossKey": "assets/video/desert/level-019-let-s-work-together.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-019-let-s-work-together.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-019-let-s-work-together.mp4",
           "bytesTotal": 26626653,
           "sha256": "",
           "status": "published"
@@ -4511,7 +4511,7 @@
           "title": "Try It With Me",
           "slug": "try-it-with-me",
           "ossKey": "assets/video/desert/level-020-try-it-with-me.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-020-try-it-with-me.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-020-try-it-with-me.mp4",
           "bytesTotal": 16201806,
           "sha256": "",
           "status": "published"
@@ -4521,7 +4521,7 @@
           "title": "Let's Have Breakfast",
           "slug": "let-s-have-breakfast",
           "ossKey": "assets/video/desert/level-021-let-s-have-breakfast.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-021-let-s-have-breakfast.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-021-let-s-have-breakfast.mp4",
           "bytesTotal": 23796812,
           "sha256": "",
           "status": "published"
@@ -4531,7 +4531,7 @@
           "title": "Let's Have Lunch",
           "slug": "let-s-have-lunch",
           "ossKey": "assets/video/desert/level-022-let-s-have-lunch.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-022-let-s-have-lunch.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-022-let-s-have-lunch.mp4",
           "bytesTotal": 23285863,
           "sha256": "",
           "status": "published"
@@ -4541,7 +4541,7 @@
           "title": "Let's Have Dinner",
           "slug": "let-s-have-dinner",
           "ossKey": "assets/video/desert/level-023-let-s-have-dinner.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-023-let-s-have-dinner.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-023-let-s-have-dinner.mp4",
           "bytesTotal": 18378288,
           "sha256": "",
           "status": "published"
@@ -4551,7 +4551,7 @@
           "title": "Drink Some Milk",
           "slug": "drink-some-milk",
           "ossKey": "assets/video/desert/level-024-drink-some-milk.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-024-drink-some-milk.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-024-drink-some-milk.mp4",
           "bytesTotal": 20113969,
           "sha256": "",
           "status": "published"
@@ -4561,7 +4561,7 @@
           "title": "Wash Your Hands",
           "slug": "wash-your-hands",
           "ossKey": "assets/video/desert/level-025-wash-your-hands.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-025-wash-your-hands.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-025-wash-your-hands.mp4",
           "bytesTotal": 25108089,
           "sha256": "",
           "status": "published"
@@ -4571,7 +4571,7 @@
           "title": "Wipe Your Mouth",
           "slug": "wipe-your-mouth",
           "ossKey": "assets/video/desert/level-026-wipe-your-mouth.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-026-wipe-your-mouth.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-026-wipe-your-mouth.mp4",
           "bytesTotal": 18821841,
           "sha256": "",
           "status": "published"
@@ -4581,7 +4581,7 @@
           "title": "Use Your Chopsticks",
           "slug": "use-your-chopsticks",
           "ossKey": "assets/video/desert/level-027-use-your-chopsticks.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-027-use-your-chopsticks.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-027-use-your-chopsticks.mp4",
           "bytesTotal": 19423838,
           "sha256": "",
           "status": "published"
@@ -4591,7 +4591,7 @@
           "title": "Taste It",
           "slug": "taste-it",
           "ossKey": "assets/video/desert/level-028-taste-it.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-028-taste-it.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-028-taste-it.mp4",
           "bytesTotal": 19773086,
           "sha256": "",
           "status": "published"
@@ -4601,7 +4601,7 @@
           "title": "I'm Full",
           "slug": "i-m-full",
           "ossKey": "assets/video/desert/level-029-i-m-full.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-029-i-m-full.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-029-i-m-full.mp4",
           "bytesTotal": 3456446,
           "sha256": "",
           "status": "published"
@@ -4611,7 +4611,7 @@
           "title": "More Rice Please",
           "slug": "more-rice-please",
           "ossKey": "assets/video/desert/level-030-more-rice-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-030-more-rice-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-030-more-rice-please.mp4",
           "bytesTotal": 3312449,
           "sha256": "",
           "status": "published"
@@ -4621,7 +4621,7 @@
           "title": "This Is An Apple",
           "slug": "this-is-an-apple",
           "ossKey": "assets/video/desert/level-031-this-is-an-apple.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-031-this-is-an-apple.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-031-this-is-an-apple.mp4",
           "bytesTotal": 3992258,
           "sha256": "",
           "status": "published"
@@ -4631,7 +4631,7 @@
           "title": "i Like Bananas",
           "slug": "i-like-bananas",
           "ossKey": "assets/video/desert/level-032-i-like-bananas.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-032-i-like-bananas.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-032-i-like-bananas.mp4",
           "bytesTotal": 4127967,
           "sha256": "",
           "status": "published"
@@ -4641,7 +4641,7 @@
           "title": "i Want Noodles",
           "slug": "i-want-noodles",
           "ossKey": "assets/video/desert/level-033-i-want-noodles.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-033-i-want-noodles.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-033-i-want-noodles.mp4",
           "bytesTotal": 3293751,
           "sha256": "",
           "status": "published"
@@ -4651,7 +4651,7 @@
           "title": "i Want Fish",
           "slug": "i-want-fish",
           "ossKey": "assets/video/desert/level-034-i-want-fish.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-034-i-want-fish.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-034-i-want-fish.mp4",
           "bytesTotal": 3706394,
           "sha256": "",
           "status": "published"
@@ -4661,7 +4661,7 @@
           "title": "i Want Chicken",
           "slug": "i-want-chicken",
           "ossKey": "assets/video/desert/level-035-i-want-chicken.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-035-i-want-chicken.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-035-i-want-chicken.mp4",
           "bytesTotal": 3254816,
           "sha256": "",
           "status": "published"
@@ -4671,7 +4671,7 @@
           "title": "i Want An Egg",
           "slug": "i-want-an-egg",
           "ossKey": "assets/video/desert/level-036-i-want-an-egg.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-036-i-want-an-egg.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-036-i-want-an-egg.mp4",
           "bytesTotal": 3340299,
           "sha256": "",
           "status": "published"
@@ -4681,7 +4681,7 @@
           "title": "Milk Please",
           "slug": "milk-please",
           "ossKey": "assets/video/desert/level-037-milk-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-037-milk-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-037-milk-please.mp4",
           "bytesTotal": 2989346,
           "sha256": "",
           "status": "published"
@@ -4691,7 +4691,7 @@
           "title": "Water Please",
           "slug": "water-please",
           "ossKey": "assets/video/desert/level-038-water-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-038-water-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-038-water-please.mp4",
           "bytesTotal": 3623271,
           "sha256": "",
           "status": "published"
@@ -4701,7 +4701,7 @@
           "title": "Juice Please",
           "slug": "juice-please",
           "ossKey": "assets/video/desert/level-039-juice-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-039-juice-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-039-juice-please.mp4",
           "bytesTotal": 3546171,
           "sha256": "",
           "status": "published"
@@ -4711,7 +4711,7 @@
           "title": "i Like Tea",
           "slug": "i-like-tea",
           "ossKey": "assets/video/desert/level-040-i-like-tea.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-040-i-like-tea.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-040-i-like-tea.mp4",
           "bytesTotal": 3420258,
           "sha256": "",
           "status": "published"
@@ -4721,7 +4721,7 @@
           "title": "i Am Hungry",
           "slug": "i-am-hungry",
           "ossKey": "assets/video/desert/level-041-i-am-hungry.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-041-i-am-hungry.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-041-i-am-hungry.mp4",
           "bytesTotal": 3271946,
           "sha256": "",
           "status": "published"
@@ -4731,7 +4731,7 @@
           "title": "i Am Thirsty",
           "slug": "i-am-thirsty",
           "ossKey": "assets/video/desert/level-042-i-am-thirsty.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-042-i-am-thirsty.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-042-i-am-thirsty.mp4",
           "bytesTotal": 3948310,
           "sha256": "",
           "status": "published"
@@ -4741,7 +4741,7 @@
           "title": "i Like Rice",
           "slug": "i-like-rice",
           "ossKey": "assets/video/desert/level-043-i-like-rice.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-043-i-like-rice.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-043-i-like-rice.mp4",
           "bytesTotal": 3939578,
           "sha256": "",
           "status": "published"
@@ -4751,7 +4751,7 @@
           "title": "i Like Noodles",
           "slug": "i-like-noodles",
           "ossKey": "assets/video/desert/level-044-i-like-noodles.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-044-i-like-noodles.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-044-i-like-noodles.mp4",
           "bytesTotal": 4419475,
           "sha256": "",
           "status": "published"
@@ -4761,7 +4761,7 @@
           "title": "i Like Fish",
           "slug": "i-like-fish",
           "ossKey": "assets/video/desert/level-045-i-like-fish.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-045-i-like-fish.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-045-i-like-fish.mp4",
           "bytesTotal": 4629322,
           "sha256": "",
           "status": "published"
@@ -4771,7 +4771,7 @@
           "title": "i Like Chicken",
           "slug": "i-like-chicken",
           "ossKey": "assets/video/desert/level-046-i-like-chicken.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-046-i-like-chicken.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-046-i-like-chicken.mp4",
           "bytesTotal": 3289804,
           "sha256": "",
           "status": "published"
@@ -4781,7 +4781,7 @@
           "title": "i Like Eggs",
           "slug": "i-like-eggs",
           "ossKey": "assets/video/desert/level-047-i-like-eggs.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-047-i-like-eggs.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-047-i-like-eggs.mp4",
           "bytesTotal": 3531279,
           "sha256": "",
           "status": "published"
@@ -4791,7 +4791,7 @@
           "title": "This Is A Pear",
           "slug": "this-is-a-pear",
           "ossKey": "assets/video/desert/level-048-this-is-a-pear.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-048-this-is-a-pear.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-048-this-is-a-pear.mp4",
           "bytesTotal": 4493601,
           "sha256": "",
           "status": "published"
@@ -4801,7 +4801,7 @@
           "title": "This Is An Orange",
           "slug": "this-is-an-orange",
           "ossKey": "assets/video/desert/level-049-this-is-an-orange.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-049-this-is-an-orange.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-049-this-is-an-orange.mp4",
           "bytesTotal": 4136645,
           "sha256": "",
           "status": "published"
@@ -4811,7 +4811,7 @@
           "title": "Do You Like Apples",
           "slug": "do-you-like-apples",
           "ossKey": "assets/video/desert/level-050-do-you-like-apples.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-050-do-you-like-apples.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-050-do-you-like-apples.mp4",
           "bytesTotal": 3046194,
           "sha256": "",
           "status": "published"
@@ -4821,7 +4821,7 @@
           "title": "This Is My Book",
           "slug": "this-is-my-book",
           "ossKey": "assets/video/desert/level-051-this-is-my-book.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-051-this-is-my-book.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-051-this-is-my-book.mp4",
           "bytesTotal": 3775955,
           "sha256": "",
           "status": "published"
@@ -4831,7 +4831,7 @@
           "title": "i Have A Pencil",
           "slug": "i-have-a-pencil",
           "ossKey": "assets/video/desert/level-052-i-have-a-pencil.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-052-i-have-a-pencil.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-052-i-have-a-pencil.mp4",
           "bytesTotal": 3520630,
           "sha256": "",
           "status": "published"
@@ -4841,7 +4841,7 @@
           "title": "i Have A Ruler",
           "slug": "i-have-a-ruler",
           "ossKey": "assets/video/desert/level-053-i-have-a-ruler.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-053-i-have-a-ruler.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-053-i-have-a-ruler.mp4",
           "bytesTotal": 4227300,
           "sha256": "",
           "status": "published"
@@ -4851,7 +4851,7 @@
           "title": "This Is My Schoolbag",
           "slug": "this-is-my-schoolbag",
           "ossKey": "assets/video/desert/level-054-this-is-my-schoolbag.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-054-this-is-my-schoolbag.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-054-this-is-my-schoolbag.mp4",
           "bytesTotal": 3801583,
           "sha256": "",
           "status": "published"
@@ -4861,7 +4861,7 @@
           "title": "This Is My Teacher",
           "slug": "this-is-my-teacher",
           "ossKey": "assets/video/desert/level-055-this-is-my-teacher.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-055-this-is-my-teacher.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-055-this-is-my-teacher.mp4",
           "bytesTotal": 3479260,
           "sha256": "",
           "status": "published"
@@ -4871,7 +4871,7 @@
           "title": "Where Is The Chair",
           "slug": "where-is-the-chair",
           "ossKey": "assets/video/desert/level-056-where-is-the-chair.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-056-where-is-the-chair.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-056-where-is-the-chair.mp4",
           "bytesTotal": 3780226,
           "sha256": "",
           "status": "published"
@@ -4881,7 +4881,7 @@
           "title": "It Is On The Desk",
           "slug": "it-is-on-the-desk",
           "ossKey": "assets/video/desert/level-057-it-is-on-the-desk.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-057-it-is-on-the-desk.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-057-it-is-on-the-desk.mp4",
           "bytesTotal": 3181835,
           "sha256": "",
           "status": "published"
@@ -4891,7 +4891,7 @@
           "title": "It Is Under The Desk",
           "slug": "it-is-under-the-desk",
           "ossKey": "assets/video/desert/level-058-it-is-under-the-desk.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-058-it-is-under-the-desk.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-058-it-is-under-the-desk.mp4",
           "bytesTotal": 3448884,
           "sha256": "",
           "status": "published"
@@ -4901,7 +4901,7 @@
           "title": "Open The Door",
           "slug": "open-the-door",
           "ossKey": "assets/video/desert/level-059-open-the-door.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-059-open-the-door.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-059-open-the-door.mp4",
           "bytesTotal": 3853791,
           "sha256": "",
           "status": "published"
@@ -4911,7 +4911,7 @@
           "title": "Close The Door",
           "slug": "close-the-door",
           "ossKey": "assets/video/desert/level-060-close-the-door.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-060-close-the-door.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-060-close-the-door.mp4",
           "bytesTotal": 4072825,
           "sha256": "",
           "status": "published"
@@ -4921,7 +4921,7 @@
           "title": "This Is My Bed",
           "slug": "this-is-my-bed",
           "ossKey": "assets/video/desert/level-061-this-is-my-bed.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-061-this-is-my-bed.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-061-this-is-my-bed.mp4",
           "bytesTotal": 3865666,
           "sha256": "",
           "status": "published"
@@ -4931,7 +4931,7 @@
           "title": "It Is In The Box",
           "slug": "it-is-in-the-box",
           "ossKey": "assets/video/desert/level-062-it-is-in-the-box.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-062-it-is-in-the-box.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-062-it-is-in-the-box.mp4",
           "bytesTotal": 3469071,
           "sha256": "",
           "status": "published"
@@ -4941,7 +4941,7 @@
           "title": "It Is Near The Box",
           "slug": "it-is-near-the-box",
           "ossKey": "assets/video/desert/level-063-it-is-near-the-box.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-063-it-is-near-the-box.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-063-it-is-near-the-box.mp4",
           "bytesTotal": 3583816,
           "sha256": "",
           "status": "published"
@@ -4951,7 +4951,7 @@
           "title": "It Is Behind The Box",
           "slug": "it-is-behind-the-box",
           "ossKey": "assets/video/desert/level-064-it-is-behind-the-box.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-064-it-is-behind-the-box.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-064-it-is-behind-the-box.mp4",
           "bytesTotal": 4856977,
           "sha256": "",
           "status": "published"
@@ -4961,7 +4961,7 @@
           "title": "This Is A Ball",
           "slug": "this-is-a-ball",
           "ossKey": "assets/video/desert/level-065-this-is-a-ball.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-065-this-is-a-ball.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-065-this-is-a-ball.mp4",
           "bytesTotal": 3463963,
           "sha256": "",
           "status": "published"
@@ -4971,7 +4971,7 @@
           "title": "This Is A Doll",
           "slug": "this-is-a-doll",
           "ossKey": "assets/video/desert/level-066-this-is-a-doll.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-066-this-is-a-doll.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-066-this-is-a-doll.mp4",
           "bytesTotal": 4951065,
           "sha256": "",
           "status": "published"
@@ -4981,7 +4981,7 @@
           "title": "This Is A Train",
           "slug": "this-is-a-train",
           "ossKey": "assets/video/desert/level-067-this-is-a-train.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-067-this-is-a-train.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-067-this-is-a-train.mp4",
           "bytesTotal": 3258651,
           "sha256": "",
           "status": "published"
@@ -4991,7 +4991,7 @@
           "title": "This Is A Car",
           "slug": "this-is-a-car",
           "ossKey": "assets/video/desert/level-068-this-is-a-car.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-068-this-is-a-car.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-068-this-is-a-car.mp4",
           "bytesTotal": 3543830,
           "sha256": "",
           "status": "published"
@@ -5001,7 +5001,7 @@
           "title": "This Is A Plane",
           "slug": "this-is-a-plane",
           "ossKey": "assets/video/desert/level-069-this-is-a-plane.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-069-this-is-a-plane.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-069-this-is-a-plane.mp4",
           "bytesTotal": 4533140,
           "sha256": "",
           "status": "published"
@@ -5011,7 +5011,7 @@
           "title": "This Is A Bear",
           "slug": "this-is-a-bear",
           "ossKey": "assets/video/desert/level-070-this-is-a-bear.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-070-this-is-a-bear.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-070-this-is-a-bear.mp4",
           "bytesTotal": 3895118,
           "sha256": "",
           "status": "published"
@@ -5021,7 +5021,7 @@
           "title": "This Is My Face",
           "slug": "this-is-my-face",
           "ossKey": "assets/video/desert/level-071-this-is-my-face.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-071-this-is-my-face.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-071-this-is-my-face.mp4",
           "bytesTotal": 3363972,
           "sha256": "",
           "status": "published"
@@ -5031,7 +5031,7 @@
           "title": "This Is My Ear",
           "slug": "this-is-my-ear",
           "ossKey": "assets/video/desert/level-072-this-is-my-ear.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-072-this-is-my-ear.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-072-this-is-my-ear.mp4",
           "bytesTotal": 3916057,
           "sha256": "",
           "status": "published"
@@ -5041,7 +5041,7 @@
           "title": "This Is My Eye",
           "slug": "this-is-my-eye",
           "ossKey": "assets/video/desert/level-073-this-is-my-eye.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-073-this-is-my-eye.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-073-this-is-my-eye.mp4",
           "bytesTotal": 3287138,
           "sha256": "",
           "status": "published"
@@ -5051,7 +5051,7 @@
           "title": "This Is My Nose",
           "slug": "this-is-my-nose",
           "ossKey": "assets/video/desert/level-074-this-is-my-nose.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-074-this-is-my-nose.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-074-this-is-my-nose.mp4",
           "bytesTotal": 3440387,
           "sha256": "",
           "status": "published"
@@ -5061,7 +5061,7 @@
           "title": "This Is My Mouth",
           "slug": "this-is-my-mouth",
           "ossKey": "assets/video/desert/level-075-this-is-my-mouth.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-075-this-is-my-mouth.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-075-this-is-my-mouth.mp4",
           "bytesTotal": 3385868,
           "sha256": "",
           "status": "published"
@@ -5071,7 +5071,7 @@
           "title": "Touch Your Nose",
           "slug": "touch-your-nose",
           "ossKey": "assets/video/desert/level-076-touch-your-nose.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-076-touch-your-nose.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-076-touch-your-nose.mp4",
           "bytesTotal": 3818173,
           "sha256": "",
           "status": "published"
@@ -5081,7 +5081,7 @@
           "title": "Open Your Mouth",
           "slug": "open-your-mouth",
           "ossKey": "assets/video/desert/level-077-open-your-mouth.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-077-open-your-mouth.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-077-open-your-mouth.mp4",
           "bytesTotal": 3677599,
           "sha256": "",
           "status": "published"
@@ -5091,7 +5091,7 @@
           "title": "Close Your Eyes",
           "slug": "close-your-eyes",
           "ossKey": "assets/video/desert/level-078-close-your-eyes.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-078-close-your-eyes.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-078-close-your-eyes.mp4",
           "bytesTotal": 3229305,
           "sha256": "",
           "status": "published"
@@ -5101,7 +5101,7 @@
           "title": "This Is My Shirt",
           "slug": "this-is-my-shirt",
           "ossKey": "assets/video/desert/level-079-this-is-my-shirt.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-079-this-is-my-shirt.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-079-this-is-my-shirt.mp4",
           "bytesTotal": 3391833,
           "sha256": "",
           "status": "published"
@@ -5111,7 +5111,7 @@
           "title": "This Is My t Shirt",
           "slug": "this-is-my-t-shirt",
           "ossKey": "assets/video/desert/level-080-this-is-my-t-shirt.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-080-this-is-my-t-shirt.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-080-this-is-my-t-shirt.mp4",
           "bytesTotal": 3573096,
           "sha256": "",
           "status": "published"
@@ -5121,7 +5121,7 @@
           "title": "This Is My Skirt",
           "slug": "this-is-my-skirt",
           "ossKey": "assets/video/desert/level-081-this-is-my-skirt.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-081-this-is-my-skirt.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-081-this-is-my-skirt.mp4",
           "bytesTotal": 3246032,
           "sha256": "",
           "status": "published"
@@ -5131,7 +5131,7 @@
           "title": "This Is My Dress",
           "slug": "this-is-my-dress",
           "ossKey": "assets/video/desert/level-082-this-is-my-dress.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-082-this-is-my-dress.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-082-this-is-my-dress.mp4",
           "bytesTotal": 4048574,
           "sha256": "",
           "status": "published"
@@ -5141,7 +5141,7 @@
           "title": "i Like My Shirt",
           "slug": "i-like-my-shirt",
           "ossKey": "assets/video/desert/level-083-i-like-my-shirt.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-083-i-like-my-shirt.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-083-i-like-my-shirt.mp4",
           "bytesTotal": 3343858,
           "sha256": "",
           "status": "published"
@@ -5151,7 +5151,7 @@
           "title": "i Like My Dress",
           "slug": "i-like-my-dress",
           "ossKey": "assets/video/desert/level-084-i-like-my-dress.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-084-i-like-my-dress.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-084-i-like-my-dress.mp4",
           "bytesTotal": 2883989,
           "sha256": "",
           "status": "published"
@@ -5161,7 +5161,7 @@
           "title": "This Is My Father",
           "slug": "this-is-my-father",
           "ossKey": "assets/video/desert/level-085-this-is-my-father.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-085-this-is-my-father.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-085-this-is-my-father.mp4",
           "bytesTotal": 3463457,
           "sha256": "",
           "status": "published"
@@ -5171,7 +5171,7 @@
           "title": "This Is My Mother",
           "slug": "this-is-my-mother",
           "ossKey": "assets/video/desert/level-086-this-is-my-mother.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-086-this-is-my-mother.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-086-this-is-my-mother.mp4",
           "bytesTotal": 3833131,
           "sha256": "",
           "status": "published"
@@ -5181,7 +5181,7 @@
           "title": "This Is My Brother",
           "slug": "this-is-my-brother",
           "ossKey": "assets/video/desert/level-087-this-is-my-brother.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-087-this-is-my-brother.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-087-this-is-my-brother.mp4",
           "bytesTotal": 3890157,
           "sha256": "",
           "status": "published"
@@ -5191,7 +5191,7 @@
           "title": "This Is My Sister",
           "slug": "this-is-my-sister",
           "ossKey": "assets/video/desert/level-088-this-is-my-sister.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-088-this-is-my-sister.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-088-this-is-my-sister.mp4",
           "bytesTotal": 3928950,
           "sha256": "",
           "status": "published"
@@ -5201,7 +5201,7 @@
           "title": "This Is My Grandmother",
           "slug": "this-is-my-grandmother",
           "ossKey": "assets/video/desert/level-089-this-is-my-grandmother.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-089-this-is-my-grandmother.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-089-this-is-my-grandmother.mp4",
           "bytesTotal": 4077051,
           "sha256": "",
           "status": "published"
@@ -5211,7 +5211,7 @@
           "title": "This Is My Grandfather",
           "slug": "this-is-my-grandfather",
           "ossKey": "assets/video/desert/level-090-this-is-my-grandfather.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-090-this-is-my-grandfather.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-090-this-is-my-grandfather.mp4",
           "bytesTotal": 4056668,
           "sha256": "",
           "status": "published"
@@ -5221,7 +5221,7 @@
           "title": "i Love My Mother",
           "slug": "i-love-my-mother",
           "ossKey": "assets/video/desert/level-091-i-love-my-mother.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-091-i-love-my-mother.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-091-i-love-my-mother.mp4",
           "bytesTotal": 3550023,
           "sha256": "",
           "status": "published"
@@ -5231,7 +5231,7 @@
           "title": "i Love My Father",
           "slug": "i-love-my-father",
           "ossKey": "assets/video/desert/level-092-i-love-my-father.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-092-i-love-my-father.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-092-i-love-my-father.mp4",
           "bytesTotal": 3532931,
           "sha256": "",
           "status": "published"
@@ -5241,7 +5241,7 @@
           "title": "He Is A Boy",
           "slug": "he-is-a-boy",
           "ossKey": "assets/video/desert/level-093-he-is-a-boy.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-093-he-is-a-boy.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-093-he-is-a-boy.mp4",
           "bytesTotal": 3249911,
           "sha256": "",
           "status": "published"
@@ -5251,7 +5251,7 @@
           "title": "She Is A Girl",
           "slug": "she-is-a-girl",
           "ossKey": "assets/video/desert/level-094-she-is-a-girl.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-094-she-is-a-girl.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-094-she-is-a-girl.mp4",
           "bytesTotal": 3313418,
           "sha256": "",
           "status": "published"
@@ -5261,7 +5261,7 @@
           "title": "We Are Friends",
           "slug": "we-are-friends",
           "ossKey": "assets/video/desert/level-095-we-are-friends.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-095-we-are-friends.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-095-we-are-friends.mp4",
           "bytesTotal": 4140787,
           "sha256": "",
           "status": "published"
@@ -5271,7 +5271,7 @@
           "title": "It Is Red",
           "slug": "it-is-red",
           "ossKey": "assets/video/desert/level-096-it-is-red.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-096-it-is-red.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-096-it-is-red.mp4",
           "bytesTotal": 3225787,
           "sha256": "",
           "status": "published"
@@ -5281,7 +5281,7 @@
           "title": "It Is Blue",
           "slug": "it-is-blue",
           "ossKey": "assets/video/desert/level-097-it-is-blue.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-097-it-is-blue.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-097-it-is-blue.mp4",
           "bytesTotal": 3227806,
           "sha256": "",
           "status": "published"
@@ -5291,7 +5291,7 @@
           "title": "It Is Green",
           "slug": "it-is-green",
           "ossKey": "assets/video/desert/level-098-it-is-green.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-098-it-is-green.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-098-it-is-green.mp4",
           "bytesTotal": 3571226,
           "sha256": "",
           "status": "published"
@@ -5301,7 +5301,7 @@
           "title": "It Is Yellow",
           "slug": "it-is-yellow",
           "ossKey": "assets/video/desert/level-099-it-is-yellow.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-099-it-is-yellow.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-099-it-is-yellow.mp4",
           "bytesTotal": 3676110,
           "sha256": "",
           "status": "published"
@@ -5311,7 +5311,7 @@
           "title": "It Is Black",
           "slug": "it-is-black",
           "ossKey": "assets/video/desert/level-100-it-is-black.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-100-it-is-black.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-100-it-is-black.mp4",
           "bytesTotal": 3150412,
           "sha256": "",
           "status": "published"
@@ -5321,7 +5321,7 @@
           "title": "i See Red And Blue",
           "slug": "i-see-red-and-blue",
           "ossKey": "assets/video/desert/level-101-i-see-red-and-blue.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-101-i-see-red-and-blue.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-101-i-see-red-and-blue.mp4",
           "bytesTotal": 4081466,
           "sha256": "",
           "status": "published"
@@ -5331,7 +5331,7 @@
           "title": "What Colour Is It",
           "slug": "what-colour-is-it",
           "ossKey": "assets/video/desert/level-102-what-colour-is-it.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-102-what-colour-is-it.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-102-what-colour-is-it.mp4",
           "bytesTotal": 3613595,
           "sha256": "",
           "status": "published"
@@ -5341,7 +5341,7 @@
           "title": "One Apple",
           "slug": "one-apple",
           "ossKey": "assets/video/desert/level-103-one-apple.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-103-one-apple.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-103-one-apple.mp4",
           "bytesTotal": 2641464,
           "sha256": "",
           "status": "published"
@@ -5351,7 +5351,7 @@
           "title": "Two Pears 2",
           "slug": "two-pears-2",
           "ossKey": "assets/video/desert/level-104-two-pears_2.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-104-two-pears_2.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-104-two-pears_2.mp4",
           "bytesTotal": 2647777,
           "sha256": "",
           "status": "published"
@@ -5361,7 +5361,7 @@
           "title": "Three Bananas",
           "slug": "three-bananas",
           "ossKey": "assets/video/desert/level-105-three-bananas.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-105-three-bananas.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-105-three-bananas.mp4",
           "bytesTotal": 3735842,
           "sha256": "",
           "status": "published"
@@ -5371,7 +5371,7 @@
           "title": "Four Books",
           "slug": "four-books",
           "ossKey": "assets/video/desert/level-106-four-books.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-106-four-books.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-106-four-books.mp4",
           "bytesTotal": 3071874,
           "sha256": "",
           "status": "published"
@@ -5381,7 +5381,7 @@
           "title": "Five Pencils 2",
           "slug": "five-pencils-2",
           "ossKey": "assets/video/desert/level-107-five-pencils_2.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-107-five-pencils_2.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-107-five-pencils_2.mp4",
           "bytesTotal": 3798959,
           "sha256": "",
           "status": "published"
@@ -5391,7 +5391,7 @@
           "title": "Six Birds",
           "slug": "six-birds",
           "ossKey": "assets/video/desert/level-108-six-birds.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-108-six-birds.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-108-six-birds.mp4",
           "bytesTotal": 2936295,
           "sha256": "",
           "status": "published"
@@ -5401,7 +5401,7 @@
           "title": "Seven Balls",
           "slug": "seven-balls",
           "ossKey": "assets/video/desert/level-109-seven-balls.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-109-seven-balls.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-109-seven-balls.mp4",
           "bytesTotal": 4257477,
           "sha256": "",
           "status": "published"
@@ -5411,7 +5411,7 @@
           "title": "i Have A Car",
           "slug": "i-have-a-car",
           "ossKey": "assets/video/desert/level-110-i-have-a-car.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-110-i-have-a-car.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-110-i-have-a-car.mp4",
           "bytesTotal": 3620030,
           "sha256": "",
           "status": "published"
@@ -5421,7 +5421,7 @@
           "title": "Nine Fish",
           "slug": "nine-fish",
           "ossKey": "assets/video/desert/level-111-nine-fish.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-111-nine-fish.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-111-nine-fish.mp4",
           "bytesTotal": 4009433,
           "sha256": "",
           "status": "published"
@@ -5431,7 +5431,7 @@
           "title": "Yummy Egg",
           "slug": "yummy-egg",
           "ossKey": "assets/video/desert/level-112-yummy-egg.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-112-yummy-egg.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-112-yummy-egg.mp4",
           "bytesTotal": 4456374,
           "sha256": "",
           "status": "published"
@@ -5441,7 +5441,7 @@
           "title": "How Many Cats 2",
           "slug": "how-many-cats-2",
           "ossKey": "assets/video/desert/level-113-how-many-cats_2.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-113-how-many-cats_2.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-113-how-many-cats_2.mp4",
           "bytesTotal": 3550984,
           "sha256": "",
           "status": "published"
@@ -5451,7 +5451,7 @@
           "title": "Count To Ten",
           "slug": "count-to-ten",
           "ossKey": "assets/video/desert/level-114-count-to-ten.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-114-count-to-ten.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-114-count-to-ten.mp4",
           "bytesTotal": 4338597,
           "sha256": "",
           "status": "published"
@@ -5461,7 +5461,7 @@
           "title": "Stand Up Please",
           "slug": "stand-up-please",
           "ossKey": "assets/video/desert/level-115-stand-up-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-115-stand-up-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-115-stand-up-please.mp4",
           "bytesTotal": 4190384,
           "sha256": "",
           "status": "published"
@@ -5471,7 +5471,7 @@
           "title": "One More",
           "slug": "one-more",
           "ossKey": "assets/video/desert/level-116-one-more.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-116-one-more.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-116-one-more.mp4",
           "bytesTotal": 3301388,
           "sha256": "",
           "status": "published"
@@ -5481,7 +5481,7 @@
           "title": "i Have Two Books",
           "slug": "i-have-two-books",
           "ossKey": "assets/video/desert/level-117-i-have-two-books.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-117-i-have-two-books.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-117-i-have-two-books.mp4",
           "bytesTotal": 4252523,
           "sha256": "",
           "status": "published"
@@ -5491,7 +5491,7 @@
           "title": "i Have A Pencil",
           "slug": "i-have-a-pencil",
           "ossKey": "assets/video/desert/level-118-i-have-a-pencil.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-118-i-have-a-pencil.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-118-i-have-a-pencil.mp4",
           "bytesTotal": 4392973,
           "sha256": "",
           "status": "published"
@@ -5501,7 +5501,7 @@
           "title": "i See A Bird",
           "slug": "i-see-a-bird",
           "ossKey": "assets/video/desert/level-119-i-see-a-bird.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-119-i-see-a-bird.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-119-i-see-a-bird.mp4",
           "bytesTotal": 3886646,
           "sha256": "",
           "status": "published"
@@ -5511,7 +5511,7 @@
           "title": "There Is A Ball",
           "slug": "there-is-a-ball",
           "ossKey": "assets/video/desert/level-120-there-is-a-ball.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-120-there-is-a-ball.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-120-there-is-a-ball.mp4",
           "bytesTotal": 3974617,
           "sha256": "",
           "status": "published"
@@ -5521,7 +5521,7 @@
           "title": "i See A Dog",
           "slug": "i-see-a-dog",
           "ossKey": "assets/video/desert/level-121-i-see-a-dog.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-121-i-see-a-dog.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-121-i-see-a-dog.mp4",
           "bytesTotal": 4518110,
           "sha256": "",
           "status": "published"
@@ -5531,7 +5531,7 @@
           "title": "i See A Cat",
           "slug": "i-see-a-cat",
           "ossKey": "assets/video/desert/level-122-i-see-a-cat.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-122-i-see-a-cat.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-122-i-see-a-cat.mp4",
           "bytesTotal": 4428056,
           "sha256": "",
           "status": "published"
@@ -5541,7 +5541,7 @@
           "title": "i See A Bird",
           "slug": "i-see-a-bird",
           "ossKey": "assets/video/desert/level-123-i-see-a-bird.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-123-i-see-a-bird.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-123-i-see-a-bird.mp4",
           "bytesTotal": 4580299,
           "sha256": "",
           "status": "published"
@@ -5551,7 +5551,7 @@
           "title": "i See A Tiger",
           "slug": "i-see-a-tiger",
           "ossKey": "assets/video/desert/level-124-i-see-a-tiger.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-124-i-see-a-tiger.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-124-i-see-a-tiger.mp4",
           "bytesTotal": 3602932,
           "sha256": "",
           "status": "published"
@@ -5561,7 +5561,7 @@
           "title": "i See A Monkey",
           "slug": "i-see-a-monkey",
           "ossKey": "assets/video/desert/level-125-i-see-a-monkey.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-125-i-see-a-monkey.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-125-i-see-a-monkey.mp4",
           "bytesTotal": 3997466,
           "sha256": "",
           "status": "published"
@@ -5571,7 +5571,7 @@
           "title": "The Dog Is Big",
           "slug": "the-dog-is-big",
           "ossKey": "assets/video/desert/level-126-the-dog-is-big.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-126-the-dog-is-big.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-126-the-dog-is-big.mp4",
           "bytesTotal": 3505629,
           "sha256": "",
           "status": "published"
@@ -5581,7 +5581,7 @@
           "title": "The Cat Is Small",
           "slug": "the-cat-is-small",
           "ossKey": "assets/video/desert/level-127-the-cat-is-small.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-127-the-cat-is-small.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-127-the-cat-is-small.mp4",
           "bytesTotal": 3841595,
           "sha256": "",
           "status": "published"
@@ -5591,7 +5591,7 @@
           "title": "The Bird Can Fly",
           "slug": "the-bird-can-fly",
           "ossKey": "assets/video/desert/level-128-the-bird-can-fly.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-128-the-bird-can-fly.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-128-the-bird-can-fly.mp4",
           "bytesTotal": 4102909,
           "sha256": "",
           "status": "published"
@@ -5601,7 +5601,7 @@
           "title": "The Tiger Is Big",
           "slug": "the-tiger-is-big",
           "ossKey": "assets/video/desert/level-129-the-tiger-is-big.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-129-the-tiger-is-big.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-129-the-tiger-is-big.mp4",
           "bytesTotal": 4333556,
           "sha256": "",
           "status": "published"
@@ -5611,7 +5611,7 @@
           "title": "The Cat Is White",
           "slug": "the-cat-is-white",
           "ossKey": "assets/video/desert/level-130-the-cat-is-white.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-130-the-cat-is-white.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-130-the-cat-is-white.mp4",
           "bytesTotal": 3485576,
           "sha256": "",
           "status": "published"
@@ -5621,7 +5621,7 @@
           "title": "The Bird Is Blue",
           "slug": "the-bird-is-blue",
           "ossKey": "assets/video/desert/level-131-the-bird-is-blue.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-131-the-bird-is-blue.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-131-the-bird-is-blue.mp4",
           "bytesTotal": 3285068,
           "sha256": "",
           "status": "published"
@@ -5631,7 +5631,7 @@
           "title": "The Fish Is Orange",
           "slug": "the-fish-is-orange",
           "ossKey": "assets/video/desert/level-132-the-fish-is-orange.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-132-the-fish-is-orange.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-132-the-fish-is-orange.mp4",
           "bytesTotal": 3578585,
           "sha256": "",
           "status": "published"
@@ -5641,7 +5641,7 @@
           "title": "This Is A Zoo",
           "slug": "this-is-a-zoo",
           "ossKey": "assets/video/desert/level-133-this-is-a-zoo.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-133-this-is-a-zoo.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-133-this-is-a-zoo.mp4",
           "bytesTotal": 4343374,
           "sha256": "",
           "status": "published"
@@ -5651,7 +5651,7 @@
           "title": "Look At The Tiger",
           "slug": "look-at-the-tiger",
           "ossKey": "assets/video/desert/level-134-look-at-the-tiger.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-134-look-at-the-tiger.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-134-look-at-the-tiger.mp4",
           "bytesTotal": 5575905,
           "sha256": "",
           "status": "published"
@@ -5661,7 +5661,7 @@
           "title": "Look At The Monkey",
           "slug": "look-at-the-monkey",
           "ossKey": "assets/video/desert/level-135-look-at-the-monkey.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-135-look-at-the-monkey.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-135-look-at-the-monkey.mp4",
           "bytesTotal": 4470058,
           "sha256": "",
           "status": "published"
@@ -5671,7 +5671,7 @@
           "title": "Look At The Fish",
           "slug": "look-at-the-fish",
           "ossKey": "assets/video/desert/level-136-look-at-the-fish.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-136-look-at-the-fish.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-136-look-at-the-fish.mp4",
           "bytesTotal": 4570978,
           "sha256": "",
           "status": "published"
@@ -5681,7 +5681,7 @@
           "title": "i Like Dogs",
           "slug": "i-like-dogs",
           "ossKey": "assets/video/desert/level-137-i-like-dogs.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-137-i-like-dogs.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-137-i-like-dogs.mp4",
           "bytesTotal": 4848846,
           "sha256": "",
           "status": "published"
@@ -5691,7 +5691,7 @@
           "title": "i Like Cats",
           "slug": "i-like-cats",
           "ossKey": "assets/video/desert/level-138-i-like-cats.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-138-i-like-cats.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-138-i-like-cats.mp4",
           "bytesTotal": 4471276,
           "sha256": "",
           "status": "published"
@@ -5701,7 +5701,7 @@
           "title": "i Like Birds",
           "slug": "i-like-birds",
           "ossKey": "assets/video/desert/level-139-i-like-birds.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-139-i-like-birds.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-139-i-like-birds.mp4",
           "bytesTotal": 4121874,
           "sha256": "",
           "status": "published"
@@ -5711,7 +5711,7 @@
           "title": "i Like Monkeys",
           "slug": "i-like-monkeys",
           "ossKey": "assets/video/desert/level-140-i-like-monkeys.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-140-i-like-monkeys.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-140-i-like-monkeys.mp4",
           "bytesTotal": 4564510,
           "sha256": "",
           "status": "published"
@@ -5721,7 +5721,7 @@
           "title": "This Is A Park",
           "slug": "this-is-a-park",
           "ossKey": "assets/video/desert/level-141-this-is-a-park.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-141-this-is-a-park.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-141-this-is-a-park.mp4",
           "bytesTotal": 5454365,
           "sha256": "",
           "status": "published"
@@ -5731,7 +5731,7 @@
           "title": "i See A Tree",
           "slug": "i-see-a-tree",
           "ossKey": "assets/video/desert/level-142-i-see-a-tree.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-142-i-see-a-tree.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-142-i-see-a-tree.mp4",
           "bytesTotal": 5044122,
           "sha256": "",
           "status": "published"
@@ -5741,7 +5741,7 @@
           "title": "i See A Flower",
           "slug": "i-see-a-flower",
           "ossKey": "assets/video/desert/level-143-i-see-a-flower.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-143-i-see-a-flower.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-143-i-see-a-flower.mp4",
           "bytesTotal": 4967824,
           "sha256": "",
           "status": "published"
@@ -5751,7 +5751,7 @@
           "title": "i See Grass",
           "slug": "i-see-grass",
           "ossKey": "assets/video/desert/level-144-i-see-grass.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-144-i-see-grass.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-144-i-see-grass.mp4",
           "bytesTotal": 4106920,
           "sha256": "",
           "status": "published"
@@ -5761,7 +5761,7 @@
           "title": "i See A Boat",
           "slug": "i-see-a-boat",
           "ossKey": "assets/video/desert/level-145-i-see-a-boat.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-145-i-see-a-boat.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-145-i-see-a-boat.mp4",
           "bytesTotal": 4777232,
           "sha256": "",
           "status": "published"
@@ -5771,7 +5771,7 @@
           "title": "The Tree Is Tall",
           "slug": "the-tree-is-tall",
           "ossKey": "assets/video/desert/level-146-the-tree-is-tall.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-146-the-tree-is-tall.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-146-the-tree-is-tall.mp4",
           "bytesTotal": 4465084,
           "sha256": "",
           "status": "published"
@@ -5781,7 +5781,7 @@
           "title": "The Flower Is Red",
           "slug": "the-flower-is-red",
           "ossKey": "assets/video/desert/level-147-the-flower-is-red.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-147-the-flower-is-red.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-147-the-flower-is-red.mp4",
           "bytesTotal": 4075303,
           "sha256": "",
           "status": "published"
@@ -5791,7 +5791,7 @@
           "title": "The Grass Is Green",
           "slug": "the-grass-is-green",
           "ossKey": "assets/video/desert/level-148-the-grass-is-green.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-148-the-grass-is-green.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-148-the-grass-is-green.mp4",
           "bytesTotal": 4793224,
           "sha256": "",
           "status": "published"
@@ -5801,7 +5801,7 @@
           "title": "Lets Go To The Park",
           "slug": "lets-go-to-the-park",
           "ossKey": "assets/video/desert/level-149-lets-go-to-the-park.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-149-lets-go-to-the-park.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-149-lets-go-to-the-park.mp4",
           "bytesTotal": 5545869,
           "sha256": "",
           "status": "published"
@@ -5811,7 +5811,7 @@
           "title": "This Is My School",
           "slug": "this-is-my-school",
           "ossKey": "assets/video/desert/level-150-this-is-my-school.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-150-this-is-my-school.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-150-this-is-my-school.mp4",
           "bytesTotal": 5646171,
           "sha256": "",
           "status": "published"
@@ -5821,7 +5821,7 @@
           "title": "This Is A Bookshop",
           "slug": "this-is-a-bookshop",
           "ossKey": "assets/video/desert/level-151-this-is-a-bookshop.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-151-this-is-a-bookshop.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-151-this-is-a-bookshop.mp4",
           "bytesTotal": 3670418,
           "sha256": "",
           "status": "published"
@@ -5831,7 +5831,7 @@
           "title": "This Is A Shop",
           "slug": "this-is-a-shop",
           "ossKey": "assets/video/desert/level-152-this-is-a-shop.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-152-this-is-a-shop.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-152-this-is-a-shop.mp4",
           "bytesTotal": 4891646,
           "sha256": "",
           "status": "published"
@@ -5841,7 +5841,7 @@
           "title": "This Is A Bike",
           "slug": "this-is-a-bike",
           "ossKey": "assets/video/desert/level-153-this-is-a-bike.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-153-this-is-a-bike.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-153-this-is-a-bike.mp4",
           "bytesTotal": 5591037,
           "sha256": "",
           "status": "published"
@@ -5851,7 +5851,7 @@
           "title": "This Is A Bus",
           "slug": "this-is-a-bus",
           "ossKey": "assets/video/desert/level-154-this-is-a-bus.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-154-this-is-a-bus.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-154-this-is-a-bus.mp4",
           "bytesTotal": 4736444,
           "sha256": "",
           "status": "published"
@@ -5861,7 +5861,7 @@
           "title": "Lets Go By Car",
           "slug": "lets-go-by-car",
           "ossKey": "assets/video/desert/level-155-lets-go-by-car.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-155-lets-go-by-car.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-155-lets-go-by-car.mp4",
           "bytesTotal": 5086002,
           "sha256": "",
           "status": "published"
@@ -5871,7 +5871,7 @@
           "title": "Lets Go By Bike",
           "slug": "lets-go-by-bike",
           "ossKey": "assets/video/desert/level-156-lets-go-by-bike.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-156-lets-go-by-bike.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-156-lets-go-by-bike.mp4",
           "bytesTotal": 4945853,
           "sha256": "",
           "status": "published"
@@ -5881,7 +5881,7 @@
           "title": "Lets Take The Train",
           "slug": "lets-take-the-train",
           "ossKey": "assets/video/desert/level-157-lets-take-the-train.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-157-lets-take-the-train.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-157-lets-take-the-train.mp4",
           "bytesTotal": 4517315,
           "sha256": "",
           "status": "published"
@@ -5891,7 +5891,7 @@
           "title": "Stop Please",
           "slug": "stop-please",
           "ossKey": "assets/video/desert/level-158-stop-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-158-stop-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-158-stop-please.mp4",
           "bytesTotal": 3932491,
           "sha256": "",
           "status": "published"
@@ -5901,7 +5901,7 @@
           "title": "Go Please",
           "slug": "go-please",
           "ossKey": "assets/video/desert/level-159-go-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-159-go-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-159-go-please.mp4",
           "bytesTotal": 4430744,
           "sha256": "",
           "status": "published"
@@ -5911,7 +5911,7 @@
           "title": "Be Careful",
           "slug": "be-careful",
           "ossKey": "assets/video/desert/level-160-be-careful.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-160-be-careful.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-160-be-careful.mp4",
           "bytesTotal": 4032902,
           "sha256": "",
           "status": "published"
@@ -5921,7 +5921,7 @@
           "title": "It s Sunny",
           "slug": "it-s-sunny",
           "ossKey": "assets/video/desert/level-161-it-s-sunny.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-161-it-s-sunny.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-161-it-s-sunny.mp4",
           "bytesTotal": 4980514,
           "sha256": "",
           "status": "published"
@@ -5931,7 +5931,7 @@
           "title": "It s Rainy",
           "slug": "it-s-rainy",
           "ossKey": "assets/video/desert/level-162-it-s-rainy.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-162-it-s-rainy.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-162-it-s-rainy.mp4",
           "bytesTotal": 4519848,
           "sha256": "",
           "status": "published"
@@ -5941,7 +5941,7 @@
           "title": "It s Windy",
           "slug": "it-s-windy",
           "ossKey": "assets/video/desert/level-163-it-s-windy.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-163-it-s-windy.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-163-it-s-windy.mp4",
           "bytesTotal": 4563503,
           "sha256": "",
           "status": "published"
@@ -5951,7 +5951,7 @@
           "title": "It s Cloudy",
           "slug": "it-s-cloudy",
           "ossKey": "assets/video/desert/level-164-it-s-cloudy.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-164-it-s-cloudy.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-164-it-s-cloudy.mp4",
           "bytesTotal": 4546398,
           "sha256": "",
           "status": "published"
@@ -5961,7 +5961,7 @@
           "title": "It s Snowy",
           "slug": "it-s-snowy",
           "ossKey": "assets/video/desert/level-165-it-s-snowy.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-165-it-s-snowy.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-165-it-s-snowy.mp4",
           "bytesTotal": 6498493,
           "sha256": "",
           "status": "published"
@@ -5971,7 +5971,7 @@
           "title": "It s Hot",
           "slug": "it-s-hot",
           "ossKey": "assets/video/desert/level-166-it-s-hot.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-166-it-s-hot.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-166-it-s-hot.mp4",
           "bytesTotal": 4806508,
           "sha256": "",
           "status": "published"
@@ -5981,7 +5981,7 @@
           "title": "It s Cold",
           "slug": "it-s-cold",
           "ossKey": "assets/video/desert/level-167-it-s-cold.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-167-it-s-cold.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-167-it-s-cold.mp4",
           "bytesTotal": 4915815,
           "sha256": "",
           "status": "published"
@@ -5991,7 +5991,7 @@
           "title": "It s Warm",
           "slug": "it-s-warm",
           "ossKey": "assets/video/desert/level-168-it-s-warm.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-168-it-s-warm.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-168-it-s-warm.mp4",
           "bytesTotal": 4663889,
           "sha256": "",
           "status": "published"
@@ -6001,7 +6001,7 @@
           "title": "It s Cool",
           "slug": "it-s-cool",
           "ossKey": "assets/video/desert/level-169-it-s-cool.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-169-it-s-cool.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-169-it-s-cool.mp4",
           "bytesTotal": 4855681,
           "sha256": "",
           "status": "published"
@@ -6011,7 +6011,7 @@
           "title": "i Like Summer",
           "slug": "i-like-summer",
           "ossKey": "assets/video/desert/level-170-i-like-summer.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-170-i-like-summer.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-170-i-like-summer.mp4",
           "bytesTotal": 4599645,
           "sha256": "",
           "status": "published"
@@ -6021,7 +6021,7 @@
           "title": "i Like Winter",
           "slug": "i-like-winter",
           "ossKey": "assets/video/desert/level-171-i-like-winter.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-171-i-like-winter.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-171-i-like-winter.mp4",
           "bytesTotal": 5243986,
           "sha256": "",
           "status": "published"
@@ -6031,7 +6031,7 @@
           "title": "Today Is Monday",
           "slug": "today-is-monday",
           "ossKey": "assets/video/desert/level-172-today-is-monday.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-172-today-is-monday.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-172-today-is-monday.mp4",
           "bytesTotal": 4239899,
           "sha256": "",
           "status": "published"
@@ -6041,7 +6041,7 @@
           "title": "Today Is Tuesday",
           "slug": "today-is-tuesday",
           "ossKey": "assets/video/desert/level-173-today-is-tuesday.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-173-today-is-tuesday.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-173-today-is-tuesday.mp4",
           "bytesTotal": 4461826,
           "sha256": "",
           "status": "published"
@@ -6051,7 +6051,7 @@
           "title": "Get Up Please",
           "slug": "get-up-please",
           "ossKey": "assets/video/desert/level-174-get-up-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-174-get-up-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-174-get-up-please.mp4",
           "bytesTotal": 5155174,
           "sha256": "",
           "status": "published"
@@ -6061,7 +6061,7 @@
           "title": "Go To School",
           "slug": "go-to-school",
           "ossKey": "assets/video/desert/level-175-go-to-school.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-175-go-to-school.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-175-go-to-school.mp4",
           "bytesTotal": 5491100,
           "sha256": "",
           "status": "published"
@@ -6071,7 +6071,7 @@
           "title": "Go Home",
           "slug": "go-home",
           "ossKey": "assets/video/desert/level-176-go-home.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-176-go-home.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-176-go-home.mp4",
           "bytesTotal": 4203310,
           "sha256": "",
           "status": "published"
@@ -6081,7 +6081,7 @@
           "title": "Go To Bed",
           "slug": "go-to-bed",
           "ossKey": "assets/video/desert/level-177-go-to-bed.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-177-go-to-bed.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-177-go-to-bed.mp4",
           "bytesTotal": 5217369,
           "sha256": "",
           "status": "published"
@@ -6091,7 +6091,7 @@
           "title": "Lets Play Football",
           "slug": "lets-play-football",
           "ossKey": "assets/video/desert/level-178-lets-play-football.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-178-lets-play-football.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-178-lets-play-football.mp4",
           "bytesTotal": 4991819,
           "sha256": "",
           "status": "published"
@@ -6101,7 +6101,7 @@
           "title": "Fly A Kite",
           "slug": "fly-a-kite",
           "ossKey": "assets/video/desert/level-179-fly-a-kite.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-179-fly-a-kite.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-179-fly-a-kite.mp4",
           "bytesTotal": 5182814,
           "sha256": "",
           "status": "published"
@@ -6111,7 +6111,7 @@
           "title": "Ride A Bike",
           "slug": "ride-a-bike",
           "ossKey": "assets/video/desert/level-180-ride-a-bike.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-180-ride-a-bike.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-180-ride-a-bike.mp4",
           "bytesTotal": 4686932,
           "sha256": "",
           "status": "published"
@@ -6121,7 +6121,7 @@
           "title": "Swim Please",
           "slug": "swim-please",
           "ossKey": "assets/video/desert/level-181-swim-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-181-swim-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-181-swim-please.mp4",
           "bytesTotal": 4576780,
           "sha256": "",
           "status": "published"
@@ -6131,7 +6131,7 @@
           "title": "Run Please",
           "slug": "run-please",
           "ossKey": "assets/video/desert/level-182-run-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-182-run-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-182-run-please.mp4",
           "bytesTotal": 4293173,
           "sha256": "",
           "status": "published"
@@ -6141,7 +6141,7 @@
           "title": "Jump Please",
           "slug": "jump-please",
           "ossKey": "assets/video/desert/level-183-jump-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-183-jump-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-183-jump-please.mp4",
           "bytesTotal": 4234719,
           "sha256": "",
           "status": "published"
@@ -6151,7 +6151,7 @@
           "title": "Sing A Song",
           "slug": "sing-a-song",
           "ossKey": "assets/video/desert/level-184-sing-a-song.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-184-sing-a-song.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-184-sing-a-song.mp4",
           "bytesTotal": 4196996,
           "sha256": "",
           "status": "published"
@@ -6161,7 +6161,7 @@
           "title": "Dance Please",
           "slug": "dance-please",
           "ossKey": "assets/video/desert/level-185-dance-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-185-dance-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-185-dance-please.mp4",
           "bytesTotal": 4507179,
           "sha256": "",
           "status": "published"
@@ -6171,7 +6171,7 @@
           "title": "Draw A Picture",
           "slug": "draw-a-picture",
           "ossKey": "assets/video/desert/level-186-draw-a-picture.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-186-draw-a-picture.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-186-draw-a-picture.mp4",
           "bytesTotal": 4711495,
           "sha256": "",
           "status": "published"
@@ -6181,7 +6181,7 @@
           "title": "Colour It Red",
           "slug": "colour-it-red",
           "ossKey": "assets/video/desert/level-187-colour-it-red.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-187-colour-it-red.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-187-colour-it-red.mp4",
           "bytesTotal": 4836513,
           "sha256": "",
           "status": "published"
@@ -6191,7 +6191,7 @@
           "title": "Read A Book",
           "slug": "read-a-book",
           "ossKey": "assets/video/desert/level-188-read-a-book.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-188-read-a-book.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-188-read-a-book.mp4",
           "bytesTotal": 4358904,
           "sha256": "",
           "status": "published"
@@ -6201,7 +6201,7 @@
           "title": "Write A",
           "slug": "write-a",
           "ossKey": "assets/video/desert/level-189-write-a.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-189-write-a.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-189-write-a.mp4",
           "bytesTotal": 4317395,
           "sha256": "",
           "status": "published"
@@ -6211,7 +6211,7 @@
           "title": "Clap Your Hands",
           "slug": "clap-your-hands",
           "ossKey": "assets/video/desert/level-190-clap-your-hands.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-190-clap-your-hands.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-190-clap-your-hands.mp4",
           "bytesTotal": 4868684,
           "sha256": "",
           "status": "published"
@@ -6221,7 +6221,7 @@
           "title": "Speak English Please",
           "slug": "speak-english-please",
           "ossKey": "assets/video/desert/level-191-speak-english-please.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-191-speak-english-please.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-191-speak-english-please.mp4",
           "bytesTotal": 4869720,
           "sha256": "",
           "status": "published"
@@ -6231,7 +6231,7 @@
           "title": "Try Again",
           "slug": "try-again",
           "ossKey": "assets/video/desert/level-192-try-again.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-192-try-again.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-192-try-again.mp4",
           "bytesTotal": 4947964,
           "sha256": "",
           "status": "published"
@@ -6241,7 +6241,7 @@
           "title": "Good Job",
           "slug": "good-job",
           "ossKey": "assets/video/desert/level-193-good-job.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-193-good-job.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-193-good-job.mp4",
           "bytesTotal": 4313180,
           "sha256": "",
           "status": "published"
@@ -6251,7 +6251,7 @@
           "title": "Here You Are",
           "slug": "here-you-are",
           "ossKey": "assets/video/desert/level-194-here-you-are.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-194-here-you-are.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-194-here-you-are.mp4",
           "bytesTotal": 5285638,
           "sha256": "",
           "status": "published"
@@ -6261,7 +6261,7 @@
           "title": "Point To The Star",
           "slug": "point-to-the-star",
           "ossKey": "assets/video/desert/level-195-point-to-the-star.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-195-point-to-the-star.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-195-point-to-the-star.mp4",
           "bytesTotal": 4196330,
           "sha256": "",
           "status": "published"
@@ -6271,7 +6271,7 @@
           "title": "Turn Around",
           "slug": "turn-around",
           "ossKey": "assets/video/desert/level-196-turn-around.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-196-turn-around.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-196-turn-around.mp4",
           "bytesTotal": 4230214,
           "sha256": "",
           "status": "published"
@@ -6281,7 +6281,7 @@
           "title": "Put It Here",
           "slug": "put-it-here",
           "ossKey": "assets/video/desert/level-197-put-it-here.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-197-put-it-here.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-197-put-it-here.mp4",
           "bytesTotal": 4393637,
           "sha256": "",
           "status": "published"
@@ -6291,7 +6291,7 @@
           "title": "That's Ok",
           "slug": "that-s-ok",
           "ossKey": "assets/video/desert/level-198-that-s-ok.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-198-that-s-ok.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-198-that-s-ok.mp4",
           "bytesTotal": 4920562,
           "sha256": "",
           "status": "published"
@@ -6301,7 +6301,7 @@
           "title": "Happy New Year",
           "slug": "happy-new-year",
           "ossKey": "assets/video/desert/level-199-happy-new-year.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-199-happy-new-year.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-199-happy-new-year.mp4",
           "bytesTotal": 4931424,
           "sha256": "",
           "status": "published"
@@ -6311,7 +6311,7 @@
           "title": "Merry Christmas",
           "slug": "merry-christmas",
           "ossKey": "assets/video/desert/level-200-merry-christmas.mp4",
-          "downloadUrl": "https://cdn.example.hirota.test/assets/video/desert/level-200-merry-christmas.mp4",
+          "downloadUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/desert/level-200-merry-christmas.mp4",
           "bytesTotal": 5162543,
           "sha256": "",
           "status": "published"

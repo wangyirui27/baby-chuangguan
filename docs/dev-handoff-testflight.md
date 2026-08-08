@@ -11,7 +11,7 @@
 | 交付 | 说明 |
 |------|------|
 | TestFlight 构建 | Archive → App Store Connect → 内测组可装 |
-| 内容验收 | 海岛/沙漠 **前 10 关** + 数学 story **31 条**离线可玩；**L11+** 联网可播 OSS 课视频 |
+| 内容验收 | 海岛/沙漠 **前 10 关** + 数学 story **31 条**离线可玩；购买/VIP/内测授权后 **L11+** 联网可播 OSS 课视频 |
 | （可选）登录联调 | 仅当产品给了生产 `apiBase` |
 
 ---
@@ -25,6 +25,7 @@ cd baby-chuangguan && git pull
 xcode-select -p   # 应含 Xcode.app
 npm test          # 应 379 pass
 node tools/audit-readiness.mjs   # testflightContentReady: true
+bash tools/pack-app-www.sh /tmp/hirota-www-check
 
 # 一键（推荐）
 DEVELOPMENT_TEAM=你的TeamID bash tools/ship-testflight.sh --upload
@@ -35,7 +36,7 @@ open ios/BabyEnglishIsland.xcodeproj
 # Product → Archive → Distribute App → App Store Connect → Upload
 ```
 
-Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（含海岛+沙漠前 10 关 mp4、数学 story 31 条 mp4 + `asset-packs.json`）。
+Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（约 382MB；含海岛+沙漠前 10 关 mp4、数学 story 31 条 mp4 + `asset-packs.json`）。
 
 ---
 
@@ -44,12 +45,14 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 | 路径 | 作用 |
 |------|------|
 | `ios/BabyEnglishIsland.xcodeproj` | Xcode 工程 |
+| `ios/BabyEnglishIsland.xcodeproj/xcshareddata/xcschemes/BabyEnglishIsland.xcscheme` | 共享 scheme，CLI / CI 可识别 |
 | `ios/Config/Team.xcconfig` | `DEVELOPMENT_TEAM=`（本地填，勿泄密） |
 | `ios/Config/Shared.xcconfig` | 版本 1.0.1 / build 3 / Bundle ID |
 | `ios/BabyEnglishIsland/shell-config.json` | `apiBase`（内容内测可空） |
 | `ios/ExportOptions-TestFlight.plist` | TF 导出（teamID 由 ship 脚本写入） |
 | `tools/ship-testflight.sh` | check / archive / upload / open |
 | `tools/pack-app-www.sh` | 打运行时 www |
+| `tools/audit-readiness.mjs` | TF 内容门禁：付费墙开关、版本、OSS 占位 URL、资源计数 |
 | `asset-packs.json` | L11–200 OSS URL |
 | `docs/testflight-checklist.md` | A/B/C/D 门禁 |
 
@@ -67,7 +70,8 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 ## 内容与网络
 
 - **包内**：海岛 `assets/video/free-levels/level-01…10` + 沙漠 `assets/video/desert-levels/level-001…010` + 数学 `assets/video/math-story/*.mp4`（31 条）
-- **OSS**（需网络）：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/{desert|ocean}/…`
+- **OSS**（需网络）：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/{desert|ocean}/…`；`asset-packs.json` 不应再出现 `cdn.example` / localhost 占位
+- **付费墙**：`TEMP_LOCAL_FULL_ACCESS=false`；TestFlight file:// / capacitor 壳不应自动解锁 11 关以后
 - **apiBase 空**：不阻塞内容内测；登录/云存进度不可用
 - **禁止**把影关 `api.modelisms.com` 填进嗨洛塔 `apiBase`
 
@@ -85,5 +89,5 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 - 启动显示 **嗨洛塔**，不是英语岛
 - 海岛 L1–10、沙漠 L1–10 无网可进课视频
 - 数学地图 story 短片无网可播，不出现空播/fallback
-- 开任意 L11+ 且有网：课视频从 OSS 加载可播
+- 未购买/未授权时 L11+ 不被本地壳放行；购买/VIP/内测授权后 L11+ 有网从 OSS 加载可播
 - 设置/关于：版本 **1.0.1 (3)**（以实际上传 build 为准）

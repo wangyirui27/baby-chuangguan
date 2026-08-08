@@ -349,7 +349,7 @@ test('app startup checks App Store release version and opens centered update dia
 
   assert.equal(releaseConfig.latestVersion, '1.0.1');
   assert.match(releaseConfig.updateUrl, /^https:\/\/apps\.apple\.com\/cn\/search\?term=/);
-  assert.match(source, /APP_RELEASE_VERSION = '1\.0\.0'/);
+  assert.match(source, /APP_RELEASE_VERSION = '1\.0\.1'/);
   assert.match(source, /APP_RELEASE_UPDATE_URL = 'app-release\.json'/);
   assert.match(source, /function checkReleaseUpdate\(\)/);
   assert.match(source, /const releaseUpdateUrl = String\(window\.BABY_ISLAND_RELEASE_UPDATE_URL \|\| APP_RELEASE_UPDATE_URL\)/);
@@ -696,13 +696,13 @@ test('level entry keeps first ten free and gates level eleven as paid', () => {
   assert.equal(getLevelAccess(1.5, { completed: [], unlockedThrough: 1 }, true), 'missing');
 });
 
-test('local QA unlock + paid sample videos keep post-free levels testable', () => {
-  assert.equal(TEMP_LOCAL_FULL_ACCESS, true);
+test('local QA unlock stays off for TestFlight by default', () => {
+  assert.equal(TEMP_LOCAL_FULL_ACCESS, false);
   assert.equal(typeof isTempLocalUnlockEnabled, 'function');
   const unlockSrc = isTempLocalUnlockEnabled.toString();
   assert.match(unlockSrc, /localQa/);
   assert.match(unlockSrc, /LOCAL_QA_UNLOCK_KEY|localStorage/);
-  assert.match(unlockSrc, /capacitor:|file:/);
+  assert.doesNotMatch(unlockSrc, /capacitor:|file:/);
   // Node 无 location → 不误开解锁，单元测试保持真实付费墙语义
   assert.equal(isTempLocalUnlockEnabled(), false);
 
@@ -1556,11 +1556,13 @@ test('asset pack status model drives iPad map download UI', () => {
   assert.equal(manifest.maps[0].levels[0].levelId, 11);
   assert.equal(manifest.maps[0].levels[189].levelId, 200);
   assert.match(String(manifest.maps[0].levels[0].downloadUrl || ''), /level-011-apple\.mp4$/);
+  assert.doesNotMatch(JSON.stringify(manifest), /cdn\.example|example\.hirota|localhost|127\.0\.0\.1/i);
   const desertMap = manifest.maps.find((m) => m.mapId === 'desert');
   assert.ok(desertMap);
   assert.equal(desertMap.levels.length, 190);
   const desert107 = desertMap.levelMedia.find((x) => x.levelId === 107);
   assert.ok(String(desert107?.ossKey || '').includes('five-pencils_2'), desert107?.ossKey);
+  assert.match(String(desert107?.downloadUrl || ''), /^https:\/\/baobao-chuangguan\.oss-cn-shanghai\.aliyuncs\.com\/assets\/video\/desert\//);
   assert.equal(notInstalledPlayable.text, '已可玩 10/200 关');
   assert.equal(downloadingPlayable.text, '已可玩 10/200 关');
   assert.equal(downloadingPlayableWithReadyLevel.text, '已可玩 11/200 关');
@@ -4276,4 +4278,3 @@ test('workbench selected videoPath maps 1:1 to desert+ocean levels', () => {
   }
   assert.equal(desertLevels.find((l) => l.id === 11)?.videoSrc, undefined);
 });
-

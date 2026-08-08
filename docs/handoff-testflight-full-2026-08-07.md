@@ -3,7 +3,7 @@
 **生成：** 2026-08-07（本机实测）
 **仓库：** https://github.com/wangyirui27/baby-chuangguan
 **本地路径：** `/Users/yr/嗨洛塔少儿启蒙APP`
-**分支：** `main` @ `c0381fe`（与 `origin/main` 同步）
+**分支：** `main`（2026-08-08 已继续更新；以 `git pull` 后 `git log -1 --oneline` 为准）
 **产品：** 嗨洛塔（HIROTA）少儿启蒙 · Bundle `com.baobaoenglish.island` · **1.0.1 (3)**
 **形态：** iOS WKWebView 壳 + 根目录 H5（`index.html` / `script.js` / `style.css`）+ 可选 Node 后端
 
@@ -14,7 +14,7 @@
 
 - **Hermes/Grok：** 提供本总交接与产品/文档侧整理；不等同于已 Archive 或已上传 TestFlight。
 - **Codex：** 负责本机集成验收、口径修正、门禁复跑；不替代有 Xcode/Apple Team 的发船机。
-- **外部团队复核（2026-08-08，只读）：** Cursor / MiniMax / Mimo / DeepSeek / WorkBuddy / Grok 复核后，确认内容门禁结论成立，同时指出 smoke 需区分“内容内测”和“全功能内测”。
+- **外部团队复核（2026-08-08，只读）：** Cursor / MiniMax / Mimo / DeepSeek / WorkBuddy / Grok 复核后，确认内容门禁结论成立；有效问题已落地为付费墙开关关闭、共享 xcscheme、版本口径和 OSS 占位 URL 清零。
 - **未完成：** 没有任何 agent 已完成 App Store Connect 创建、Archive、Upload 或真机 TestFlight 安装证明。
 
 ---
@@ -23,8 +23,8 @@
 
 | 层 | 状态 | 说明 |
 |----|------|------|
-| **A 内容包** | ✅ 已绿并推仓 | `npm test` 379 pass；`testflightContentReady=true`；`hardFailures=[]`；pack 含海岛+沙漠各前 10 + 数学 story 31 条 |
-| **B iOS 壳骨架** | ✅ 仓内齐 | 图标/启动/Privacy/pack Build Phase/ship 脚本齐；**本机无 Xcode.app → 不能 Archive** |
+| **A 内容包** | ✅ 已绿并推仓 | `npm test` 379 pass；`testflightContentReady=true`；`hardFailures=[]`；pack 含海岛+沙漠各前 10 + 数学 story 31 条；`asset-packs.json` 无假 CDN/local URL |
+| **B iOS 壳骨架** | ✅ 仓内齐 | 图标/启动/Privacy/pack Build Phase/共享 xcscheme/ship 脚本齐；**本机无 Xcode.app → 不能 Archive** |
 | **C 苹果** | ⬜ 用户/有 Xcode 的 Mac | Team ID、ASC App、Archive Upload、TF 组 |
 | **D 后台** | ⬜ 可选 | 内容内测 **apiBase 可空**；要登录/云进度再填生产 HTTPS |
 
@@ -57,6 +57,9 @@ node tools/audit-readiness.mjs
 #   missingFirstTenVideos: 0
 #   desertSeedMissing: 0
 #   mathStoryVideos: expected 31, listed 31, missing 0, localBytes 99877902
+#   assetPackPlaceholders: count 0
+#   tempLocalFullAccess: false
+#   scriptReleaseVersion: "1.0.1"
 #   remoteCourseVideos ocean/desert: listed 190, missingRemote11to200 0, realOssUrls 190
 
 bash tools/pack-app-www.sh /tmp/hirota-www-check
@@ -125,9 +128,10 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | 沙漠 L1–10 包内 mp4 | `assets/video/desert-levels/level-001-good-morning.mp4` … `level-010-i-m-sorry.mp4` |
 | 数学 story 31 条包内 mp4 | `assets/video/math-story/level-001-roll-call.mp4` … `level-031-num-ten.mp4`；manifest `present=31` |
 | L11–200 OSS | `asset-packs.json`：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/{ocean\|desert}/…`，无 `cdn.example` 占位 |
+| 付费墙 QA 开关 | `script.js`：`TEMP_LOCAL_FULL_ACCESS=false`；TestFlight file:// / capacitor 壳不自动解锁 11 关以后 |
 | 目录/对账 | `data/content-catalog.json`（400 levels）、`data/workbench-level-video-map.json` |
 | pack 脚本 | `tools/pack-app-www.sh`：非视频运行时 + shell loop + 双图前 10 + 数学 story 31；L11+ 不进包 |
-| 审计 | `tools/audit-readiness.mjs`：双图种子 + 数学 story + OSS 真链 + TF content 字段 |
+| 审计 | `tools/audit-readiness.mjs`：双图种子 + 数学 story + OSS 真链 + 付费墙开关 + 版本 + 占位 URL + TF content 字段 |
 | 测试 | `npm test` → 379 |
 | 品牌文案 | 用户可见「嗨洛塔」；禁「英语岛 / 开通 VIP」口径（按地图收费） |
 
@@ -136,6 +140,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | 项 | 路径 |
 |----|------|
 | Xcode 工程 | `ios/BabyEnglishIsland.xcodeproj` |
+| 共享 scheme | `ios/BabyEnglishIsland.xcodeproj/xcshareddata/xcschemes/BabyEnglishIsland.xcscheme` |
 | 壳代码 | `ios/BabyEnglishIsland/ViewController.swift`（WKWebView、`BABY_ISLAND_API_BASE` 注入、asset pack / IAP bridge） |
 | AppDelegate | `ios/BabyEnglishIsland/AppDelegate.swift`（含 background URLSession 钩子） |
 | 配置 | `ios/BabyEnglishIsland/shell-config.json`（apiBase 空、displayName 嗨洛塔、IAP id） |
@@ -174,13 +179,15 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 
 > 「最近」= 约 2026-07-31～2026-08-07 推上 `main` 的 TF 相关与产品收口。
 > **本 Hermes 会话（写本文当下）**：只做了多语言难度口头评估 + 本交接文档；**未**再改发船代码。
-> **2026-08-08 Codex 后续**：已将数学 story 31 条 mp4 纳入 GitHub、`pack-app-www` 和 readiness 门禁；见 `8e755be`。
+> **2026-08-08 Codex 后续**：已将数学 story 31 条 mp4 纳入 GitHub、`pack-app-www` 和 readiness 门禁；见 `8e755be`。随后补齐共享 xcscheme、付费墙默认关闭、H5 版本 1.0.1 和 `asset-packs.json` 真 OSS URL。
 > 工作区另有 **untracked** 数学 QA/切图脚本（见 §8），与 TF 门禁无关，勿误提交除非用户要求。
 
 ### 4.1 提交时间线（新 → 旧）
 
 | Commit | 日期 | 摘要 |
 |--------|------|------|
+| `latest` | 2026-08-08 | fix：TF 预检门禁收紧，关闭本地壳付费绕过，共享 scheme，清理 `asset-packs.json` 假 URL |
+| `d916a4e` | 2026-08-08 | docs：记录数学 story 31 条进包与 pack 体积 |
 | `8e755be` | 2026-08-08 | fix：数学 story 31 条 mp4 进仓并打入 iOS `www` 包 |
 | `85a136d` | 2026-08-08 | docs：更新 TestFlight handoff 与内容/全功能内测口径 |
 | `c0381fe` | 2026-08-07 | docs(tf)：对齐 `ship-testflight` 路径与 **1.0.1 (3)** 交接清单 |
@@ -233,7 +240,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 4. `DEVELOPMENT_TEAM=… bash tools/ship-testflight.sh --upload`
 5. ASC → TF 组 → 安装
 6. 无网测：海岛 1–10、沙漠 1–10 视频
-7. 有网测：任意 L11+ OSS 可播
+7. 未购买/未授权：L11+ 不被本地壳直接放行；购买/恢复/VIP/内测授权后，有网测任意 L11+ OSS 可播
 
 ### 5.2 全功能 TF（第二枪）
 
@@ -288,7 +295,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 ```
 仓库根/
   index.html, script.js, style.css, sw.js    # H5 主应用
-  asset-packs.json                           # L11+ OSS
+  asset-packs.json                           # L11+ OSS，禁止假 CDN/local URL
   app-release.json                           # 强更文案/版本
   auth/apiClient.js                          # API + 壳 base
   data/content-catalog.json
@@ -299,6 +306,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
   tools/ship-testflight.sh
   tools/audit-readiness.mjs
   ios/BabyEnglishIsland.xcodeproj
+  ios/BabyEnglishIsland.xcodeproj/xcshareddata/xcschemes/BabyEnglishIsland.xcscheme
   ios/Config/{Shared,Team}.xcconfig
   ios/ExportOptions-TestFlight.plist
   ios/BabyEnglishIsland/{ViewController.swift,shell-config.json,PrivacyInfo.xcprivacy,Assets.xcassets}
@@ -345,7 +353,7 @@ IAP Product ID：`baby_island_map_vip_001`（Swift 常量与 shell-config 文档
 | 隐私 URL 未上公网 | 内测通常不挡 | 外测/上架要 |
 | 工程目录名 BabyEnglishIsland | 否 | 用户可见名已是嗨洛塔 |
 | 单体 `script.js` 无 i18n | 否 | 与 TF 无关；多语言另项 |
-| pack ~286MB | 否 | 大于旧文档写的 ~180MB，以实测为准 |
+| pack ~382MB | 否 | 大于旧文档写的 ~180MB，以实测为准 |
 | smoke 构建号 | 否 | 已对齐工程 **1.0.1 (3)**；上传后以 ASC 实际构建为准 |
 
 ---

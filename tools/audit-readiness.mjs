@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const { levels } = require('../script.js');
+const { levels, TEMP_LOCAL_FULL_ACCESS } = require('../script.js');
 const wordManifest = require('../assets/audio/words/word-audio-manifest.json');
 
 const expectedFirstTen = [
@@ -72,9 +72,12 @@ const missingQuestionAudioFirstTen = missingQuestionAudio.filter((entry) => {
 const missingQuestionAudioBeyondSeed = missingQuestionAudio.length - missingQuestionAudioFirstTen.length;
 
 const appRelease = JSON.parse(readFileSync(join(ROOT, 'app-release.json'), 'utf8'));
+const scriptSource = readFileSync(join(ROOT, 'script.js'), 'utf8');
+const scriptReleaseVersion = scriptSource.match(/APP_RELEASE_VERSION\s*=\s*'([^']+)'/)?.[1] || '';
 
 function nativeShellReady() {
   const projectFile = 'ios/BabyEnglishIsland.xcodeproj/project.pbxproj';
+  const sharedSchemeFile = 'ios/BabyEnglishIsland.xcodeproj/xcshareddata/xcschemes/BabyEnglishIsland.xcscheme';
   const appDelegateFile = 'ios/BabyEnglishIsland/AppDelegate.swift';
   const viewControllerFile = 'ios/BabyEnglishIsland/ViewController.swift';
   const infoFile = 'ios/BabyEnglishIsland/Info.plist';
@@ -85,6 +88,7 @@ function nativeShellReady() {
   const shellConfigFile = 'ios/BabyEnglishIsland/shell-config.json';
   if (![
     projectFile,
+    sharedSchemeFile,
     appDelegateFile,
     viewControllerFile,
     infoFile,
@@ -96,6 +100,7 @@ function nativeShellReady() {
   ].every(fileExists)) return false;
 
   const project = readFileSync(join(ROOT, projectFile), 'utf8');
+  const sharedScheme = readFileSync(join(ROOT, sharedSchemeFile), 'utf8');
   const viewController = readFileSync(join(ROOT, viewControllerFile), 'utf8');
   const appDelegate = readFileSync(join(ROOT, appDelegateFile), 'utf8');
   const packScript = readFileSync(join(ROOT, packScriptFile), 'utf8');
@@ -125,6 +130,8 @@ function nativeShellReady() {
     && appDelegate.includes('AssetPackDownloadManager.backgroundCompletionHandler')
     && project.includes('Copy H5 app')
     && project.includes('tools/pack-app-www.sh')
+    && sharedScheme.includes('BlueprintIdentifier = "A10000000000000000000060"')
+    && sharedScheme.includes('buildForArchiving = "YES"')
     && project.includes('Assets.xcassets')
     && project.includes('PrivacyInfo.xcprivacy')
     && project.includes('shell-config.json')
@@ -213,6 +220,35 @@ function assetPackRemoteCoverage() {
 
 const remoteCoverage = assetPackRemoteCoverage();
 
+function assetPackPlaceholderUrls() {
+  const placeholderRe = /cdn\.example|example\.hirota|localhost|127\.0\.0\.1/i;
+  try {
+    const manifest = JSON.parse(readFileSync(join(ROOT, 'asset-packs.json'), 'utf8'));
+    const matches = [];
+    const visit = (value, path = '') => {
+      if (Array.isArray(value)) {
+        value.forEach((item, index) => visit(item, `${path}[${index}]`));
+        return;
+      }
+      if (!value || typeof value !== 'object') return;
+      for (const [key, item] of Object.entries(value)) {
+        const nextPath = path ? `${path}.${key}` : key;
+        if (key === 'downloadUrl' && placeholderRe.test(String(item || ''))) {
+          matches.push({ path: nextPath, url: String(item) });
+        } else {
+          visit(item, nextPath);
+        }
+      }
+    };
+    visit(manifest);
+    return { count: matches.length, first: matches.slice(0, 5) };
+  } catch {
+    return { count: 1, first: [{ path: 'asset-packs.json', url: 'unreadable' }] };
+  }
+}
+
+const assetPackPlaceholders = assetPackPlaceholderUrls();
+
 function mathStoryVideoCoverage() {
   const expected = 31;
   const fallback = { expected, listed: 0, missing: expected, localBytes: 0, firstMissing: ['manifest'] };
@@ -270,6 +306,13 @@ for (let id = 1; id <= 10; id += 1) {
 const hardFailures = [
   ...(JSON.stringify(firstTen) !== JSON.stringify(expectedFirstTen) ? ['前 10 关设定被改动。'] : []),
   ...(levels.length !== 200 ? [`当前只有 ${levels.length} 关，不是 200 关。`] : []),
+  ...(TEMP_LOCAL_FULL_ACCESS === true ? ['TEMP_LOCAL_FULL_ACCESS 仍为 true，TestFlight 会绕过付费墙。'] : []),
+  ...(scriptReleaseVersion && appRelease.latestVersion && scriptReleaseVersion !== appRelease.latestVersion
+    ? [`H5 关于页版本 ${scriptReleaseVersion} 与 app-release latestVersion ${appRelease.latestVersion} 不一致。`]
+    : []),
+  ...(assetPackPlaceholders.count
+    ? [`asset-packs.json 仍有 ${assetPackPlaceholders.count} 条假 CDN/本地 downloadUrl。`]
+    : []),
   ...(missingQuestionAudioFirstTen.length
     ? [`前 10 关缺少 ${missingQuestionAudioFirstTen.length} 个题目语音。`]
     : []),
@@ -320,8 +363,11 @@ const result = {
     missingFirstTenVideos: missingFirstTenVideos.length,
     desertSeedMissing: desertSeedMissing.length,
     mathStoryVideos,
+    assetPackPlaceholders,
     remoteCourseVideos: remoteCoverage,
     nonNounWords: nonNounWordLevels.length,
+    tempLocalFullAccess: TEMP_LOCAL_FULL_ACCESS,
+    scriptReleaseVersion,
     nativeShellReady: nativeReady,
     nativeBuildToolReady: nativeBuildReady,
     shellApiBaseConfigured: shellApiBaseConfigured(),

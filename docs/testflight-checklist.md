@@ -6,7 +6,7 @@
 
 ## 一句话
 
-**A 内容包 + B 原生壳骨架已齐**（`testflightContentReady=true`，`hardFailures=[]`，`npm test` 379 全绿，`pack-app-www` 含海岛+沙漠各前 10 关 + 数学 story 31 条）。
+**A 内容包 + B 原生壳骨架已齐**（`testflightContentReady=true`，`hardFailures=[]`，`npm test` 379 全绿，`pack-app-www` 含海岛+沙漠各前 10 关 + 数学 story 31 条；共享 xcscheme 已补）。
 **本机无完整 Xcode → 不能本地 Archive**。
 **C 苹果账号 / D 后台公网**仍是外部步骤。
 
@@ -21,6 +21,7 @@
 | 沙漠 L1–10 包内视频 | ✅ 已进 `pack-app-www` + 仓 |
 | 数学 story 31 条短片 | ✅ 已进 `pack-app-www` + 仓 |
 | L11–200 课视频 | ✅ OSS 公网直链（`asset-packs.json`，非假 CDN） |
+| 付费墙本地开关 | ✅ `TEMP_LOCAL_FULL_ACCESS=false`；TF file:// 壳不自动解锁 |
 | RDS 474 BLOB 备份 | ✅ 仅备份，播放走 OSS |
 | 品牌 嗨洛塔 / 禁英语岛开通VIP | ✅ |
 | `npm test` | ✅ 379 pass |
@@ -42,6 +43,7 @@ OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
 | PrivacyInfo / 加密声明 | ✅ |
 | 品牌显示名 嗨洛塔 | ✅ |
 | Build Phase 调 `pack-app-www.sh` → bundle `www/` | ✅ |
+| Shared scheme `BabyEnglishIsland.xcscheme` | ✅ |
 | `ExportOptions-TestFlight.plist` | ✅（teamID 占位，发船时写入） |
 | `tools/ship-testflight.sh` | ✅ check / archive / upload / open |
 | `Team.xcconfig` DEVELOPMENT_TEAM | ⬜ 空，需填 |
@@ -69,8 +71,10 @@ OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
 
 | 模式 | apiBase | 能力 |
 |------|---------|------|
-| **内容内测（推荐先发）** | 空 | 离线海岛/沙漠前 10 + 数学 story 31 条 + L11–200 下 OSS；登录/云进度不可用 |
+| **内容内测（推荐先发）** | 空 | 离线海岛/沙漠前 10 + 数学 story 31 条；未授权 L11+ 留在付费墙；登录/云进度不可用 |
 | 全功能 TF | 生产 HTTPS 根（无尾斜杠） | 登录/学习进度；短信·IAP 另配 |
+
+L11–200 的 OSS URL 已在清单中；真机要播放这些课视频，需要购买/恢复购买/VIP/内测授权后再测。
 
 `ios/BabyEnglishIsland/shell-config.json` 当前 `apiBase=""`。
 **不要**把 `api.modelisms.com` 当嗨洛塔后端（那是影关）。

@@ -108,11 +108,11 @@ function curriculumAlignmentForTopic(topic) {
 }
 
 const FREE_LEVEL_COUNT = 10;
-/** TEMP local QA unlock (2026-08-05): 本地预览可进 11–200，不扣费。上线前改 false。
- *  生效：localhost / 127.0.0.1 / file|capacitor|app 协议 / ?localQa=1 / localStorage 开关。
+/** TEMP local QA unlock (2026-08-05): 本地预览可进 11–200，不扣费；TestFlight 必须保持 false。
+ *  若临时要测付费关，改 true 后仅 localhost / ?localQa=1 / localStorage 开关生效。
  *  例外：?vip-paid11 / ?localVip=0 仍走真实付费墙（给 e2e/自测保留）。
  */
-const TEMP_LOCAL_FULL_ACCESS = true;
+const TEMP_LOCAL_FULL_ACCESS = false;
 const LOCAL_QA_UNLOCK_KEY = 'baby-island-local-qa-unlock-v1';
 function isTempLocalUnlockEnabled() {
   if (TEMP_LOCAL_FULL_ACCESS !== true) return false;
@@ -126,18 +126,13 @@ function isTempLocalUnlockEnabled() {
     } catch (_) {}
     const host = String(location.hostname || '').toLowerCase();
     if (host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0' || host === '[::1]') return true;
-    const protocol = String(location.protocol || '').toLowerCase();
-    // file:// / Capacitor 预览 hostname 常为空
-    if (!host && (protocol === 'file:' || protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:')) {
-      return true;
-    }
     return false;
   } catch {
     return false;
   }
 }
 const DISPLAY_LEVEL_COUNT = 200;
-const APP_RELEASE_VERSION = '1.0.0';
+const APP_RELEASE_VERSION = '1.0.1';
 const APP_RELEASE_UPDATE_URL = 'app-release.json';
 const ASSET_PACK_MANIFEST_URL = 'asset-packs.json';
 const ASSET_PACK_STORAGE_KEY = 'baby-island-asset-packs-v1';

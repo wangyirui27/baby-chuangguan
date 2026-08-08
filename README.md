@@ -26,6 +26,7 @@ open ios/BabyEnglishIsland.xcodeproj
 ```
 
 `ios/Config/Team.xcconfig` 填 `DEVELOPMENT_TEAM`；生产 API 写入 `ios/BabyEnglishIsland/shell-config.json` 的 `apiBase`（HTTPS，无尾 `/`）。
+TestFlight 默认 `TEMP_LOCAL_FULL_ACCESS=false`，本地壳不会绕过 11 关以后的付费墙。
 
 ## 后端
 

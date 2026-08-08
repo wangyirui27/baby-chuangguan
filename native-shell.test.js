@@ -8,6 +8,7 @@ const exists = (file) => fs.existsSync(path.join(__dirname, file));
 
 test('iOS shell implements the H5 purchase and release-update bridges', () => {
   assert.ok(exists('ios/BabyEnglishIsland.xcodeproj/project.pbxproj'));
+  assert.ok(exists('ios/BabyEnglishIsland.xcodeproj/xcshareddata/xcschemes/BabyEnglishIsland.xcscheme'));
   assert.ok(exists('ios/BabyEnglishIsland/AppDelegate.swift'));
   assert.ok(exists('ios/BabyEnglishIsland/ViewController.swift'));
   assert.ok(exists('ios/BabyEnglishIsland/Info.plist'));
@@ -15,6 +16,7 @@ test('iOS shell implements the H5 purchase and release-update bridges', () => {
   const appDelegate = read('ios/BabyEnglishIsland/AppDelegate.swift');
   const viewController = read('ios/BabyEnglishIsland/ViewController.swift');
   const project = read('ios/BabyEnglishIsland.xcodeproj/project.pbxproj');
+  const scheme = read('ios/BabyEnglishIsland.xcodeproj/xcshareddata/xcschemes/BabyEnglishIsland.xcscheme');
 
   assert.match(appDelegate, /@main/);
   assert.match(appDelegate, /IslandViewController\(\)/);
@@ -56,6 +58,8 @@ test('iOS shell implements the H5 purchase and release-update bridges', () => {
   assert.match(viewController, /window\.babyIslandIAPComplete/);
   assert.match(project, /Copy H5 app/);
   assert.match(project, /tools\/pack-app-www\.sh/);
+  assert.match(scheme, /BlueprintIdentifier = "A10000000000000000000060"/);
+  assert.match(scheme, /buildForArchiving = "YES"/);
   assert.match(project, /Assets\.xcassets/);
   assert.match(project, /PrivacyInfo\.xcprivacy/);
   assert.match(project, /shell-config\.json/);
@@ -136,6 +140,9 @@ test('release audit tracks whether the iOS shell can be build-verified', () => {
   assert.match(audit, /BABY_ISLAND_API_BASE/);
   assert.match(audit, /shell-config\.json/);
   assert.match(audit, /testflightContentReady/);
+  assert.match(audit, /TEMP_LOCAL_FULL_ACCESS/);
+  assert.match(audit, /assetPackPlaceholders/);
+  assert.match(audit, /scriptReleaseVersion/);
   assert.match(audit, /mathStoryVideoCoverage/);
   assert.match(audit, /mathStoryVideos/);
   assert.match(audit, /math-story mp4 count/);

@@ -244,7 +244,7 @@ def main() -> int:
     cat_path = ROOT / "data" / "content-catalog.json"
     old = json.loads(cat_path.read_text(encoding="utf-8")) if cat_path.exists() else {}
     oss = old.get("oss") or {
-        "publicBaseUrl": "https://cdn.example.hirota.test",
+        "publicBaseUrl": "https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com",
         "keyPrefix": "assets/video",
         "bucket": "",
         "endpoint": "",
