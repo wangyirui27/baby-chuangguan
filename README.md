@@ -1,6 +1,6 @@
 # 嗨洛塔（HIROTA）少儿启蒙
 
-iOS WKWebView 壳 + H5 闯关（英语地图 / 数学小桌）。  
+iOS WKWebView 壳 + H5 闯关（英语地图 / 数学小桌）。
 Bundle ID：`com.baobaoenglish.island`
 
 ## 快速开始（Web）
@@ -13,9 +13,8 @@ npm test
 
 ## iOS / TestFlight
 
-内容包门禁与打包步骤见：
-
-- **开发人员交接（打包用）** → [`docs/dev-handoff-testflight.md`](docs/dev-handoff-testflight.md)
+- **总交接（给接手 AI / 全量现状）** → [`docs/handoff-testflight-full-2026-08-07.md`](docs/handoff-testflight-full-2026-08-07.md)
+- 开发人员交接（打包用） → [`docs/dev-handoff-testflight.md`](docs/dev-handoff-testflight.md)
 - 工程清单 → [`docs/testflight-checklist.md`](docs/testflight-checklist.md)
 - 内测冒烟 → [`docs/testflight-smoke.md`](docs/testflight-smoke.md)
 
@@ -35,4 +34,4 @@ open ios/BabyEnglishIsland.xcodeproj
 ## 仓库约定
 
 - 不提交：`.env`、本地 `data/*.json`、截图、AI 中间态（`_gen` / `_dreamina-raw`）、付费课全量 mp4
-- 进 TF 包：runtime + 英语 L01–10 + 数学运行时资源（见 `tools/pack-app-www.sh`）
+- 进 TF 包：runtime + 海岛/沙漠 L01–10 + 数学运行时资源（见 `tools/pack-app-www.sh`）
