@@ -49,6 +49,7 @@ npm test
 
 npm run testflight:preflight
 # 预期：[testflight-preflight] git-tracked assets ocean=10 desert=10 math=31 mathThemeAudio=31
+#      [assert-testflight-bundle-media] OK files=... mp4=51 mp3=31 sizeMiB=...
 #      [testflight-preflight] seeds ocean=10 desert=10 math=31 mathThemeAudio=31
 #      [testflight-preflight] plist+icon gate OK
 #      [testflight-preflight] OK
@@ -153,7 +154,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | 目录/对账 | `data/content-catalog.json`（400 levels）、`data/workbench-level-video-map.json` |
 | pack 脚本 | `tools/pack-app-www.sh`：非视频运行时 + shell loop + 双图前 10 + 数学 story 31；L11+ 不进包 |
 | 审计 | `tools/audit-readiness.mjs`：双图种子 + 数学 story + OSS 真链 + 付费墙开关 + 版本 + 占位 URL + TF content 字段 |
-| 一键预检 | `npm run testflight:preflight`：无 Xcode 跑测试、readiness、pack、plist/scheme 语法 |
+| 一键预检 | `npm run testflight:preflight`：无 Xcode 跑测试、readiness、pack、pack 后媒体 magic/LFS/体积、plist/scheme 语法 |
 | 干净交接验证 | `npm run testflight:verify-handoff`：从已提交 HEAD 克隆干净副本、重装依赖并跑完整预检 |
 | GitHub 预检 | `.github/workflows/testflight-preflight.yml`：已启用无 Apple 密钥门禁；`docs/testflight-github-actions-template.yml` 保留为源模板 |
 | GitHub 接手单 | `.github/ISSUE_TEMPLATE/testflight-handoff.yml`：给有 Xcode/Apple 权限的同事记录 commit、Actions 绿勾、Archive/Upload 与真机冒烟结果；不得填写凭据 |
@@ -178,6 +179,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | Export | `ios/ExportOptions-TestFlight.plist`（teamID 占位模板；ship 生成临时副本） |
 | 发船 | `tools/ship-testflight.sh`：check / archive / upload / open；可选 ASC API Key 无人值守上传；`BUILD_NUMBER=4` 可临时递增 build |
 | 预检 | `tools/testflight-preflight.sh` |
+| pack 后媒体门禁 | `tools/assert-testflight-bundle-media.mjs` |
 | Archive 静态契约 | `tools/assert-ios-archive-contract.mjs`；也可跑 `bash tools/ship-testflight.sh --static-check`，不需要 Xcode |
 | 签名变量 | `docs/testflight-secrets.md` |
 | H5 API | `auth/apiClient.js` 读 `window.BABY_ISLAND_API_BASE`，strip 尾 `/`；有 apiBase 时不走 local mock；native 壳注入 `BABY_ISLAND_DISABLE_LOCAL_MOCK` |

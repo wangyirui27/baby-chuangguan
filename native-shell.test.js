@@ -82,6 +82,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.ok(exists('ios/Config/Shared.xcconfig'));
   assert.ok(exists('ios/ExportOptions-TestFlight.plist'));
   assert.ok(exists('tools/assert-ios-archive-contract.mjs'));
+  assert.ok(exists('tools/assert-testflight-bundle-media.mjs'));
   assert.ok(exists('tools/testflight-preflight.sh'));
   assert.ok(exists('tools/verify-testflight-handoff.sh'));
   assert.ok(exists('tools/scan-no-apple-secrets.sh'));
@@ -164,6 +165,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(preflight, /email-like asset filename/);
   assert.match(preflight, /missing asset filename/);
   assert.match(preflight, /bash tools\/pack-app-www\.sh/);
+  assert.match(preflight, /node tools\/assert-testflight-bundle-media\.mjs "\$OUT"/);
   assert.match(preflight, /probe:asset-packs -- --dry-run --sample 12/);
   assert.match(preflight, /ocean_count/);
   assert.match(preflight, /desert_count/);
@@ -175,6 +177,15 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(preflight, /verified_commit=\$sha/);
   assert.match(preflight, /bundle_id=com\.baobaoenglish\.island/);
   assert.match(preflight, /preflight=OK/);
+  const bundleMediaGate = read('tools/assert-testflight-bundle-media.mjs');
+  assert.match(bundleMediaGate, /git-lfs\.github\.com\/spec\/v1/);
+  assert.match(bundleMediaGate, /assets\/video\/free-levels/);
+  assert.match(bundleMediaGate, /assets\/video\/desert-levels/);
+  assert.match(bundleMediaGate, /assets\/video\/math-story/);
+  assert.match(bundleMediaGate, /assets\/audio\/math-story-theme/);
+  assert.match(bundleMediaGate, /raw\.subarray\(4, 8\)\.equals\(MP4_FTYP\)/);
+  assert.match(bundleMediaGate, /280 \* 1024 \* 1024/);
+  assert.match(bundleMediaGate, /520 \* 1024 \* 1024/);
   const secretScan = read('tools/scan-no-apple-secrets.sh');
   assert.match(secretScan, /forbidden tracked signing\/secret path/);
   assert.match(secretScan, /ios\/Config\/Team\.xcconfig/);
@@ -202,6 +213,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(readme, /ship-testflight\.sh --static-check/);
   assert.match(devHandoff, /testflight:verify-handoff/);
   assert.match(devHandoff, /assert-ios-archive-contract\.mjs/);
+  assert.match(devHandoff, /assert-testflight-bundle-media\.mjs/);
   assert.match(fullHandoff, /testflight:verify-handoff/);
   assert.match(githubWorkflow, /name: TestFlight Preflight/);
   assert.match(githubWorkflow, /npm run testflight:preflight/);
@@ -228,8 +240,10 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(fullHandoff, /npm ci --prefix apps\/frontend/);
   assert.match(fullHandoff, /TESTFLIGHT_HANDOFF_CARD/);
   assert.match(fullHandoff, /assert-ios-archive-contract\.mjs/);
+  assert.match(fullHandoff, /assert-testflight-bundle-media\.mjs/);
   assert.match(fullHandoff, /git-tracked assets ocean=10 desert=10 math=31 mathThemeAudio=31/);
   assert.match(read('docs/testflight-checklist.md'), /assert-ios-archive-contract\.mjs/);
+  assert.match(read('docs/testflight-checklist.md'), /assert-testflight-bundle-media\.mjs/);
   assert.doesNotMatch(githubWorkflow, /lfs: true/);
   assert.doesNotMatch(githubWorkflow, /ASC_KEY|DEVELOPMENT_TEAM|APP_STORE_CONNECT|p8/);
   assert.doesNotMatch(enabledGithubWorkflow, /ASC_KEY|DEVELOPMENT_TEAM|APP_STORE_CONNECT|p8/);
