@@ -81,6 +81,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.ok(exists('ios/Config/Team.xcconfig.example'));
   assert.ok(exists('ios/Config/Shared.xcconfig'));
   assert.ok(exists('ios/ExportOptions-TestFlight.plist'));
+  assert.ok(exists('tools/assert-ios-archive-contract.mjs'));
   assert.ok(exists('tools/testflight-preflight.sh'));
   assert.ok(exists('tools/verify-testflight-handoff.sh'));
   assert.ok(exists('tools/scan-no-apple-secrets.sh'));
@@ -122,6 +123,9 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(ship, /authenticationKeyPath/);
   assert.match(ship, /cleanup_asc_key_tmp/);
   assert.match(ship, /ASC_KEY_TMP_CREATED=1/);
+  assert.match(ship, /--static-check/);
+  assert.match(ship, /assert-ios-archive-contract\.mjs/);
+  assert.match(ship, /scan-no-apple-secrets\.sh/);
   assert.match(ship, /run_handoff_preflight/);
   assert.match(ship, /npm run testflight:preflight/);
   assert.match(ship, /do_archive\(\)[\s\S]*?need_xcode[\s\S]*?run_handoff_preflight/);
@@ -138,6 +142,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(exportOptions, /<key>signingStyle<\/key>\s*<string>automatic<\/string>/);
 
   const preflight = read('tools/testflight-preflight.sh');
+  const archiveContract = read('tools/assert-ios-archive-contract.mjs');
   const githubWorkflow = read('docs/testflight-github-actions-template.yml');
   const enabledGithubWorkflow = read('.github/workflows/testflight-preflight.yml');
   const testflightIssue = read('.github/ISSUE_TEMPLATE/testflight-handoff.yml');
@@ -150,6 +155,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(preflight, /need_node_modules "apps\/backend" "npm ci --prefix apps\/backend"/);
   assert.match(preflight, /need_node_modules "apps\/frontend" "npm ci --prefix apps\/frontend"/);
   assert.match(preflight, /bash tools\/scan-no-apple-secrets\.sh/);
+  assert.match(preflight, /node tools\/assert-ios-archive-contract\.mjs/);
   assert.match(preflight, /npm test/);
   assert.match(preflight, /node tools\/audit-readiness\.mjs/);
   assert.match(preflight, /git ls-files 'assets\/video\/math-story\/\*\.mp4'/);
@@ -175,6 +181,13 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(secretScan, /\*\.mobileprovision/);
   assert.match(secretScan, /PRIVATE KEY/);
   assert.match(secretScan, /real-looking DEVELOPMENT_TEAM/);
+  assert.match(archiveContract, /app-release\.json/);
+  assert.match(archiveContract, /app-store-connect/);
+  assert.match(archiveContract, /PRODUCT_BUNDLE_IDENTIFIER/);
+  assert.match(archiveContract, /CODE_SIGN_STYLE/);
+  assert.match(archiveContract, /buildForArchiving = "YES"/);
+  assert.match(archiveContract, /teamID must stay YOUR_TEAM_ID placeholder/);
+  assert.match(archiveContract, /manageAppVersionAndBuildNumber must be false/);
   assert.match(preflight, /plistlib\.load/);
   assert.match(preflight, /struct\.unpack\('>IIBB'/);
   assert.match(preflight, /plist\+icon gate OK/);
@@ -186,7 +199,9 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(verifyHandoff, /npm ci --prefix apps\/frontend/);
   assert.match(verifyHandoff, /npm run testflight:preflight/);
   assert.match(readme, /testflight:verify-handoff/);
+  assert.match(readme, /ship-testflight\.sh --static-check/);
   assert.match(devHandoff, /testflight:verify-handoff/);
+  assert.match(devHandoff, /assert-ios-archive-contract\.mjs/);
   assert.match(fullHandoff, /testflight:verify-handoff/);
   assert.match(githubWorkflow, /name: TestFlight Preflight/);
   assert.match(githubWorkflow, /npm run testflight:preflight/);
@@ -212,7 +227,9 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(devHandoff, /testflight-readiness-<sha>/);
   assert.match(fullHandoff, /npm ci --prefix apps\/frontend/);
   assert.match(fullHandoff, /TESTFLIGHT_HANDOFF_CARD/);
+  assert.match(fullHandoff, /assert-ios-archive-contract\.mjs/);
   assert.match(fullHandoff, /git-tracked assets ocean=10 desert=10 math=31 mathThemeAudio=31/);
+  assert.match(read('docs/testflight-checklist.md'), /assert-ios-archive-contract\.mjs/);
   assert.doesNotMatch(githubWorkflow, /lfs: true/);
   assert.doesNotMatch(githubWorkflow, /ASC_KEY|DEVELOPMENT_TEAM|APP_STORE_CONNECT|p8/);
   assert.doesNotMatch(enabledGithubWorkflow, /ASC_KEY|DEVELOPMENT_TEAM|APP_STORE_CONNECT|p8/);

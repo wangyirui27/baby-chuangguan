@@ -48,6 +48,7 @@ OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
 | Shared scheme `BabyEnglishIsland.xcscheme` | ✅ |
 | `ExportOptions-TestFlight.plist` | ✅（teamID 占位；ship 使用临时副本写入） |
 | `tools/ship-testflight.sh` | ✅ check / archive / upload / open |
+| `tools/assert-ios-archive-contract.mjs` | ✅ 无 Xcode 静态校验 Bundle / 版本 / scheme / ExportOptions / Build Phase |
 | `tools/testflight-preflight.sh` | ✅ 无 Xcode 内容/壳门禁一键预检 |
 | GitHub Actions 预检 | ✅ `.github/workflows/testflight-preflight.yml` 已启用；只跑无凭据内容/壳门禁，不代表已 Archive/Upload |
 | `docs/testflight-secrets.md` | ✅ Team ID / ASC API Key 环境变量契约 |

@@ -29,6 +29,7 @@ npm ci --prefix apps/frontend
 xcode-select -p   # 应含 Xcode.app
 npm test          # 应 383 pass
 node tools/audit-readiness.mjs   # testflightContentReady: true；contentTestflightGaps: []
+bash tools/ship-testflight.sh --static-check   # 无 Xcode 静态检查：Bundle/版本/ExportOptions/签名模板
 bash tools/pack-app-www.sh /tmp/hirota-www-check
 npm run testflight:preflight
 npm run testflight:verify-handoff   # 可选：从已提交 HEAD 干净克隆后重跑完整预检
@@ -66,6 +67,7 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 | `ios/BabyEnglishIsland/shell-config.json` | `apiBase`（内容内测可空）+ `allowLocalMockLogin`（内容内测显式 mock 登录） |
 | `ios/ExportOptions-TestFlight.plist` | TF 导出模板（ship 脚本生成临时带 teamID 的副本） |
 | `tools/ship-testflight.sh` | check / archive / upload / open |
+| `tools/assert-ios-archive-contract.mjs` | 无 Xcode 静态校验 Bundle、版本、scheme、ExportOptions、Build Phase |
 | `tools/testflight-preflight.sh` | 无 Xcode 内容/壳门禁一键预检；含关键视频/主题音 Git 跟踪计数 |
 | `tools/verify-testflight-handoff.sh` | 从已提交 HEAD 干净克隆、重装依赖并跑完整 TF 预检 |
 | `tools/scan-no-apple-secrets.sh` | 防止误提交 Team ID、`.p8`、证书、provisioning profile、IPA |

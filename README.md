@@ -29,6 +29,7 @@ npm ci
 npm ci --prefix backend
 npm ci --prefix apps/backend
 npm ci --prefix apps/frontend
+bash tools/ship-testflight.sh --static-check
 bash tools/pack-app-www.sh /tmp/hirota-www-check
 npm run testflight:preflight
 npm run testflight:verify-handoff

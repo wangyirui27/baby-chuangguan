@@ -42,6 +42,7 @@ need_node_modules "apps/backend" "npm ci --prefix apps/backend"
 need_node_modules "apps/frontend" "npm ci --prefix apps/frontend"
 
 bash tools/scan-no-apple-secrets.sh
+node tools/assert-ios-archive-contract.mjs
 npm test
 node tools/audit-readiness.mjs
 if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then

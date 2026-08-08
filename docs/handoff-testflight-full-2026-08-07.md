@@ -178,6 +178,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | Export | `ios/ExportOptions-TestFlight.plist`（teamID 占位模板；ship 生成临时副本） |
 | 发船 | `tools/ship-testflight.sh`：check / archive / upload / open；可选 ASC API Key 无人值守上传；`BUILD_NUMBER=4` 可临时递增 build |
 | 预检 | `tools/testflight-preflight.sh` |
+| Archive 静态契约 | `tools/assert-ios-archive-contract.mjs`；也可跑 `bash tools/ship-testflight.sh --static-check`，不需要 Xcode |
 | 签名变量 | `docs/testflight-secrets.md` |
 | H5 API | `auth/apiClient.js` 读 `window.BABY_ISLAND_API_BASE`，strip 尾 `/`；有 apiBase 时不走 local mock；native 壳注入 `BABY_ISLAND_DISABLE_LOCAL_MOCK` |
 | 版本提示 | `app-release.json` latestVersion `1.0.1`，商店搜词嗨洛塔 |

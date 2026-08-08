@@ -2,6 +2,7 @@
 # 嗨洛塔 → TestFlight 一键发船（需完整 Xcode + 已登录 Apple ID + Team）
 # 用法:
 #   bash tools/ship-testflight.sh                  # 检查 + 引导
+#   bash tools/ship-testflight.sh --static-check   # 无 Xcode 静态检查
 #   bash tools/ship-testflight.sh --archive        # Archive
 #   bash tools/ship-testflight.sh --upload         # Archive + 导出上传
 #   DEVELOPMENT_TEAM=XXXXXXXX bash tools/ship-testflight.sh --upload
@@ -275,6 +276,23 @@ open_xcode() {
   grn "已打开 Xcode 工程。手动路径: Signing 选 Team → Product → Archive → Distribute App → App Store Connect → Upload"
 }
 
+static_check() {
+  grn "Static TestFlight handoff check..."
+  (cd "$ROOT" && bash tools/scan-no-apple-secrets.sh)
+  (cd "$ROOT" && node tools/assert-ios-archive-contract.mjs)
+  local asc_status
+  asc_status="$(asc_key_status)"
+  case "$asc_status" in
+    INCOMPLETE|MISSING_FILE)
+      red "ASC API Key 配置不完整: $asc_status"
+      exit 2
+      ;;
+  esac
+  echo "ASC API Key: $asc_status"
+  echo "Build: $(marketing_version) ($(current_build_number))"
+  grn "Static check OK"
+}
+
 cmd="${1:-check}"
 case "$cmd" in
   check|--check|"")
@@ -287,11 +305,12 @@ case "$cmd" in
       ylw "内容包已就绪。本机还差: 完整 Xcode + Apple 登录证书 + Team ID（apiBase 建议生产 HTTPS，内容内测可暂空）。"
     fi
     ;;
+  --static-check|static-check) static_check ;;
   --archive|archive) do_archive ;;
   --upload|upload) do_upload ;;
   --open|open) open_xcode ;;
   *)
-    echo "usage: $0 [--check|--archive|--upload|--open]"
+    echo "usage: $0 [--check|--static-check|--archive|--upload|--open]"
     exit 2
     ;;
 esac
