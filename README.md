@@ -6,7 +6,10 @@ Bundle ID：`com.baobaoenglish.island`
 ## 快速开始（Web）
 
 ```bash
-npm install
+npm ci
+npm ci --prefix backend
+npm ci --prefix apps/backend
+npm ci --prefix apps/frontend
 npm test
 # 静态预览：用任意静态服务器打开仓库根目录 index.html
 ```
@@ -21,6 +24,10 @@ npm test
 - 内测冒烟 → [`docs/testflight-smoke.md`](docs/testflight-smoke.md)
 
 ```bash
+npm ci
+npm ci --prefix backend
+npm ci --prefix apps/backend
+npm ci --prefix apps/frontend
 bash tools/pack-app-www.sh /tmp/hirota-www-check
 npm run testflight:preflight
 npm run probe:asset-packs -- --dry-run  # 可选：只列 OSS 样本 URL，不联网

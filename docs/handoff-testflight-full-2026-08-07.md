@@ -38,13 +38,18 @@
 ## 1. 本机刚刚复测（接手后请再跑一遍）
 
 ```bash
-cd /Users/yr/嗨洛塔少儿启蒙APP   # 或 clone 后的 baby-chuangguan
-git pull origin main
+git clone https://github.com/wangyirui27/baby-chuangguan.git
+cd baby-chuangguan
+npm ci
+npm ci --prefix backend
+npm ci --prefix apps/backend
+npm ci --prefix apps/frontend
 npm test
 # 预期：tests 383 · pass 383 · fail 0
 
 npm run testflight:preflight
-# 预期：[testflight-preflight] seeds ocean=10 desert=10 math=31
+# 预期：[testflight-preflight] git-tracked assets ocean=10 desert=10 math=31 mathThemeAudio=31
+#      [testflight-preflight] seeds ocean=10 desert=10 math=31
 #      [testflight-preflight] OK
 
 node tools/audit-readiness.mjs

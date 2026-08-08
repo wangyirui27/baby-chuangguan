@@ -26,6 +26,7 @@
 | 品牌 嗨洛塔 / 禁英语岛开通VIP | ✅ |
 | `npm test` | ✅ 383 pass |
 | `node tools/audit-readiness.mjs` | ✅ `testflightContentReady=true` 且 `contentTestflightGaps=[]`；`uploadBlockers` 是 Xcode/Team |
+| `npm run testflight:preflight` | ✅ 断言 Git 跟踪种子资源：海岛 10、沙漠 10、数学视频 31、数学主题音 31 |
 | `npm run probe:asset-packs -- --dry-run` | ✅ 可选 OSS URL 抽检入口；默认不联网 |
 | Build | **1.0.1 (3)** |
 
@@ -58,7 +59,7 @@ OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
 
 ## C 苹果（你/开发者）
 
-GitHub 接手验收口令：先跑 `npm run testflight:preflight`，再用有 Xcode 的 Mac 执行 `DEVELOPMENT_TEAM=... bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`。
+GitHub 接手验收口令：fresh clone 后先跑 `npm ci && npm ci --prefix backend && npm ci --prefix apps/backend && npm ci --prefix apps/frontend`，再跑 `npm run testflight:preflight`；随后用有 Xcode 的 Mac 执行 `DEVELOPMENT_TEAM=... bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`。
 
 1. Apple Developer 登录 + Team ID
 2. ASC 建 App：`com.baobaoenglish.island`，名 **嗨洛塔**

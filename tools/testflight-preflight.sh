@@ -27,8 +27,42 @@ for bin in node npm rsync python3; do
   }
 done
 
+need_node_modules() {
+  local dir="$1"
+  local command_hint="$2"
+  if [[ ! -d "$dir/node_modules" ]]; then
+    echo "[testflight-preflight] missing dependencies in $dir: run $command_hint" >&2
+    exit 2
+  fi
+}
+
+need_node_modules "." "npm ci"
+need_node_modules "backend" "npm ci --prefix backend"
+need_node_modules "apps/backend" "npm ci --prefix apps/backend"
+need_node_modules "apps/frontend" "npm ci --prefix apps/frontend"
+
 npm test
 node tools/audit-readiness.mjs
+if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  check_git_count() {
+    local label="$1"
+    local actual="$2"
+    local expected="$3"
+    if [[ "$actual" != "$expected" ]]; then
+      echo "[testflight-preflight] $label git-tracked count=$actual want=$expected" >&2
+      exit 15
+    fi
+  }
+  git_ocean_count="$(git ls-files 'assets/video/free-levels/*.mp4' | wc -l | tr -d ' ')"
+  git_desert_count="$(git ls-files 'assets/video/desert-levels/*.mp4' | wc -l | tr -d ' ')"
+  git_math_story_count="$(git ls-files 'assets/video/math-story/*.mp4' | wc -l | tr -d ' ')"
+  git_math_theme_audio_count="$(git ls-files 'assets/audio/math-story-theme/*.mp3' | wc -l | tr -d ' ')"
+  check_git_count ocean "$git_ocean_count" 10
+  check_git_count desert "$git_desert_count" 10
+  check_git_count math-story "$git_math_story_count" 31
+  check_git_count math-theme-audio "$git_math_theme_audio_count" 31
+  echo "[testflight-preflight] git-tracked assets ocean=$git_ocean_count desert=$git_desert_count math=$git_math_story_count mathThemeAudio=$git_math_theme_audio_count"
+fi
 node <<'JS'
 const fs = require('node:fs');
 const path = require('node:path');

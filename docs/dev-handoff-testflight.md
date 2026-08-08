@@ -21,6 +21,10 @@
 ```bash
 git clone https://github.com/wangyirui27/baby-chuangguan.git
 cd baby-chuangguan && git pull
+npm ci
+npm ci --prefix backend
+npm ci --prefix apps/backend
+npm ci --prefix apps/frontend
 # 本机完整 Xcode（非仅 CLT）
 xcode-select -p   # 应含 Xcode.app
 npm test          # 应 383 pass
@@ -43,7 +47,7 @@ open ios/BabyEnglishIsland.xcodeproj
 `docs/testflight-github-actions-template.yml` 可由有 GitHub `workflow` 权限的同事复制到 `.github/workflows/testflight-preflight.yml`，在 `main` / PR 上跑同一套无凭据门禁。它不做 Archive / Upload，也不需要 Apple 密钥。
 启用：`bash tools/enable-testflight-workflow.sh`，再由有 `workflow` scope 的凭据提交 `.github/workflows/testflight-preflight.yml`。
 
-Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（约 382MB；含海岛+沙漠前 10 关 mp4、数学 story 31 条 mp4 + 31 条主题音 + `asset-packs.json`）。
+Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（约 382MB；含海岛+沙漠前 10 关 mp4、数学 story 31 条 mp4 + 31 条主题音 + `asset-packs.json`）。`npm run testflight:preflight` 也会检查这些种子资源已被 Git 跟踪，避免“本机有、clone 后没有”。
 
 ---
 
@@ -58,7 +62,7 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 | `ios/BabyEnglishIsland/shell-config.json` | `apiBase`（内容内测可空）+ `allowLocalMockLogin`（内容内测显式 mock 登录） |
 | `ios/ExportOptions-TestFlight.plist` | TF 导出模板（ship 脚本生成临时带 teamID 的副本） |
 | `tools/ship-testflight.sh` | check / archive / upload / open |
-| `tools/testflight-preflight.sh` | 无 Xcode 内容/壳门禁一键预检 |
+| `tools/testflight-preflight.sh` | 无 Xcode 内容/壳门禁一键预检；含关键视频/主题音 Git 跟踪计数 |
 | `tools/enable-testflight-workflow.sh` | 把 GitHub Actions 模板复制到 `.github/workflows/`；提交需 workflow scope |
 | `tools/pack-app-www.sh` | 打运行时 www |
 | `tools/audit-readiness.mjs` | TF 内容门禁：付费墙开关、版本、OSS 占位 URL、资源计数 |
