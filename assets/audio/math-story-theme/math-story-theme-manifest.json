@@ -1,0 +1,295 @@
+{
+  "version": "20260807-story-theme-v9-ep20-finish-ten",
+  "scriptVersion": "20260807-story-theme-v9-ep20-finish-ten",
+  "speaker": "zh_female_peiqi_uranus_bigtts",
+  "generated_at": "2026-08-07T05:45:35.929Z",
+  "entries": [
+    {
+      "id": "num-00",
+      "text": "嗨，我是零，圆圆，中间小洞",
+      "file": "assets/audio/math-story-theme/num-00.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 32301,
+      "sha256": "1143f85d84422e5a6f1d771ffe9532b8ec02c230c0cdfa2cee25716bccc2eef6"
+    },
+    {
+      "id": "num-01",
+      "text": "嗨，我是一，直直站高高",
+      "file": "assets/audio/math-story-theme/num-01.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 30957,
+      "sha256": "3a6875d2dcad7cef1867398b174294dd3e12ce4fd0e0f44f63317fc8a2353b42"
+    },
+    {
+      "id": "num-02",
+      "text": "嗨，我是二，上弯下平",
+      "file": "assets/audio/math-story-theme/num-02.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 27693,
+      "sha256": "2171d6a84bfff996d35909f7fea1732e87f1e5b6164fe601b5356085b5d55042"
+    },
+    {
+      "id": "num-03",
+      "text": "嗨，我是三，两道弯弯",
+      "file": "assets/audio/math-story-theme/num-03.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25965,
+      "sha256": "523ff46d1d585a83b14f89ac759de57fe1e8c77170a99f4223718d2e598acbab"
+    },
+    {
+      "id": "ep-05",
+      "text": "就我一个，也很棒",
+      "file": "assets/audio/math-story-theme/ep-05.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 18093,
+      "sha256": "ff6ec263320b7e688bdb0e919d87a7792abb2145ae74217aebbafec412ee36d7"
+    },
+    {
+      "id": "ep-01",
+      "text": "到，到，整齐啦",
+      "file": "assets/audio/math-story-theme/ep-01.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "f30e921f5aad5161a147cff8f5034d19e40e49fec1c8aa42b0adf2f2c56191c6"
+    },
+    {
+      "id": "ep-03",
+      "text": "两个，是我，还有你，一对",
+      "file": "assets/audio/math-story-theme/ep-03.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 32301,
+      "sha256": "692b5918d7b5d502b52b608bc0fc263483dda130f7ab0cb61cc014bf293997f0"
+    },
+    {
+      "id": "ep-04",
+      "text": "我们是三个，还是三个",
+      "file": "assets/audio/math-story-theme/ep-04.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "7d830f1aa109d8924894897ecdae2f54703c9e7e398961a4d0838de273d408ff"
+    },
+    {
+      "id": "ep-06",
+      "text": "变多了？还是三个",
+      "file": "assets/audio/math-story-theme/ep-06.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 19629,
+      "sha256": "c599596d9c93602b8743ed8e742ffd6b40a8ab76e7ceaab7f84e350cebbd27c4"
+    },
+    {
+      "id": "num-04",
+      "text": "嗨，我是四，开口加一竖",
+      "file": "assets/audio/math-story-theme/num-04.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 29037,
+      "sha256": "47582716aed0d08629f34047687ed38daa5e4b06604f50f1f3bb3e172c957223"
+    },
+    {
+      "id": "ep-02",
+      "text": "一，二，三，四，全亮啦",
+      "file": "assets/audio/math-story-theme/ep-02.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 32301,
+      "sha256": "02e0e60cf0c494f8bf7ddcdd2ad9bba29d9fbc5a36a0ecfeef7f010dcb40a4bb"
+    },
+    {
+      "id": "num-05",
+      "text": "嗨，我是五，平顶圆肚",
+      "file": "assets/audio/math-story-theme/num-05.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25965,
+      "sha256": "10bdd69b08bdf3bb51064f9ce1f7c8179260f4cf607d71c91a14b6d2866aa065"
+    },
+    {
+      "id": "ep-12",
+      "text": "一二三四五",
+      "file": "assets/audio/math-story-theme/ep-12.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 18093,
+      "sha256": "b379e95d0720d9ae4b16de75d501228c1ded408114f8a967b8d5a2cf345fdb29"
+    },
+    {
+      "id": "ep-08",
+      "text": "少了一个，又齐啦",
+      "file": "assets/audio/math-story-theme/ep-08.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 19629,
+      "sha256": "5c37ab3d3afa0ec6f7fd4332c03b9881d0d3abaa6b620eed9ca66fdcf282b77e"
+    },
+    {
+      "id": "ep-11",
+      "text": "只要三个，三个到齐",
+      "file": "assets/audio/math-story-theme/ep-11.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 21357,
+      "sha256": "831922593967b4bb04dd101f49503b3e5ff06bd2e13ebfb450d0b4d8c37e8846"
+    },
+    {
+      "id": "ep-09",
+      "text": "一二三，一样多",
+      "file": "assets/audio/math-story-theme/ep-09.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 19629,
+      "sha256": "e19696b6cd3e4d0e44f5e3211090dc385788059efcfe1eaa2bc54ed9f90eae63"
+    },
+    {
+      "id": "ep-07",
+      "text": "这边多，沉下去了",
+      "file": "assets/audio/math-story-theme/ep-07.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 19629,
+      "sha256": "136ad4b88b3435b882732347ab220c23d7b2a90e2a751cdb8f7078b3828e8705"
+    },
+    {
+      "id": "ep-10",
+      "text": "一样多",
+      "file": "assets/audio/math-story-theme/ep-10.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 11757,
+      "sha256": "6abf1a767a621ae8c10eb672f5a7a6e286ff9ebfb995aae7e97f00af02728979"
+    },
+    {
+      "id": "ep-13",
+      "text": "只要两个，耶两个",
+      "file": "assets/audio/math-story-theme/ep-13.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 22701,
+      "sha256": "f606132cb54c30a37f4f570f116e969f273503810dd08e1a8eb15c42b6c5c63d"
+    },
+    {
+      "id": "ep-14",
+      "text": "三个满员",
+      "file": "assets/audio/math-story-theme/ep-14.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 13101,
+      "sha256": "46d06efb0599986cc92d89a6742fe37b57c2c8e8f858f11d94fc8e74e54f8daf"
+    },
+    {
+      "id": "ep-15",
+      "text": "刚好四个",
+      "file": "assets/audio/math-story-theme/ep-15.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 11757,
+      "sha256": "225c6a9d3d934a5a274036b824411e8e268ffbbc304307b870e79eac3628242d"
+    },
+    {
+      "id": "ep-16",
+      "text": "还差点，满啦",
+      "file": "assets/audio/math-story-theme/ep-16.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 16173,
+      "sha256": "2bf3f8a773d409c6dda6868b6a9ad01981f68872139ff135e8bdb6bdd25af086"
+    },
+    {
+      "id": "ep-17",
+      "text": "五个手拉手，又是五个",
+      "file": "assets/audio/math-story-theme/ep-17.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 21357,
+      "sha256": "640958b8f1c2be0669707c7c31528c1ffa4a66a6666c35d0f17eaf9e2cf91f30"
+    },
+    {
+      "id": "num-06",
+      "text": "嗨，我是六，大圆在下面",
+      "file": "assets/audio/math-story-theme/num-06.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 29229,
+      "sha256": "3c7e74a7fd1e3622d603d5ed04e6dbba62fdb1aebb9e4c2c7cab19ae57cb77fa"
+    },
+    {
+      "id": "num-07",
+      "text": "嗨，我是七，横一笔斜一脚",
+      "file": "assets/audio/math-story-theme/num-07.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 32493,
+      "sha256": "4d71c41ce5b6419757ef5ea54952df8947deb410bb5a24ec4be57e46eb76e733"
+    },
+    {
+      "id": "num-08",
+      "text": "嗨，我是八，上圆下圆",
+      "file": "assets/audio/math-story-theme/num-08.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 29229,
+      "sha256": "ad8c5d3ee10366675bbda4cccb62d874a72dcf7c7bc6031c79dddea6af9d9fb4"
+    },
+    {
+      "id": "num-09",
+      "text": "嗨，我是九，大圆在上面",
+      "file": "assets/audio/math-story-theme/num-09.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 25965,
+      "sha256": "defb78be0cdffaf15c432da94fd8cb0c42ea879428e6b1db50643cd103d74a49"
+    },
+    {
+      "id": "num-10",
+      "text": "我是一，我是零，我们是十，手拉手",
+      "file": "assets/audio/math-story-theme/num-10.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 32493,
+      "sha256": "a1a3cec80a444a56f193567be4f7aaa2f202a6be1398fefb709190acd3a6b683"
+    },
+    {
+      "id": "ep-18",
+      "text": "十个满啦",
+      "file": "assets/audio/math-story-theme/ep-18.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 11757,
+      "sha256": "561f141bef0f10c724a32e8a12eba5a527c325b15819ac0be4c32915d4ed1729"
+    },
+    {
+      "id": "ep-19",
+      "text": "后面是谁，我是五",
+      "file": "assets/audio/math-story-theme/ep-19.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 19629,
+      "sha256": "145a7af76834725402b3157415fa99af6e13d60c797d96145a25fadc21e39f53"
+    },
+    {
+      "id": "ep-20",
+      "text": "到啦，终点是十",
+      "file": "assets/audio/math-story-theme/ep-20.mp3",
+      "speaker": "zh_female_peiqi_uranus_bigtts",
+      "status": "generated",
+      "size": 18093,
+      "sha256": "7d4db5f13121aa576daefc4d3766760f5ac4ae464d22655c9998f5abad100bae"
+    }
+  ],
+  "summary": {
+    "total": 31,
+    "generated": 0,
+    "skipped": 31,
+    "available": 31,
+    "failed": 0,
+    "not_attempted": 0
+  }
+}

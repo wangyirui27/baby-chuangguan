@@ -11,7 +11,7 @@
 | 交付 | 说明 |
 |------|------|
 | TestFlight 构建 | Archive → App Store Connect → 内测组可装 |
-| 内容验收 | 海岛/沙漠 **前 10 关** + 数学 story **31 条**离线可玩；购买/VIP/内测授权后 **L11+** 联网可播 OSS 课视频 |
+| 内容验收 | 海岛/沙漠 **前 10 关** + 数学 story **31 条视频与 31 条主题音**离线可玩；购买/VIP/内测授权后 **L11+** 联网可播 OSS 课视频 |
 | （可选）登录联调 | 仅当产品给了生产 `apiBase` |
 
 ---
@@ -29,6 +29,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 npm run testflight:preflight
 
 # 一键（推荐）
+# 会先自动跑 npm run testflight:preflight，再 Archive/Upload
 DEVELOPMENT_TEAM=你的TeamID bash tools/ship-testflight.sh --upload
 # 若 ASC 已有同版本 build，再临时递增：
 # DEVELOPMENT_TEAM=你的TeamID BUILD_NUMBER=4 bash tools/ship-testflight.sh --upload
@@ -39,7 +40,7 @@ open ios/BabyEnglishIsland.xcodeproj
 # Product → Archive → Distribute App → App Store Connect → Upload
 ```
 
-Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（约 382MB；含海岛+沙漠前 10 关 mp4、数学 story 31 条 mp4 + `asset-packs.json`）。
+Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（约 382MB；含海岛+沙漠前 10 关 mp4、数学 story 31 条 mp4 + 31 条主题音 + `asset-packs.json`）。
 
 ---
 
@@ -86,7 +87,7 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 
 ## 内容与网络
 
-- **包内**：海岛 `assets/video/free-levels/level-01…10` + 沙漠 `assets/video/desert-levels/level-001…010` + 数学 `assets/video/math-story/*.mp4`（31 条）
+- **包内**：海岛 `assets/video/free-levels/level-01…10` + 沙漠 `assets/video/desert-levels/level-001…010` + 数学 `assets/video/math-story/*.mp4`（31 条）+ `assets/audio/math-story-theme/*.mp3`（31 条）
 - **OSS**（需网络）：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com/assets/video/{desert|ocean}/…`；`asset-packs.json` 不应再出现 `cdn.example` / localhost 占位
 - **付费墙**：`TEMP_LOCAL_FULL_ACCESS=false`；TestFlight file:// / capacitor 壳不应自动解锁 11 关以后
 - **apiBase 空**：不阻塞内容内测；登录/云存进度不可用
@@ -106,6 +107,6 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 
 - 启动显示 **嗨洛塔**，不是英语岛
 - 海岛 L1–10、沙漠 L1–10 无网可进课视频
-- 数学地图 story 短片无网可播，不出现空播/fallback
+- 数学地图 story 短片与主题音无网可播，不出现空播/fallback
 - 未购买/未授权时 L11+ 不被本地壳放行；购买/VIP/内测授权后 L11+ 有网从 OSS 加载可播
 - 设置/关于：版本 **1.0.1 (3)**（以实际上传 build 为准）

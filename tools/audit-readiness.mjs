@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const { levels, TEMP_LOCAL_FULL_ACCESS } = require('../script.js');
+const { collectMathStoryThemeUtterances, levels, TEMP_LOCAL_FULL_ACCESS } = require('../script.js');
 const wordManifest = require('../assets/audio/words/word-audio-manifest.json');
 
 const expectedFirstTen = [
@@ -295,6 +295,45 @@ function mathStoryVideoCoverage() {
 }
 
 const mathStoryVideos = mathStoryVideoCoverage();
+
+function mathStoryThemeAudioCoverage() {
+  const expected = 31;
+  const fallback = { expected, listed: 0, missing: expected, localBytes: 0, firstMissing: ['script'] };
+  try {
+    const entries = collectMathStoryThemeUtterances();
+    const missing = [];
+    let localBytes = 0;
+    for (const entry of entries) {
+      const rel = String(entry.file || '').trim();
+      if (!rel) {
+        missing.push(String(entry.id || 'unknown'));
+        continue;
+      }
+      const file = join(ROOT, rel);
+      if (!existsSync(file)) {
+        missing.push(rel);
+        continue;
+      }
+      const size = statSync(file).size;
+      if (size <= 0) {
+        missing.push(rel);
+        continue;
+      }
+      localBytes += size;
+    }
+    return {
+      expected,
+      listed: entries.length,
+      missing: missing.length + Math.max(0, expected - entries.length),
+      localBytes,
+      firstMissing: missing.slice(0, 5),
+    };
+  } catch {
+    return fallback;
+  }
+}
+
+const mathStoryThemeAudio = mathStoryThemeAudioCoverage();
 const desertSeedMissing = [];
 for (let id = 1; id <= 10; id += 1) {
   // filenames come from DESERT_FREE_LEVEL_VIDEOS in script; existence via glob
@@ -338,6 +377,9 @@ const hardFailures = [
   ...(mathStoryVideos.listed !== mathStoryVideos.expected || mathStoryVideos.missing
     ? [`数学 story 短片未就绪：manifest ${mathStoryVideos.listed}/${mathStoryVideos.expected}，本地缺 ${mathStoryVideos.missing} 个。`]
     : []),
+  ...(mathStoryThemeAudio.listed !== mathStoryThemeAudio.expected || mathStoryThemeAudio.missing
+    ? [`数学 story 主题音未就绪：script ${mathStoryThemeAudio.listed}/${mathStoryThemeAudio.expected}，本地缺 ${mathStoryThemeAudio.missing} 个。`]
+    : []),
   ...(nonNounTopicLevels.length ? [`仍有 ${nonNounTopicLevels.length} 关属于颜色/数字/动作，不是高频名词关。`] : []),
   ...(nonNounWordLevels.length ? [`仍有 ${nonNounWordLevels.length} 个非名词词条：${nonNounWordLevels.map((level) => `${level.id}:${level.title}`).join(', ')}。`] : []),
   ...(staleHundredMentions().map((file) => `${file} 仍有 100 levels 文档残留。`)),
@@ -379,6 +421,7 @@ const result = {
     missingFirstTenVideos: missingFirstTenVideos.length,
     desertSeedMissing: desertSeedMissing.length,
     mathStoryVideos,
+    mathStoryThemeAudio,
     assetPackPlaceholders,
     remoteCourseVideos: remoteCoverage,
     nonNounWords: nonNounWordLevels.length,

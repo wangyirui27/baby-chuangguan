@@ -85,6 +85,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.ok(exists('docs/iap-product-ids.md'));
   assert.ok(exists('docs/testflight-smoke.md'));
   assert.ok(exists('assets/video/math-story/math-story-video-manifest.json'));
+  assert.ok(exists('assets/audio/math-story-theme/math-story-theme-manifest.json'));
 
   const info = read('ios/BabyEnglishIsland/Info.plist');
   const launchLogoContents = read('ios/BabyEnglishIsland/Assets.xcassets/LaunchLogo.imageset/Contents.json');
@@ -108,6 +109,9 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(ship, /ASC_KEY_ID/);
   assert.match(ship, /ASC_ISSUER_ID/);
   assert.match(ship, /authenticationKeyPath/);
+  assert.match(ship, /run_handoff_preflight/);
+  assert.match(ship, /npm run testflight:preflight/);
+  assert.match(ship, /do_archive\(\)[\s\S]*?need_xcode[\s\S]*?run_handoff_preflight/);
   assert.match(ship, /provisioning_updates_enabled/);
   assert.match(ship, /BUILD_NUMBER/);
   assert.doesNotMatch(ship, /\n\s*sudo xcode-select/);
@@ -125,6 +129,8 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(preflight, /ocean_count/);
   assert.match(preflight, /desert_count/);
   assert.match(preflight, /math_story_count/);
+  assert.match(preflight, /math_theme_audio_count/);
+  assert.match(preflight, /mathThemeAudio=\$math_theme_audio_count/);
   assert.match(preflight, /seeds ocean=\$ocean_count desert=\$desert_count math=\$math_story_count/);
   assert.match(preflight, /AppIcon-1024\.png must not contain alpha/);
 
@@ -149,6 +155,12 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
     assert.ok(exists(entry.dest), `missing ${entry.dest}`);
     assert.ok(fs.statSync(path.join(__dirname, entry.dest)).size > 0, `empty ${entry.dest}`);
   }
+  const mathThemeManifest = JSON.parse(read('assets/audio/math-story-theme/math-story-theme-manifest.json'));
+  assert.equal(mathThemeManifest.entries.length, 31);
+  for (const entry of mathThemeManifest.entries) {
+    assert.ok(exists(entry.file), `missing ${entry.file}`);
+    assert.ok(fs.statSync(path.join(__dirname, entry.file)).size > 0, `empty ${entry.file}`);
+  }
 });
 
 test('native pack script keeps only seed videos and runtime map assets', () => {
@@ -161,11 +173,12 @@ test('native pack script keeps only seed videos and runtime map assets', () => {
   assert.match(packScript, /assets\/video\/desert-levels\/level-010-\*\.mp4/);
   assert.match(packScript, /assets\/video\/math-story\/\*\.mp4/);
   assert.match(packScript, /math-story mp4 count=\$math_story_count want=31/);
+  assert.match(packScript, /math-story theme mp3 count=\$math_theme_audio_count want=31/);
   assert.match(packScript, /non-seed course video found in bundle/);
   assert.match(packScript, /raw-v2/);
   assert.match(packScript, /candidates/);
   assert.match(packScript, /front-ocean-v1-video/);
-  assert.match(packScript, /ocean L01-10\+desert L001-010\+math-story x31 in/);
+  assert.match(packScript, /ocean L01-10\+desert L001-010\+math-story x31\+theme-audio x31 in/);
   assert.match(packScript, /_dreamina\*/);
   assert.match(packScript, /runtime asset gate OK/);
 });
@@ -191,5 +204,7 @@ test('release audit tracks whether the iOS shell can be build-verified', () => {
   assert.match(audit, /projectBuildNumbers/);
   assert.match(audit, /mathStoryVideoCoverage/);
   assert.match(audit, /mathStoryVideos/);
+  assert.match(audit, /mathStoryThemeAudio/);
   assert.match(audit, /math-story mp4 count/);
+  assert.match(audit, /数学 story 主题音未就绪/);
 });

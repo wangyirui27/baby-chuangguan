@@ -4,7 +4,7 @@
 # 包体铁律（产品确认）：
 # 1) 非视频的基本运行时素材必须打进 App（音频、图标、地图 UI 图、数学道具、Lottie、品牌…）
 # 2) 课程闯关教学 mp4：仅种子 L01–L10 进包；付费/后续关走下载或 CDN（不塞整库）
-# 3) 数学地图 31 条 story waypoint mp4：当前播放路径是包内 assets/video/math-story，必须进包
+# 3) 数学地图 31 条 story waypoint mp4 + 31 条主题音：当前播放路径是包内 assets/video/math-story 与 assets/audio/math-story-theme，必须进包
 # 4) 地图氛围 loop（海洋/沙漠背景循环、骆驼 alpha）算「壳层体验」仍进包（体积可控）
 # 5) 生成草稿 / raw / candidates / _dreamina / _gen 等绝不准进包
 #
@@ -152,6 +152,11 @@ if [[ "$math_story_count" != "31" ]]; then
   echo "[pack-app-www] FAIL: math-story mp4 count=$math_story_count want=31" >&2
   exit 13
 fi
+math_theme_audio_count="$(find "$OUT/assets/audio/math-story-theme" -maxdepth 1 -type f -name '*.mp3' 2>/dev/null | wc -l | tr -d ' ')"
+if [[ "$math_theme_audio_count" != "31" ]]; then
+  echo "[pack-app-www] FAIL: math-story theme mp3 count=$math_theme_audio_count want=31" >&2
+  exit 14
+fi
 
 # fail if non-seed course video leaked (free ocean L01-10 + desert L001-010 + math-story allowed)
 if find "$OUT/assets/video" -type f 2>/dev/null \
@@ -258,4 +263,4 @@ PY
 
 echo "[pack-app-www] OK -> $OUT"
 du -sh "$OUT" "$OUT/assets" 2>/dev/null || true
-echo "[pack-app-www] basics(non-video)+shell loops+ocean L01-10+desert L001-010+math-story x31 in; L11+ OSS/asset-packs; drafts/raw out"
+echo "[pack-app-www] basics(non-video)+shell loops+ocean L01-10+desert L001-010+math-story x31+theme-audio x31 in; L11+ OSS/asset-packs; drafts/raw out"

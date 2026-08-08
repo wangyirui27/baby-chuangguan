@@ -153,7 +153,10 @@ assets/math-map/quiz/wood-digits/_preview*
 assets/math-map/quiz/wood-digits/_qa*
 assets/math-map/quiz/wood-digits/*-v[1-6].webp
 assets/math-map/props/_gen*/
-assets/audio/math-story-theme/
+assets/audio/math-story-theme/*
+!assets/audio/math-story-theme/
+!assets/audio/math-story-theme/*.mp3
+!assets/audio/math-story-theme/math-story-theme-manifest.json
 docs/curriculum/table-tricks-s1/
 output/
 screenshots/

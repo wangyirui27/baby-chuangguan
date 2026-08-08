@@ -151,6 +151,11 @@ make_export_options() {
   echo "$EXPORT_OPTS_WORK"
 }
 
+run_handoff_preflight() {
+  grn "GitHub handoff preflight..."
+  (cd "$ROOT" && npm run testflight:preflight)
+}
+
 preflight() {
   echo "=== A 内容 ==="
   (cd "$ROOT" && node tools/audit-readiness.mjs)
@@ -178,6 +183,7 @@ preflight() {
 
 do_archive() {
   need_xcode
+  run_handoff_preflight
   local tid
   tid="$(team_id)"
   [[ -n "$tid" ]] || { red "无 Team ID"; exit 1; }

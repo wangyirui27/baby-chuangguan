@@ -59,9 +59,11 @@ bash tools/pack-app-www.sh "$OUT"
 ocean_count="$(find "$OUT/assets/video/free-levels" -maxdepth 1 -type f -name 'level-*.mp4' | wc -l | tr -d ' ')"
 desert_count="$(find "$OUT/assets/video/desert-levels" -maxdepth 1 -type f -name 'level-*.mp4' | wc -l | tr -d ' ')"
 math_story_count="$(find "$OUT/assets/video/math-story" -maxdepth 1 -type f -name '*.mp4' | wc -l | tr -d ' ')"
+math_theme_audio_count="$(find "$OUT/assets/audio/math-story-theme" -maxdepth 1 -type f -name '*.mp3' | wc -l | tr -d ' ')"
 test "$ocean_count" = "10"
 test "$desert_count" = "10"
 test "$math_story_count" = "31"
+test "$math_theme_audio_count" = "31"
 
 if command -v plutil >/dev/null 2>&1; then
   plutil -lint \
@@ -83,5 +85,5 @@ if command -v ruby >/dev/null 2>&1; then
 fi
 
 du -sh "$OUT" "$OUT/assets/video/math-story"
-echo "[testflight-preflight] seeds ocean=$ocean_count desert=$desert_count math=$math_story_count"
+echo "[testflight-preflight] seeds ocean=$ocean_count desert=$desert_count math=$math_story_count mathThemeAudio=$math_theme_audio_count"
 echo "[testflight-preflight] OK"
