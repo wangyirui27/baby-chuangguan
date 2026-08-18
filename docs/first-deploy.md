@@ -126,7 +126,7 @@ sudo systemctl status baobao-backend --no-pager
 |----|------|
 | Node | 20 LTS，`/usr/bin/node` |
 | 用户 | `baobao`，能 SSH 密钥登录 |
-| sudo | 免密 `systemctl restart baobao-backend`（包内 sudoers） |
+| sudo | 免密 `systemctl restart baobao-backend`（包内 sudoers）。**Actions 必做**，否则 restart 卡密码 |
 | 目录 | `/opt/apps/baobao/backend` 属主 `baobao:baobao` |
 | env | `/etc/baobao-backend.env` 640，**rsync 永不覆盖** |
 | 代码 | 仓根在 APP_DIR 下，存在 `backend/src/index.js` |
