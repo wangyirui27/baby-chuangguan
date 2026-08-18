@@ -115,10 +115,16 @@ else
 fi
 
 echo "==> restart baobao-backend"
-ssh_remote bash -s <<EOF
+ssh_remote bash -s <<'EOF'
 set -euo pipefail
-sudo systemctl restart baobao-backend
-sudo systemctl is-active baobao-backend
+if ! sudo -n systemctl restart baobao-backend; then
+  echo "sudo needs a password — GitHub Actions cannot type it." >&2
+  echo "On the server, install NOPASSWD (once):" >&2
+  echo "  sudo install -m 440 /opt/apps/baobao/backend/deploy/first-install/sudoers.baobao /etc/sudoers.d/baobao-backend" >&2
+  echo "  sudo visudo -c -f /etc/sudoers.d/baobao-backend" >&2
+  exit 1
+fi
+sudo -n systemctl is-active baobao-backend
 EOF
 
 echo "==> health acceptance ${REMOTE_HEALTH_URL}"
