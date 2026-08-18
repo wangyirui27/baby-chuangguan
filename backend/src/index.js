@@ -86,10 +86,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// ─── 静态文件 ────────────────────────────────────────
-app.use(express.static(path.resolve(__dirname, '..', '..')));
-
-// ─── 健康检查 ──────────────────────────────────────
+// ─── 健康检查（必须在 static 之前，避免被仓库根路径抢走）──
 app.get('/api/health', (_req, res) => {
   res.status(200).json({
     status: 'ok',
@@ -100,10 +97,12 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
-// 向后兼容
 app.get('/healthz', (_req, res) => {
   res.status(200).json({ status: 'ok' });
 });
+
+// ─── 静态文件 ────────────────────────────────────────
+app.use(express.static(path.resolve(__dirname, '..', '..')));
 
 // ─── 认证路由 ──────────────────────────────────────
 app.use('/api/auth', authRouter);

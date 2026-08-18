@@ -117,15 +117,23 @@ fi
 echo "==> restart baobao-backend"
 ssh_remote bash -s <<EOF
 set -euo pipefail
-if command -v systemctl >/dev/null 2>&1 && systemctl list-unit-files baobao-backend.service >/dev/null 2>&1; then
-  sudo systemctl restart baobao-backend || systemctl restart baobao-backend || true
-else
-  echo "No systemd unit baobao-backend — restart manually (see deploy/ecs/README.md)" >&2
-fi
+sudo systemctl restart baobao-backend
+sudo systemctl is-active baobao-backend
 EOF
 
 echo "==> health acceptance ${REMOTE_HEALTH_URL}"
 # 验收脚本只打印四个 backend 标识和 HTTP 状态，不打印生产响应体或凭据。
-ssh_remote "bash '${APP_DIR}/deploy/pipeline/verify-ecs.sh' '${REMOTE_HEALTH_URL}'"
+if ! ssh_remote "bash '${APP_DIR}/deploy/pipeline/verify-ecs.sh' '${REMOTE_HEALTH_URL}'"; then
+  echo "HEALTH failed — remote unit/journal (no secrets):" >&2
+  ssh_remote bash -s <<'EOF' || true
+set -euo pipefail
+echo "UNIT=$(systemctl is-active baobao-backend 2>/dev/null || echo unknown)"
+echo "PORT_PROBE=$(ss -ltn 2>/dev/null | awk 'NR==1 || /:3000|:8080|:80 /' || netstat -ltn 2>/dev/null | awk 'NR==1 || /:3000|:8080/')"
+curl -sS -m 5 -o /tmp/baobao-healthz.body -w 'HEALTHZ_HTTP=%{http_code}\n' http://127.0.0.1:3000/healthz || echo 'HEALTHZ_CURL_FAIL'
+# do not print response body
+sudo journalctl -u baobao-backend -n 40 --no-pager -o cat
+EOF
+  exit 1
+fi
 
 echo "PIPELINE_DEPLOY_OK"
