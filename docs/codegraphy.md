@@ -1,263 +1,361 @@
-# 宝宝闯关 (baby-island-quest) — Codegraphy
+# 嗨洛塔少儿启蒙 APP — Codegraphy
 
-> 模块依赖 + 数据流图。新 session 第一份读这个 + `~/.hermes/handoffs/baby-island-quest-*.md`。
->
-> 产品：3–6 岁英语启蒙闯关 H5（宝宝英语岛）。前后端分离 + **契约驱动**（OpenAPI 0.1.0 冻结 5 条 auth/health 路由）。
+> 模块依赖 + 数据流 + Graphify 读图。新 session：本文件 + `docs/TECH.md` + `docs/graphify-team/00-cursor-architecture.md`。  
+> 项目根：`/Users/yr/嗨洛塔少儿启蒙APP`  
+> 图快照：2026-08-13 · `/Users/yr/嗨洛塔少儿启蒙APP/graphify-out/README.md`  
+> 产品：3–6 岁启蒙闯关 H5（英语地图 / 数学小桌）。生产形态 = 根目录 SPA + `backend/` Express 同端口；iOS/Android WebView 壳 pack 同一份 www。
 
-## 1. 全局架构
+旧标题 `baby-island-quest` / 「宝宝闯关」仍是 npm 包名与部分文档别名。绝对路径以 **嗨洛塔少儿启蒙APP** 为准。
+
+---
+
+## 0. 与 graphify-out 对齐的当前结构
+
+Graphify **不是**全仓库图。语料 = 代码/文档 286 文件；排除 `assets/**` 媒体、node_modules、output、`.git`。
+
+| 项 | 2026-08-13 |
+|----|------------|
+| files | 286 |
+| nodes | 3462 |
+| edges | 5743 |
+| communities | 240（报告展示 226） |
+| 抽取 | 91% EXTRACTED · 9% INFERRED |
+
+产出绝对路径：
+
+- `/Users/yr/嗨洛塔少儿启蒙APP/graphify-out/GRAPH_REPORT.md`
+- `/Users/yr/嗨洛塔少儿启蒙APP/graphify-out/graph.html`
+- `/Users/yr/嗨洛塔少儿启蒙APP/graphify-out/graph.json`
+- `/Users/yr/嗨洛塔少儿启蒙APP/graphify-out/wiki/index.md`
+
+图在说什么（读 hub 时先过滤 vendor/产物）：
+
+1. **生产巨石在根 `script.js`**，不是 `apps/frontend`。  
+2. **学习域中心在 `backend/src/learning.js`**，前端合并点 `mergeLearningStateFromCloud`。  
+3. **契约/测试社区很大**（`quiz.test.js`、`contract.test.js`、`e2e-auth-flow.mjs`）——仓内测试与生成器权重高于「干净业务分层」。  
+4. **`lottie.min.js` / `dist/script.js` 占最大社区** = 第三方与构建拷贝，**不是**产品架构中心。导航时跳过。
+
+---
+
+## 1. 全局架构（当前生产叙事）
 
 ```mermaid
 flowchart LR
-    subgraph 用户
-        BROWSER[浏览器<br/>H5 SPA]
-        CLI[npm scripts<br/>TTS / 测试]
-    end
+  subgraph 用户
+    BROWSER[浏览器 H5]
+    IOS[iOS WKWebView]
+    AND[Android WebView]
+  end
 
-    subgraph 表现层_遗留根目录
-        HTML[index.html]
-        CSS[style.css]
-        JS[script.js<br/>课程/关卡/UI]
-        AUTH[auth/apiClient.js]
-    end
+  subgraph 生产表现层
+    HTML[index.html]
+    CSS[style.css]
+    JS[script.js]
+    AUTH[auth/apiClient.js]
+  end
 
-    subgraph 前端工作区
-        VITE[apps/frontend<br/>Vite :5173]
-        MOCK[mock-server<br/>:3001 fixtures]
-        FEAPI[src/api/client.js]
-    end
+  subgraph 生产后端
+    BE[backend/src/index.js Express]
+    AUTHBE[auth.js + db.js JSON默认]
+    LEARNBE[learning.js + factory]
+    ADMIN[admin-router.js]
+    CONTENT[content-catalog.js]
+  end
 
-    subgraph 契约层_SSOT
-        OAPI[packages/contracts<br/>openapi.yaml]
-        FIX[fixtures/schemas]
-        GEN[src/types msw dto]
-    end
+  subgraph 学习仓
+    IF[InsForge 默认]
+    MY[MySQL 显式 LEARNING_REPOSITORY=mysql]
+  end
 
-    subgraph 后端_双实现
-        LEGACY[backend/<br/>Express + 静态托管<br/>JSON 文件持久化]
-        NEWAPI[apps/backend/<br/>契约分层 API<br/>memory only]
-    end
+  subgraph 非生产
+    VITE[apps/frontend Vite]
+    NBE[apps/backend memory auth]
+    CTR[packages/contracts OpenAPI 0.1.0]
+  end
 
-    subgraph 外部
-        DOUBAO[(豆包 TTS<br/>火山引擎)]
-        SMS[(短信<br/>仅 development)]
-        DISK[(data/*.json<br/>音频 assets)]
-    end
-
-    BROWSER --> HTML
-    HTML --> JS
-    HTML --> AUTH
-    VITE --> HTML
-    VITE -->|proxy /api mock| MOCK
-    VITE -->|proxy /api real| NEWAPI
-    VITE -->|proxy /api real| LEGACY
-    AUTH --> VITE
-    FEAPI --> VITE
-    MOCK --> FIX
-    NEWAPI --> OAPI
-    LEGACY --> OAPI
-    LEGACY --> DISK
-    LEGACY --> SMS
-    NEWAPI --> SMS
-    CLI --> LEGACY
-    LEGACY -.->|批量预录| DOUBAO
-    OAPI --> GEN
+  BROWSER --> HTML
+  IOS --> HTML
+  AND --> HTML
+  HTML --> JS
+  HTML --> AUTH
+  AUTH -->|相对 /api/*| BE
+  BE --> AUTHBE
+  BE --> LEARNBE
+  BE --> ADMIN
+  BE --> CONTENT
+  LEARNBE --> IF
+  LEARNBE --> MY
+  VITE -.-> HTML
+  NBE --> CTR
 ```
 
-## 2. 一次完整登录的时序
+一体启动：`npm start` → `backend` 托管仓库根静态文件，同时提供 `/api/*`。这是本地验收与生产 ECS 的同一形状。
+
+非生产 Vite 可 proxy mock `:3001` 或 real `:3000`。`apps/backend` **没有** learning。real 联调应对准 `backend/`，不要假设契约后端能同步进度。
+
+---
+
+## 2. 社区 hub（GRAPH_REPORT 前列）
+
+来源：`/Users/yr/嗨洛塔少儿启蒙APP/graphify-out/GRAPH_REPORT.md` 「Community Hubs (Navigation)」与 wiki 体积序。下列按**读架构时的优先级**分组，不是盲目按社区体积。
+
+### 2.1 先读（业务真源）
+
+| Hub | 为何是中心 | wiki |
+|-----|------------|------|
+| `script.js` | 生产 SPA 巨石；wiki：82 nodes，333 connections | `/Users/yr/嗨洛塔少儿启蒙APP/graphify-out/wiki/script.js.md` |
+| `learning.js` | 生产 Learning HTTP；89 nodes 级社区 | `/Users/yr/嗨洛塔少儿启蒙APP/graphify-out/wiki/learning.js.md` |
+| `auth-service.js` / `auth.js` | 契约层 vs 生产 auth | wiki `auth-service.js.md` · `auth.js.md` |
+| `apiClient.js` | 前端唯一 `/api/*` 出口 | `apiClient.js.md` |
+| `db.js` | JSON/MySQL auth 仓 | `db.js.md` |
+| `content-catalog.js` | 运维内容目录 | `content-catalog.js.md` |
+| `mergeLearningStateFromCloud` | 本地进度与云快照合并 | 函数社区 |
+| `renderMap` / `normalizeMapWorldId` / `mathAssembleLevel` | 地图与数学关组装 | 多个同名社区，读最大那份 |
+| `openLoginDialogForce` | 登录门控 | 函数社区 |
+| `server.cjs` | frontend mock-server | 非生产 |
+
+### 2.2 体积大但不要当架构中心
+
+| Hub | 处理 |
+|-----|------|
+| `lottie.min.js` | vendor，130 nodes，跳过 |
+| `dist/script.js` | 构建/拷贝产物社区，生产入口仍是根 `script.js` |
+| `write-desert-workbench-prompts.cjs` 等生成器 | 内容产线，不是运行时 |
+| `quiz.test.js` / `audit-readiness.mjs` / 一堆 `qa-*.mjs` | 测试与门禁，边多因为断言引用面广 |
+| 中文文档社区（说明书、交接、审题） | 文档入图导致；架构以代码 hub 为准 |
+
+GRAPH_REPORT 原始前列（未过滤）：`lottie.min.js` → `dist/script.js` → `learning.js` → `script.js` → `quiz.test.js` → 生成器 / `audit-readiness.mjs` → `renderMap` → `mathAssembleLevel` → `normalizeMapWorldId` → `content-catalog.js` → `user.json` → `auth-service.js` → `contract.test.js` → `mergeLearningStateFromCloud` → `apiClient.js` → `db.js` …
+
+完整列表只在 `GRAPH_REPORT.md` 维护。本页不复制全部 240 社区。
+
+---
+
+## 3. 如何读 graph.html / wiki
+
+### 3.1 `graph.html`
+
+1. 用浏览器打开 `/Users/yr/嗨洛塔少儿启蒙APP/graphify-out/graph.html`（本地文件即可）。  
+2. 先按社区着色看团块，不要从 `lottie.min.js` 团块开始拖。  
+3. 搜索 `script.js`、`learning.js`、`apiClient.js`、`index.js`。  
+4. 边 = 引用/共现/推断。INFERRED 约占 9%，置信度均值 0.53——跨语言、跨文档边可能是弱提示，验证时回源文件。  
+5. `graph.json` 给 GraphRAG / 脚本，不给人读。
+
+### 3.2 wiki
+
+入口：`/Users/yr/嗨洛塔少儿启蒙APP/graphify-out/wiki/index.md`（社区按体积降序）。
+
+读法：
+
+1. index 点进社区文（如 `script.js.md`）。  
+2. 「Key Concepts」是该团块内高连接符号。  
+3. 「Relationships」是跨社区共享边——这是找「谁跟地图/登录/学习缠在一起」的最快路径。  
+4. 同名社区会有 `foo.md` 与 `foo_2.md`（Graphify 拆薄社区）。体积大的优先；不要合并当成一个文件。  
+5. 中文文件名社区来自 `docs/` 入图。要架构时回到代码 hub。
+
+Wiki 是导航，不是规范。规范以 `backend/src/*.js` 与 `auth/apiClient.js` 为准。
+
+---
+
+## 4. 与 2026-07 旧数字的差异
+
+旧 Graphify 团队文档（`docs/graphify-team/README.md`，更新栏 2026-07-21）写过：
+
+| 项 | 约 2026-07 | 2026-08-13 |
+|----|------------|------------|
+| 项目根写法 | `/Users/yr/宝宝闯关` | `/Users/yr/嗨洛塔少儿启蒙APP` |
+| 入图 files | 146（全库当时约 1146 含媒体） | **286** 代码/文档 |
+| nodes | **~1243** | **3462** |
+| edges | ~1961 | **5743** |
+| communities | 81 | **240** |
+
+**不是**业务突然变成 2.8 倍复杂。主因：
+
+1. **语料变大：** 7 月后仓内增加 iOS/Android 壳、大量 QA/`tools/qa-*.mjs`、数学 AI、运维台、交接 Markdown、生成器。Graphify 把文档和测试算节点。  
+2. **排除规则仍排除媒体，但代码/文档文件从 146 → 286。**  
+3. **抽取更碎：** 同一 `script.js` 拆出 `renderMap`、`mathAssembleLevel`、`normalizeMapWorldId` 等函数社区，节点数涨、社区数涨。  
+4. **vendor/产物入图：** `lottie.min.js`、`dist/script.js` 成为最大团块，7 月叙事几乎没把它们当 hub。
+
+因此：**禁止用 1243/81 当当前规模。** 对外与新 session 只用 2026-08-13 的 286 / 3462 / 5743 / 240。旧数字只用于解释「为什么 7 月整理文档里的图指数对不上」。
+
+7 月 codegraphy 还写「课程 200 关、进度、排行、我的页全在 `script.js` / localStorage、非后端」。**已过时。** 生产已有：
+
+- `GET|PUT /api/learning/state` 等（`learning.js`）  
+- `/api/me`、`/api/rankings`（`me-router.js`）  
+- `/api/admin` + 内容目录  
+
+本地 `localStorage`（如 `baby-island-preview-progress-v1`）仍在，作为离线/合并源，与云快照双写。合并逻辑在 `script.js` 的 `mergeLearningStateFromCloud` 社区。
+
+---
+
+## 5. 一次登录 + 学习同步（当前契约）
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    participant U as 用户
-    participant SPA as script.js
-    participant API as auth/apiClient
-    participant V as Vite proxy
-    participant BE as backend :3000
-    participant SMS as SMS Provider
-    participant DB as data/*.json 或 memory
+  autonumber
+  participant U as 用户
+  participant SPA as script.js
+  participant API as auth/apiClient.js
+  participant BE as backend :3000
+  participant SMS as SMS Provider
+  participant AUTHDB as data/*.json 或 MySQL
+  participant LEARN as InsForge 或 MySQL learning
 
-    U->>SPA: 点受限关卡
-    SPA->>SPA: getLevelAccess → login-required
-    SPA->>U: 打开短信登录弹窗
-    U->>SPA: 输入手机号 → 发送验证码
-    SPA->>API: sendVerificationCode(phone)
-    API->>V: POST /api/auth/send-code
-    V->>BE: 转发
-    BE->>BE: 校验/限流/冷却
-    BE->>SMS: send(phone, code)
-    Note over SMS: development: 终端打印 + debugCode
-    BE->>DB: 存 code 哈希
-    BE-->>API: 200 {success, debugCode?}
-    API-->>SPA: 显示开发验证码
-    U->>SPA: 输入验证码 → 登录
-    SPA->>API: verifyCode(phone, code)
-    API->>BE: POST /api/auth/verify-code
-    BE->>DB: 校验哈希/尝试次数
-    BE->>DB: 创建 user + session token
-    BE-->>API: 200 {token, user}
-    API->>API: setToken(token)
-    SPA->>SPA: account.isLoggedIn=true
-    SPA->>U: 进入关卡或支付门控
+  U->>SPA: 点受限关卡
+  SPA->>SPA: getLevelAccess
+  SPA->>U: 登录弹窗
+  U->>SPA: 手机号
+  SPA->>API: sendVerificationCode
+  API->>BE: POST /api/auth/send-code
+  BE->>SMS: send
+  BE->>AUTHDB: 验证码哈希
+  BE-->>API: 200
+  U->>SPA: 验证码
+  SPA->>API: verifyCode
+  API->>BE: POST /api/auth/verify-code
+  BE->>AUTHDB: user + session
+  BE-->>API: token
+  SPA->>API: saveLearningState
+  API->>BE: PUT /api/learning/state
+  BE->>LEARN: saveState
+  BE-->>SPA: snapshot
 ```
 
-## 3. 持久化 Schema
+同步写路径只有 **`PUT /api/learning/state`**。客户端：`auth/apiClient.js` 的 PUT。服务端：`learning.js` `router.put('/state')`。无第二条全量 snapshot POST。
+
+Learning 默认 InsForge；只有 `LEARNING_REPOSITORY=mysql` 才走 `MysqlLearningRepository`。
+
+---
+
+## 6. 持久化分域
 
 ```mermaid
 erDiagram
-    USERS ||--o{ SESSIONS : "userId"
-    USERS ||--o{ VERIFICATIONS : "phone"
+    USERS ||--o{ SESSIONS : userId
+    USERS ||--o{ VERIFICATIONS : phone
+    USERS ||--o| BABY_PROFILES : local_user_id
 
     USERS {
         string id PK
-        string normalizedPhone UK
-        string createdAt
-        string lastLoginAt
+        string normalizedPhone
     }
-
     SESSIONS {
         string token PK
         string userId FK
-        string createdAt
-        string expiresAt
-        bool revoked
     }
-
-    VERIFICATIONS {
-        string phone PK
-        string codeHash
-        int attempts
-        string expiresAt
-        string lastSentAt
-        int sendCount
+    BABY_PROFILES {
+        string id PK
+        string local_user_id UK
     }
 ```
 
-- **legacy `backend/`**：`data/users.json` / `sessions.json` / `verifications.json`（启动 load，写入后异步 save）
-- **`apps/backend/`**：`MemoryAuthRepository` 纯内存，无磁盘（未来 `DATABASE_URL` 边界未接通）
-- **客户端进度**：`localStorage` key `baby-island-preview-progress-v1`（无后端）
-- **登录标记**：`sessionStorage` `baby-island-preview-login` + token `baby-island-auth-token`
+| 域 | 默认 | 切换 | 代码 |
+|----|------|------|------|
+| Auth | JSON `data/users.json` 等 | `AUTH_REPOSITORY=mysql` | `/Users/yr/嗨洛塔少儿启蒙APP/backend/src/db.js` |
+| Learning | InsForge Postgres | `LEARNING_REPOSITORY=mysql` | factory + 两个 `*-learning-repository.js` |
+| 权益/排行账本 | JSON `data/entitlements.json` 等 | 无 factory | `entitlements.js` |
+| 内容目录 | `data/content-catalog.json` | OSS URL 元数据 | `content-catalog.js` |
+| 限流 | 内存 | `REDIS_URL` | `security.js` |
+| 客户端进度 | localStorage | 登录后 PUT state | `script.js` |
+| Token | sessionStorage `baby-island-auth-token` + cookie | 原生 `BABY_ISLAND_API_BASE` | `apiClient.js` |
 
-## 4. 运行模式对比
+表字段以 `/Users/yr/嗨洛塔少儿启蒙APP/docs/graphify-team/07-data-model.md` 与 `migrations/` 为准。
+
+---
+
+## 7. 运行模式
 
 ```mermaid
 flowchart TD
-    A[启动前端] --> B{模式}
-    B -->|npm run frontend:dev:mock| C[Vite mock<br/>proxy → :3001]
-    B -->|npm run frontend:dev:real| D[Vite real<br/>proxy → :3000]
-    B -->|npm start 根| E[backend 静态+API<br/>同端口 :3000]
-    C --> F[mock-server 读 fixtures]
-    D --> G{选哪个后端}
-    G -->|契约新栈| H[apps/backend]
-    G -->|生产/集成遗留| I[backend/]
-    E --> I
+  A[要跑什么] --> B{目的}
+  B -->|本地验收生产形状| E[npm start → backend :3000]
+  B -->|无后端画 UI| C[npm run frontend:dev:mock]
+  B -->|Vite + 真 API| D[frontend:dev:real 且另起 backend]
+  B -->|契约单测| F[apps/backend npm test]
+  E --> G[静态根目录 + /api 全量]
+  F --> H[仅 auth/health 内存]
 ```
 
 | 模式 | 前端 | API | 用途 |
 |------|------|-----|------|
-| mock 开发 | Vite :5173 | mock :3001 | 无后端 UI/契约联调 |
-| real 开发 | Vite :5173 | :3000 | 真 auth 联调 |
-| 一体启动 | 静态根目录 | `backend/` :3000 | 本地验收登录 + 静态资源 |
+| 一体 | Express 静态根 | `backend/` :3000 | **生产同构** |
+| Vite mock | :5173 | mock :3001 | 契约 fixtures，无学习同步 |
+| Vite real | :5173 | :3000 | 须起 `backend/`，不是 `apps/backend` 就能同步 learning |
 | 契约后端 | 任意 | `apps/backend` | 分层/contract 测试 |
+| 原生 | bundle `www/` | 壳注入 API base | TestFlight / APK |
 
-## 5. 鉴权/限流/异常路径
+---
 
-```mermaid
-flowchart TD
-    SEND[POST send-code] --> P{手机号合法?}
-    P -- 否 --> E400[PHONE_REQUIRED / INVALID_PHONE]
-    P -- 是 --> C{冷却 60s?}
-    C -- 是 --> E429C[COOLDOWN]
-    C -- 否 --> R{手机 5次/15min<br/>或 IP 20次/15min?}
-    R -- 超限 --> E429R[RATE_LIMITED / IP_RATE_LIMITED]
-    R -- 通过 --> SMS{SMS 可用?}
-    SMS -- 否 --> E503[SMS_UNAVAILABLE]
-    SMS -- 是 --> OK200[200 success + 可选 debugCode]
-
-    VERIFY[POST verify-code] --> V1{参数齐全?}
-    V1 -- 否 --> E400P[PARAMS_REQUIRED]
-    V1 -- 是 --> V2{码存在且未过期?}
-    V2 -- 否 --> EEXP[VERIFICATION_EXPIRED]
-    V2 -- 是 --> V3{码匹配?}
-    V3 -- 否 --> ATT{attempts < 3?}
-    ATT -- 否 --> EATT[ATTEMPTS_EXCEEDED 删码]
-    ATT -- 是 --> EINV[INVALID_CODE]
-    V3 -- 是 --> SESS[签发 64hex token<br/>HttpOnly cookie + body.token]
-```
-
-安全要点：验证码 SHA-256 存盘、一次性消费、日志手机号脱敏、统一错误文案「验证码错误或已过期」。
-
-## 6. 调用路径速查
+## 8. 调用路径速查
 
 | 场景 | 调用栈 |
 |------|--------|
-| 页面登录弹窗 | `script.js` 访问门控 → `window.babyIslandApi` (`auth/apiClient.js`) → `/api/auth/*` |
-| Vite mock API | `apps/frontend` Vite proxy → `src/mock-server/server.cjs` → fixtures |
-| 契约后端 HTTP | `apps/backend/src/server.js` → `app.js` → `transport/auth-router` → `service/auth-service` → `repository/memory-*` |
-| 遗留后端 HTTP | `backend/src/index.js` → `auth.js` → `db.js` + `sms-provider.js` |
-| 契约生成 | `npm run generate:contracts` → `tools/contracts/generate.mjs` → `packages/contracts/src/*` |
-| 单词 TTS 预录 | `backend` `npm run generate-word-audio` → 豆包 → `assets/audio/words/` |
-| 关卡判定 | `script.js` `getLevelAccess` / `applyQuizAnswer` / `normalizeProgress` |
+| 登录弹窗 | `script.js` 门控 → `window.babyIslandApi` → `/api/auth/*` → `backend/src/auth.js` |
+| 学习同步 | `apiClient.saveLearningState` → **`PUT /api/learning/state`** → `learning.js` → InsForge 或 MySQL |
+| 数学陪练 | `POST /api/learning/math-coach` → 默认 `localMathCoachPlan`；`MATH_COACH_AI_ENABLED=1` 才尝试远程 |
+| 我的权益 | `/api/me/entitlements` → `me-router.js` + `entitlements.js` |
+| 运维台 | `/admin` + `/api/admin/*` → `admin-router.js`，`ADMIN_TOKEN` |
+| 内容绑定 | `/api/admin/content/*` → `content-catalog.js` |
+| Vite mock | `apps/frontend` proxy → `src/mock-server/server.cjs` → contracts fixtures |
+| 契约 HTTP | `apps/backend/src/server.js` → auth-router → memory repo |
+| www 打包 | `tools/pack-app-www.sh` → iOS Archive `www/` 或 `android/.../assets/www` |
+| 契约生成 | `npm run generate:contracts` → `tools/contracts/generate.mjs` |
 
-## 7. 文件→模块反查表
+---
+
+## 9. 文件 → 模块反查
 
 ```
-宝宝闯关/
-├── index.html / style.css / script.js   # 主 SPA（无框架）：地图/关卡/测验/排行/我的
-├── auth/apiClient.js                    # 线上实际引用的 API 客户端
-├── apps/frontend/                       # Vite 工作区：dev 代理 + mock server + 双模式
-│   ├── vite.config.js                   # root=仓库根；proxy /api
-│   ├── scripts/switch-mode.cjs          # 写 .env.local → mock|real
-│   └── src/api/client.js                # 新版 client（与 auth/ 并行存在）
-├── apps/backend/                        # 契约分层 Express（memory，无静态站）
-├── backend/                             # 主集成后端：静态托管 + auth + TTS 工具链
-├── packages/contracts/                  # API 唯一真相源 openapi/schemas/fixtures + 生成物
-├── data/                                # 遗留后端 JSON 持久化
-├── assets/                              # 岛屿图、BGM、单词/音色音频
-├── doc/API_SPEC.md                      # 豆包 TTS 规格（非业务 API）
-├── tools/contracts/                     # generate + validate
-└── quiz.test.js 等                      # 根级 node:test 前端/生成器测试
+/Users/yr/嗨洛塔少儿启蒙APP/
+├── index.html / style.css / script.js / sw.js   # 生产 SPA
+├── auth/apiClient.js                            # 线上 API 客户端
+├── admin/                                       # 运维台页面
+├── backend/src/index.js                         # 生产 Express
+├── apps/frontend/                               # 非生产 Vite
+├── apps/backend/                                # 非生产契约 API
+├── packages/contracts/                          # OpenAPI 0.1.0（落后于生产 learning）
+├── ios/BabyEnglishIsland/                       # WKWebView 壳
+├── android/app/                                 # WebView 壳
+├── tools/pack-app-www.sh                        # www 打包
+├── data/                                        # JSON auth / 权益 / 目录
+├── migrations/                                  # InsForge Postgres DDL
+├── docs/TECH.md                                 # 技术总入口
+├── docs/graphify-team/                          # 00–12
+└── graphify-out/                                # 2026-08-13 图
 ```
 
-## 8. 依赖图（谁依赖谁）
+---
 
-```mermaid
-graph TD
-    SPA[script.js] --> Client[auth/apiClient.js]
-    Client --> Proxy[Vite / Express]
-    Proxy --> AppsBE[apps/backend]
-    Proxy --> LegacyBE[backend]
-    AppsBE --> Contract[packages/contracts]
-    LegacyBE --> Contract
-    Mock[mock-server] --> Fixtures[contracts/fixtures]
-    Generate[tools/contracts/generate.mjs] --> Contract
-    TTS[generate-*-tts.js] --> Doubao[豆包 openspeech]
-    SPA --> Local[localStorage 进度]
-    SPA --> Assets[assets 音频/图]
-```
+## 10. 踩坑
 
-## 9. 踩坑位置搜索指引
+| 症状 | 看哪里 |
+|------|--------|
+| 「服务未启动」 | 是否 `npm start` 起了 :3000；原生是否注入 `BABY_ISLAND_API_BASE`；CORS / `file://` |
+| 验证码对不上 | `SMS_PROVIDER=development`；终端 `[DEV SMS]`；勿用生产 SMS 配本地 |
+| 进度不同步 | 是否打了 **PUT** `/api/learning/state`；Learning kind 是否 `none`（缺 InsForge 又没 mysql） |
+| 学习同步 404 / 错方法 | 必须 `PUT /api/learning/state`；不要自造 learning 全量 POST |
+| 切了 MySQL 但 learning 仍 InsForge | 必须显式 `LEARNING_REPOSITORY=mysql`，有 `MYSQL_*` 不够 |
+| Auth 意外打到 RDS | 只有 `AUTH_REPOSITORY=mysql`；`npm test` 强制 json |
+| mock 与真后端字段不一致 | fixtures vs 生产 `learning.js`；OpenAPI 未覆盖 learning |
+| 两套 backend 行为漂移 | `npm start` 只跑 `backend/` |
+| 图上最大团是 lottie | 正常。业务从 `script.js` / `learning.js` 进 |
+| 文档路径 宝宝闯关 404 | 根是 `/Users/yr/嗨洛塔少儿启蒙APP` |
+| 原生缺视频 | 重新 `pack-app-www.sh`；L11+ 本就不进包 |
+| TTS 失败 | 预录工具凭据；运行时播的是 `assets/` 静态音，不是请求时豆包 |
 
-| 错误症状 | 看哪里 |
-|----------|--------|
-| 登录一直「服务未启动」 | 是否起了 :3000；Vite 是否 real 且 proxy 对；CORS/`file://` |
-| 验证码对不上 | `SMS_PROVIDER=development`；看后端终端 `[DEV SMS]`；`debugCode` 路径 |
-| mock 与真后端字段不一致 | `packages/contracts/fixtures` vs openapi；勿手改生成物 |
-| 改了 openapi 前后端类型没变 | `npm run generate:contracts` + validate |
-| 两套 backend 行为漂移 | `backend/` 有磁盘；`apps/backend/` 仅 memory；确认当前 `npm start` 指向 |
-| 第 11 关起被挡 | `getLevelAccess`：`levelId > FREE_LEVEL_COUNT && !vipActive` → 会员支付面板；VIP 后仍需对应课程资源已上线 |
-| 进度丢了 | `localStorage` key `baby-island-preview-progress-v1` |
-| TTS 鉴权失败 | `doc/API_SPEC.md`：`Authorization: Bearer;{token}` **分号**非空格 |
-| 真实短信 | **阿里云已接入代码**；填 env 即可 |
-| 静态资源 404 | 一体模式用 `backend` 静态根；Vite root 是仓库根 |
+---
 
-## 10. 冻结 API 一览（v0.1.0）
+## 11. 冻结 API 与生产扩展面
 
-| Method | Path | Auth |
-|--------|------|------|
-| GET | `/api/health` | 无 |
-| POST | `/api/auth/send-code` | 无 |
-| POST | `/api/auth/verify-code` | 无 |
-| GET | `/api/auth/session` | bearer / cookie |
-| POST | `/api/auth/logout` | bearer / cookie |
+契约包 v0.1.0 **冻结**：
 
-**非后端**：课程 200 关、进度、排行榜基础数据 + 当前宝宝本地排名、我的页资料 → 全在 `script.js` / localStorage。
+| Method | Path |
+|--------|------|
+| GET | `/api/health` |
+| POST | `/api/auth/send-code` |
+| POST | `/api/auth/verify-code` |
+| GET | `/api/auth/session` |
+| POST | `/api/auth/logout` |
+
+生产 `backend/` **额外**（未进 OpenAPI 0.1.0）：learning（含 **PUT** `/api/learning/state`）、`/api/me`、`/api/rankings`、`/api/admin`、`GET /healthz`。前端照样只走 `/api/*`，不绑云厂商 URL。
+
+详情：`/Users/yr/嗨洛塔少儿启蒙APP/docs/graphify-team/00-cursor-architecture.md`、`/Users/yr/嗨洛塔少儿启蒙APP/docs/backend-architecture.md`。

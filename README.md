@@ -1,7 +1,19 @@
 # 嗨洛塔（HIROTA）少儿启蒙
 
 iOS WKWebView 壳 + H5 闯关（英语地图 / 数学小桌）。
-Bundle ID：`com.baobaoenglish.island`
+Bundle ID：`com.modelisms.kids`
+
+## 产品 / 技术文档（2026-08-13）
+
+| 入口 | 路径 |
+|------|------|
+| 产品总入口 | [`docs/PRODUCT.md`](docs/PRODUCT.md) |
+| 技术总入口 | [`docs/TECH.md`](docs/TECH.md) |
+| Codegraphy | [`docs/codegraphy.md`](docs/codegraphy.md) |
+| 工程矩阵 00–12 | [`docs/graphify-team/README.md`](docs/graphify-team/README.md) |
+| Graphify 图 | [`graphify-out/GRAPH_REPORT.md`](graphify-out/GRAPH_REPORT.md) · [`graphify-out/graph.html`](graphify-out/graph.html) |
+
+生产真相：根目录 `index.html`+`script.js`+`style.css`；`npm start` → `backend/` 同端口静态+`/api/*`。学习同步 **`PUT /api/learning/state`**（无 upsert）。
 
 ## 快速开始（Web）
 

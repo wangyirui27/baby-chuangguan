@@ -1,260 +1,267 @@
-# 宝宝闯关 — 产品闭环与学习流程
+# 02 · 产品闭环与学习流程
 
-> 只读分析，不改业务代码。基于 `script.js`、`index.html`、`auth/apiClient.js`、`backend/src/learning.js`、`packages/contracts/openapi/openapi.yaml`、`docs/` 等源文件。审计日期 2026-07-21。
+> 品牌：嗨洛塔 / HiRota（npm `baby-island-quest`）  
+> 项目根：`/Users/yr/嗨洛塔少儿启蒙APP`  
+> 只读核验：`script.js`、`index.html`、`auth/apiClient.js`、`backend/src/learning.js`、`backend/src/index.js`、`backend/src/auth.js`、`backend/src/me-router.js`、`backend/src/learning-repository-factory.js`  
+> 审计日期：2026-08-13  
+> **禁止改业务 JS/CSS/后端**；本文件只描述已落地行为。  
+> 编号约定：04=deploy/ops · 06=frontend · 05=审计快照（见同目录 README）。
+
+---
+
+## 0. 30 秒结论
+
+| 点 | 事实 | 证据 |
+|----|------|------|
+| 生产 H5 | `index.html` + `script.js` + `style.css` | `/Users/yr/嗨洛塔少儿启蒙APP/index.html`；`package.json` name=`baby-island-quest` |
+| 生产 API | 根 `npm start` → `backend/`（静态根目录 + `/api/*`） | `package.json` `start`；`backend/src/index.js:90-122` |
+| 主闭环 | 登录 → 地图 → 视频/题 → 反馈 → learning 同步 | 下文 §1–§5 |
+| 同步 API | **`PUT /api/learning/state`**（完整 snapshot 保存；**路由层无 upsert 名**） | `auth/apiClient.js:415-416`；`backend/src/learning.js:159-167` |
+| Learning 默认 | 有 InsForge 凭据 → InsForge；**仅** `LEARNING_REPOSITORY=mysql`（或 `rds`）才 MySQL | `backend/src/learning-repository-factory.js:15-28` |
+| VIP | 英语图前 10 关免费；11–200 需本地图 VIP；**数学图不做 VIP 门控** | `script.js:110` `FREE_LEVEL_COUNT`；`getLevelAccess` `script.js:2062-2068` |
+| 非生产 | `apps/*` 非主入口；`apps/backend` 仅 auth/health 内存 | `apps/backend/README.md` |
 
 ---
 
 ## 1. 产品定位
 
-- 面向 3–6 岁幼儿（但不限死年龄段，年龄选填不拦截）的英语启蒙 H5
-- 核心体验：看视频 → 听单词 → 选答案 → 挣星星 → 解锁下一关
-- 平台：iPad 横屏为主，兼容移动浏览器
-- 当前状态：海岛地图 200 关已上线（前 10 关免费），沙漠地图 200 关内容已就绪，城堡地图 coming soon
+| 项 | 现行事实 |
+|----|----------|
+| 品牌 | 嗨洛塔少儿启蒙APP / HiRota |
+| 对象 | 家庭场景 3–6 岁启蒙（年龄选填，不硬拦） |
+| 形态 | iPad 横屏为主的 H5 + Capacitor/原生壳 IAP |
+| 学科 | **英语地图**（海岛词 + 沙漠句）+ **数学小桌**（计数/序数等） |
+| 关卡规模 | 每可玩地图 **200** 关（`DISPLAY_LEVEL_COUNT = 200`，`script.js:134`） |
 
 ---
 
-## 2. 学习闭环五环节
-
-### 2.1 输入目标
-
-用户在地图页看到当前关卡进度（已完成/总数），知道"下一关该做什么"。
-
-- 进度展示：地图顶栏圆形进度徽章（`renderCompactJourney`，script.js:1845）
-- 当前关高亮：`levelStatus` → `current`（script.js:1829 / 2022）
-- 下一关提示：答对后的反馈文案 `completionUnlockText`（script.js:568 / 733–740）
-
-### 2.2 练习
-
-练习 = 看视频 + 答题，一个关卡一轮。
-
-**视频阶段**（`data-stage-video`，script.js:2625）
-- 视频来源：`assets/video/free-levels/level-{id}-{word}.mp4`（前 10 关有手工视频）
-- 11 关起视频尚未制作，`lessonUnavailableMessage` 阻止进入（script.js:264）
-- 视频播放结束（`ended` 事件）→ 自动切入答题阶段（`showQuizStage`，script.js:3624）
-- 视频加载失败也放行（不卡死）
-- 用户可随时点"再看一遍"重新播放（`rewatchVideo`，script.js:3642）
-
-**答题阶段**（`data-stage-quiz`，script.js:2642 / 3184）
-- 题型一：2 选 1（正确单词 + 1 干扰项），适配幼儿大触控区
-- 干扰项从同一主题单元中取（`buildLevelsFromUnits`，script.js:170）
-- 每轮选项随机洗牌（`shuffle`，script.js:3338）
-- 题目文案：`小朋友，视频里学到的单词，哪一个是「{zhTitle}」的意思？`
-- 可点"听题目"按钮再听一遍（`speakQuestion`，script.js:2865）
-- 每个选项卡片有发音按钮（优先播放本地 MP3，fallback 到 `new Audio`）
-- 8 秒无操作触发 idle 提示动画 + Lottie 手指引导（`armIdleInvite`，script.js:2920）
-- 选择后必须点提交按钮确认（防误触）
-
-### 2.3 反馈
-
-| 场景 | 反馈行为 | 代码位置 |
-|------|----------|----------|
-| 选择选项 | 播放音效 + 发音 + Lottie 手指指向提交 | script.js:2984–2989 |
-| 答对 | 正确音效（上升三音）+ 正确音频 + Lottie 庆祝 + 进度更新 + 解锁下一关 | script.js:3547–3585 |
-| 答错 | 错误音效（下降两音）+ 错误音频 + 红色标记 + 3.4 秒后自动重来 | script.js:3586–3614 |
-| 超时无操作 | 选项闪烁提示 + 手指动画循环 | script.js:2920 |
-
-答对反馈内容包含：
-- 下一关解锁文案（`completionUnlockText`）
-- VIP 付费提示（如果下一关 > 10 且非 VIP）
-- 2.6 秒后自动播放正确单词发音（script.js:3581–3585）
-
-答错不惩罚：不扣分、不退关、清空选中状态、选项随机洗牌重新来。
-
-### 2.4 复习
-
-当前复习机制比较轻量：
-
-**错题本**（script.js:514–558）
-- 答错时自动记录到 `mistakeBook`：单词、错误选项、正确答案、错误次数、时间
-- 答对时自动从错题本移除（`resolveMistake`，script.js:557）
-- 最多保存 50 条（`normalizeMistakeBook`，script.js:535）
-- "我的"页展示待复习数量
-
-**已完成关卡可重做**
-- 已完成关卡状态变为 `completed` 但仍可点击进入
-- 重复答对不影响进度（已是 completed），只刷新完成日期
-- 重复答错会更新错题本记录
-
-**注意：当前没有独立的"阶段复习关"或"错题专项练习"模式。** 复习只能通过：
-1. 回到已完成的关卡重新做（地图上点任意已完成关）
-2. 在地图页点击单词发音按钮听单词
-
-### 2.5 进度沉淀
-
-进度数据流（双重存储）：
+## 2. 主闭环（编号固定，勿改序）
 
 ```
-答题结果 → 本地 localStorage（即时）→ 后端同步（600ms 延迟）
+① 登录  →  ② 地图  →  ③ 视频/题  →  ④ 反馈  →  ⑤ learning 同步
+                 ↑__________________________________|
 ```
 
-**本地存储 key（script.js:973–977）：**
-| key | 内容 |
-|-----|------|
-| `baby-island-preview-progress-v1` | 按世界分的完成关卡 + 解锁位置（`progressByWorld`） |
-| `baby-island-learning-activity-v1` | 学习日历（活跃日期数组） |
-| `baby-island-app-preferences-v1` | 设置（音乐、发音、中文提示、地图世界、宝宝档案、VIP） |
-| `baby-island-mistake-book-v1` | 错题本 |
+| 步 | 名称 | 用户感知 | 关键实现 |
+|----|------|----------|----------|
+| ① | 登录 | 手机号 + 验证码；新号自动注册 | `openLoginDialog` `script.js:4578`；`POST /api/auth/send-code` · `POST /api/auth/verify-code` · `GET /api/auth/session`（`backend/src/auth.js:155,326,472`） |
+| ② | 地图 | `#map` 海岛/沙漠/数学；底栏 ranking/mine 等 | `parseRouteHash` `script.js:2785-2794`；`renderMap` `script.js:6181`；`MAP_WORLDS` `script.js:1735-1800` |
+| ③ | 视频/题 | 英语：`#level-N` 先视频后 2 选 1；数学：地图内联关卡 | 英语 `renderDetail` `script.js:8591`；数学 `showInlineMathLevel` `script.js:5308`；入口 `requestLevelAccess` `script.js:5337` |
+| ④ | 反馈 | 对/错音效、庆祝、错题本、解锁文案 | `applyQuizAnswer` `script.js:1838`；`completionUnlockText` `script.js:2124`；错题 `normalizeMistakeBook`/`resolveMistake` `script.js:2015,2058` |
+| ⑤ | learning 同步 | 本地 localStorage 即时；登录后 600ms 防抖整包上传 | `persistLearningStateLocal` `script.js:3216`；`scheduleLearningSync`/`flushLearningSync` `script.js:3481-3500`；`api.saveLearningState` → **`PUT /api/learning/state`** |
 
-**后端同步（script.js:1061–1200）：**
-- `flushLearningSync`：600ms 防抖后批量上传快照（`learningSnapshot`）
-- `recordQuizAttemptSync`：每笔答题即时上报
-- `mergeLearningStateFromCloud`（script.js:1290）：本地 + 远程取并集（completed 取 max）
-- 同步前提：`learningSyncReady`（后端 session 有效）
+### 2.1 ① 登录
 
----
+| 项 | 事实 |
+|----|------|
+| UI | `<dialog class="login-dialog">`，文案「嗨洛塔少儿启蒙」 |
+| 客户端 | `auth/apiClient.js`：`sendCode` / `verifyCode` / `checkSession` / `logout` |
+| 后端挂载 | `app.use('/api/auth', authRouter)` · `backend/src/index.js:109` |
+| 同步门槛 | `hydrateLearningStateFromBackend` 要求 session 已登录后才 `learningSyncReady=true`（`script.js:3502-3533`） |
 
-## 3. 答题状态机
+### 2.2 ② 地图世界
 
-答题页面内部用一个局部变量 `quizState` 驱动（script.js:3229），共四个状态。严格串行，不可跳级：
+| worldId | 标题 | zone | 可玩 | 说明 |
+|---------|------|------|------|------|
+| `ocean` | 魔法海岛 | english | 是 | 词关；前 10 关包内视频 |
+| `desert` | 沙漠奇境 | english | 是 | 句/短语关 |
+| `math` | 数学小桌 | math | 是 | 地图内联答题；`usesVideoAssets: false` |
+| `castle` | 魔法城堡 | english | **comingSoon** | 占位 |
+| `math58` | 数学花园 | math | **comingSoon** | 占位 |
+| `math912` | 数学星塔 | math | **comingSoon** | 占位 |
+
+证据：`MAP_WORLDS` `script.js:1735-1800`。默认世界：`normalizeMapWorldId` 非法值回落 `ocean`（`script.js:2148-2149`）。
+
+**Hash 路由（生产前端）**
+
+| hash | type |
+|------|------|
+| `#` / `#map` | map |
+| `#level-{n}` | level |
+| `#ranking` `#mine` `#support` `#accuracy` | 同名 type |
+| `#privacy` `#terms` `#about` | info |
+| 其它 | not-found |
+
+证据：`parseRouteHash` `script.js:2785-2794`。
+
+### 2.3 ③ 视频 / 题
+
+#### 英语（ocean / desert）
+
+| 阶段 | DOM / 行为 | 证据 |
+|------|------------|------|
+| 进关 | `requestLevelAccess` → `navigate('level-N')` | `script.js:5337-5349` |
+| 渲染 | `renderDetail(level)`：`data-stage-video` → `data-stage-quiz` | `script.js:8591+` |
+| 题型 | **题型一**：正确项 + 1 干扰项（2 选项，大触控） | 注释与构造 `script.js:8600-8603` |
+| 题干 | 海岛：单词义；沙漠：哪一句在说「zhTitle」 | `questionPromptText` `script.js:2797-2811` |
+| 无视频 | 非本地 QA 解锁时走下载卡；本地预览可 `data-skip-to-quiz` | `script.js:8608-8630` 一带 |
+
+#### 数学（math）
+
+| 项 | 事实 | 证据 |
+|----|------|------|
+| 不进 `#level-N` 详情壳 | `renderDetail` 若 math 则改 `mapWorld=math` 并 `showInlineMathLevel` | `script.js:8591-8598` |
+| 进关 | `requestLevelAccess` → `showInlineMathLevel` | `script.js:5342-5347` |
+| 小片子 | 关前 story 路点（`mathStoryCleared`）；截图模式可 bypass | `script.js:5308-5326`；`shouldBypassMathStoryForCapture` |
+| 自适应 | 本地 `adaptMathLevel` + 可选 `POST /api/learning/math-coach` | `backend/src/learning.js:205-215`；`localMathCoachPlan` `learning.js:112-129` |
+
+### 2.4 ④ 反馈
+
+| 场景 | 行为 | 证据锚点 |
+|------|------|----------|
+| 判定 | `applyQuizAnswer(progress, levelId, selected, correct, total)` | `script.js:1838` |
+| 连续进度 | `normalizeProgress` 强制 completed 为 `1..N` 连续；断档截断 | `script.js:1817-1825` |
+| 通关写入 | `completeLevel`：仅 `levelId ≤ unlockedThrough` 才推进 | `script.js:1829+` |
+| 解锁文案 | `completionUnlockText`；下一关 paid → `paidAccessMessage` | `script.js:2124-2137`；`paidAccessMessage` `script.js:243` |
+| 错题本 | 答错写入 / 答对 `resolveMistake` 移除；规范化 `normalizeMistakeBook` | `script.js:2015,2058` |
+| 英语/数学 attempt 日志 | `englishAttempts` / `mathAttempts` 本地 key + 进 snapshot | `script.js:1146,1385,3226-3270,3198-3213` |
+
+答错：**不扣星、不退关**；需重答对才推进（连续解锁规则）。
+
+### 2.5 ⑤ learning 同步
 
 ```
-                    ┌─────────────────────────────────┐
-                    │           地图页 (#map)           │
-                    │  海岛 / 沙漠 / 城堡(coming soon)  │
-                    └──────┬──────────────────┬────────┘
-                           │                  │
-                    点击关卡                底部 tab
-                           │                  │
-                    ┌──────▼──────┐    ┌───────┴───────┐
-                    │ 关卡详情页  │    │ ranking / mine │
-                    │ (#level-N) │    │  / support     │
-                    └──────┬──────┘    └───────────────┘
-                           │
-                    ┌──────▼──────┐
-                    │  视频阶段   │
-                    │ (无 quizState)│
-                    └──────┬──────┘
-                           │ ended / error
-                    ┌──────▼──────┐
-                    │  答题阶段   │
-                    │ answering   │ ◄────────── 答错 3.4s 后重来
-                    └──────┬──────┘              │
-                           │ 选完 + 点提交        │
-                    ┌──────▼──────┐         ┌────┘
-                    │  judging    │     答错 │
-                    └──┬───────┬──┘         │
-                   正确      错误     ┌──────▼──────┐
-                     │         └─────→│ answering   │
-              ┌──────▼──┐             │ (洗牌重出题) │
-              │ correct │             └─────────────┘
-              │ 庆祝动画 │
-              │ 返回地图 │
-              └─────────┘
+答题/偏好变更
+  → persistLearningStateLocal()          // 即时 localStorage
+  → scheduleLearningSync()               // 600ms debounce
+  → flushLearningSync()
+       → api.saveLearningState(snapshot) // PUT /api/learning/state
 ```
 
-状态流转规则（script.js:3229–3614）：
+| 层 | 名称 / 路径 | 证据 |
+|----|-------------|------|
+| 本地 key | `baby-island-preview-progress-v1` / `learning-activity` / `app-preferences` / `mistake-book` / `math-attempts` / `english-attempts` / `math-story-cleared` | `script.js:3078-3082,1028,1146,1385` |
+| Snapshot 字段 | `profile, preferences, progressByWorld, learningActivity, mistakeBook, mathAttempts, englishAttempts, mathStoryCleared` | `learningSnapshot` `script.js:3198-3213` |
+| 合并下行 | `mergeLearningStateFromCloud`：进度 max 并集、attempt merge | `script.js:3447-3478` |
+| 客户端 API | `loadLearningState` GET · `saveLearningState` **PUT** · `recordQuizAttempt` POST | `auth/apiClient.js:412-424` |
+| 后端路由 | 全部 `requireAuth`：`GET/PUT /state`，`PATCH /preferences`，`POST /quiz-attempts`，`POST /support-feedback`，`POST /math-coach` | `backend/src/learning.js:149-215` |
+| 挂载 | `app.use('/api/learning', createLearningRouter(...))` | `backend/src/index.js:114-118` |
+| 仓库选择 | 默认 InsForge（凭据在）；**显式** `LEARNING_REPOSITORY=mysql` → MySQL | `learning-repository-factory.js:15-28` |
 
-| 当前状态 | 触发条件 | 目标状态 | 附加行为 |
-|----------|----------|----------|----------|
-| (视频阶段) | video `ended` / 加载失败 | `answering` | `showQuizStage()` + `speakQuestion()` + 2.2s 后手指引导 |
-| `answering` | 点选项 → 点提交按钮 | `judging` | 提交按钮防误触二次确认 |
-| `judging` → 正确 | `applyQuizAnswer` 返回 `correct: true` | `correct` | 进度更新 + 错题移除 + 庆祝动画 + 显示"返回地图"按钮 |
-| `judging` → 错误 | `applyQuizAnswer` 返回 `correct: false` | `answering`（3.4s 后） | 错题记录 + 红色标记 + 音效 → 清空选中 → 重新洗牌出题 |
-| `correct` | 点"返回地图"按钮 | (退出答题页) | `goBackMap()` → `history.back()` 或 `#map` |
+**「无 upsert」口径（验收）**
 
-关键约束：
-- `judging` 是瞬时判断态，不会停留——立即分叉到 `correct` 或回到 `answering`
-- 答错后必须重新答对本关才能解锁下一关，不存在"跳过本题"
-- 答对后必须手动点"返回地图"（`data-continue-map`，script.js:3205），不会自动跳转
-
----
-
-## 4. 地图与闯关（跳关规则）
-
-### 4.1 地图世界（`MAP_WORLDS`，script.js:294）
-
-| 世界 | 主题 | 关卡数 | 状态 |
-|------|------|--------|------|
-| ocean | 魔法海岛 | 200 | 上线（前 10 免费视频，11–200 视频待制作） |
-| desert | 沙漠奇境 | 200 | 内容就绪，可切换进入 |
-| castle | 魔法城堡 | — | coming soon |
-
-- 地图切换：地图顶栏按钮 → dialog 选择（script.js:2138）
-- 每个世界有独立进度（`progressByWorld`）
-- 每个世界有专属 BGM、背景视频、地标图片、交通工具
-
-### 4.2 关卡状态（`levelStatus`，script.js:725 / 2022）
-
-| 状态 | 条件 | 行为 |
-|------|------|------|
-| `completed` | `completed` 包含该 id | 绿色勾，可重入（复习） |
-| `current` | `id ≤ unlockedThrough` 且未 completed | 黄色播放，默认定位 |
-| `locked` | `id > unlockedThrough` | 灰色锁，点击提示"先完成第 N 关" |
-| `premium` | `id > 10` 且非 VIP | 锁 + VIP 图标，点击弹出付费弹窗 |
-| `missing` | id 超出范围 | 不渲染 |
-
-### 4.3 跳关规则（不可跳级 + 可回看）
-
-**核心原则：进度严格连续，不允许跳关。**
-
-`normalizeProgress`（script.js:455）强制约束：
-- `completed` 数组必须是 `[1, 2, 3, ..., N]` 连续序列
-- 如果存储中出现断档（如 `[1, 2, 4]`），会被截断为 `[1, 2]`，`unlockedThrough` 回到 3
-- `completeLevel`（script.js:472）只在 `levelId ≤ unlockedThrough` 时才写入——跳级答题不生效
-
-地图上的三种跳转行为：
-
-| 操作 | 允许？ | 说明 |
-|------|--------|------|
-| 点已完成关（`completed`） | 允许 | 回看复习，重复答对不增加进度 |
-| 点当前关（`current`） | 允许 | 正常推进 |
-| 点未解锁关（`locked`） | 拒绝 | toast 提示"先完成第 N 关"（script.js:2091） |
-| 点会员关（`premium`） | 拒绝 | 弹出 VIP 付费弹窗 |
-
-地图定位逻辑（`renderMap`，script.js:2250）：默认 focus 到 `unlockedThrough` 对应的关卡，即"当前该做的关"，用户不需要手动找。
-
-### 4.4 关卡内容结构（script.js:170–193）
-
-每个关卡由 `buildLevelsFromUnits` 生成：
-- `curriculumUnits`（10 个主题 × 10 词 = 100 关）+ `additionalLevelUnits`（10 个主题 × 10 词 = 100 关）= 海岛 200 关
-- `desertPhraseUnits`（20 个主题 × 10 短语 = 200 关）= 沙漠 200 关
-- 前 10 关通过 `lessonOverrides` 硬编码固定（确保转化稳定）
-- 每关 3 分钟（每 10 关 4 分钟）
-- 4 选项自动生成，正确答案固定在 position 0（通过洗牌隐藏）
+| 允许说 | 禁止说 |
+|--------|--------|
+| 对外同步 API = **`PUT /api/learning/state`**，handler 调 `repository.saveState` | 文档写成客户端/OpenAPI 主路径叫 `upsertLearningState` / `POST .../upsert` |
+| 仓库内部若用 DB upsert 语义是实现细节 | 把内部表 upsert 写成产品对外 API 名 |
 
 ---
 
-## 5. VIP 矩阵付费
+## 3. 门控：进度锁 + VIP
 
-### 5.1 付费门控
+### 3.1 访问矩阵 `getLevelAccess`
 
-- 产品 ID：`baby_island_map_vip_001`（script.js:92）
-- 前 10 关免费（`FREE_LEVEL_COUNT = 10`），11 关起 VIP（`DISPLAY_LEVEL_COUNT = 200`）
-- 付费触发：`requestLevelAccess` 检测到 `premium` 状态 → `openPaywallDialog`（script.js:2098）
-- 支付通道：iOS webkit messageHandler / Android native bridge（script.js:1069–1092）
+| 条件（顺序） | 返回 | 证据 |
+|--------------|------|------|
+| id 非法 | `missing` | `script.js:2063` |
+| 本地 QA 全开 `isTempLocalUnlockEnabled()` | `allowed` | `script.js:2064` |
+| **`worldId === 'math'`** | **`allowed`（不做 VIP）** | `script.js:2065` |
+| `levelId > FREE_LEVEL_COUNT(10)` 且非 VIP | `paid` | `script.js:2066` |
+| `levelId > unlockedThrough` | `locked` | `script.js:2067` |
+| 否则 | `allowed` | `script.js:2068` |
 
-### 5.2 矩阵式付费弹窗
+地图节点展示 `levelStatus`（`script.js:5226-5238`）：
 
-当前 paywall（script.js:2098–2226）不是简单价格牌，而是一张三列对比矩阵，把宝宝英语岛 VIP 和两种主流替代方案并排比较：
+| status | 英语图条件 | 数学图 |
+|--------|------------|--------|
+| `completed` | completed 含 id | 同左 |
+| `current` | ≤ unlockedThrough 且未完成 | **非 completed 即 current**（无 premium/locked 展示） |
+| `premium` | id>10 且非 vip | 不出现 |
+| `locked` | id>unlockedThrough | 不出现 |
 
-| 维度 | 线上一对一私教 | 线下少儿英语班 | 宝宝英语岛 VIP（推荐） |
-|------|---------------|---------------|---------------------|
-| 价格 | ~¥200/节 | ~¥150+/课时 | ¥99/本地图（买断） |
-| 每天练 | ✗ 约不上就断 | ✗ 一周一两次 | ✓ 打开就能练 |
-| 家长负担 | ✗ 约课催课 | ✗ 接送排期 | ✓ 孩子自己开 |
-| 开口效果 | ✗ 一节就没了 | ✗ 开口机会少 | ✓ 每天都能开口 |
+点击：`requestLevelAccess`（`script.js:5337-5355`）  
+- `allowed` → 进关  
+- `paid` → `showMapMessage(paidAccessMessage)` + **`openPaywallDialog`**  
+- 其它 →「先完成第 N 关」
 
-弹窗结构（script.js:2119–2186）：
-- Hero：`VIP 学习卡` + `¥99 买断本地图`
-- 矩阵表：3 列（私教 / 线下班 / 我们），我们这列高亮 `is-ours` + `推荐` 徽章
-- 权益清单（sr-only）：第 11–200 关 / 会员关卡权益 / 单词发音练习 / 答题闯关记录
-- 操作按钮：`立即支付 ¥99` / `狠心拒绝` / `恢复购买`
-- 支付提示文案区分原生 / 预览：原生 = "通过 App Store 安全支付"；预览 = "正式 iPad 包会打开 App Store 支付，当前预览不会扣费"
+### 3.2 VIP / paywall
 
-### 5.3 VIP 激活
+| 项 | 事实 | 证据 |
+|----|------|------|
+| 产品 ID | `baby_island_map_vip_001` | `script.js:242`；`docs/iap-product-ids.md` |
+| 定价文案 | ¥99 **买断本地图**；新地图另购 | `openPaywallDialog` `script.js:5361-5413` |
+| 权益文案 | 第 11–200 关、会员权益、内容更新、进度记录 | 同上 |
+| 支付 | iOS `webkit.messageHandlers.babyIslandIAP` / Android bridge；预览不扣费 | `script.js:2948-2971,5367-5373` |
+| 成功回调 | `BabyIslandIAPComplete` / `babyIslandIAPComplete` → `completeVipPurchase` | `script.js:5455+` 一带 |
+| 服务端账本 | `POST /api/me/entitlements/vip`；读取 `GET /api/me/entitlements` | `backend/src/me-router.js:19-31`；`auth/apiClient.js:436-441` |
+| 登录灌权 | session `hasFullAccess` 或 entitlements → `activateVipPreferences` | `script.js:3507-3518` |
 
-- 支付成功后 native bridge 回调 `BabyIslandIAPComplete` / `babyIslandIAPComplete`（script.js:2243–2244）
-- `completeVipPurchase`（script.js:2234）：写入 `vipActive: true` → localStorage → 关弹窗 → toast → 重新渲染
-- `activateVipPreferences`（script.js:1099）：只改 `vipActive` 字段，不动其他偏好
+**现行 paywall 形态**：本地图套餐卡 + 权益 chips + 立即支付 / 恢复购买（**不是**旧文档里的三列「私教 vs 线下班 vs 我们」矩阵；以 `script.js:5386-5413` 为准）。
 
 ---
 
-## 6. 排行榜（近 7 天滚动 + 英语星成长）
+## 4. 数学 vs 英语边界
 
-### 6.1 核心规则
+| 维度 | 英语 ocean/desert | 数学 math |
+|------|-------------------|-----------|
+| zone | `english` | `math` |
+| 主交互壳 | `#level-N` 全屏详情 | 地图内联 + 可选 story |
+| 媒体 | 关卡视频 + 词句音频 | 一般无关卡视频；有 math-story / 题干音频 |
+| 题型 | 2 选 1 词/句 | count / subitize / take / compose / sequence / numeral 等 |
+| VIP | 11+ 需 VIP | **`getLevelAccess` 直接 allowed** |
+| 进度 key | `progressByWorld.ocean` / `.desert` | `progressByWorld.math` |
+| 正确率科目 | `accuracySubjectFromWorldId` → `english` | → `math`（`script.js:1426-1428`） |
+| 服务端附加 | `POST /api/learning/quiz-attempts` | 另有 `POST /api/learning/math-coach` |
+| coming soon | castle | math58 / math912 |
 
-**假人榜已退役。** `const rankings = []`（script.js:396），冷启动不插虚拟用户，peer 行只来自真实数据（当前只有本地孩子自己）。
+---
 
-- 积分单位：**英语星**（`STAR_PER_LEVEL = 12`，script.js:397）——每通关 1 关 +12 星
-- 时间窗口：**近 7 天滚动**（`RANKING_WINDOW_DAYS_DEFAULT = 7`，script.js:398），不是周一清空
-- 窗口算法：`windowCutoffDate`（script.js:501）算出 cutoff 日期（今天 - 6 天），只统计 `completedAt ≥ cutoff` 的关卡
+## 5. MVP 非目标（当前不做 / 未闭环）
+
+| 非目标 | 说明 | 依据 |
+|--------|------|------|
+| 英语「阶段复习关 / Boss 关」 | 无独立阶段复习路由；复习=重做已完成关 + 错题本 | 无 `#review` 路由；`parseRouteHash` 仅 map/level/mine… |
+| 全库假数据排行当生产真相 | `rankings` 仍有静态 peer 名（展示用）；真实分数另有 `/api/me/ranking`、`/api/rankings` | `script.js:1802-1811`；`backend/src/index.js:121-122` |
+| `apps/*` 当生产主入口 | 生产仍是根目录三件套 + `backend/` | 任务全局约束；`apps/backend/README.md` |
+| 默认同步到 MySQL | 必须显式 `LEARNING_REPOSITORY=mysql` | `learning-repository-factory.js` |
+| 对外 Learning **upsert** 路由 | 仅 `PUT /state` 整包保存 | `learning.js:159`；`apiClient.js:415-416` |
+| 数学花园 / 星塔 / 城堡可玩内容 | `comingSoon: true` | `MAP_WORLDS` |
+| 未登录云同步 | `learningSyncReady` 依赖 session | `hydrateLearningStateFromBackend` |
+| App Store 服务器侧完整验票 | me-router 注释：生产应再加 Server API 验票；现至少写账本 | `backend/src/me-router.js:29` 一带 |
+
+---
+
+## 6. 后端 API 速查（产品相关）
+
+| Method | Path | 作用 |
+|--------|------|------|
+| POST | `/api/auth/send-code` | 发验证码 |
+| POST | `/api/auth/verify-code` | 登录/注册 |
+| GET | `/api/auth/session` | 会话 |
+| POST | `/api/auth/logout` | 登出 |
+| GET | `/api/learning/state` | 拉学习快照 |
+| **PUT** | **`/api/learning/state`** | **存学习快照（主同步）** |
+| PATCH | `/api/learning/preferences` | 偏好补丁 |
+| POST | `/api/learning/quiz-attempts` | 单笔答题 |
+| POST | `/api/learning/support-feedback` | 反馈 |
+| POST | `/api/learning/math-coach` | 数学陪练计划 |
+| GET | `/api/me/entitlements` | VIP 权益 |
+| POST | `/api/me/entitlements/vip` | 声明/写入 VIP |
+| GET | `/api/health` | 健康（含 `learningBackend` kind） |
+
+挂载总览：`backend/src/index.js:93-122`。
+
+---
+
+## 7. 与 Graphify / 编号
+
+| 项 | 值 |
+|----|-----|
+| Graphify | 2026-08-13：286 files；3462 nodes · 5743 edges · 240 communities → `graphify-out/README.md` |
+| 本文编号 | **02** = 产品闭环（本文件） |
+| 关联 | 产品总入口 → [`../PRODUCT.md`](../PRODUCT.md)；后端细节 → `03-backend-api.md`；部署 → `04-deploy-ops.md`；前端 HUD → `06`（历史文件名可能仍为 `04-frontend-hud.md`，以编号语义 06=frontend 为准）；数据 → `07-data-model.md` |
+
+---
+
+## 8. 核验命令（只读）
+
+```bash
+cd "/Users/yr/嗨洛塔少儿启蒙APP"
+rg -n "function (openLoginDialog|requestLevelAccess|openPaywallDialog|renderDetail|flushLearningSync|getLevelAccess|parseRouteHash)" script.js
+rg -n "router\.(get|put|post|patch)\(" backend/src/learning.js backend/src/auth.js backend/src/me-router.js
+rg -n "saveLearningState|/api/learning/state|LEARNING_REPOSITORY" auth/apiClient.js backend/src/learning-repository-factory.js
+```
+
+---
+
+**文档状态**：2026-08-13 按现行 `script.js` / `backend` 重写；旧版「三列对比 paywall / 假人榜已退役 / 航程胶囊」等表述已按代码废弃或更正。

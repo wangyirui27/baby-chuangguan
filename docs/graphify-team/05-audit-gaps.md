@@ -1,13 +1,94 @@
 # 05 · 终验与缺口清单
 
-> 项目根：`/Users/yr/宝宝闯关`
+> 项目根：`/Users/yr/嗨洛塔少儿启蒙APP`
+> 品牌：嗨洛塔/HiRota；npm name=baby-island-quest
 > 范围：交叉审计 `docs/graphify-team/02-product-loop.md`（产品闭环）与 `03-backend-api.md`（后端 API）相对仓库真实代码，以及与 `AGENTS.md` / `docs/backend-architecture.md` / `docs/handoff-backend-aliyun-2026-07-21.md` 的事实一致性。
 > 生成方式：只读分析，未修改业务代码。
 > 生成时间：2026-07-21
+> 现况复核：2026-08-13（以下第 0 节）
 
 ---
 
-## 0. 总评（先看结论）
+## 0. 2026-08-13 现况复核
+
+> 项目根已迁至 `/Users/yr/嗨洛塔少儿启蒙APP`（旧 `/Users/yr/宝宝闯关`）。
+> 以下各项以**代码现状**为准，不依赖 07-21 审计结论。
+
+### 0.1 架构总览（P0 关键项）
+
+| 维度 | 现状 | 证据 | 严重度 |
+| --- | --- | --- | --- |
+| **双后端并存** | `backend/`（生产，Express，9+ 路由含 learning/me/admin）与 `apps/backend/`（契约层，Express，仅 auth + health，内存存储）同时存在 | `backend/src/index.js` 挂 learning/me/admin 路由；`apps/backend/src/server.js:29` `AUTH_REPOSITORY='memory'`，无 learning 路由 | P0 |
+| **双 client 并存** | `auth/apiClient.js`（IIFE，file:// + HTTP 双协议，485 行）与 `apps/frontend/src/api/`（Vite 模块化前端）同时存在 | `auth/apiClient.js:1-23` 相对路径 `/api/*`；`apps/frontend/` 有独立 `src/api/` + `mock-server/` | P0 |
+| **巨石 script.js** | **10,043 行**（07-21 审计时 3,731 行，增长 169%） | `wc -l script.js` → 10043 | P0 |
+| **iOS 壳 script.js 漂移** | `ios/BabyEnglishIsland/www/script.js` = 10,031 行，比根目录少 12 行 | `wc -l ios/.../script.js` → 10031 | P1 |
+
+### 0.2 认证 & 数据层
+
+| 维度 | 现状 | 证据 |
+| --- | --- | --- |
+| **Auth 存储** | `backend/src/db.js`：JSON 文件 + Map 内存缓存，`data/{users,sessions,verifications}.json` 落盘。支持 `AUTH_REPOSITORY=mysql` 切换但默认 JSON | `db.js:15-17` 三文件路径；`db.js:20-36` `resolveAuthRepository()` |
+| **Auth dual adapter** | `db.js` 已实现 `resolveAuthRepository()` → `json` 或 `mysql`，但 **apps/backend 只支持 `memory`**（`server.js:35-40` switch 只有 memory/default） | `apps/backend/src/server.js:29-40` |
+| **Learning dual adapter** | `learning-repository-factory.js` → InsForge（默认）或 MySQL（`LEARNING_REPOSITORY=mysql`） | `learning-repository-factory.js:2-17` |
+| **Learning sync API** | `PUT /api/learning/state`（无 upsert），`learning.js:159` | `backend/src/learning.js:159` |
+
+### 0.3 TEMP_LOCAL & 付费墙
+
+| 维度 | 现状 | 证据 |
+| --- | --- | --- |
+| **TEMP_LOCAL_FULL_ACCESS** | `false`（`script.js:115`），`isTempLocalUnlockEnabled()` 在 `false` 时直接返回 `false` | `script.js:115,118` |
+| **TestFlight** | `TEMP_LOCAL_FULL_ACCESS=false`，file:// 壳不绕过 11 关后付费墙 | `README.md:57` |
+
+### 0.4 壳 & Pack
+
+| 维度 | 现状 | 证据 |
+| --- | --- | --- |
+| **iOS 壳** | `ios/BabyEnglishIsland/`，Capacitor 管理的 www/ 目录含 script.js 副本 | `ls ios/BabyEnglishIsland/www/script.js` |
+| **Asset pack 系统** | `assetPackHasDownloadSource`、`assetPackLevelDownloadQueue`、`assetPackPlayableSummary` 已实现 | `quiz.test.js:1657-1670` 测试覆盖 |
+| **H5 壳安装元数据** | 测试 `quiz.test.js:519` 验证 tablet packaging 元数据 | `quiz.test.js:519` |
+
+### 0.5 历史项开闭状态（以代码为准）
+
+| # | 07-21 审计项 | 当前状态 | 证据 |
+| --- | --- | --- | --- |
+| drift-1 | `mysql-learning-repository.js` count 未 clamp | **✅ 已修复** — `clampInteger(item.count, 1, 99, 1)` 在 L314 | `mysql-learning-repository.js:314` |
+| drift-2 | `selected/correct` 无 maxLength 声明 | **⏳ 未修** — contract `openapi.yaml` 仍无 `maxLength`，`learning.js:31-32` 静默 `.slice(0,40)` | `backend/src/learning.js:31-32` |
+| drift-3 | `packages/contracts/schemas/` 缺 learning schema | **⏳ 未修** — schemas 目录仅 10 个 auth/健康相关 JSON | `ls packages/contracts/schemas/` |
+| error-1 | `apps/backend/README.md` "five frozen routes" 过时 | **⏳ 未修** — README 仍写 "five" | `apps/backend/README.md` |
+| error-2 | `backend/README.md` 提 PostgreSQL | **⏳ 未修** | `backend/README.md` |
+| error-3 | 03 完成情况表缺 auth 数据层行 | **⏳ 未修** — 03 文档未更新 | `docs/graphify-team/03-backend-api.md` |
+
+### 0.6 新增项（07-21 审计后出现）
+
+| 项目 | 详情 | 证据 |
+| --- | --- | --- |
+| math coach AI | `backend/src/math-coach-ai.js` + `math-coach-ai.test.js` | `ls backend/src/` |
+| math migrations | `20260804142000_add-math-worlds-to-learning-backend.sql` + `20260804150000_add-math-attempts-to-learning-profile.sql`（6 个 migration，原 4 个） | `ls migrations/` |
+| content catalog | `backend/src/content-catalog.js` + `data/content-catalog.json` | `ls backend/src/`, `ls data/` |
+| entitlements | `backend/src/entitlements.js` + `data/entitlements.json` | `ls backend/src/`, `ls data/` |
+| admin router | `backend/src/admin-router.js` + `admin.test.js` | `ls backend/src/` |
+| OSS | `backend/src/oss.js` | `ls backend/src/` |
+| me-router | `backend/src/me-router.js`（`/api/me/*` 路由） | `backend/src/me-router.js` |
+| 04 部署文档 | `docs/graphify-team/04-deploy-ops.md` 已创建 | `ls docs/graphify-team/` |
+| 07 数据模型 | `docs/graphify-team/07-data-model.md` 已创建 | `ls docs/graphify-team/` |
+
+### 0.7 P0-P2 缺口优先级
+
+| 优先级 | 缺口 | 影响 |
+| --- | --- | --- |
+| **P0** | 巨石 script.js 10,043 行未拆分 | 任何单文件改动冲突概率极高；iOS 壳同步困难 |
+| **P0** | 双后端并存（backend/ 生产 vs apps/backend/ 契约） | 新开发者不知道该改哪个；learning 路由只在 backend/ 有 |
+| **P0** | 双 client 并存（auth/apiClient.js vs apps/frontend/src/api/） | 认证逻辑两套维护，修一处忘另一处 |
+| **P1** | iOS 壳 script.js 12 行漂移 | 壳内版本落后根目录，TestFlight 行为不一致 |
+| **P1** | contract schemas 缺 learning 系列（drift-3） | 下游消费者（fixtures/dto）找不到 schema 源 |
+| **P1** | `selected/correct` 无 maxLength（drift-2） | client 可传 1000 字被静默截断到 40 |
+| **P2** | apps/backend/README 过时（error-1） | 新人误判架构 |
+| **P2** | backend/README PostgreSQL 措辞（error-2） | 与 InsForge 现状矛盾 |
+| **P2** | 03 完成情况表缺 auth 行（error-3） | 审计盲区 |
+
+---
+
+## 0-0721. 总评（先看结论，2026-07-21 原始审计）
 
 | 维度 | 评分 | 备注 |
 | --- | --- | --- |
@@ -32,32 +113,32 @@
 所有结论都基于以下可定位的真实文件。引用一律带绝对路径 + 行号。
 
 治理三层：
-- `/Users/yr/宝宝闯关/AGENTS.md`（32 行）
-- `/Users/yr/宝宝闯关/docs/backend-architecture.md`（75 行）
-- `/Users/yr/宝宝闯关/docs/handoff-backend-aliyun-2026-07-21.md`（297 行）
+- `/Users/yr/嗨洛塔少儿启蒙APP/AGENTS.md`（32 行）
+- `/Users/yr/嗨洛塔少儿启蒙APP/docs/backend-architecture.md`（75 行）
+- `/Users/yr/嗨洛塔少儿启蒙APP/docs/handoff-backend-aliyun-2026-07-21.md`（297 行）
 
 Graphify-team 工作区：
-- `/Users/yr/宝宝闯关/docs/graphify-team/02-product-loop.md`（408 行）
-- `/Users/yr/宝宝闯关/docs/graphify-team/03-backend-api.md`（460 行）
+- `/Users/yr/嗨洛塔少儿启蒙APP/docs/graphify-team/02-product-loop.md`（408 行）
+- `/Users/yr/嗨洛塔少儿启蒙APP/docs/graphify-team/03-backend-api.md`（460 行）
 - 01、04、05（本文件）原不存在
 
 仓库关键代码（04 写时必须重读）：
-- `/Users/yr/宝宝闯关/backend/src/index.js`
-- `/Users/yr/宝宝闯关/backend/src/auth.js`
-- `/Users/yr/宝宝闯关/backend/src/learning.js`
-- `/Users/yr/宝宝闯关/backend/src/insforge-learning-repository.js`
-- `/Users/yr/宝宝闯关/backend/src/mysql-learning-repository.js`
-- `/Users/yr/宝宝闯关/backend/src/mysql-learning-repository.test.js`
-- `/Users/yr/宝宝闯关/backend/src/learning.test.js`
-- `/Users/yr/宝宝闯关/backend/src/db.js`
-- `/Users/yr/宝宝闯关/backend/src/security.js`
-- `/Users/yr/宝宝闯关/backend/src/sms-provider.js`
-- `/Users/yr/宝宝闯关/backend/.env.example`
-- `/Users/yr/宝宝闯关/apps/backend/src/server.js`、`apps/backend/src/app.js`、`apps/backend/README.md`、`apps/backend/package.json`
-- `/Users/yr/宝宝闯关/packages/contracts/openapi/openapi.yaml`（861 行，diff +502）
-- `/Users/yr/宝宝闯关/packages/contracts/OWNERSHIP.md`、`HANDOFF.md`、`schemas/`、`fixtures/`
-- `/Users/yr/宝宝闯关/script.js`（3731 行）/ `auth/apiClient.js`
-- `/Users/yr/宝宝闯关/migrations/`（4 个 sql 文件）
+- `/Users/yr/嗨洛塔少儿启蒙APP/backend/src/index.js`
+- `/Users/yr/嗨洛塔少儿启蒙APP/backend/src/auth.js`
+- `/Users/yr/嗨洛塔少儿启蒙APP/backend/src/learning.js`
+- `/Users/yr/嗨洛塔少儿启蒙APP/backend/src/insforge-learning-repository.js`
+- `/Users/yr/嗨洛塔少儿启蒙APP/backend/src/mysql-learning-repository.js`
+- `/Users/yr/嗨洛塔少儿启蒙APP/backend/src/mysql-learning-repository.test.js`
+- `/Users/yr/嗨洛塔少儿启蒙APP/backend/src/learning.test.js`
+- `/Users/yr/嗨洛塔少儿启蒙APP/backend/src/db.js`
+- `/Users/yr/嗨洛塔少儿启蒙APP/backend/src/security.js`
+- `/Users/yr/嗨洛塔少儿启蒙APP/backend/src/sms-provider.js`
+- `/Users/yr/嗨洛塔少儿启蒙APP/backend/.env.example`
+- `/Users/yr/嗨洛塔少儿启蒙APP/apps/backend/src/server.js`、`apps/backend/src/app.js`、`apps/backend/README.md`、`apps/backend/package.json`
+- `/Users/yr/嗨洛塔少儿启蒙APP/packages/contracts/openapi/openapi.yaml`（861 行，diff +502）
+- `/Users/yr/嗨洛塔少儿启蒙APP/packages/contracts/OWNERSHIP.md`、`HANDOFF.md`、`schemas/`、`fixtures/`
+- `/Users/yr/嗨洛塔少儿启蒙APP/script.js`（10,043 行）/ `auth/apiClient.js`
+- `/Users/yr/嗨洛塔少儿启蒙APP/migrations/`（6 个 sql 文件）
 
 测试：本地运行 `node --test backend/src/*.test.js` → **90/90 全绿**（与 handoff 声明一致）。
 
@@ -126,7 +207,7 @@ Graphify-team 工作区：
 | IP 限流 `20次/15分钟` (`security.js`) | `security.js:78` 默认 `20` ✓ | 准 |
 | 同手机号 5次/15min 60s 冷却 (RATE_LIMIT) | `auth.js:19-26` ✓ | 准 |
 | 虚拟登录 1234 默认开启 | `virtual-login.js`、`auth.js:228-232` ✓ | 准 |
-| migration 文件 4 个文件名 | `migrations/` 实际存在 ✓ | 准 |
+| migration 文件 4 个文件名（现有 6 个，+2 math 相关 2026-08-04） | `migrations/` 实际存在 ✓ | 准 |
 | `packages/contracts/openapi/openapi.yaml:1-861` | 861 行 ✓ | 准 |
 
 ### 3.2 事实错误（必须修正）❌
@@ -185,8 +266,8 @@ Graphify-team 工作区：
 #### drift 1：`baby_mistakes.mistake_count` 范围不一致
 
 - `packages/contracts/openapi/openapi.yaml:721-725`：`LearningMistakeItem.count` 定义 `minimum: 1, maximum: 99`。
-- `/Users/yr/宝宝闯关/backend/src/insforge-learning-repository.js:128`：`clampInteger(item?.count, 1, 99, 1)`。
-- `/Users/yr/宝宝闯关/backend/src/mysql-learning-repository.js:260-280`：`syncMistakes` 写入时**没有 clamp**——直接把 `item.count` 写入库。
+- `/Users/yr/嗨洛塔少儿启蒙APP/backend/src/insforge-learning-repository.js:128`：`clampInteger(item?.count, 1, 99, 1)`。
+- `/Users/yr/嗨洛塔少儿启蒙APP/backend/src/mysql-learning-repository.js:260-280`：`syncMistakes` 写入时**没有 clamp**——直接把 `item.count` 写入库。
 
 证据：
 ```js
@@ -242,9 +323,9 @@ Graphify-team 工作区：
 
 | 01 引用 | 实际 | 结论 |
 | --- | --- | --- |
-| 顶层目录结构 | 实际 `ls /Users/yr/宝宝闯关` 路径准确 | ✓ |
+| 顶层目录结构 | 实际 `ls /Users/yr/嗨洛塔少儿启蒙APP` 路径准确 | ✓ |
 | `AGENTS.md` / `docs/backend-architecture.md` / handoff 摘要 | 已读，三个文档摘要在第 73-75 行无误 | ✓ |
-| `migrations/` 4 个文件名 | 实际目录存在 ✓ | ✓ |
+| `migrations/` 4 个文件名（现有 6 个，+2 math 相关） | 实际目录存在 ✓ | ✓ |
 | `apps/backend/test/helpers/{schema-validator,test-server}.js` | 实际存在 ✓ | ✓ |
 | `apps/backend/.env.example` / `apps/frontend/.env.example` | 实际存在 ✓ | ✓ |
 | `auth/apiClient.local-mock.test.cjs` 等测试文件 | 已确认存在 ✓ | ✓ |

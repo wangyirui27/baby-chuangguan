@@ -9,10 +9,10 @@
 |----------|--------|-----------|
 | 平台 | iOS | `ios/BabyEnglishIsland.xcodeproj` |
 | App 名称 | 嗨洛塔 | `Info.plist` `CFBundleDisplayName` |
-| Bundle ID | `com.baobaoenglish.island` | `ios/Config/Shared.xcconfig` |
+| Bundle ID | `com.modelisms.kids` | `ios/Config/Shared.xcconfig` |
 | Primary Language | 简体中文 | 工程 `developmentRegion = zh-Hans`，产品文案中文 |
 | 分类 | 教育 | 少儿启蒙/英语/数学内容 |
-| 当前构建号 | `1.0.1 (3)` | `ios/Config/Shared.xcconfig` |
+| 当前构建号 | `1.0.1 (6)` | `ios/Config/Shared.xcconfig` |
 | 加密出口 | 不使用非豁免加密 | `Info.plist` `ITSAppUsesNonExemptEncryption=false` |
 | IAP Product ID | `baby_island_map_vip_001` | `docs/iap-product-ids.md`，缩小范围 TF 可先不测购买 |
 
@@ -58,7 +58,7 @@
 
 ## 创建/上传顺序
 
-1. ASC 先建 App：平台 iOS、名称嗨洛塔、Bundle ID `com.baobaoenglish.island`、SKU 自定。
+1. ASC 先建 App：平台 iOS、名称嗨洛塔、Bundle ID `com.modelisms.kids`、SKU 自定。
 2. 有完整 Xcode 的 Mac pull `main`。
 3. 跑 `npm run testflight:preflight`，确认 `git-tracked assets ocean=10 desert=10 math=31 mathThemeAudio=31` 与 `seeds ocean=10 desert=10 math=31 mathThemeAudio=31`。
 4. `DEVELOPMENT_TEAM=你的TeamID ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`。

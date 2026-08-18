@@ -17,6 +17,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
   func application(
     _ application: UIApplication,
+    supportedInterfaceOrientationsFor window: UIWindow?
+  ) -> UIInterfaceOrientationMask {
+    // 嗨洛塔是横屏产品，iPhone 和 iPad 都保持同一横屏交互坐标系。
+    .landscape
+  }
+
+  func application(
+    _ application: UIApplication,
     handleEventsForBackgroundURLSession identifier: String,
     completionHandler: @escaping () -> Void
   ) {

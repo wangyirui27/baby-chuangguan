@@ -185,7 +185,7 @@ cat <<EOF
 -----BEGIN TESTFLIGHT_HANDOFF_CARD-----
 verified_commit=$sha
 version_build=$version ($build)
-bundle_id=com.baobaoenglish.island
+bundle_id=com.modelisms.kids
 scope=content_testflight
 math_story_delivery=bundled_31_not_oss
 oss_scope=ocean_desert_l11_200_only

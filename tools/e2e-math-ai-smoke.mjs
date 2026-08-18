@@ -7,12 +7,16 @@ import { createReadStream, existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import { chromium } from 'playwright';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'screenshots', 'math-ai-smoke');
+const require = createRequire(import.meta.url);
+const { MATH_STORY_WAYPOINTS } = require('../script.js');
 const APP_PREFERENCES_KEY = 'baby-island-app-preferences-v1';
+const MATH_STORY_CLEARED_KEY = 'baby-island-math-story-cleared-v1';
 const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
@@ -92,6 +96,20 @@ async function loginIfNeeded(page) {
   await page.locator('[data-login-code]').fill('1234');
   await page.locator('[data-login-submit]').click();
   await page.waitForSelector('dialog.login-dialog', { state: 'detached', timeout: 10_000 });
+}
+
+async function continueMathStoryIfVisible(page) {
+  const continueButton = page.locator('[data-math-story-continue]').first();
+  if (!(await continueButton.count())) return false;
+  await continueButton.waitFor({ state: 'visible', timeout: 5_000 });
+  await page.waitForFunction(
+    () => !document.querySelector('[data-math-story-continue]')?.disabled,
+    null,
+    { timeout: 12_000 },
+  );
+  await continueButton.click({ force: true });
+  await page.waitForTimeout(500);
+  return true;
 }
 
 async function ensureMathWorld(page) {
@@ -245,6 +263,9 @@ async function main() {
   page.on('console', (msg) => {
     if (msg.type() === 'error') problems.push(`console ${msg.text()}`);
   });
+  page.on('response', (response) => {
+    if (response.status() >= 400) problems.push(`http ${response.status()} ${response.url()}`);
+  });
 
   const report = {
     ok: false,
@@ -269,6 +290,12 @@ async function main() {
         }));
       } catch {}
     }, APP_PREFERENCES_KEY);
+    await page.addInitScript(({ clearedKey, waypointIds }) => {
+      localStorage.setItem(clearedKey, JSON.stringify(waypointIds));
+    }, {
+      clearedKey: MATH_STORY_CLEARED_KEY,
+      waypointIds: MATH_STORY_WAYPOINTS.map((waypoint) => waypoint.id),
+    });
 
     await page.goto(`${baseUrl}/index.html#map`, { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await skipSplash(page);
@@ -276,6 +303,7 @@ async function main() {
     await loginIfNeeded(page);
     report.steps.push('login-ok');
     await closeReleaseDialog(page);
+    if (await continueMathStoryIfVisible(page)) report.steps.push('math-story-continued');
     report.screenshots.push(await shot(page, '01-after-login.png'));
 
     await ensureMathWorld(page);

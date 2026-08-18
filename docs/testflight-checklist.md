@@ -1,7 +1,7 @@
 # TestFlight 工程清单（助手已落地 vs 你侧）
 
 更新：2026-08-08（iPad TF 最后准备 · OSS 课视频 + 沙漠种子 + 数学 story 进包）
-工程：嗨洛塔 / Bundle `com.baobaoenglish.island` / 版本 **1.0.1 (3)**
+工程：嗨洛塔 / Bundle `com.modelisms.kids` / 版本 **1.0.1 (6)**
 仓库：`https://github.com/wangyirui27/baby-chuangguan` · 分支 `main`
 
 ## 一句话
@@ -28,7 +28,7 @@
 | `node tools/audit-readiness.mjs` | ✅ `testflightContentReady=true` 且 `contentTestflightGaps=[]`；`uploadBlockers` 是 Xcode/Team |
 | `npm run testflight:preflight` | ✅ 断言 Git 跟踪种子资源：海岛 10、沙漠 10、数学视频 31、数学主题音 31 |
 | `npm run probe:asset-packs -- --dry-run` | ✅ 可选 OSS URL 抽检入口；默认不联网 |
-| Build | **1.0.1 (3)** |
+| Build | **1.0.1 (6)** |
 
 OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
 前缀：`assets/video/desert|ocean/*`（匿名 GET 已通）
@@ -65,7 +65,7 @@ OSS 基址：`https://baobao-chuangguan.oss-cn-shanghai.aliyuncs.com`
 GitHub 接手验收口令：fresh clone 后 `git fetch --all --tags && git checkout <verified_commit>`（与 handoff issue / `TESTFLIGHT_HANDOFF_CARD` 同 SHA，禁止盲 pull 最新 main），再跑 `npm ci && npm ci --prefix backend && npm ci --prefix apps/backend && npm ci --prefix apps/frontend`，再跑 `npm run testflight:preflight`；随后用有 Xcode 的 Mac 执行 `DEVELOPMENT_TEAM=... ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`。内容内测不要求 `apiBase`。
 
 1. Apple Developer 登录 + Team ID
-2. ASC 建 App：`com.baobaoenglish.island`，名 **嗨洛塔**
+2. ASC 建 App：`com.modelisms.kids`，名 **嗨洛塔**
    - 表单草稿见 `docs/testflight-asc-form.md`
 3. 有完整 Xcode 的 Mac：
    ```bash

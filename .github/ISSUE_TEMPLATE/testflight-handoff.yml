@@ -1,6 +1,6 @@
 name: TestFlight upload handoff
 description: Hand off a verified commit to the developer who has Xcode and Apple Developer access.
-title: "[TestFlight] 嗨洛塔 1.0.1 (3) upload handoff"
+title: "[TestFlight] 嗨洛塔 1.0.1 (6) upload handoff"
 labels:
   - testflight
   - handoff
@@ -40,8 +40,8 @@ body:
       placeholder: |
         -----BEGIN TESTFLIGHT_HANDOFF_CARD-----
         verified_commit=<same 40-char SHA as above>
-        version_build=1.0.1 (3)
-        bundle_id=com.baobaoenglish.island
+        version_build=1.0.1 (6)
+        bundle_id=com.modelisms.kids
         scope=content_testflight
         math_story_delivery=bundled_31_not_oss
         oss_scope=ocean_desert_l11_200_only
@@ -58,7 +58,7 @@ body:
     attributes:
       label: Upload scope
       options:
-        - Content TestFlight: 1.0.1 (3), apiBase may stay empty
+        - Content TestFlight: 1.0.1 (6), apiBase may stay empty
         - Full-function TestFlight: production apiBase configured first
     validations:
       required: true
@@ -86,7 +86,7 @@ body:
           required: true
         - label: Signing team is configured locally only, via Xcode Signing settings, local ignored `ios/Config/Team.xcconfig`, or an environment variable.
           required: true
-        - label: App Store Connect app exists with Bundle ID `com.baobaoenglish.island` and display name `嗨洛塔`.
+        - label: App Store Connect app exists with Bundle ID `com.modelisms.kids` and display name `嗨洛塔`.
           required: true
 
   - type: checkboxes
@@ -108,7 +108,7 @@ body:
     attributes:
       label: Uploaded version/build
       description: Actual version and build shown in App Store Connect after upload.
-      placeholder: 1.0.1 (3)
+      placeholder: 1.0.1 (6)
     validations:
       required: true
 

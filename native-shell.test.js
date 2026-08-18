@@ -25,8 +25,13 @@ test('iOS shell implements the H5 purchase and release-update bridges', () => {
 
   assert.match(appDelegate, /@main/);
   assert.match(appDelegate, /IslandViewController\(\)/);
+  assert.match(appDelegate, /supportedInterfaceOrientationsFor[\s\S]*?\.landscape/);
+  assert.doesNotMatch(appDelegate, /supportedInterfaceOrientationsFor[\s\S]*?\.all/);
   assert.match(viewController, /import StoreKit/);
   assert.match(viewController, /WKWebView/);
+  assert.match(viewController, /requestGeometryUpdate\(\.iOS\(interfaceOrientations: \.landscape\)/);
+  assert.match(viewController, /supportedInterfaceOrientations[\s\S]*?\{\s*\.landscape\s*\}/);
+  assert.doesNotMatch(viewController, /supportedInterfaceOrientations[\s\S]*?\? \.landscape : \.all/);
   assert.match(viewController, /final class WeakScriptMessageHandler/);
   assert.match(viewController, /weak var target: WKScriptMessageHandler\?/);
   assert.match(viewController, /contentController\.add\(WeakScriptMessageHandler\(self\), name: "babyIslandIAP"\)/);
@@ -36,6 +41,9 @@ test('iOS shell implements the H5 purchase and release-update bridges', () => {
   assert.match(viewController, /window\.BABY_ISLAND_APP_VERSION/);
   assert.match(viewController, /window\.BABY_ISLAND_API_BASE/);
   assert.match(viewController, /window\.BABY_ISLAND_DISABLE_LOCAL_MOCK/);
+  assert.match(viewController, /window\.BABY_ISLAND_APPSTORE_CAPTURE/);
+  assert.match(viewController, /window\.BABY_ISLAND_APPSTORE_CAPTURE_ROUTE/);
+  assert.match(viewController, /--appstore-capture-route=/);
   assert.match(viewController, /shellConfigApiBase/);
   assert.match(viewController, /shellConfigAllowLocalMockLogin/);
   assert.match(viewController, /babyIslandApi\.setApiBase/);
@@ -191,7 +199,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(preflight, /seeds ocean=\$ocean_count desert=\$desert_count math=\$math_story_count/);
   assert.match(preflight, /BEGIN TESTFLIGHT_HANDOFF_CARD/);
   assert.match(preflight, /verified_commit=\$sha/);
-  assert.match(preflight, /bundle_id=com\.baobaoenglish\.island/);
+  assert.match(preflight, /bundle_id=com\.modelisms\.kids/);
   assert.match(preflight, /math_story_delivery=bundled_31_not_oss/);
   assert.match(preflight, /oss_scope=ocean_desert_l11_200_only/);
   assert.match(preflight, /preflight=OK/);
@@ -287,7 +295,7 @@ test('iOS ship kit has icon, privacy, launch, team config, export options', () =
   assert.match(testflightIssue, /git checkout <verified_commit>/);
   assert.match(testflightIssue, /blind latest `main`/);
   assert.doesNotMatch(testflightIssue, /08e0e3fb15969117e7072c0c1269e694790e97e2/);
-  assert.match(testflightIssue, /com\.baobaoenglish\.island/);
+  assert.match(testflightIssue, /com\.modelisms\.kids/);
   assert.match(testflightIssue, versionBuildRe);
   assert.match(testflightIssue, /Do not paste Apple account emails, Team IDs, certificates/);
   assert.match(readme, /npm ci --prefix backend/);

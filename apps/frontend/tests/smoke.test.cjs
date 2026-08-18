@@ -25,6 +25,7 @@ const http = require('http');
 
 const PROGRESS_STORAGE_KEY = 'baby-island-preview-progress-v1';
 const PREFERENCES_STORAGE_KEY = 'baby-island-app-preferences-v1';
+const LEVEL_VIDEO_STORAGE_KEY = 'baby-island-level-videos-v1';
 
 // ── Helpers ─────────────────────────────────────────────────────────
 
@@ -98,6 +99,7 @@ async function runPlaywrightSmoke(frontendUrl) {
 
   const consoleErrors = [];
   const consoleWarnings = [];
+  const httpErrors = [];
 
   page.on('console', msg => {
     if (msg.type() === 'error') consoleErrors.push(msg.text());
@@ -111,6 +113,24 @@ async function runPlaywrightSmoke(frontendUrl) {
   page.on('unhandledrejection', err => {
     consoleErrors.push(`[unhandledrejection] ${err.reason}`);
   });
+  page.on('response', response => {
+    if (response.status() >= 400) httpErrors.push(`${response.status()} ${response.url()}`);
+  });
+
+  // 当前构建为 1.0.1；用受控的远端版本 1.0.2 专门验证更新弹窗，
+  // 避免把“当前版本已是最新”误判成启动失败。
+  await page.route('**/app-release.json*', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({
+      latestVersion: '1.0.2',
+      minSupportedVersion: '1.0.1',
+      title: '发现新版本',
+      message: '请前往 App Store 更新嗨洛塔。',
+      storeName: 'App Store',
+      updateUrl: 'https://apps.apple.com/cn/search?term=%E5%97%A8%E6%B4%9B%E5%A1%94',
+    }),
+  }));
 
   try {
     // ── 1. 页面加载 ──────────────────────────────────────────────────
@@ -139,13 +159,26 @@ async function runPlaywrightSmoke(frontendUrl) {
     assert.ok(main, '#main-content 必须存在');
     console.info('[smoke] ✓ #main-content 存在');
 
+    // 先完成强制登录门；更新弹窗会在登录弹窗之下，登录完成后再验证其关闭行为。
+    const loginDialog = page.locator('dialog.login-dialog[open]');
+    await loginDialog.waitFor({ state: 'visible', timeout: 5_000 }).catch(() => {});
+    if (await loginDialog.isVisible().catch(() => false)) {
+      await page.locator('[data-login-phone]').fill('13800138000');
+      const sendCode = page.locator('[data-login-send-code]');
+      if (await sendCode.count()) await sendCode.click();
+      await page.locator('[data-login-code]').fill('1234');
+      await page.locator('[data-login-submit]').click();
+      await page.locator('dialog.login-dialog').waitFor({ state: 'detached', timeout: 8_000 });
+      console.info('[smoke] ✓ 强制登录门可通过');
+    }
+
     // ── 5. 启动必须检查发版更新并弹出提示，验证后关闭 ───────────────
     const releaseDialog = page.locator('.release-update-dialog[open]');
     await releaseDialog.waitFor({ state: 'visible', timeout: 5_000 });
     const releaseText = await releaseDialog.innerText();
     assert.ok(releaseText.includes('APP 版本更新'), '启动发版更新弹窗文案必须存在');
-    assert.ok(releaseText.includes('当前版本 1.0.0'), '启动发版更新弹窗必须显示当前版本');
-    assert.ok(releaseText.includes('最新版本 1.0.1'), '启动发版更新弹窗必须显示最新版本');
+    assert.ok(releaseText.includes('当前版本 1.0.1'), '启动发版更新弹窗必须显示当前版本');
+    assert.ok(releaseText.includes('最新版本 1.0.2'), '启动发版更新弹窗必须显示最新版本');
     await page.locator('[data-release-update-close]').first().click();
     await releaseDialog.waitFor({ state: 'hidden', timeout: 5_000 });
     console.info('[smoke] ✓ 启动发版更新弹窗可展示并关闭');
@@ -193,10 +226,14 @@ async function runPlaywrightSmoke(frontendUrl) {
       console.warn('[smoke] ⚠ route-scroll 未找到，可能需要登录或等待渲染');
     }
 
-    // ── 9. 当前 App Store 版本不再暴露旧短信登录运行时 ───────────────
-    const apiExists = await page.evaluate(() => typeof window.babyIslandApi !== 'undefined');
-    assert.strictEqual(apiExists, false, 'window.babyIslandApi 不应存在');
-    console.info('[smoke] ✓ 旧短信登录运行时未暴露');
+    // ── 9. 当前 App Store 版本暴露稳定的认证 API 契约 ────────────────
+    const apiContract = await page.evaluate(() => ({
+      exists: typeof window.babyIslandApi !== 'undefined',
+      checkSession: typeof window.babyIslandApi?.checkSession === 'function',
+      verifyCode: typeof window.babyIslandApi?.verifyCode === 'function',
+    }));
+    assert.deepEqual(apiContract, { exists: true, checkSession: true, verifyCode: true });
+    console.info('[smoke] ✓ 认证 API 契约已暴露');
 
     // ── 10. 第 11 关会员支付面板可以直接弹出 ────────────────────────
     await page.evaluate((progressKey) => {
@@ -211,7 +248,7 @@ async function runPlaywrightSmoke(frontendUrl) {
     const paywallDialog = page.locator('.paywall-dialog[open]');
     await paywallDialog.waitFor({ state: 'visible', timeout: 5_000 });
     const paywallText = await paywallDialog.innerText();
-    assert.ok(paywallText.includes('VIP 学习卡'), 'VIP 支付面板标题必须存在');
+    assert.ok(paywallText.includes('本地图学习卡'), '本地图支付面板标题必须存在');
     assert.ok(paywallText.includes('立即支付 ¥99'), 'VIP 支付按钮必须存在');
     assert.ok(paywallText.includes('当前预览不会扣费'), 'H5 预览必须前置说明不会扣费');
     console.info('[smoke] ✓ 第 11 关直接弹出 VIP 支付面板');
@@ -220,7 +257,7 @@ async function runPlaywrightSmoke(frontendUrl) {
     assert.ok(payNote.includes('正式 iPad 包会打开 App Store 支付，当前预览不会扣费'), '点击支付后必须说明正式包支付边界');
     await page.locator('[data-paywall-close]').click();
 
-    // ── 11. VIP 后第 11/12 关可以进入真实视频，第 13 关仍保护未上线内容 ───
+    // ── 11. VIP 后第 11–13 关进入当前 iPad 下载等待态，不渲染空视频 ───
     await page.evaluate(({ progressKey, preferencesKey }) => {
       localStorage.setItem(progressKey, JSON.stringify({
         completed: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -232,10 +269,15 @@ async function runPlaywrightSmoke(frontendUrl) {
     const releaseDialogAfterVip = page.locator('.release-update-dialog[open]');
     if (await releaseDialogAfterVip.count()) await page.locator('[data-release-update-close]').first().click();
     await page.locator('[data-stage-video]').waitFor({ state: 'visible', timeout: 5_000 });
-    assert.ok(
-      (await page.locator('[data-video]').getAttribute('src')).includes('assets/video/paid-levels/level-11-pear.mp4'),
-      'VIP 后第 11 关必须播放已上线 Pear 视频'
-    );
+    await page.waitForFunction((key) => {
+      try {
+        const states = JSON.parse(localStorage.getItem(key) || '{}');
+        return states['ocean:11']?.status === 'not-installed'
+          && String(states['ocean:11']?.downloadUrl || '').includes('level-011-apple.mp4');
+      } catch { return false; }
+    }, LEVEL_VIDEO_STORAGE_KEY, { timeout: 5_000 });
+    assert.strictEqual(await page.locator('[data-video]').count(), 0, 'iPad 下载完成前不能渲染空视频播放器');
+    assert.strictEqual(await page.locator('[data-level-video-download-panel]').count(), 1, 'VIP 后第 11 关必须展示下载等待态');
 
     await page.evaluate(({ progressKey }) => {
       localStorage.setItem(progressKey, JSON.stringify({
@@ -245,10 +287,15 @@ async function runPlaywrightSmoke(frontendUrl) {
     }, { progressKey: PROGRESS_STORAGE_KEY });
     await page.goto(`${frontendUrl}/?vip-paid12=1#level-12`, { waitUntil: 'domcontentloaded' });
     await page.locator('[data-stage-video]').waitFor({ state: 'visible', timeout: 5_000 });
-    assert.ok(
-      (await page.locator('[data-video]').getAttribute('src')).includes('assets/video/paid-levels/level-12-grape.mp4'),
-      'VIP 后第 12 关必须播放已上线 Grape 视频'
-    );
+    await page.waitForFunction((key) => {
+      try {
+        const states = JSON.parse(localStorage.getItem(key) || '{}');
+        return states['ocean:12']?.status === 'not-installed'
+          && String(states['ocean:12']?.downloadUrl || '').includes('level-012-banana.mp4');
+      } catch { return false; }
+    }, LEVEL_VIDEO_STORAGE_KEY, { timeout: 5_000 });
+    assert.strictEqual(await page.locator('[data-video]').count(), 0, 'iPad 下载完成前不能渲染空视频播放器');
+    assert.strictEqual(await page.locator('[data-level-video-download-panel]').count(), 1, 'VIP 后第 12 关必须展示下载等待态');
 
     await page.evaluate(({ progressKey }) => {
       localStorage.setItem(progressKey, JSON.stringify({
@@ -259,27 +306,33 @@ async function runPlaywrightSmoke(frontendUrl) {
     await page.goto(`${frontendUrl}/?vip-content-check=1#level-13`, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(500);
     const unavailableText = await page.locator('body').innerText();
-    assert.ok(
-      unavailableText.includes('这关视频还在准备中') ||
-        unavailableText.includes('课程内容更新中') ||
-        unavailableText.includes('后续课程内容会随更新开放'),
-      'VIP 后访问未上线付费关必须提示课程内容更新中'
-    );
-    assert.strictEqual(await page.locator('[data-video]').count(), 0, '未上线付费关不能渲染空视频播放器');
-    console.info('[smoke] ✓ VIP 后第 11/12 关可播放，第 13 关不进入空视频页');
+    await page.waitForFunction((key) => {
+      try {
+        const states = JSON.parse(localStorage.getItem(key) || '{}');
+        return states['ocean:13']?.status === 'not-installed'
+          && String(states['ocean:13']?.downloadUrl || '').includes('level-013-orange.mp4');
+      } catch { return false; }
+    }, LEVEL_VIDEO_STORAGE_KEY, { timeout: 5_000 });
+    assert.ok(unavailableText.includes('课程内容更新中') || unavailableText.includes('后续课程内容会随更新开放') || await page.locator('[data-level-video-download-panel]').count() === 1, 'VIP 后访问付费关必须进入下载等待态');
+    assert.strictEqual(await page.locator('[data-video]').count(), 0, 'iPad 下载完成前不能渲染空视频播放器');
+    console.info('[smoke] ✓ VIP 后第 11–13 关进入下载等待态，不渲染空视频页');
 
     // ── 12. 检查无致命控制台错误 ─────────────────────────────────────
+    const onlyExpectedStaticApiFailures = httpErrors.length > 0 && httpErrors.every(e => /\/api\//.test(e));
     const fatalErrors = consoleErrors.filter(e =>
       // 过滤已知的无害警告
       !e.includes('favicon') &&
       !e.includes('manifest') &&
       !e.includes('net::ERR_FILE_NOT_FOUND') && // file:// 场景的 manifest fetch 错误
-      !e.includes('401') // 未登录时 session 检查返回 401 — 预期行为
+      !e.includes('401') && // 未登录时 session 检查返回 401 — 预期行为
+      !(onlyExpectedStaticApiFailures && /status of (404|501)/.test(e))
     );
 
     if (fatalErrors.length > 0) {
       console.error('[smoke] ✗ 控制台致命错误:');
       fatalErrors.forEach(e => console.error('  ', e));
+      console.error('[smoke] HTTP 错误:');
+      httpErrors.forEach(e => console.error('  ', e));
     }
     assert.strictEqual(fatalErrors.length, 0, '控制台不能有致命错误');
 

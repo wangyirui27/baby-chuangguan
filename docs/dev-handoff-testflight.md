@@ -2,7 +2,7 @@
 
 更新：2026-08-08
 仓库：`https://github.com/wangyirui27/baby-chuangguan` · 分支 `main`
-产品名：**嗨洛塔** · Bundle ID：`com.baobaoenglish.island` · 版本 **1.0.1 (3)**
+产品名：**嗨洛塔** · Bundle ID：`com.modelisms.kids` · 版本 **1.0.1 (6)**
 
 ---
 
@@ -103,7 +103,7 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 2. Team ID → `DEVELOPMENT_TEAM` 环境变量、本地 ignored `Team.xcconfig`，或 Signing 面板
 3. 无人值守上传：按 `docs/testflight-secrets.md` 配 ASC API Key；ASC Key 齐全时脚本默认允许自动管理签名，可用 `ALLOW_PROVISIONING_UPDATES=0` 关闭。若不配 ASC Key、只靠 Xcode 登录态自动拉证书/profile，上传命令显式加 `ALLOW_PROVISIONING_UPDATES=1`
    - 本仓 Actions 不做 Upload，不需要配置 Apple / ASC / Team Secrets；这些值只放同事本机或其自有私密 CI。
-4. ASC 若无 App：新建 iOS，Bundle `com.baobaoenglish.island`，名 **嗨洛塔**
+4. ASC 若无 App：新建 iOS，Bundle `com.modelisms.kids`，名 **嗨洛塔**
 5. 表单值按 `docs/testflight-asc-form.md`，不确定项留给产品/同事确认
 6. 上传后处理 5–30 分钟 → 加内测组 / 外测合规
 
@@ -134,4 +134,4 @@ Build Phase 已调用 `tools/pack-app-www.sh`，Archive 时自动打 `www/`（�
 - 海岛 L1–10、沙漠 L1–10 无网可进课视频
 - 数学地图 story 短片与主题音无网可播，不出现空播/fallback
 - 未购买/未授权时 L11+ 不被本地壳放行；购买/VIP/内测授权后 L11+ 有网从 OSS 加载可播
-- 设置/关于：版本 **1.0.1 (3)**（以实际上传 build 为准）
+- 设置/关于：版本 **1.0.1 (6)**（以实际上传 build 为准）

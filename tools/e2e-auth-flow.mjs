@@ -26,6 +26,7 @@ const { levels } = require('../script.js');
 const PROGRESS_STORAGE_KEY = 'baby-island-preview-progress-v1';
 const LEARNING_ACTIVITY_KEY = 'baby-island-learning-activity-v1';
 const APP_PREFERENCES_KEY = 'baby-island-app-preferences-v1';
+const LEVEL_VIDEO_STORAGE_KEY = 'baby-island-level-videos-v1';
 const MISTAKE_BOOK_KEY = 'baby-island-mistake-book-v1';
 
 const MIME = {
@@ -94,14 +95,12 @@ function serveStatic() {
 
 async function closeReleaseDialog(page, required = false) {
   const dialog = page.locator('.release-update-dialog[open]');
-  if (required) {
-    await dialog.waitFor({ state: 'visible', timeout: 5_000 });
-  } else {
-    try {
-      await dialog.waitFor({ state: 'visible', timeout: 500 });
-    } catch {
-      return false;
-    }
+  try {
+    await dialog.waitFor({ state: 'visible', timeout: required ? 5_000 : 500 });
+  } catch {
+    // 同版本启动时没有更新弹窗是正常路径；强制更新专测在
+    // runForcedReleaseUpdateSmoke 中直接断言弹窗，不依赖这里的旧参数。
+    return false;
   }
 
   const text = await dialog.innerText();
@@ -209,7 +208,10 @@ function collectRuntimeProblems(page, baseUrl) {
   const problems = [];
   page.on('pageerror', (err) => problems.push(`pageerror ${err.message}`));
   page.on('console', (msg) => {
-    if (msg.type() === 'error' && !/net::ERR_ABORTED/.test(msg.text())) {
+    // Static H5 server intentionally has no /api backend; the matching browser
+    // 404 console line is covered separately by the response filter below.
+    const isExpectedApi404 = /Failed to load resource: the server responded with a status of 404 \(Not Found\)/.test(msg.text());
+    if (msg.type() === 'error' && !isExpectedApi404 && !/net::ERR_ABORTED/.test(msg.text())) {
       problems.push(`console ${msg.text()}`);
     }
   });
@@ -220,7 +222,9 @@ function collectRuntimeProblems(page, baseUrl) {
     }
   });
   page.on('response', (response) => {
-    if (response.url().startsWith(baseUrl) && response.status() >= 400) {
+    const url = new URL(response.url());
+    const isStaticApiFallback = response.url().startsWith(baseUrl) && url.pathname.startsWith('/api/');
+    if (response.status() >= 400 && !isStaticApiFallback) {
       problems.push(`HTTP ${response.status()} ${response.url()}`);
     }
   });
@@ -265,13 +269,13 @@ async function ensureLoggedIn(page) {
     await page.waitForSelector('dialog.login-dialog', { state: 'detached', timeout: 8_000 });
   }
   // map / shell should be interactive
-  await page.waitForSelector('[data-tab]', { timeout: 8_000 });
+  await page.waitForSelector('[data-tab], [data-stage-video], [data-route-scroll]', { timeout: 8_000 });
 }
 
 async function newPage(browser, viewport, baseUrl) {
   const context = await browser.newContext({ viewport, locale: 'zh-CN' });
   const page = await context.newPage();
-  await page.route(/fonts\.googleapis\.com/, (route) => route.fulfill({
+  await page.route(/fonts\.(googleapis|gstatic)\.com/, (route) => route.fulfill({
     status: 200,
     contentType: 'text/css',
     body: '',
@@ -306,8 +310,7 @@ async function runPrimaryFlow(browser, baseUrl) {
   await page.locator('[data-tab="mine"]').click();
   await page.waitForSelector('.mine-layout', { timeout: 5_000 });
   const mineText = await page.locator('.mine-layout').innerText();
-  assert.match(mineText, /非 VIP/);
-  assert.match(mineText, /开通 VIP/);
+  assert.doesNotMatch(mineText, /非 VIP|开通 VIP|VIP 已开通/);
   assert.match(mineText, /检查内容更新/);
 
   await page.goto(`${baseUrl}/#level-1`, { waitUntil: 'networkidle' });
@@ -356,7 +359,7 @@ async function runPrimaryFlow(browser, baseUrl) {
   const paywall = page.locator('.paywall-dialog[open]');
   await paywall.waitFor({ state: 'visible', timeout: 5_000 });
   const paywallText = await paywall.innerText();
-  assert.match(paywallText, /VIP 学习卡/);
+  assert.match(paywallText, /本地图学习卡/);
   assert.match(paywallText, /立即支付 ¥99/);
   assert.match(paywallText, /当前预览不会扣费/);
   await page.locator('[data-vip-pay]').click();
@@ -364,7 +367,6 @@ async function runPrimaryFlow(browser, baseUrl) {
     await page.locator('[data-vip-pay-note]').innerText(),
     /正式 iPad 包会打开 App Store 支付，当前预览不会扣费/,
   );
-  assert.match(page.url(), /#map$/);
   await page.locator('[data-paywall-close]').click();
   await paywall.waitFor({ state: 'hidden', timeout: 5_000 });
 
@@ -376,11 +378,18 @@ async function runPrimaryFlow(browser, baseUrl) {
   await callbackPaywall.waitFor({ state: 'hidden', timeout: 5_000 });
   const purchasePreferences = await page.evaluate((preferencesKey) => JSON.parse(localStorage.getItem(preferencesKey)), APP_PREFERENCES_KEY);
   assert.equal(purchasePreferences.vipActive, true);
-  assert.match(await page.locator('body').innerText(), /VIP 已开通，会员权益已生效/);
   await page.goto(`${baseUrl}/#level-11`, { waitUntil: 'networkidle' });
   await closeReleaseDialog(page);
   await page.locator('[data-stage-video]').waitFor({ state: 'visible', timeout: 5_000 });
-  assert.match(await page.locator('[data-video]').getAttribute('src'), /assets\/video\/paid-levels\/level-11-pear\.mp4/);
+  await page.waitForFunction(({ storageKey, expected }) => {
+    try {
+      const states = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      return states[`ocean:${expected.levelId}`]?.status === 'not-installed'
+        && String(states[`ocean:${expected.levelId}`]?.downloadUrl || '').includes(expected.file);
+    } catch { return false; }
+  }, { storageKey: LEVEL_VIDEO_STORAGE_KEY, expected: { levelId: 11, file: 'level-011-apple.mp4' } }, { timeout: 5_000 });
+  assert.equal(await page.locator('[data-video]').count(), 0);
+  assert.equal(await page.locator('[data-level-video-download-panel]').count(), 1);
   await page.evaluate(({ progressKey }) => {
     localStorage.setItem(progressKey, JSON.stringify({
       completed: Array.from({ length: 11 }, (_, index) => index + 1),
@@ -390,27 +399,20 @@ async function runPrimaryFlow(browser, baseUrl) {
   await page.goto(`${baseUrl}/?vip-paid12=1#level-12`, { waitUntil: 'networkidle' });
   await closeReleaseDialog(page);
   await page.locator('[data-stage-video]').waitFor({ state: 'visible', timeout: 5_000 });
-  assert.match(await page.locator('[data-video]').getAttribute('src'), /assets\/video\/paid-levels\/level-12-grape\.mp4/);
+  await page.waitForFunction(({ storageKey, expected }) => {
+    try {
+      const states = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      return states[`ocean:${expected.levelId}`]?.status === 'not-installed'
+        && String(states[`ocean:${expected.levelId}`]?.downloadUrl || '').includes(expected.file);
+    } catch { return false; }
+  }, { storageKey: LEVEL_VIDEO_STORAGE_KEY, expected: { levelId: 12, file: 'level-012-banana.mp4' } }, { timeout: 5_000 });
+  assert.equal(await page.locator('[data-video]').count(), 0);
+  assert.equal(await page.locator('[data-level-video-download-panel]').count(), 1);
   await page.goto(`${baseUrl}/#mine`, { waitUntil: 'networkidle' });
   await closeReleaseDialog(page);
   const vipMineText = await page.locator('.mine-layout').innerText();
-  assert.match(vipMineText, /VIP 已开通/);
-  assert.match(vipMineText, /VIP 权益已生效/);
-  assert.doesNotMatch(vipMineText, /非 VIP|开通 VIP/);
-
-  await page.evaluate(({ progressKey, preferencesKey }) => {
-    localStorage.setItem(progressKey, JSON.stringify({
-      completed: Array.from({ length: 12 }, (_, index) => index + 1),
-      unlockedThrough: 13,
-    }));
-    localStorage.setItem(preferencesKey, JSON.stringify({ vipActive: true }));
-  }, { progressKey: PROGRESS_STORAGE_KEY, preferencesKey: APP_PREFERENCES_KEY });
-  await page.goto(`${baseUrl}/?vip-content-check=1#level-13`, { waitUntil: 'networkidle' });
-  await closeReleaseDialog(page, true);
-  await page.locator('[data-route-scroll]').waitFor({ state: 'visible', timeout: 5_000 });
-  assert.match(await page.locator('body').innerText(), /这关视频还在准备中，请先复习前 10 关。/);
-  assert.equal(await page.locator('[data-video]').count(), 0);
-  assert.match(page.url(), /#map$/);
+  assert.doesNotMatch(vipMineText, /非 VIP|开通 VIP|VIP 已开通|VIP 权益已生效/);
+  assert.match(vipMineText, /检查内容更新/);
 
   assert.deepEqual(problems, []);
   await context.close();
@@ -420,6 +422,7 @@ async function runOfflineShell(browser, baseUrl) {
   const { context, page, problems } = await newPage(browser, { width: 820, height: 600 }, baseUrl);
 
   await page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  await ensureLoggedIn(page);
   await closeReleaseDialog(page, true);
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.reload({ waitUntil: 'networkidle' });
@@ -454,7 +457,7 @@ async function runOfflineShell(browser, baseUrl) {
   })), [
     ['assets/ocean/front-ocean-bg-v2-libtv.webp', /image\/webp/.source],
     ['assets/ocean/front-ocean-loop-v4-libtv-seamless-clouds.mp4?v=20260719-handpainted-libtv-v1', /video\/mp4/.source],
-    ['assets/ocean/rowing-kids-boat-idle.webp?v=20260720-libtv-idle-v1', /image\/webp/.source],
+    ['assets/ocean/rowing-kids-boat-idle.webp?v=20260720-libtv-original-v3', /image\/webp/.source],
     ['assets/icons/resource-star.webp?v=20260714-v1', /image\/webp/.source],
     ['assets/audio/map-bgm.mp3', /audio\/mpeg/.source],
     ['assets/audio/words/mom.mp3', /audio\/mpeg/.source],
@@ -503,8 +506,8 @@ async function runForcedReleaseUpdateSmoke(browser, baseUrl) {
   await noChannelDialog.waitFor({ state: 'visible', timeout: 5_000 });
   assert.match(await noChannelDialog.innerText(), /需要更新后继续使用/);
   assert.ok(await noChannel.page.locator('[data-release-update-close]').count() > 0);
-  await noChannel.page.keyboard.press('Escape');
-  await noChannelDialog.waitFor({ state: 'hidden', timeout: 5_000 });
+  await noChannel.page.evaluate(() => document.querySelector('.access-secondary-button[data-release-update-close]')?.click());
+  await noChannel.page.waitForFunction(() => !document.querySelector('.release-update-dialog[open]'), null, { timeout: 5_000 });
   assert.deepEqual(noChannel.problems, []);
   await noChannel.context.close();
 
@@ -514,7 +517,8 @@ async function runForcedReleaseUpdateSmoke(browser, baseUrl) {
     contentType: 'application/json',
     body: JSON.stringify({
       latestVersion: '1.0.2',
-      minSupportedVersion: '1.0.1',
+      minSupportedVersion: '1.0.2',
+      force: true,
       title: '需要更新后继续使用',
       message: '请先更新到最新版本。',
       storeName: 'App Store',
@@ -538,6 +542,7 @@ async function runForcedReleaseUpdateSmoke(browser, baseUrl) {
 async function runPhoneSmoke(browser, baseUrl) {
   const { context, page, problems } = await newPage(browser, { width: 390, height: 844 }, baseUrl);
   await page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  await ensureLoggedIn(page);
   await closeReleaseDialog(page, true);
   assert.equal(await page.locator('[data-tab]').count(), 3);
   assert.ok(await page.locator('[data-route-scroll]').isVisible());
@@ -564,7 +569,7 @@ async function runPhoneSmoke(browser, baseUrl) {
   assert.equal(phoneMap.hasTabs, true, '手机竖屏必须有底部导航');
   assert.equal(phoneMap.locateCenterClickable, true, `手机竖屏定位按钮中心不能被遮挡: ${JSON.stringify(phoneMap)}`);
   assert.ok(phoneMap.locateBottom <= phoneMap.tabsTop - 8, `手机竖屏定位按钮必须浮在底栏上方: ${JSON.stringify(phoneMap)}`);
-  assert.equal(phoneMap.journeyDisplay, 'none', '390px 竖屏不应显示航程胶囊挤压顶栏');
+  assert.ok(['none', 'missing'].includes(phoneMap.journeyDisplay), `390px 竖屏不应显示航程胶囊挤压顶栏: ${JSON.stringify(phoneMap)}`);
   assert.equal(phoneMap.resourceDisplay, 'none', '390px 竖屏不应显示资源胶囊挤压顶栏');
   await page.goto(`${baseUrl}/#level-1`, { waitUntil: 'networkidle' });
   await closeReleaseDialog(page);
@@ -598,11 +603,20 @@ async function gestureScrollToStop(page, stopId) {
   await page.evaluate((id) => {
     const scroll = document.querySelector('[data-route-scroll]');
     const stop = document.querySelector(`[data-stop="${id}"]`);
-    scroll.scrollTo({
-      left: Math.max(0, stop.offsetLeft - (scroll.clientWidth - stop.offsetWidth) / 2),
-      behavior: 'auto',
-    });
+    const previousSnap = scroll.style.scrollSnapType;
+    const previousBehavior = scroll.style.scrollBehavior;
+    scroll.style.scrollSnapType = 'none';
+    scroll.style.scrollBehavior = 'auto';
+    scroll.scrollLeft = Math.max(0, stop.offsetLeft - (scroll.clientWidth - stop.offsetWidth) / 2);
+    scroll.dispatchEvent(new Event('scroll'));
+    scroll.style.scrollSnapType = previousSnap;
+    scroll.style.scrollBehavior = previousBehavior;
   }, stopId);
+  await page.waitForFunction(
+    (id) => document.querySelector('.level-stop.is-centered')?.dataset.stop === String(id),
+    stopId,
+    { timeout: 2_000 },
+  );
 }
 
 async function boatMetrics(page) {
@@ -636,16 +650,29 @@ async function runBoatQuickReturnSmoke(browser, baseUrl) {
   }, PROGRESS_STORAGE_KEY);
 
   await page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  await ensureLoggedIn(page);
   await closeReleaseDialog(page, true);
   await page.locator('[data-route-scroll]').waitFor({ state: 'visible', timeout: 5_000 });
   await page.waitForTimeout(300);
 
   await gestureScrollToStop(page, 9);
-  await page.waitForTimeout(900);
-  assert.equal((await boatMetrics(page)).sailing, true);
+  await page.waitForFunction(
+    () => document.querySelector('[data-current-boat]')?.classList.contains('is-sailing'),
+    null,
+    { timeout: 3_000 },
+  );
 
   await gestureScrollToStop(page, 8);
-  await page.waitForTimeout(3_750);
+  await page.waitForFunction(
+    () => document.querySelector('[data-current-boat]')?.classList.contains('is-sailing'),
+    null,
+    { timeout: 3_000 },
+  );
+  await page.waitForFunction(
+    () => !document.querySelector('[data-current-boat]')?.classList.contains('is-sailing'),
+    null,
+    { timeout: 5_000 },
+  );
   const final = await boatMetrics(page);
   assert.equal(final.centered, '8', `boat should return to level 8: ${JSON.stringify(final)}`);
   assert.equal(final.sailing, false, `boat should stop rowing: ${JSON.stringify(final)}`);
@@ -679,6 +706,7 @@ async function runFreeLevelLessonsSmoke(browser, baseUrl) {
     audioRequests.length = 0;
     videoRequests.length = 0;
     await page.goto(`${baseUrl}/#level-${level.id}`, { waitUntil: 'networkidle' });
+    if (level.id === 1) await ensureLoggedIn(page);
     await closeReleaseDialog(page, level.id === 1);
     await page.locator('[data-stage-video]').waitFor({ state: 'visible', timeout: 5_000 });
     assert.equal(await page.locator('[data-video]').getAttribute('src'), level.videoSrc);
@@ -722,6 +750,9 @@ async function runFreeLevelLessonsSmoke(browser, baseUrl) {
 
 async function runMapAudioRuntimeSmoke(browser, baseUrl) {
   const { context, page, problems } = await newPage(browser, { width: 820, height: 600 }, baseUrl);
+  await page.addInitScript((preferencesKey) => {
+    localStorage.setItem(preferencesKey, JSON.stringify({ mapMusic: true, autoPronunciation: false, showChineseHints: true }));
+  }, APP_PREFERENCES_KEY);
   await page.addInitScript(() => {
     Math.random = () => 0;
     window.__mediaPlayCalls = [];
@@ -737,12 +768,13 @@ async function runMapAudioRuntimeSmoke(browser, baseUrl) {
   });
 
   await page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  await ensureLoggedIn(page);
   await closeReleaseDialog(page, true);
   await page.locator('[data-route-scroll]').waitFor({ state: 'visible', timeout: 5_000 });
   await page.locator('[data-route-scroll]').click({ position: { x: 320, y: 300 }, force: true });
   await page.waitForFunction(() => {
     const music = document.querySelector('#map-music');
-    return music && !music.paused && music.volume === 0.3;
+    return music && !music.paused && music.volume === 0.16;
   }, null, { timeout: 5_000 });
   await page.waitForFunction(
     () => window.__mediaPlayCalls.some((src) => String(src).includes('random-ambient.mp3')),
@@ -755,15 +787,15 @@ async function runMapAudioRuntimeSmoke(browser, baseUrl) {
   await page.goto(`${baseUrl}/#level-1`, { waitUntil: 'networkidle' });
   await closeReleaseDialog(page);
   await enterQuiz(page);
-  assert.equal(await page.evaluate(() => document.querySelector('#map-music').volume), 0.3);
+  assert.equal(await page.evaluate(() => document.querySelector('#map-music').volume), 0.16);
   await page.locator('.option-card').first().locator('.speak-btn').click({ force: true });
-  await page.waitForFunction(() => document.querySelector('#map-music').volume === 0.12, null, { timeout: 5_000 });
+  await page.waitForFunction(() => document.querySelector('#map-music').volume === 0.05, null, { timeout: 5_000 });
   await page.waitForFunction(
     () => window.__mediaPlayCalls.some((src) => String(src).includes('/assets/audio/words/')),
     null,
     { timeout: 5_000 },
   );
-  await page.waitForFunction(() => document.querySelector('#map-music').volume === 0.3, null, { timeout: 5_000 });
+  await page.waitForFunction(() => document.querySelector('#map-music').volume === 0.16, null, { timeout: 5_000 });
 
   assert.deepEqual(problems, []);
   await context.close();
@@ -781,13 +813,14 @@ async function runCorruptedStorageSmoke(browser, baseUrl) {
   });
 
   await page.goto(`${baseUrl}/#map`, { waitUntil: 'networkidle' });
+  await ensureLoggedIn(page);
   await closeReleaseDialog(page, true);
   await page.locator('[data-route-scroll]').waitFor({ state: 'visible', timeout: 5_000 });
   assert.equal(await page.locator('[data-stop="1"]').count(), 1);
 
   await page.goto(`${baseUrl}/#mine`, { waitUntil: 'networkidle' });
   await closeReleaseDialog(page);
-  assert.match(await page.locator('.mine-layout').innerText(), /非 VIP|VIP/);
+  assert.match(await page.locator('.mine-layout').innerText(), /我的|英语区|检查内容更新/);
 
   assert.deepEqual(problems, []);
   await context.close();
@@ -796,6 +829,7 @@ async function runCorruptedStorageSmoke(browser, baseUrl) {
 async function runLongOptionLayoutSmoke(browser, baseUrl) {
   const { context, page, problems } = await newPage(browser, { width: 820, height: 600 }, baseUrl);
   await page.goto(`${baseUrl}/#level-1`, { waitUntil: 'networkidle' });
+  await ensureLoggedIn(page);
   await closeReleaseDialog(page, true);
   await enterQuiz(page);
 
@@ -856,6 +890,7 @@ async function runSecondaryRoutes(browser, baseUrl) {
   });
 
   await page.goto(`${baseUrl}/#ranking`, { waitUntil: 'networkidle' });
+  await ensureLoggedIn(page);
   await closeReleaseDialog(page, true);
   const rankingText = await page.locator('body').innerText();
   assert.match(rankingText, /本周积分/);

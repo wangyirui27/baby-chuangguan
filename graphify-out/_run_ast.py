@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused Graphify AST pipeline for 宝宝闯关 (exclude media assets)."""
+"""Focused Graphify AST pipeline for 嗨洛塔/HiRota (exclude media assets)."""
 from __future__ import annotations
 
 import json
@@ -7,7 +7,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
-ROOT = Path("/Users/yr/宝宝闯关").resolve()
+ROOT = Path("/Users/yr/嗨洛塔少儿启蒙APP").resolve()
 OUT = ROOT / "graphify-out"
 OUT.mkdir(exist_ok=True)
 
@@ -17,6 +17,7 @@ from graphify.cluster import cluster, cohesion_score, label_communities_by_hub
 from graphify.export import generate_html
 from graphify.report import generate as generate_report
 from graphify.wiki import to_wiki
+from graphify.analyze import god_nodes
 import networkx as nx
 
 KEEP_ROOTS = [
@@ -108,7 +109,7 @@ def main() -> int:
 
     communities = cluster(G)
     labels = label_communities_by_hub(G, communities)
-    cohesion = cohesion_score(G, communities)
+    cohesion = {cid: cohesion_score(G, nodes) for cid, nodes in communities.items()}
     gods = god_nodes(G)
 
     # Persist graph.json (node-link)
@@ -125,14 +126,25 @@ def main() -> int:
     print(f"[graphify] html -> {html_path}", flush=True)
 
     detection_result = {
+        "total_files": len(files),
+        "total_words": 0,
         "files": len(files),
         "nodes": G.number_of_nodes(),
         "edges": G.number_of_edges(),
         "communities": len(communities),
         "excluded": detect_payload["excluded"],
         "note": detect_payload["note"],
+        "warning": (
+            f"Focused corpus: {len(files)} code/doc files; assets/** media excluded — "
+            "not a full-repo graph. "
+            f"Graph: {G.number_of_nodes()} nodes · {G.number_of_edges()} edges · "
+            f"{len(communities)} communities."
+        ),
     }
     token_cost = {
+        "input": extraction.get("input_tokens") or 0,
+        "output": extraction.get("output_tokens") or 0,
+        "cost": 0,
         "input_tokens": extraction.get("input_tokens") or 0,
         "output_tokens": extraction.get("output_tokens") or 0,
     }
@@ -157,9 +169,10 @@ def main() -> int:
     print(f"[graphify] wiki pages={n_wiki} -> {wiki_dir}", flush=True)
 
     # index for humans
-    index = f"""# Graphify index — 宝宝闯关
+    index = f"""# Graphify index — 嗨洛塔 / HiRota（宝宝闯关）
 
 - Date: {date.today()}
+- Project root: `{ROOT}`
 - Focused files: **{len(files)}** (code/docs only)
 - Graph: **{G.number_of_nodes()}** nodes · **{G.number_of_edges()}** edges · **{len(communities)}** communities
 - Excluded: `assets/**` media, node_modules, output, .git — **not** a full-repo corpus graph

@@ -45,7 +45,7 @@ final class AssetPackDownloadManager: NSObject, URLSessionDownloadDelegate {
   private var levelQueues: [String: [LevelQueueItem]] = [:]
 
   private lazy var session: URLSession = {
-    let bundleId = Bundle.main.bundleIdentifier ?? "com.baobaoenglish.island"
+    let bundleId = Bundle.main.bundleIdentifier ?? "com.modelisms.kids"
     let config = URLSessionConfiguration.background(withIdentifier: "\(bundleId).assetpacks")
     config.sessionSendsLaunchEvents = true
     config.allowsCellularAccess = true
@@ -532,6 +532,24 @@ final class IslandViewController: UIViewController, WKScriptMessageHandler, SKPr
     loadBundledApp()
   }
 
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    if #available(iOS 16.0, *), let windowScene = view.window?.windowScene {
+      setNeedsUpdateOfSupportedInterfaceOrientations()
+      windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: .landscape)) { error in
+        print("[orientation] landscape request failed: \(error)")
+      }
+    }
+  }
+
+  override var shouldAutorotate: Bool { true }
+
+  override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    .landscape
+  }
+
+  override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation { .landscapeRight }
+
   deinit {
     webView?.configuration.userContentController.removeScriptMessageHandler(forName: "babyIslandIAP")
     webView?.configuration.userContentController.removeScriptMessageHandler(forName: "babyIslandAppUpdate")
@@ -551,12 +569,17 @@ final class IslandViewController: UIViewController, WKScriptMessageHandler, SKPr
     let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
     let apiBase = shellConfigApiBase()
     let disableLocalMock = shellConfigAllowLocalMockLogin() ? "false" : "true"
+    let isAppStoreCapture = ProcessInfo.processInfo.arguments.contains("--appstore-capture") ? "true" : "false"
+    let captureRoute = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--appstore-capture-route=") })?
+      .replacingOccurrences(of: "--appstore-capture-route=", with: "") ?? "map"
     // Inject version + production API origin before any H5 script runs (file:// has no host).
     let source = """
     window.BABY_ISLAND_APP_VERSION = \(jsonString(version));
     window.BABY_ISLAND_BUILD_NUMBER = \(jsonString(build));
     window.BABY_ISLAND_API_BASE = \(jsonString(apiBase));
     window.BABY_ISLAND_DISABLE_LOCAL_MOCK = \(disableLocalMock);
+    window.BABY_ISLAND_APPSTORE_CAPTURE = \(isAppStoreCapture);
+    window.BABY_ISLAND_APPSTORE_CAPTURE_ROUTE = \(jsonString(captureRoute));
     (function () {
       var base = window.BABY_ISLAND_API_BASE;
       if (!base) return;

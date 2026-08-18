@@ -169,3 +169,17 @@ hirota-www-*/
 # ─── Large optional local only (RDS backup / workbench pointers stay out) ──
 backend/data/
 *.sql.gz
+
+# ─── Local-only: 安安安全意识地图（暂不推远程）──
+assets/safety-map/
+safety-curriculum.js
+docs/curriculum/safety-map*
+docs/curriculum/team-drafts/*safety*
+docs/安全地图*
+docs/plans/*safety*
+docs/prototypes/safety*
+tools/*safety*
+tools/gen-safety*
+tools/cut-safety*
+tools/stitch-safety*
+__safety_*

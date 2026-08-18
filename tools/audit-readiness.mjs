@@ -97,7 +97,7 @@ const sharedConfigSource = readFileSync(join(ROOT, 'ios/Config/Shared.xcconfig')
 const projectSource = readFileSync(join(ROOT, 'ios/BabyEnglishIsland.xcodeproj/project.pbxproj'), 'utf8');
 const sharedMarketingVersion = sharedConfigSource.match(/^\s*MARKETING_VERSION\s*=\s*(\S+)/m)?.[1] || '';
 const sharedBuildNumber = sharedConfigSource.match(/^\s*CURRENT_PROJECT_VERSION\s*=\s*(\S+)/m)?.[1] || '';
-const sharedBundleId = sharedConfigSource.match(/^\s*PRODUCT_BUNDLE_IDENTIFIER\s*=\s*(\S+)/m)?.[1] || 'com.baobaoenglish.island';
+const sharedBundleId = sharedConfigSource.match(/^\s*PRODUCT_BUNDLE_IDENTIFIER\s*=\s*(\S+)/m)?.[1] || 'com.modelisms.kids';
 const projectMarketingVersions = [...new Set([...projectSource.matchAll(/MARKETING_VERSION\s*=\s*([^;]+);/g)].map((m) => m[1].trim()))];
 const projectBuildNumbers = [...new Set([...projectSource.matchAll(/CURRENT_PROJECT_VERSION\s*=\s*([^;]+);/g)].map((m) => m[1].trim()))];
 

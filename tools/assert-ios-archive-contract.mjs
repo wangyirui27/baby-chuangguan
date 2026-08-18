@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const EXPECTED_BUNDLE_ID = 'com.baobaoenglish.island';
+const EXPECTED_BUNDLE_ID = 'com.modelisms.kids';
 const EXPECTED_DISPLAY_NAME = '嗨洛塔';
 
 const read = (file) => readFileSync(join(ROOT, file), 'utf8');

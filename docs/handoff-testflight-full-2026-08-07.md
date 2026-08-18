@@ -4,7 +4,7 @@
 **仓库：** https://github.com/wangyirui27/baby-chuangguan
 **本地路径：** `/Users/yr/嗨洛塔少儿启蒙APP`
 **分支：** `main`（2026-08-08 已继续更新；接手上传时以 handoff issue / `TESTFLIGHT_HANDOFF_CARD` 的 `verified_commit` 为准）
-**产品：** 嗨洛塔（HIROTA）少儿启蒙 · Bundle `com.baobaoenglish.island` · **1.0.1 (3)**
+**产品：** 嗨洛塔（HIROTA）少儿启蒙 · Bundle `com.modelisms.kids` · **1.0.1 (6)**
 **形态：** iOS WKWebView 壳 + 根目录 H5（`index.html` / `script.js` / `style.css`）+ 可选 Node 后端
 
 > **读本文即可接手。** 旧分拆文档仍有效，冲突时以 **本文件 + 本机再跑门禁** 为准。
@@ -111,7 +111,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
    - 本地 ignored `ios/Config/Team.xcconfig`：`DEVELOPMENT_TEAM=XXXXXXXXXX`
    - 或 Xcode → Signing & Capabilities 选 Team
    - 或：`DEVELOPMENT_TEAM=XXX ALLOW_PROVISIONING_UPDATES=1 bash tools/ship-testflight.sh --upload`（脚本会生成临时 ExportOptions 写 teamID，不污染 Git）
-4. **App Store Connect** 若无 App：新建 iOS，Bundle **完全一致** `com.baobaoenglish.island`，显示名 **嗨洛塔**
+4. **App Store Connect** 若无 App：新建 iOS，Bundle **完全一致** `com.modelisms.kids`，显示名 **嗨洛塔**
 5. **Archive → Upload**：
    ```bash
    git fetch --all --tags
@@ -121,7 +121,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
    # 或 GUI：open ios/BabyEnglishIsland.xcodeproj → Product → Archive → Distribute → ASC
    ```
 6. ASC 处理 5–30 分钟 → **加 Internal 测试组** → 设备安装
-7. 真机按 `docs/testflight-smoke.md` 冒烟（见 §6；构建号以实际上传为准，当前工程是 **1.0.1 (3)**）
+7. 真机按 `docs/testflight-smoke.md` 冒烟（见 §6；构建号以实际上传为准，当前工程是 **1.0.1 (6)**）
 
 ### 2.2 可选（不挡「先玩内容」）
 
@@ -197,7 +197,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | **本文** `docs/handoff-testflight-full-2026-08-07.md` | 总交接（优先） |
 | `docs/dev-handoff-testflight.md` | 给打包同事的 5 分钟上手 |
 | `docs/testflight-checklist.md` | A/B/C/D 勾选 |
-| `docs/testflight-smoke.md` | 真机冒烟（当前工程与模板均按 **1.0.1 (3)** 记录） |
+| `docs/testflight-smoke.md` | 真机冒烟（当前工程与模板均按 **1.0.1 (6)** 记录） |
 | `docs/testflight-secrets.md` | Team ID / ASC API Key 环境变量契约 |
 | `docs/testflight-asc-form.md` | ASC 新建 App / TestFlight 表单草稿 |
 | `docs/iap-product-ids.md` | IAP 商品 ID |
@@ -242,7 +242,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 | `d916a4e` | 2026-08-08 | docs：记录数学 story 31 条进包与 pack 体积 |
 | `8e755be` | 2026-08-08 | fix：数学 story 31 条 mp4 进仓并打入 iOS `www` 包 |
 | `85a136d` | 2026-08-08 | docs：更新 TestFlight handoff 与内容/全功能内测口径 |
-| `c0381fe` | 2026-08-07 | docs(tf)：对齐 `ship-testflight` 路径与 **1.0.1 (3)** 交接清单 |
+| `c0381fe` | 2026-08-07 | docs(tf)：对齐 `ship-testflight` 路径与 **1.0.1 (6)** 交接清单 |
 | `5c9069c` | 2026-08-07 | **feat(tf)**：OSS 课视频清单 + 沙漠 L1–10 进包；海岛前 10 换 workbench 成片；catalog/video-map；pack/audit 增强；auth/apiClient 与壳注入；build **3** |
 | `7348b25` | 2026-08-07 | docs：hosted legal pages（隐私/条款/儿童隐私） |
 | `2b497e2` | 2026-08-07 | **feat**：TF handoff 全家桶——iOS shell kit、pack gates、admin、数学题音频大批进仓、dev 文档 |
@@ -261,7 +261,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 - `tools/pack-app-www.sh` 双图种子门禁
 - `tools/audit-readiness.mjs`：沙漠种子 + remote OSS 计数、`testflightContentReady`
 - `backend/scripts/upload_course_videos_to_oss.py`、`scripts/sync-workbench-level-videos.py`
-- 版本升 **1.0.1 (3)**（Shared + pbx）
+- 版本升 **1.0.1 (6)**（Shared + pbx）
 - 学习/me 路由、math attempts migration 等后端增量（全功能 TF 用，内容内测不依赖）
 
 ### 4.3 `2b497e2` 关键落地（壳与工具链）
@@ -329,7 +329,7 @@ bash tools/pack-app-www.sh /tmp/hirota-www-check
 
 ## 6. 真机冒烟（缩写；全文见 `docs/testflight-smoke.md`）
 
-构建号记录用：**嗨洛塔 1.0.1 (3)**（或实际上传号）
+构建号记录用：**嗨洛塔 1.0.1 (6)**（或实际上传号）
 
 - [ ] 冷启动非长时间白屏；桌面名「嗨洛塔」
 - [ ]（内容内测）本地 mock 登录能进内容且不授予 VIP
@@ -410,7 +410,7 @@ IAP Product ID：`baby_island_map_vip_001`（Swift 常量与 shell-config 文档
 | 工程目录名 BabyEnglishIsland | 否 | 用户可见名已是嗨洛塔 |
 | 单体 `script.js` 无 i18n | 否 | 与 TF 无关；多语言另项 |
 | pack ~364M / 361.1MiB（干净克隆） | 否 | 脏工作区带未跟踪 QA 资源时可能更大；以 clean checkout / Actions 为准 |
-| smoke 构建号 | 否 | 已对齐工程 **1.0.1 (3)**；上传后以 ASC 实际构建为准 |
+| smoke 构建号 | 否 | 已对齐工程 **1.0.1 (6)**；上传后以 ASC 实际构建为准 |
 
 ---
 
@@ -429,7 +429,7 @@ IAP Product ID：`baby_island_map_vip_001`（Swift 常量与 shell-config 文档
 
 1. 先发 **内容内测**（apiBase 空）还是等 **全功能**（生产 API+短信）？
 2. Team ID / 哪台 Mac 有 Xcode？
-3. ASC 是否已有 `com.baobaoenglish.island`？
+3. ASC 是否已有 `com.modelisms.kids`？
 4. 本次 TF 是否要测 IAP / 数学？
 
 ---
