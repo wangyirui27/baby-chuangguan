@@ -16,8 +16,9 @@
 | 生产前端是什么？ | 仓库根 `index.html` + `script.js` + `style.css`，不是 `apps/frontend` |
 | 生产后端是什么？ | 根目录 `npm start` → `backend/` Express；H5 与 `/api/*` **同端口**（默认 3000） |
 | `apps/frontend`、`apps/backend`、`packages/contracts`？ | **非生产**。契约冻的是 auth/health 五条；learning 只在 `backend/` |
-| 学习数据默认去哪？ | **InsForge**。RDS MySQL 必须显式 `LEARNING_REPOSITORY=mysql` |
-| 登录数据默认去哪？ | **JSON 文件** `data/*.json`。MySQL auth 必须显式 `AUTH_REPOSITORY=mysql` |
+| 学习数据默认去哪？ | 代码默认探测 InsForge；**本机 `backend/.env` 现为 RDS**（`LEARNING_REPOSITORY=mysql`）。见 [`deploy-server.md`](./deploy-server.md) §0–§1 |
+| 登录数据默认去哪？ | 代码默认 JSON；**本机现为 RDS**（`AUTH_REPOSITORY=mysql`）。JSON 须不设或 `AUTH_FORCE_JSON=1` |
+| 本机开发连哪库？ | **阿里云 RDS**（`MYSQL_HOST=rm-….rds.aliyuncs.com`），不是本机 mysqld |
 | 进度怎么同步？ | `PUT /api/learning/state`。无其它 learning 全量写入 POST |
 | 手机 App 是原生重写吗？ | 否。iOS `WKWebView` / Android `WebView` 加载 `tools/pack-app-www.sh` 打出的 `www/` |
 | 前端能直连云厂商吗？ | **不能**。只打自家 `/api/*`；InsForge / RDS / OSS / Redis / 短信藏在 Express |
@@ -33,6 +34,7 @@
 | 路径 | 用途 |
 |------|------|
 | `/Users/yr/嗨洛塔少儿启蒙APP/docs/TECH.md` | 本页：总入口 |
+| `/Users/yr/嗨洛塔少儿启蒙APP/docs/deploy-server.md` | **服务端部署 SOP**（本机 vs ECS、RDS 配置、systemd） |
 | `/Users/yr/嗨洛塔少儿启蒙APP/docs/graphify-team/00-cursor-architecture.md` | 系统架构、模块边界、原生壳、债、文档地图 |
 | `/Users/yr/嗨洛塔少儿启蒙APP/docs/graphify-team/README.md` | 00–12 索引（部分目标文件尚未生成） |
 | `/Users/yr/嗨洛塔少儿启蒙APP/docs/backend-architecture.md` | Express 契约不绑云厂商；阿里云目标部署与 factory 切换 |

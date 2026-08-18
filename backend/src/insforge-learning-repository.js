@@ -244,7 +244,11 @@ function stateFromRows(profile, progressRows, activityRows, mistakeRows) {
 class InsForgeLearningRepository {
   constructor(options = {}) {
     this.baseUrl = options.baseUrl || process.env.INSFORGE_URL;
-    this.apiKey = options.apiKey || process.env.INSFORGE_API_KEY;
+    // 正式键名 INSFORGE_API_KEY；兼容 options.serviceKey / INSFORGE_SERVICE_KEY
+    this.apiKey = options.apiKey
+      || options.serviceKey
+      || process.env.INSFORGE_API_KEY
+      || process.env.INSFORGE_SERVICE_KEY;
     this._clientPromise = null;
   }
 

@@ -23,8 +23,11 @@ function resolveLearningBackendKind(env = process.env) {
   if (raw === 'insforge' || raw === 'postgres' || raw === 'pg') return 'insforge';
   if (raw === 'none' || raw === 'off' || raw === 'disabled') return 'none';
 
-  // 未显式指定：有 InsForge 凭据则默认 InsForge；否则 none（勿静默假成功）
-  if (env.INSFORGE_URL && env.INSFORGE_SERVICE_KEY) return 'insforge';
+  // 未显式指定：有 InsForge URL + key 则默认 InsForge；否则 none（勿静默假成功）
+  // 接受 INSFORGE_API_KEY（正式）或 INSFORGE_SERVICE_KEY（兼容旧名）
+  if (env.INSFORGE_URL && (env.INSFORGE_API_KEY || env.INSFORGE_SERVICE_KEY)) {
+    return 'insforge';
+  }
   return 'none';
 }
 
@@ -65,11 +68,11 @@ function createLearningRepositoryFromEnv(options = {}) {
     }
   }
 
-  // insforge
+  // insforge：传 apiKey（repository 读 apiKey）；兼容旧 env 名 SERVICE_KEY
   try {
     const repository = createInsForgeLearningRepository({
       baseUrl: env.INSFORGE_URL,
-      serviceKey: env.INSFORGE_SERVICE_KEY,
+      apiKey: env.INSFORGE_API_KEY || env.INSFORGE_SERVICE_KEY,
     });
     return { kind: 'insforge', repository, reason: null };
   } catch (err) {

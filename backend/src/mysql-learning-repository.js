@@ -8,6 +8,10 @@ const {
   stateFromRows,
   toProfilePatch,
 } = require('./insforge-learning-repository');
+const {
+  mysqlConfigError,
+  resolveMysqlConfig,
+} = require('./mysql-config');
 
 const PROFILE_COLUMNS = [
   'id',
@@ -21,17 +25,6 @@ const PROFILE_COLUMNS = [
   'math_attempts',
 ];
 
-function mysqlConfigError(message, code = 'MYSQL_NOT_CONFIGURED') {
-  const err = new Error(message);
-  err.code = code;
-  return err;
-}
-
-function requireConfig(value, name) {
-  if (!value) throw mysqlConfigError(`${name} is not configured`);
-  return value;
-}
-
 function createMysqlPool(options = {}) {
   let mysql;
   try {
@@ -40,15 +33,7 @@ function createMysqlPool(options = {}) {
     throw mysqlConfigError('mysql2 is not installed', 'MYSQL_DRIVER_NOT_INSTALLED');
   }
 
-  return mysql.createPool({
-    host: requireConfig(options.host || process.env.MYSQL_HOST, 'MYSQL_HOST'),
-    port: Number(options.port || process.env.MYSQL_PORT || 3306),
-    user: requireConfig(options.user || process.env.MYSQL_USER, 'MYSQL_USER'),
-    password: requireConfig(options.password || process.env.MYSQL_PASSWORD, 'MYSQL_PASSWORD'),
-    database: requireConfig(options.database || process.env.MYSQL_DATABASE, 'MYSQL_DATABASE'),
-    waitForConnections: true,
-    connectionLimit: Number(options.connectionLimit || process.env.MYSQL_CONNECTION_LIMIT || 5),
-  });
+  return mysql.createPool(resolveMysqlConfig(options));
 }
 
 async function executeRows(client, sql, params = []) {

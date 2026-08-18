@@ -8,6 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { resolveMysqlConfig, hasMysqlEnv } = require('./mysql-config');
 
 // ─── 可配置数据目录（测试时可通过 setDataDir 隔离） ──────
 let DATA_DIR = path.resolve(__dirname, '..', '..', 'data');
@@ -29,7 +30,8 @@ function resolveAuthRepository() {
   ).trim().toLowerCase();
   // 仅显式 AUTH_* 切 mysql；不要因 LEARNING_BACKEND=mysql 隐式改鉴权
   if (raw === 'mysql' || raw === 'rds') {
-    if (!process.env.MYSQL_HOST) return 'json';
+    // 缺 MYSQL_* 整套时回落 json，避免半配置连上硬编码默认库
+    if (!hasMysqlEnv()) return 'json';
     return 'mysql';
   }
   return 'json';
@@ -41,16 +43,8 @@ function getMysqlPool() {
   // lazy require so unit tests without mysql2 still load db.js
   // eslint-disable-next-line global-require
   const mysql = require('mysql2/promise');
-  _mysqlPool = mysql.createPool({
-    host: process.env.MYSQL_HOST || '127.0.0.1',
-    port: Number(process.env.MYSQL_PORT || 3306),
-    user: process.env.MYSQL_USER || 'root',
-    password: process.env.MYSQL_PASSWORD || '',
-    database: process.env.MYSQL_DATABASE || 'baby_island',
-    waitForConnections: true,
-    connectionLimit: Number(process.env.MYSQL_CONNECTION_LIMIT || 5),
-    timezone: 'Z',
-  });
+  // host/user/password/database 必须来自 env；无 127.0.0.1/root/baby_island 默认
+  _mysqlPool = mysql.createPool(resolveMysqlConfig());
   return _mysqlPool;
 }
 

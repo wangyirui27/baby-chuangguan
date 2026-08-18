@@ -14,8 +14,9 @@
 |----|------|
 | **生产 H5** | 仓库根 `index.html` + `script.js` + `style.css`（`tools/pack-app-www.sh:22`） |
 | **生产 API** | 根 `npm start` → `backend/src/index.js`（Express 同端口托管静态 + `/api/*`） |
+| **本机开发库** | 以 `backend/.env` 为准；团队现状为 **阿里云 RDS**（`AUTH_REPOSITORY=mysql` + `LEARNING_REPOSITORY=mysql` + `MYSQL_HOST=rm-….rds.aliyuncs.com`），**不是**本机 mysqld。SOP：`docs/deploy-server.md` |
 | **Learning** | 默认按 `LEARNING_REPOSITORY` 解析：`mysql`/`rds` → MySQL；`insforge`/`pg` → InsForge；缺省看凭据；都无 → `none` |
-| **Auth** | 默认 JSON 文件（`data/*.json`）；`AUTH_REPOSITORY=mysql` 且配 `MYSQL_HOST` 才切 MySQL |
+| **Auth** | 默认 JSON 文件（`data/*.json`）；`AUTH_REPOSITORY=mysql` 且配齐 `MYSQL_*` 才切 MySQL |
 | **Redis 限流** | **未实现**：`security.js` 的 `IpRateLimiter` 是纯内存 Map，代码无 `REDIS_URL` 读取、无 redis 依赖 |
 | **OSS 静态** | **未挂载**：`backend/src/oss.js` 存在但全库无 `require('./oss')`；生产请求路径走 `express.static` 本地 |
 | **apps/\*** | 非生产入口；`apps/backend` 仅 auth/health 契约壳 |
@@ -93,6 +94,8 @@
 | 数据防抖写间隔 | 500 ms | `db.js:194` |
 | session token | `crypto.randomBytes(32)`，无 `SESSION_SECRET` | `db.js:223-225` |
 | 静态根 | 固定仓库根 | `index.js:90` |
+| MySQL host/user/password/database | **无硬编码默认**；缺则 `MYSQL_NOT_CONFIGURED` | `mysql-config.js` `resolveMysqlConfig` |
+| MySQL port / connectionLimit 未设时 | `3306` / `5`（仅端口与池大小） | `mysql-config.js` |
 
 > 需要可配置 → 改代码读 env 后发版；在此之前 `.env.example` 注释里的同名变量是**假旋钮**。
 

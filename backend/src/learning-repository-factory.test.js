@@ -19,6 +19,13 @@ test('resolveLearningBackendKind accepts LEARNING_BACKEND alias', () => {
     }),
     'insforge',
   );
+  assert.equal(
+    resolveLearningBackendKind({
+      INSFORGE_URL: 'https://example.test',
+      INSFORGE_API_KEY: 'k2',
+    }),
+    'insforge',
+  );
 });
 
 test('createLearningRepositoryFromEnv mysql returns repository when mysql2 present', () => {
