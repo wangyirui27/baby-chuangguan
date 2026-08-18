@@ -12,7 +12,6 @@ RUN_MIGRATE="${RUN_MIGRATE:-0}"
 
 [[ -z "${ECS_USER}" ]] && ECS_USER="baobao"
 [[ -z "${APP_DIR}" ]] && APP_DIR="/opt/apps/baobao/backend"
-[[ -z "${REMOTE_HEALTH_URL}" ]] && REMOTE_HEALTH_URL="http://127.0.0.1:3000/api/health"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
@@ -130,11 +129,16 @@ EOF
 if [[ -z "${REMOTE_HEALTH_URL}" ]]; then
   remote_port="$(ssh_remote bash -s <<'EOF'
 set -euo pipefail
-file=/etc/baobao-backend.env
 port=""
-if [[ -r "$file" ]]; then
+pid="$(pgrep -n -u baobao -f 'backend/src/index.js' || true)"
+if [[ -n "$pid" && -r "/proc/${pid}/environ" ]]; then
+  port="$(tr '\0' '\n' < "/proc/${pid}/environ" | grep -E '^PORT=' | tail -1 | cut -d= -f2- | tr -cd '0-9')"
+fi
+file=/etc/baobao-backend.env
+if [[ ! "$port" =~ ^[0-9]+$ && -r "$file" ]]; then
   port="$(grep -E '^PORT=' "$file" | tail -1 | cut -d= -f2- | tr -cd '0-9')"
-elif sudo -n test -r "$file" 2>/dev/null; then
+fi
+if [[ ! "$port" =~ ^[0-9]+$ ]] && sudo -n test -r "$file" 2>/dev/null; then
   port="$(sudo -n grep -E '^PORT=' "$file" | tail -1 | cut -d= -f2- | tr -cd '0-9')"
 fi
 if [[ ! "$port" =~ ^[0-9]+$ ]]; then
