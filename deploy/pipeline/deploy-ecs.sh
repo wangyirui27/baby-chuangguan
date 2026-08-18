@@ -127,17 +127,35 @@ fi
 sudo -n systemctl is-active baobao-backend
 EOF
 
+if [[ -z "${REMOTE_HEALTH_URL}" ]]; then
+  remote_port="$(ssh_remote bash -s <<'EOF'
+set -euo pipefail
+file=/etc/baobao-backend.env
+port=""
+if [[ -r "$file" ]]; then
+  port="$(grep -E '^PORT=' "$file" | tail -1 | cut -d= -f2- | tr -cd '0-9')"
+elif sudo -n test -r "$file" 2>/dev/null; then
+  port="$(sudo -n grep -E '^PORT=' "$file" | tail -1 | cut -d= -f2- | tr -cd '0-9')"
+fi
+if [[ ! "$port" =~ ^[0-9]+$ ]]; then
+  port=3000
+fi
+echo "$port"
+EOF
+)"
+  REMOTE_HEALTH_URL="http://127.0.0.1:${remote_port}/api/health"
+fi
+
 echo "==> health acceptance ${REMOTE_HEALTH_URL}"
 # 验收脚本只打印四个 backend 标识和 HTTP 状态，不打印生产响应体或凭据。
 if ! ssh_remote "bash '${APP_DIR}/deploy/pipeline/verify-ecs.sh' '${REMOTE_HEALTH_URL}'"; then
   echo "HEALTH failed — remote unit/journal (no secrets):" >&2
-  ssh_remote bash -s <<'EOF' || true
+  ssh_remote bash -s <<EOF || true
 set -euo pipefail
-echo "UNIT=$(systemctl is-active baobao-backend 2>/dev/null || echo unknown)"
-echo "PORT_PROBE=$(ss -ltn 2>/dev/null | awk 'NR==1 || /:3000|:8080|:80 /' || netstat -ltn 2>/dev/null | awk 'NR==1 || /:3000|:8080/')"
-curl -sS -m 5 -o /tmp/baobao-healthz.body -w 'HEALTHZ_HTTP=%{http_code}\n' http://127.0.0.1:3000/healthz || echo 'HEALTHZ_CURL_FAIL'
-# do not print response body
-sudo journalctl -u baobao-backend -n 40 --no-pager -o cat
+echo "UNIT=\$(systemctl is-active baobao-backend 2>/dev/null || echo unknown)"
+echo "LISTEN=\$(ss -ltn 2>/dev/null | awk 'NR==1 || /:3999 |:3000 |:8080 /')"
+curl -sS -m 5 -o /tmp/baobao-healthz.body -w 'HEALTHZ_HTTP=%{http_code}\\n' '${REMOTE_HEALTH_URL%/api/health}/healthz' || echo 'HEALTHZ_CURL_FAIL'
+sudo -n journalctl -u baobao-backend -n 20 --no-pager -o cat | grep -E 'INFO|FATAL|Error|listening' || true
 EOF
   exit 1
 fi

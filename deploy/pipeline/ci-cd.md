@@ -41,7 +41,7 @@
 | Variable | 用途 | 默认 |
 |----------|------|------|
 | `APP_DIR` | 远端目录 | `/opt/apps/baobao/backend` |
-| `REMOTE_HEALTH_URL` | 远端本机 health | `http://127.0.0.1:3000/api/health` |
+| `REMOTE_HEALTH_URL` | 远端本机 health | 未设则读 ECS env 的 `PORT`（本机默认 3000） |
 | `EXPECT_LEARNING_BACKEND` | health 断言，如 `mysql` | 不设则只检查字段存在 + `status=ok` + `nodeEnv=production` |
 | `EXPECT_SMS_PROVIDER` | health 断言，如 `aliyun` | 同上 |
 
