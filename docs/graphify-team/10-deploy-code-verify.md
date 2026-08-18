@@ -154,7 +154,7 @@ Vite `apps/frontend` **不**进入 pack。
 
 | 文件 | 代码事实 | vs `04` |
 |------|----------|---------|
-| `deploy/ecs/baobao-backend.service` | `WorkingDirectory=/opt/baobao-chuangguan`；`ExecStart=/usr/bin/node backend/src/index.js`；`EnvironmentFile=-/etc/baobao-backend.env` | `04` §7 **对齐** |
+| `deploy/ecs/baobao-backend.service` | `WorkingDirectory=/opt/apps/baobao/backend`；`ExecStart=/usr/bin/node backend/src/index.js`；`EnvironmentFile=-/etc/baobao-backend.env` | `04` §7 **对齐** |
 | `deploy/pipeline/deploy-ecs.sh` | rsync 排除 `node_modules` `.git` `data` `.env*`；远端 `npm ci --omit=dev`；可选 migrate；`systemctl restart baobao-backend` | `04` §7 **对齐** |
 | `deploy/pipeline/ci-cd.md:7` | 写「没有 `.github/workflows/*`」 | **过期**。实际：`.github/workflows/testflight-preflight.yml`（`04:210`） |
 

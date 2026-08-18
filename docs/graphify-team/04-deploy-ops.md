@@ -210,7 +210,7 @@
 ### 6.3 CI
 
 - `.github/workflows/testflight-preflight.yml`：`push main` / `pull_request` / `workflow_dispatch`，ubuntu-latest + Node 20，跑内容与壳 handoff 预检（可手动触发 OSS URL 抽样探测）。
-- 注：`deploy/pipeline/ci-cd.md` 称"当前仓库没有提交 `.github/workflows/*`"——**已过时**，实际存在上述 workflow。
+- `.github/workflows/deploy-ecs.yml`：tag `v*` / `workflow_dispatch` 应急 → backend 单测 → `deploy-ecs.sh`（Secrets：`ECS_HOST` / `ECS_SSH_KEY`）。说明：`deploy/pipeline/ci-cd.md`。`push main` **不**部署。
 
 ---
 
@@ -218,12 +218,13 @@
 
 | 文件 | 作用 |
 |------|------|
-| `deploy/pipeline/deploy-ecs.sh` | 一键同步 + 安装 + 可选迁移 + 重启。env：`ECS_HOST`、`ECS_USER`（默认 `baobao`）、`ECS_SSH_KEY_PATH`、`APP_DIR`（默认 `/opt/baobao-chuangguan`）、`RUN_MIGRATE`（默认 0） |
-| `deploy/ecs/baobao-backend.service` | systemd unit：`User=baobao`、`WorkingDirectory=/opt/baobao-chuangguan`、`EnvironmentFile=-/etc/baobao-backend.env`、`ExecStart=/usr/bin/node backend/src/index.js`、`Restart=on-failure`、`NoNewPrivileges`/`PrivateTmp` |
+| `deploy/pipeline/deploy-ecs.sh` | 一键同步 + 安装 + 可选迁移 + 重启。env：`ECS_HOST`、`ECS_USER`（默认 `baobao`）、`ECS_SSH_KEY_PATH` **或** `ECS_SSH_KEY`（PEM）、`APP_DIR`（默认 `/opt/apps/baobao/backend`）、`RUN_MIGRATE`（默认 0） |
+| `deploy/pipeline/verify-ecs.sh` | 远端 health 验收：HTTP 200 + 四个 backend 字段；不打印响应体 |
+| `deploy/ecs/baobao-backend.service` | systemd unit：`User=baobao`、`WorkingDirectory=/opt/apps/baobao/backend`、`EnvironmentFile=-/etc/baobao-backend.env`、`ExecStart=/usr/bin/node backend/src/index.js`、`Restart=on-failure`、`NoNewPrivileges`/`PrivateTmp` |
 
 deploy-ecs.sh 流程：
 
-1. rsync `--delete`（排除 `node_modules` / `.git` / `data` / `.env` / `.env.*` / `*.log`）→ 远端 `APP_DIR`
+1. rsync `--delete`（排除 `node_modules` / `.git` / `.github` / `android` / `ios` / `data` / `.env*` / `*.log`）→ 远端 `APP_DIR`；rsync 走同一把 SSH 私钥
 2. `cd backend && npm ci --omit=dev`
 3. `RUN_MIGRATE=1` 时：source `/etc/baobao-backend.env` → 有 `MYSQL_HOST`/`MYSQL_URL`/`DATABASE_URL` 才跑 `node scripts/mysql-apply-migration.js`，否则跳过
 4. `sudo systemctl restart baobao-backend`（无 unit 则提示手动重启）

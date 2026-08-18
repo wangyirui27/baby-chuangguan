@@ -1,24 +1,52 @@
 #!/usr/bin/env bash
 # Sync repo to ECS, install backend deps, optional migrate, restart, health-check.
-# No cloud secrets in this script — pass SSH key path via env only.
+# No cloud secrets in this script. Pass ECS_SSH_KEY_PATH (file) or ECS_SSH_KEY (PEM body).
 set -euo pipefail
 
 ECS_HOST="${ECS_HOST:-}"
-ECS_USER="${ECS_USER:-baobao}"
+ECS_USER="${ECS_USER:-}"
 ECS_SSH_KEY_PATH="${ECS_SSH_KEY_PATH:-}"
-APP_DIR="${APP_DIR:-/opt/baobao-chuangguan}"
-REMOTE_HEALTH_URL="${REMOTE_HEALTH_URL:-http://127.0.0.1:3000/api/health}"
+APP_DIR="${APP_DIR:-}"
+REMOTE_HEALTH_URL="${REMOTE_HEALTH_URL:-}"
 RUN_MIGRATE="${RUN_MIGRATE:-0}"
+
+[[ -z "${ECS_USER}" ]] && ECS_USER="baobao"
+[[ -z "${APP_DIR}" ]] && APP_DIR="/opt/apps/baobao/backend"
+[[ -z "${REMOTE_HEALTH_URL}" ]] && REMOTE_HEALTH_URL="http://127.0.0.1:3000/api/health"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+_ECS_KEY_TMP=""
+
+cleanup_deploy_tmp() {
+  if [[ -n "${_ECS_KEY_TMP}" && -f "${_ECS_KEY_TMP}" ]]; then
+    rm -f "${_ECS_KEY_TMP}"
+  fi
+}
+trap cleanup_deploy_tmp EXIT
+
+# GitHub Actions passes the private key body as ECS_SSH_KEY.
+if [[ -z "${ECS_SSH_KEY_PATH}" && -n "${ECS_SSH_KEY:-}" ]]; then
+  _ECS_KEY_TMP="$(mktemp)"
+  (
+    umask 077
+    printf '%s' "${ECS_SSH_KEY}" > "${_ECS_KEY_TMP}"
+    if [[ -s "${_ECS_KEY_TMP}" && "$(tail -c 1 "${_ECS_KEY_TMP}" | wc -l)" -eq 0 ]]; then
+      printf '\n' >> "${_ECS_KEY_TMP}"
+    fi
+  )
+  chmod 600 "${_ECS_KEY_TMP}"
+  ECS_SSH_KEY_PATH="${_ECS_KEY_TMP}"
+  unset ECS_SSH_KEY
+fi
 
 missing=()
 [[ -z "${ECS_HOST}" ]] && missing+=("ECS_HOST")
-[[ -z "${ECS_SSH_KEY_PATH}" ]] && missing+=("ECS_SSH_KEY_PATH")
+[[ -z "${ECS_SSH_KEY_PATH}" ]] && missing+=("ECS_SSH_KEY_PATH or ECS_SSH_KEY")
 if ((${#missing[@]} > 0)); then
   echo "Missing required env: ${missing[*]}" >&2
   echo "Example: ECS_HOST=<host> ECS_SSH_KEY_PATH=~/.ssh/id_ed25519 ECS_USER=baobao $0" >&2
+  echo "CI: set GitHub Secrets ECS_HOST + ECS_SSH_KEY (and optional ECS_USER)." >&2
   exit 2
 fi
 
@@ -31,17 +59,25 @@ SSH_OPTS=(
   -i "${ECS_SSH_KEY_PATH}"
   -o IdentitiesOnly=yes
   -o StrictHostKeyChecking=accept-new
+  -o BatchMode=yes
+  -o ConnectTimeout=20
 )
 REMOTE="${ECS_USER}@${ECS_HOST}"
+RSYNC_RSH="ssh ${SSH_OPTS[*]}"
 
 ssh_remote() {
   ssh "${SSH_OPTS[@]}" "${REMOTE}" "$@"
 }
 
 echo "==> rsync → ${REMOTE}:${APP_DIR}"
-rsync -az --delete \
+rsync -az --delete -e "${RSYNC_RSH}" \
   --exclude node_modules \
   --exclude .git \
+  --exclude .github \
+  --exclude .cursor \
+  --exclude android \
+  --exclude ios \
+  --exclude graphify-out \
   --exclude data \
   --exclude .env \
   --exclude '.env.*' \

@@ -1,0 +1,94 @@
+name: Deploy ECS
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      run_migrate:
+        description: "Remote MySQL migrate (RUN_MIGRATE=1). Default off."
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: deploy-ecs-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  test-backend:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install and test
+        working-directory: backend
+        env:
+          NODE_ENV: test
+        run: |
+          npm ci
+          npm test
+
+  deploy:
+    name: rsync + restart
+    needs: test-backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production
+    env:
+      ECS_HOST: ${{ secrets.ECS_HOST }}
+      ECS_USER: ${{ secrets.ECS_USER }}
+      ECS_SSH_KEY: ${{ secrets.ECS_SSH_KEY }}
+      APP_DIR: ${{ vars.APP_DIR || '/opt/apps/baobao/backend' }}
+      REMOTE_HEALTH_URL: ${{ vars.REMOTE_HEALTH_URL }}
+      EXPECT_NODE_ENV: production
+      EXPECT_LEARNING_BACKEND: ${{ vars.EXPECT_LEARNING_BACKEND }}
+      EXPECT_SMS_PROVIDER: ${{ vars.EXPECT_SMS_PROVIDER }}
+      RUN_MIGRATE: ${{ github.event_name == 'workflow_dispatch' && inputs.run_migrate && '1' || '0' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Require deploy secrets
+        run: |
+          missing=()
+          [[ -z "${ECS_HOST}" ]] && missing+=("ECS_HOST")
+          [[ -z "${ECS_SSH_KEY}" ]] && missing+=("ECS_SSH_KEY")
+          if ((${#missing[@]} > 0)); then
+            echo "Missing GitHub Secrets: ${missing[*]}" >&2
+            echo "Repo Settings → Secrets and variables → Actions. See deploy/pipeline/ci-cd.md" >&2
+            exit 1
+          fi
+
+      - name: Install rsync
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rsync
+
+      - name: Deploy to ECS
+        run: bash deploy/pipeline/deploy-ecs.sh
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Deploy ECS"
+            echo "- ref: \`${GITHUB_REF}\`"
+            echo "- sha: \`${GITHUB_SHA}\`"
+            echo "- app dir: \`${APP_DIR:-/opt/apps/baobao/backend}\`"
+            echo "- migrate: \`${RUN_MIGRATE}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,1 @@
+baobao ALL=(root) NOPASSWD: /usr/bin/systemctl restart baobao-backend, /usr/bin/systemctl start baobao-backend, /usr/bin/systemctl stop baobao-backend, /usr/bin/systemctl status baobao-backend, /bin/systemctl restart baobao-backend, /bin/systemctl start baobao-backend, /bin/systemctl stop baobao-backend, /bin/systemctl status baobao-backend

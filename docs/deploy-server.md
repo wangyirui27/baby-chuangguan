@@ -27,7 +27,7 @@
 | 场景 | 进程在哪 | 读哪个配置 | 数据库（当前团队惯例） |
 |------|----------|------------|------------------------|
 | 本机 `npm start` | 笔记本 | `backend/.env`（优先；见 `index.js` dotenv 顺序） | **RDS**（`MYSQL_HOST` 为 `*.mysql.rds.aliyuncs.com`） |
-| ECS 生产 | `/opt/baobao-chuangguan` | **`/etc/baobao-backend.env`**（systemd `EnvironmentFile`） | 应与本机同一 RDS **或** 单独生产库（见下） |
+| ECS 生产 | `/opt/apps/baobao/backend` | **`/etc/baobao-backend.env`**（systemd `EnvironmentFile`） | 应与本机同一 RDS **或** 单独生产库（见下） |
 | `npm test` | 本机 | `NODE_ENV=test` → Auth **强制 json** | 不依赖 RDS；Learning 单测自带 mock/隔离 |
 
 **核对本机实际目标（不打印密码）：**
@@ -46,7 +46,7 @@ grep -E '^(AUTH_|LEARNING_|MYSQL_HOST|MYSQL_DATABASE|MYSQL_PORT|MYSQL_USER)=' .e
 
 - 本机开发写的用户/进度进**真实云库**；误删、脏数据、并发测会影响他人。
 - RDS 白名单须放行本机出口 IP；换网络可能连不上。
-- `SMS_PROVIDER=aliyun` 时本机也会发**真短信**（计费）；本地联调短信请用 `SMS_PROVIDER=development`。
+- 登录默认走**阿里云真短信**（`SMS_PROVIDER=aliyun`；虚拟登录默认关）。会计费。
 - **不要**把 `backend/.env` 同步进 git；ECS 用独立 `/etc/baobao-backend.env`，值可同源但文件分离。
 
 ### 1.2 若要改成「本机只连本机库」
@@ -222,7 +222,8 @@ INSFORGE_API_KEY=
 | 变量 / 行为 | 原因 |
 |-------------|------|
 | `SMS_PROVIDER=development` | 验证码打日志，不能当真短信 |
-| `VIRTUAL_LOGIN=1` / `ALLOW_VIRTUAL_LOGIN` | `NODE_ENV=production` 下应关闭 |
+| `VIRTUAL_LOGIN=1` / `ALLOW_VIRTUAL_LOGIN=1` | **默认关**；任意手机号捷径。正常只用阿里云短信 |
+| `SMS_DEV_FALLBACK=1` | 阿里云失败回落终端；默认关 |
 | `TEMP_LOCAL_FULL_ACCESS` | 商店包必须 `false`（客户端） |
 | 密钥进 `shell-config.json` / H5 / commit | 泄漏 |
 | 依赖代码默认 `127.0.0.1`/`root` | **已删除**；必须配 `MYSQL_*` |
@@ -232,7 +233,9 @@ INSFORGE_API_KEY=
 
 ## 5. 服务器首装（一次性）
 
-假设：Ubuntu、用户 `baobao`、目录 `/opt/baobao-chuangguan`（与现有 unit 一致）。
+**打包好的首装包 + 短文：** [`first-deploy.md`](./first-deploy.md) · `deploy/dist/baobao-first-install.tar.gz`
+
+假设：Ubuntu、用户 `baobao`、目录 `/opt/apps/baobao/backend`（与现有 unit 一致）。
 
 ### 5.1 系统依赖
 
@@ -245,10 +248,10 @@ npm -v
 ### 5.2 目录与权限
 
 ```bash
-sudo mkdir -p /opt/baobao-chuangguan
-sudo chown baobao:baobao /opt/baobao-chuangguan
-sudo mkdir -p /opt/baobao-chuangguan/data
-sudo chown baobao:baobao /opt/baobao-chuangguan/data
+sudo mkdir -p /opt/apps/baobao/backend
+sudo chown baobao:baobao /opt/apps/baobao/backend
+sudo mkdir -p /opt/apps/baobao/backend/data
+sudo chown baobao:baobao /opt/apps/baobao/backend/data
 ```
 
 ### 5.3 环境文件（生产画像 B，与本机 RDS 对齐）
@@ -299,12 +302,12 @@ INSFORGE_API_KEY=
 ### 5.4 systemd
 
 ```bash
-sudo cp /opt/baobao-chuangguan/deploy/ecs/baobao-backend.service /etc/systemd/system/
+sudo cp /opt/apps/baobao/backend/deploy/ecs/baobao-backend.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable baobao-backend
 ```
 
-Unit 要点：`WorkingDirectory=/opt/baobao-chuangguan`，`ExecStart=/usr/bin/node backend/src/index.js`，`EnvironmentFile=-/etc/baobao-backend.env`。
+Unit 要点：`WorkingDirectory=/opt/apps/baobao/backend`，`ExecStart=/usr/bin/node backend/src/index.js`，`EnvironmentFile=-/etc/baobao-backend.env`。
 
 ### 5.5 反向代理（HTTPS）
 
@@ -335,6 +338,16 @@ server {
 
 ## 6. 日常发版（代码同步）
 
+### 6.0 GitHub Actions（推荐）
+
+`.github/workflows/deploy-ecs.yml`：**打 `v*` tag 并 push** 才发版（`push main` 不部署）。
+
+1. 仓库 Secrets：`ECS_HOST`、`ECS_SSH_KEY`（私钥全文），可选 `ECS_USER`
+2. 先跑 `backend` 单测，再调用 `deploy/pipeline/deploy-ecs.sh`
+3. **不会**覆盖 `/etc/baobao-backend.env`；默认不跑 migrate
+4. 应急手动：Actions → Deploy ECS → Run workflow
+5. 明细与 `gh secret set` 示例：`deploy/pipeline/ci-cd.md`
+
 本机（有 SSH 密钥）：
 
 ```bash
@@ -343,7 +356,7 @@ cd /path/to/嗨洛塔少儿启蒙APP
 ECS_HOST=你的公网IP或域名 \
 ECS_USER=baobao \
 ECS_SSH_KEY_PATH=~/.ssh/your_key \
-APP_DIR=/opt/baobao-chuangguan \
+APP_DIR=/opt/apps/baobao/backend \
 bash deploy/pipeline/deploy-ecs.sh
 ```
 
@@ -427,16 +440,16 @@ ASC 要的隐私政策 / 支持 URL 必须是**公网 HTTPS**。可同机静态�
 | 9 | 付费墙 | 未购仍挡英语 L11+ |
 | 10 | 备份 | RDS 快照 / binlog 策略已开 |
 
-**本机联调（仍可能写 RDS）：**
+**本机联调（真短信）：**
 
 ```bash
 cd backend
-# 确认 .env 里 MYSQL_HOST 是你想要的目标（RDS 或 127.0.0.1）
-SMS_PROVIDER=development npm start   # 避免真短信
-# 浏览器 http://localhost:3000
+# .env：SMS_PROVIDER=aliyun、VIRTUAL_LOGIN=0、SMS_DEV_FALLBACK=0
+npm start
+# 浏览器 http://localhost:3000 → 发码到真实手机 → 填短信里的 6 位码
 ```
 
-单测不连 RDS：`NODE_ENV=test` 强制 Auth json。
+单测不连 RDS、不发短信：`NODE_ENV=test` + 测试内 `SMS_PROVIDER=development`。
 
 ---
 
@@ -518,8 +531,12 @@ SMS_PROVIDER=development npm start   # 避免真短信
 | `backend/.env` | **本机真实配置**（gitignore；当前指向 RDS） |
 | `backend/.env.example` | env 模板（含 MYSQL_* / AUTH_* / LEARNING_*） |
 | `/etc/baobao-backend.env` | **ECS 真实配置**（不在仓内） |
-| `deploy/ecs/baobao-backend.service` | systemd unit |
-| `deploy/pipeline/deploy-ecs.sh` | 一键同步重启（不覆盖远端 env） |
+| `deploy/ecs/baobao-backend.service` | systemd unit（WorkingDirectory=`/opt/apps/baobao/backend`） |
+| `docs/first-deploy.md` | **初次部署短文**（目录 `/opt/apps/baobao/backend`） |
+| `deploy/first-install/` | 首装脚本 / sudoers / nginx 示例 / env 模板（无密钥） |
+| `deploy/dist/baobao-first-install.tar.gz` | 发给运维的首装包 |
+| `deploy/pipeline/verify-ecs.sh` | 远端 health 验收（不打印响应体） |
+| `deploy/pipeline/deploy-ecs.sh` | 一键同步重启（不覆盖远端 env；CI 用 `ECS_SSH_KEY`） |
 | `ios/BabyEnglishIsland/shell-config.json` | App `apiBase`（不直连库） |
 | `docs/graphify-team/04-deploy-ops.md` | 变量/仓库切换证据表 |
 | `docs/testflight-asc-form.md` | ASC URL / 法律页约束 |
